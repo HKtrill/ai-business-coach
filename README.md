@@ -1,147 +1,56 @@
-# Customer Churn Predictor
+# AI Business Coach
 
-A full-stack machine learning application that predicts customer churn and provides interactive visual analytics.  
-Built with **FastAPI**, **React (TypeScript)**, **Scikit-learn**, **PyTorch**, **PostgreSQL**, **Docker**, and **AWS**.
-
----
-
-## 📌 Overview
-
-This project enables businesses to identify customers likely to churn using classical and deep learning models.  
-Users upload customer datasets (CSV/XLSX), which are preprocessed to handle missing data and categorical features.  
-The backend serves predictions through a FastAPI RESTful API using Logistic Regression and Neural Networks.  
-Results are visualized with an interactive React frontend featuring charts and dashboards.
+FastAPI, React, TypeScript, PyTorch, PostgreSQL, Docker (optional)
 
 ---
 
-## 🚀 Features
-
-- Upload and preprocess customer datasets (CSV/XLSX).  
-- Predict churn with Logistic Regression, XGBoost, or Neural Networks (PyTorch).  
-- Interactive charts and dashboards with React and Chart.js.  
-- Store datasets, predictions, and logs in PostgreSQL.  
-- Containerized with Docker for easy deployment.  
-- Designed for scalable AWS deployment (Elastic Beanstalk, ECS, or EKS).  
-- Optional user authentication with OAuth2 and JWT tokens.
+## Author
+Phillip Harris
 
 ---
 
-## 🛠 Tech Stack
-
-**Backend:**  
-- Python 3  
-- FastAPI  
-- Scikit-learn, XGBoost  
-- PyTorch (Deep Learning)  
-- Pandas, NumPy  
-- SQLAlchemy, Alembic  
-- Joblib for model persistence
-
-**Frontend:**  
-- React with TypeScript  
-- Chart.js  
-- Axios
-
-**Database:**  
-- PostgreSQL
-
-**Deployment:**  
-- Docker  
-- AWS (Elastic Beanstalk, ECS, or EKS)
+## Synopsis
+AI Business Coach is a full-stack web application designed to provide business owners and analysts with actionable insights, recommendations, and AI-assisted guidance. Users can interact with a custom AI chatbot for business advice focused on customer churn, retention, and growth strategies. The system showcases AI-driven business insights while laying the foundation for future enhancements such as file uploads, feature selection, and per-customer analysis.
 
 ---
 
-## 📊 Dataset
-
-**Source:** [Telco Customer Churn Dataset](https://www.kaggle.com/datasets/blastchar/telco-customer-churn) (Open-Source)  
-Contains 7,043 customer records with demographics, account info, and services, labeled by churn status.
-
----
-
-## 🗂 Project Roadmap
-
-### ✅ Phase 1: Planning  
-- Define scope, dataset, and tech stack.
-
-### ⏳ Phase 2: Model Development (Day 2–3)  
-- Data loading and preprocessing in Jupyter.  
-- Train Logistic Regression baseline and PyTorch neural network.  
-- Evaluate models and save best performing one.
-
-### ⏳ Phase 3: Backend API (Day 4)  
-- FastAPI endpoints for file upload, prediction, and analytics.  
-- Input validation and error handling.
-
-### ⏳ Phase 4: Frontend (Day 5–6)  
-- React components for file upload, results display, and charts.
-
-### ⏳ Phase 5: Database Integration (Day 7)  
-- Store files, prediction results, and logs in PostgreSQL.
-
-### ⏳ Phase 6: Testing & Deployment (Day 8–9)  
-- Unit and integration testing.  
-- Docker containerization.  
-- AWS deployment.
-
----
+## Clone or Download
+git clone https://github.com/HKtrill/ai-business-coach.git
+cd ai-business-coach
+npm install      # or yarn
 
 ## 📁 Project Structure (Initial)
 
 ```plaintext
-customer-churn-predictor/
-│
+ai-business-coach/
 ├── backend/
 │   ├── app/
 │   │   ├── main.py
 │   │   ├── api/
-│   │   │   ├── routes/
-│   │   │   │   ├── upload.py
-│   │   │   │   ├── predict.py
-│   │   │   │   └── analytics.py
-│   │   ├── core/
+│   │   │  └── routes/
+│   │   │      └── chat.py
 │   │   ├── models/
-│   │   ├── preprocessing/
-│   │   ├── tests/
+│   │   │  └── ai_model.py
 │   │   └── requirements.txt
 │   └── Dockerfile
-│
 ├── frontend/
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── FileUpload.tsx
-│   │   │   ├── PredictionTable.tsx
-│   │   │   └── Charts.tsx
-│   │   ├── pages/
-│   │   ├── services/
-│   │   └── App.tsx
-│   ├── public/
+│   │   └── components/
+│   │       └── ChatInterface.tsx
 │   ├── package.json
 │   └── Dockerfile
-│
 ├── data/
-│   ├── raw/
-│   ├── processed/
-│   └── README.md
-│
+│   └── baseline.csv
 ├── notebooks/
-│   └── model_dev.ipynb
-│
+│   └── ai_dev.ipynb
 ├── README.md
-├── docker-compose.yml
-└── .gitignore
-
+└── docker-compose.yml
 ```
-
----
-
 ## 📦 Installation & Setup
 
 *(To be updated during development)*
 
 ```bash
-git clone https://github.com/yourusername/customer-churn-predictor.git
-cd customer-churn-predictor
-
 # Backend
 cd backend
 pip install -r requirements.txt
@@ -151,5 +60,4 @@ uvicorn app.main:app --reload
 cd ../frontend
 npm install
 npm start
-
-
+```
