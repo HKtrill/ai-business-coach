@@ -1,6 +1,6 @@
 # AI Business Coach
 
-FastAPI, React, TypeScript, PyTorch, PostgreSQL, Docker (optional)
+FastAPI, React, TypeScript, PyTorch, PostgreSQL, Docker
 
 ---
 
