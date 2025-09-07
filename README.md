@@ -1,6 +1,6 @@
 # AI Business Coach
 
-FastAPI, React, TypeScript, PyTorch, PostgreSQL, Docker
+**Tech Stack:** Python, Jupyter, PyTorch, SQL, PostgreSQL, C++, TypeScript, FastAPI, React, Docker
 
 ---
 
@@ -10,7 +10,7 @@ Phillip Harris
 ---
 
 ## Synopsis
-AI Business Coach is a full-stack web application designed to provide business owners and analysts with actionable insights, recommendations, and AI-assisted guidance. Users can interact with a custom AI chatbot for business advice focused on customer churn, retention, and growth strategies. The system showcases AI-driven business insights while laying the foundation for future enhancements such as file uploads, feature selection, and per-customer analysis.
+AI Business Coach is a bespoke web application providing business analysts and owners with actionable insights and AI-assisted guidance. Users interact with a specialized AI chatbot trained on an open-source Telco dataset to analyze customer churn, retention, and growth strategies using PyTorch. This project showcases full-stack development and data science skills for portfolio purposes and is not affiliated with any telecommunications company.
 
 ---
 
