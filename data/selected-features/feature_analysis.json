@@ -1,0 +1,383 @@
+{
+  "high_corr_pairs": [
+    {
+      "feature1": "monthly_to_total_ratio",
+      "feature2": "tenure_log",
+      "correlation": -0.8278579583813644
+    },
+    {
+      "feature1": "monthly_to_total_ratio",
+      "feature2": "is_new_customer",
+      "correlation": 0.8122532210106371
+    },
+    {
+      "feature1": "tenure_log",
+      "feature2": "tenure",
+      "correlation": 0.913745544341466
+    },
+    {
+      "feature1": "tenure_log",
+      "feature2": "is_new_customer",
+      "correlation": -0.8419203276002677
+    },
+    {
+      "feature1": "tenure",
+      "feature2": "tenure_squared",
+      "correlation": 0.9680995277900238
+    },
+    {
+      "feature1": "tenure",
+      "feature2": "tenure_cube",
+      "correlation": 0.9205517934299038
+    },
+    {
+      "feature1": "tenure",
+      "feature2": "estimated_clv",
+      "correlation": 0.8259850821822442
+    },
+    {
+      "feature1": "tenure",
+      "feature2": "tenure_monthly_charges_interaction",
+      "correlation": 0.8259850821822442
+    },
+    {
+      "feature1": "tenure",
+      "feature2": "TotalCharges",
+      "correlation": 0.8241644781916867
+    },
+    {
+      "feature1": "tenure_squared",
+      "feature2": "tenure_cube",
+      "correlation": 0.9876999398033399
+    },
+    {
+      "feature1": "tenure_squared",
+      "feature2": "estimated_clv",
+      "correlation": 0.8162354777106876
+    },
+    {
+      "feature1": "tenure_squared",
+      "feature2": "tenure_monthly_charges_interaction",
+      "correlation": 0.8162354777106876
+    },
+    {
+      "feature1": "tenure_squared",
+      "feature2": "is_loyal_customer",
+      "correlation": 0.8495297375470848
+    },
+    {
+      "feature1": "tenure_squared",
+      "feature2": "TotalCharges",
+      "correlation": 0.8151284973332085
+    },
+    {
+      "feature1": "tenure_cube",
+      "feature2": "is_loyal_customer",
+      "correlation": 0.8973223723692211
+    },
+    {
+      "feature1": "tenure_total_extra_services_interaction",
+      "feature2": "estimated_clv",
+      "correlation": 0.9050778260677159
+    },
+    {
+      "feature1": "tenure_total_extra_services_interaction",
+      "feature2": "tenure_monthly_charges_interaction",
+      "correlation": 0.9050778260677159
+    },
+    {
+      "feature1": "tenure_total_extra_services_interaction",
+      "feature2": "MonthlyCharges_total_extra_services_interaction",
+      "correlation": 0.858552577851645
+    },
+    {
+      "feature1": "tenure_total_extra_services_interaction",
+      "feature2": "TotalCharges_cube",
+      "correlation": 0.8277442452728457
+    },
+    {
+      "feature1": "tenure_total_extra_services_interaction",
+      "feature2": "TotalCharges",
+      "correlation": 0.9043865771227738
+    },
+    {
+      "feature1": "tenure_total_extra_services_interaction",
+      "feature2": "TotalCharges_squared",
+      "correlation": 0.8837283768861087
+    },
+    {
+      "feature1": "tenure_total_extra_services_interaction",
+      "feature2": "service_adoption_rate",
+      "correlation": 0.8650999045851803
+    },
+    {
+      "feature1": "tenure_total_extra_services_interaction",
+      "feature2": "total_extra_services",
+      "correlation": 0.8650999045851833
+    },
+    {
+      "feature1": "InternetService_Fiber optic",
+      "feature2": "MonthlyCharges_squared",
+      "correlation": 0.8059031956744237
+    },
+    {
+      "feature1": "estimated_clv",
+      "feature2": "tenure_monthly_charges_interaction",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "estimated_clv",
+      "feature2": "MonthlyCharges_total_extra_services_interaction",
+      "correlation": 0.8002936887577298
+    },
+    {
+      "feature1": "estimated_clv",
+      "feature2": "TotalCharges_cube",
+      "correlation": 0.8845314190662685
+    },
+    {
+      "feature1": "estimated_clv",
+      "feature2": "TotalCharges",
+      "correlation": 0.9987635430321146
+    },
+    {
+      "feature1": "estimated_clv",
+      "feature2": "TotalCharges_squared",
+      "correlation": 0.9544667871355376
+    },
+    {
+      "feature1": "tenure_monthly_charges_interaction",
+      "feature2": "MonthlyCharges_total_extra_services_interaction",
+      "correlation": 0.8002936887577298
+    },
+    {
+      "feature1": "tenure_monthly_charges_interaction",
+      "feature2": "TotalCharges_cube",
+      "correlation": 0.8845314190662685
+    },
+    {
+      "feature1": "tenure_monthly_charges_interaction",
+      "feature2": "TotalCharges",
+      "correlation": 0.9987635430321146
+    },
+    {
+      "feature1": "tenure_monthly_charges_interaction",
+      "feature2": "TotalCharges_squared",
+      "correlation": 0.9544667871355376
+    },
+    {
+      "feature1": "MonthlyCharges_cube",
+      "feature2": "MonthlyCharges_total_extra_services_interaction",
+      "correlation": 0.8539596010465239
+    },
+    {
+      "feature1": "MonthlyCharges_cube",
+      "feature2": "MonthlyCharges",
+      "correlation": 0.9346500450190549
+    },
+    {
+      "feature1": "MonthlyCharges_cube",
+      "feature2": "MonthlyCharges_squared",
+      "correlation": 0.9863596546082699
+    },
+    {
+      "feature1": "MonthlyCharges_cube",
+      "feature2": "above_avg_charges",
+      "correlation": 0.8261055493335988
+    },
+    {
+      "feature1": "MonthlyCharges_total_extra_services_interaction",
+      "feature2": "MonthlyCharges_squared",
+      "correlation": 0.8373071614604167
+    },
+    {
+      "feature1": "MonthlyCharges_total_extra_services_interaction",
+      "feature2": "TotalCharges",
+      "correlation": 0.8003765601063388
+    },
+    {
+      "feature1": "MonthlyCharges_total_extra_services_interaction",
+      "feature2": "service_adoption_rate",
+      "correlation": 0.9533139221845441
+    },
+    {
+      "feature1": "MonthlyCharges_total_extra_services_interaction",
+      "feature2": "total_extra_services",
+      "correlation": 0.9533139221845476
+    },
+    {
+      "feature1": "MonthlyCharges_total_extra_services_interaction",
+      "feature2": "premium_service_user",
+      "correlation": 0.8084939897286041
+    },
+    {
+      "feature1": "MonthlyCharges",
+      "feature2": "MonthlyCharges_squared",
+      "correlation": 0.9798259288570468
+    },
+    {
+      "feature1": "MonthlyCharges",
+      "feature2": "above_avg_charges",
+      "correlation": 0.857647857260867
+    },
+    {
+      "feature1": "TotalCharges_cube",
+      "feature2": "TotalCharges",
+      "correlation": 0.8857334369787909
+    },
+    {
+      "feature1": "TotalCharges_cube",
+      "feature2": "TotalCharges_squared",
+      "correlation": 0.980525865696191
+    },
+    {
+      "feature1": "MonthlyCharges_squared",
+      "feature2": "above_avg_charges",
+      "correlation": 0.86207666140572
+    },
+    {
+      "feature1": "TotalCharges",
+      "feature2": "TotalCharges_squared",
+      "correlation": 0.9555670503139334
+    },
+    {
+      "feature1": "TechSupport_No internet service",
+      "feature2": "DeviceProtection_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "TechSupport_No internet service",
+      "feature2": "OnlineBackup_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "TechSupport_No internet service",
+      "feature2": "StreamingTV_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "TechSupport_No internet service",
+      "feature2": "InternetService_No",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "TechSupport_No internet service",
+      "feature2": "StreamingMovies_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "TechSupport_No internet service",
+      "feature2": "OnlineSecurity_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "DeviceProtection_No internet service",
+      "feature2": "OnlineBackup_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "DeviceProtection_No internet service",
+      "feature2": "StreamingTV_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "DeviceProtection_No internet service",
+      "feature2": "InternetService_No",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "DeviceProtection_No internet service",
+      "feature2": "StreamingMovies_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "DeviceProtection_No internet service",
+      "feature2": "OnlineSecurity_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "OnlineBackup_No internet service",
+      "feature2": "StreamingTV_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "OnlineBackup_No internet service",
+      "feature2": "InternetService_No",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "OnlineBackup_No internet service",
+      "feature2": "StreamingMovies_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "OnlineBackup_No internet service",
+      "feature2": "OnlineSecurity_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "service_adoption_rate",
+      "feature2": "total_extra_services",
+      "correlation": 1.0000000000000027
+    },
+    {
+      "feature1": "service_adoption_rate",
+      "feature2": "premium_service_user",
+      "correlation": 0.8049166061557115
+    },
+    {
+      "feature1": "StreamingTV_No internet service",
+      "feature2": "InternetService_No",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "StreamingTV_No internet service",
+      "feature2": "StreamingMovies_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "StreamingTV_No internet service",
+      "feature2": "OnlineSecurity_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "InternetService_No",
+      "feature2": "StreamingMovies_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "InternetService_No",
+      "feature2": "OnlineSecurity_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "StreamingMovies_No internet service",
+      "feature2": "OnlineSecurity_No internet service",
+      "correlation": 1.0
+    },
+    {
+      "feature1": "total_extra_services",
+      "feature2": "premium_service_user",
+      "correlation": 0.8049166061557088
+    }
+  ],
+  "low_variance_count": 0,
+  "suggestions": [
+    "\ud83d\udd27 MULTICOLLINEARITY:",
+    "   - Consider removing one feature from highly correlated pairs",
+    "   - Or combine correlated features using PCA",
+    "   - Drop either 'monthly_to_total_ratio' or 'tenure_log'",
+    "   - Drop either 'monthly_to_total_ratio' or 'is_new_customer'",
+    "   - Drop either 'tenure_log' or 'tenure'",
+    "\n\ud83d\udd27 NEW FEATURE IDEAS:",
+    "   - Ratios of highly correlated features",
+    "   - Binning continuous features into categories",
+    "   - Time-based features (if timestamps available)",
+    "   - Interaction terms between top 5 features",
+    "\n\ud83d\udd27 ADVANCED TECHNIQUES:",
+    "   - Feature clustering to create meta-features",
+    "   - Recursive feature elimination with cross-validation",
+    "   - Automated feature engineering (e.g., Featuretools)",
+    "   - Target encoding for categorical variables"
+  ]
+}
