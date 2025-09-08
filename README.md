@@ -40,9 +40,24 @@ ai-business-coach/
 │   ├── package.json
 │   └── Dockerfile
 ├── data/
-│   └── baseline.csv
+│   └── preprocessed/
+|   |   └── preprocessed-telco-churn.csv
+|   └── raw/
+|   |   └── WA_Fn_UseC_-Telco-Customer-Chrun.csv
+|   └── selected-features/
+|   |   └── enhanced_features_dataset.csv
+|   |   └── feature_analysis.json
+|   |   └── feature-info.json
+|   |   └── selected-features.csv
+|   |   └── selected_features_dataset.csv  
 ├── notebooks/
-│   └── ai_dev.ipynb
+│   └── Models/
+|   |   └── MODEL_SUMMARY_REPORT.txt
+|   |   └── detailed_results.json
+|   |   └── xgboost_model.pkl
+|   └── feature-analysis-selection.ipynb
+|   └── preprocessed.ipynb
+|   └── slm-churn-model.ipynb
 ├── README.md
 └── docker-compose.yml
 ```
