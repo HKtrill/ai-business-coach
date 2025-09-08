@@ -10,8 +10,7 @@ Phillip Harris
 ---
 
 ## Synopsis
-AI Business Coach is a bespoke web application providing business analysts and owners with actionable insights and AI-assisted guidance. Users interact with a specialized AI chatbot trained on an open-source Telco dataset to analyze customer churn, retention, and growth strategies using PyTorch. This project showcases full-stack development and data science skills for portfolio purposes and is not affiliated with any telecommunications company.
-
+AI Business Coach is a bespoke web app offering business analysts and owners actionable insights with AI-assisted guidance. Users interact with a specialized AI chatbot, trained on an open-source Telco dataset, to analyze customer churn, retention, and growth strategies using PyTorch. This project showcases full-stack development and data science skills for portfolio purposes and is not affiliated with any telecommunications company.
 ---
 
 ## Clone or Download
