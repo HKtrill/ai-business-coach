@@ -1,0 +1,46 @@
+================================================================================
+CHURN PREDICTION MODEL SUMMARY REPORT
+================================================================================
+Generated: 2025-09-08 08:31:36
+
+🏆 BEST PERFORMING MODEL: Stacking
+   - ROC-AUC: 0.9247
+   - PR-AUC: 0.9317
+   - Accuracy: 0.8349
+
+📊 MODEL PERFORMANCE RANKING (by ROC-AUC):
+--------------------------------------------------
+1. Stacking             ROC-AUC: 0.9247  PR-AUC: 0.9317
+2. Voting               ROC-AUC: 0.9243  PR-AUC: 0.9303
+3. GradientBoosting     ROC-AUC: 0.9236  PR-AUC: 0.9315
+4. XGBoost              ROC-AUC: 0.9223  PR-AUC: 0.9299
+5. RandomForest         ROC-AUC: 0.9138  PR-AUC: 0.9153
+
+🔧 FEATURE ENGINEERING:
+   - Total features after engineering: 40
+   - Feature selection method: Mutual Information
+   - Selected features: 40
+
+🎯 KEY INSIGHTS:
+------------------------------
+• Ensemble methods avg ROC-AUC: 0.9245
+• Individual models avg ROC-AUC: 0.9199
+• Ensemble improvement: +0.0046
+• Using 40 optimally selected features
+• All models achieved >0.91 ROC-AUC
+
+📈 RECOMMENDED NEXT STEPS:
+----------------------------------------
+1. Deploy the best performing model (saved as .pkl file)
+2. Monitor model performance on new data
+3. Consider feature drift detection
+4. Retrain periodically with fresh data
+5. A/B test ensemble vs individual models in production
+
+💾 FILES SAVED:
+--------------------
+• Individual model files (.pkl)
+• Feature information (feature_info.json)
+• Performance metrics (model_performance.csv)
+• Processed dataset (processed_dataset.csv)
+• Hyperparameter details (detailed_results.json)

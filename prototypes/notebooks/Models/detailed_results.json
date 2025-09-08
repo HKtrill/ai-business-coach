@@ -1,0 +1,49 @@
+{
+  "RandomForest": {
+    "accuracy": 0.8330106485963213,
+    "roc_auc": 0.9137616449986834,
+    "pr_auc": 0.9153192823688029,
+    "best_params": {
+      "class_weight": "balanced",
+      "max_depth": null,
+      "min_samples_leaf": 2,
+      "min_samples_split": 10,
+      "n_estimators": 300
+    }
+  },
+  "XGBoost": {
+    "accuracy": 0.8325266214908035,
+    "roc_auc": 0.9223443405376683,
+    "pr_auc": 0.929852569488294,
+    "best_params": {
+      "colsample_bytree": 0.8,
+      "learning_rate": 0.1,
+      "max_depth": 6,
+      "n_estimators": 100,
+      "subsample": 0.9
+    }
+  },
+  "GradientBoosting": {
+    "accuracy": 0.8325266214908035,
+    "roc_auc": 0.9235907220484889,
+    "pr_auc": 0.9315288136891449,
+    "best_params": {
+      "learning_rate": 0.1,
+      "max_depth": 5,
+      "n_estimators": 100,
+      "subsample": 0.8
+    }
+  },
+  "Voting": {
+    "accuracy": 0.8412391093901258,
+    "roc_auc": 0.9242940373295947,
+    "pr_auc": 0.9302999905898139,
+    "best_params": "N/A"
+  },
+  "Stacking": {
+    "accuracy": 0.834946757018393,
+    "roc_auc": 0.9247391735834593,
+    "pr_auc": 0.9317002190227447,
+    "best_params": "N/A"
+  }
+}
