@@ -1,6 +1,6 @@
 # AI Business Coach
 
-**Tech Stack:** Python, Jupyter, PyTorch, SQL, PostgreSQL, C++, TypeScript, FastAPI, React, Docker
+**Tech Stack:** SQLite, Jupyter, Python, PyTorch, MLOps, TypeScript, Docker, React, Node.js
 
 ---
 
@@ -10,7 +10,11 @@ Phillip Harris
 ---
 
 ## Synopsis
-AI Business Coach is a bespoke web application providing business analysts and owners with actionable insights and AI-assisted guidance. Users interact with a specialized AI chatbot trained on an open-source Telco dataset to analyze customer churn, retention, and growth strategies using PyTorch. This project showcases full-stack development and data science skills for portfolio purposes and is not affiliated with any telecommunications company.
+Empower business analysts and owners to proactively combat customer churn with AI-driven, actionable intelligence. **AI Business Coach** is a bespoke web application featuring a specialized AI chatbot at its core, helping users gain real-time insights into customer behavior and retention strategies with AI-powered guidance.
+
+The system is powered by a robust, object-oriented churn prediction pipeline trained on a real-world Telco dataset. It implements a three-stage cascade model combining Random Forest, ANN, and Gradient Boosting classifiers. This innovative design allows the system to identify complex, "edge-case" churners with superior recall and precision—a critical advantage in competitive markets. Architected to be completely free of data leakage, the pipeline showcases a best-practices approach to MLOps.
+
+This project is a comprehensive portfolio piece demonstrating the seamless integration of full-stack development (Node.js, React, TypeScript, Docker) with advanced data science and machine learning expertise (Python, PyTorch, Jupyter, SQLite). It highlights the creation of a sophisticated, production-ready system where basic AI approaches would struggle, providing not just data, but actionable strategic insights to drive growth.
 
 ---
 
@@ -23,28 +27,31 @@ npm install      # or yarn
 
 ```plaintext
 ai-business-coach/
-├── backend/
-│   ├── app/
-│   │   ├── main.py
-│   │   ├── api/
-│   │   │  └── routes/
-│   │   │      └── chat.py
-│   │   ├── models/
-│   │   │  └── ai_model.py
-│   │   └── requirements.txt
-│   └── Dockerfile
-├── frontend/
-│   ├── src/
-│   │   └── components/
-│   │       └── ChatInterface.tsx
-│   ├── package.json
-│   └── Dockerfile
 ├── data/
-│   └── baseline.csv
+│   ├── raw/
+│   │   └── WA_Fn-UseC_-Telco-Customer-Churn.csv
+│   └── test_splits/
+├── churn_pipeline/
+│   ├── __init__.py
+│   ├── data_loader.py
+│   ├── preprocessor.py
+│   ├── feature_engineer.py
+│   ├── leakage_monitor.py
+│   ├── cascade_model.py
+│   └── experiment_runner.py
+├── chatbot_pipeline/
+│   ├── __init__.py
+│   ├── user_input_handler.py
+│   ├── query_processor.py
+│   ├── churn_prediction_interface.py
+│   └── response_generator.py
+├── utils/
+│   └── utils.py
 ├── notebooks/
-│   └── ai_dev.ipynb
-├── README.md
-└── docker-compose.yml
+│   └── churn_pipeline.ipynb
+├── BasePipeline.py
+└── README.md
+
 ```
 ## 📦 Installation & Setup
 
