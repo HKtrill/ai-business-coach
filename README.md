@@ -15,6 +15,7 @@ Empower business analysts and owners to proactively combat customer churn with A
 The system is powered by a robust, object-oriented churn prediction pipeline trained on a real-world Telco dataset. It implements a three-stage cascade model combining Random Forest, ANN, and Gradient Boosting classifiers. This innovative design allows the system to identify complex, "edge-case" churners with superior recall and precision—a critical advantage in competitive markets. Architected to be completely free of data leakage, the pipeline showcases a best-practices approach to MLOps.
 
 This project is a comprehensive portfolio piece demonstrating the seamless integration of full-stack development (Node.js, React, TypeScript, Docker) with advanced data science and machine learning expertise (Python, PyTorch, Jupyter, SQLite). It highlights the creation of a sophisticated, production-ready system where basic AI approaches would struggle, providing not just data, but actionable strategic insights to drive growth.
+
 ---
 
 ## Clone or Download
