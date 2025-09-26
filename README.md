@@ -18,7 +18,7 @@ Phillip Harris
 - **Terminal Version (Light):** Perfect for telecom analysts and technical teams who want fast, efficient insights through command-line conversation
 - **Dashboard Version (Heavy):** Built for telecom executives who need rich visualizations and executive-ready presentations
 
-Both versions understand telecom churn unlike any general-purpose tool—analyzing call patterns, data usage shifts, billing disputes, and service degradation that generic models miss entirely. Your sensitive subscriber data never leaves your network, yet you get telecommunications-specialized AI insights through natural conversation.
+Both versions are highly specialized in telecom churn unlike any general-purpose tool—analyzing call patterns, data usage shifts, billing disputes, and service degradation that generic models miss entirely. Your sensitive subscriber data never leaves your network, yet you get telecommunications-specialized AI insights through natural conversation.
 
 ## Local-First Philosophy
 
