@@ -31,7 +31,7 @@ This project demonstrates advanced machine learning specialization with a three-
 ---
 
 ## Clone or Download
-git clone https://github.com/HKtrill/ai-business-coach.git
+git clone https://github.com/HKtrill/Project-ChurnBot.git
 cd ai-business-coach
 npm install      # or yarn
 
