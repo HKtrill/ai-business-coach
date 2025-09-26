@@ -35,10 +35,10 @@ git clone https://github.com/HKtrill/ai-business-coach.git
 cd ai-business-coach
 npm install      # or yarn
 
-## 📁 Project Structure (Initial)
+## 📁 Project Structure
 
 ```plaintext
-ai-business-coach/
+prototype/
 ├── data/
 │   ├── raw/
 │   │   └── WA_Fn-UseC_-Telco-Customer-Churn.csv
