@@ -205,14 +205,6 @@ ChurnBot isn't just another AI tool — it's a **research-backed, production-rea
 
 This positions ChurnBot as a standout project in a market flooded with generic AI applications.
 
-## 📝 License
-
-MIT License - see LICENSE file for details
-
-## 🤝 Contributing
-
-Contributions welcome! Please read CONTRIBUTING.md for guidelines.
-
 ## 📞 Support
 
 For questions or issues, please open a GitHub issue or contact the maintainer.
