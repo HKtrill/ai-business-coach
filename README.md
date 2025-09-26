@@ -27,6 +27,7 @@ Download from GitHub and analyze your subscriber base immediately. **No cloud de
 ## Technical Excellence
 
 This project demonstrates advanced machine learning specialization with a three-stage cascade model combining Random Forest, ANN, and Gradient Boosting classifiers, architected to identify complex telecom churn patterns with superior recall and precision. Built with modern full-stack technologies (Node.js, React, TypeScript) integrated with specialized data science expertise (Python, PyTorch), showcasing production-ready MLOps without data leakage.
+
 ---
 
 ## Clone or Download
