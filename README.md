@@ -138,7 +138,6 @@ prototype/
 │   └── it_pipeline_lab.ipynb           # TODO: set up lab for IT experimentation
 ├── BasePipeline.py                     # TODO: implement base class for pipelines
 └── README.md
-
 ```
 
 ## 📋 Requirements
