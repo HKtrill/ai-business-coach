@@ -128,7 +128,7 @@ prototype/
 │   └── experiment_runner.py           # TODO: implement experimentation framework
 ├── interfaces/
 │   ├── __init__.py
-│   ├── churn_model_interface.py       # TODO: define standard methods like train(), predict(), evaluate()
+│   ├── churn_model_interface.py       # TODO: place extract churn model interface here
 │   ├── security_model_interface.py    # TODO: define standard methods like train(), predict(), evaluate()
 │   └── it_model_interface.py          # TODO: define standard methods like train(), predict(), evaluate()
 ├── utils/
