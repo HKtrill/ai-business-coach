@@ -100,39 +100,40 @@ prototype/
 │   ├── __init__.py
 │   ├── data_loader.py
 │   ├── preprocessor.py
-│   ├── feature_engineer.py
+│   ├── feature_engineer.py  # Optimizing
 │   ├── leakage_monitor.py
-│   ├── cascade_model.py
+│   ├── cascade_model.py      # Optimizing
 │   └── experiment_runner.py
 ├── chatbot_pipeline/
 │   ├── __init__.py
-│   ├── user_input_handler.py
-│   ├── query_processor.py
-│   ├── churn_prediction_interface.py
-│   └── response_generator.py
+│   ├── user_input_handler.py          # TODO: implement input parsing and validation
+│   ├── query_processor.py             # TODO: implement query formatting for model
+│   ├── churn_prediction_interface.py  # TODO: connect to churn model pipeline
+│   └── response_generator.py          # TODO: implement response formatting and templates
 ├── security_pipeline/
 │   ├── __init__.py
-│   ├── threat_data_loader.py       # Loads security logs, alerts
-│   ├── threat_preprocessor.py      # Cleans / preprocesses security data
-│   ├── feature_engineer.py         # Security-specific features
-│   ├── anomaly_detector.py         # Models / rules for threat detection
-│   └── experiment_runner.py        # Security lab experiments
+│   ├── threat_data_loader.py          # TODO: implement security data loading
+│   ├── threat_preprocessor.py         # TODO: implement cleaning and preprocessing
+│   ├── feature_engineer.py            # TODO: implement security-specific feature extraction
+│   ├── anomaly_detector.py            # TODO: implement anomaly detection model
+│   └── experiment_runner.py           # TODO: implement experimentation framework
 ├── it_pipeline/
 │   ├── __init__.py
-│   ├── it_data_loader.py           # IT logs, tickets, assets
-│   ├── it_preprocessor.py          # Cleans IT data
-│   ├── feature_engineer.py         # IT-specific features
-│   ├── predictive_model.py         # Models for IT metrics, outages, etc.
-│   └── experiment_runner.py        # IT lab experiments
+│   ├── it_data_loader.py              # TODO: implement IT data loading
+│   ├── it_preprocessor.py             # TODO: implement IT data cleaning and preprocessing
+│   ├── feature_engineer.py            # TODO: implement IT-specific feature engineering
+│   ├── predictive_model.py            # TODO: implement predictive model for IT metrics/outages
+│   └── experiment_runner.py           # TODO: implement experimentation framework
 ├── utils/
-│   └── utils.py
+│   └── utils.py                        # TODO: add additional shared utility functions
 ├── notebooks/
 │   ├── churn_pipeline_lab.ipynb
-│   ├── chatbot_pipeline_lab.ipynb
-│   ├── security_pipeline_lab.ipynb
-│   └── it_pipeline_lab.ipynb
-├── BasePipeline.py
+│   ├── chatbot_pipeline_lab.ipynb      # TODO: set up lab for chatbot experimentation
+│   ├── security_pipeline_lab.ipynb     # TODO: set up lab for security experimentation
+│   └── it_pipeline_lab.ipynb           # TODO: set up lab for IT experimentation
+├── BasePipeline.py                     # TODO: implement base class for pipelines
 └── README.md
+
 ```
 
 ## 📋 Requirements
