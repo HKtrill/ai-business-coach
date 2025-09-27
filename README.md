@@ -93,7 +93,8 @@ npm install # or yarn
 ```
 prototype/
 ├── data/
-│   ├── raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+│   ├── raw/
+│   │   └── WA_Fn-UseC_-Telco-Customer-Churn.csv
 │   └── test_splits/
 ├── churn_pipeline/
 │   ├── __init__.py
@@ -109,8 +110,27 @@ prototype/
 │   ├── query_processor.py
 │   ├── churn_prediction_interface.py
 │   └── response_generator.py
-├── utils/utils.py
-├── notebooks/churn_pipeline.ipynb
+├── security_pipeline/
+│   ├── __init__.py
+│   ├── threat_data_loader.py       # Loads security logs, alerts
+│   ├── threat_preprocessor.py      # Cleans / preprocesses security data
+│   ├── feature_engineer.py         # Security-specific features
+│   ├── anomaly_detector.py         # Models / rules for threat detection
+│   └── experiment_runner.py        # Security lab experiments
+├── it_pipeline/
+│   ├── __init__.py
+│   ├── it_data_loader.py           # IT logs, tickets, assets
+│   ├── it_preprocessor.py          # Cleans IT data
+│   ├── feature_engineer.py         # IT-specific features
+│   ├── predictive_model.py         # Models for IT metrics, outages, etc.
+│   └── experiment_runner.py        # IT lab experiments
+├── utils/
+│   └── utils.py
+├── notebooks/
+│   ├── churn_pipeline_lab.ipynb
+│   ├── chatbot_pipeline_lab.ipynb
+│   ├── security_pipeline_lab.ipynb
+│   └── it_pipeline_lab.ipynb
 ├── BasePipeline.py
 └── README.md
 ```
