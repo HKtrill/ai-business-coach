@@ -19,17 +19,18 @@ General-purpose models often treat telecom churn like a standard classification 
 
 ChurnBot addresses these gaps with specialized telecom intelligence that general-purpose models may not fully capture.
 
-## 🧠 Core Thesis: Specialized Smaller Models > Generic Larger Models
-**Research Hypothesis**: Domain-specific smaller models consistently outperform massive general-purpose LLMs on specialized tasks like telecom churn prediction.
+## 🧠 Core Thesis: Domain-Specific Cascade Architectures Achieve Superior Performance-Interpretability Trade-offs
+**Research Hypothesis**: Domain-specific cascade architectures achieve superior performance-interpretability trade-offs compared to general-purpose models for specialized prediction tasks, demonstrated through telecom churn prediction.
 
 **Key Arguments**:
 
-🎯 **Focused Architecture**: Smaller models trained on domain-specific data capture nuanced patterns that large models miss
-⚡ **Computational Efficiency**: Specialized models achieve superior performance with dramatically lower computational overhead
-🔍 **Signal vs. Noise**: Smaller models avoid the "curse of generalization" that causes larger models to dilute domain-specific signals
-💡 **Feature Engineering Advantage**: Traditional ML techniques (feature engineering, ensemble methods) outperform brute-force parameter scaling
+🎯 **Architectural Interpretability**: Each cascade stage serves a distinct, interpretable purpose mapping to real telecom business logic - RF for feature ranking, ANN for complex interactions, RNN for temporal patterns
+⚡ **Computational Efficiency Trade-offs**: Specialized models achieve comparable accuracy with dramatically lower resource requirements and faster inference times
+🔍 **Domain Structure Exploitation**: Cascade design decomposes telecom churn into manageable, interpretable components that avoid the opacity of massive parameter spaces
+💡 **Actionable Insights**: Model predictions include clear feature importance and decision paths enabling targeted business interventions rather than black-box outputs
+📊 **Measurable Explanations**: Quantifiable interpretability metrics enable direct comparison with general-purpose approaches on explanation quality
 
-This thesis challenges the current industry assumption that "bigger is always better" by demonstrating measurable superiority in precision, recall, and resource efficiency for domain-specific applications.
+This thesis challenges the current industry assumption that "bigger is always better" by demonstrating measurable advantages in performance, interpretability, resource efficiency, and business actionability for domain-specific applications. The approach works best for problems where business processes can be decomposed into interpretable stages.
 
 ## 🎯 Domain-Specific Intelligence
 
