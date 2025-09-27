@@ -103,7 +103,8 @@ prototype/
 │   ├── feature_engineer.py       # Optimizing
 │   ├── leakage_monitor.py
 │   ├── cascade_model.py          # Optimizing
-│   └── experiment_runner.py
+│   ├── experiment_runner.py
+│   └── TODO_extract_model_interface.py  # TODO: extract churn model interface into interfaces/
 ├── chatbot_pipeline/
 │   ├── __init__.py
 │   ├── user_input_handler.py          # TODO: implement input parsing and validation
