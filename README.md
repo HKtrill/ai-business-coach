@@ -97,14 +97,14 @@ prototype/
 │   │   └── WA_Fn-UseC_-Telco-Customer-Churn.csv
 │   └── test_splits/
 ├── churn_pipeline/   # TODO: extract churn model interface into interfaces/
-│   ├── __init__.py
-│   ├── data_loader.py
-│   ├── preprocessor.py
+│   ├── __init__.py                ✅
+│   ├── data_loader.py             ✅
+│   ├── preprocessor.py            ✅
 │   ├── feature_engineer.py       # Optimizing
-│   ├── leakage_monitor.py
+│   ├── leakage_monitor.py         ✅
 │   ├── cascade_model.py          # Optimizing
 │   ├── cascade_model_cpp_wrapper.py    # TODO: implement C++ model wrapper
-│   └── experiment_runner.py
+│   └── experiment_runner.py       ✅
 ├── chatbot_pipeline/
 │   ├── __init__.py
 │   ├── user_input_handler.py          # TODO: implement input parsing and validation
