@@ -103,15 +103,14 @@ prototype/
 │   ├── feature_engineer.py       # Optimizing
 │   ├── leakage_monitor.py
 │   ├── cascade_model.py          # Optimizing
-│   ├── model_interface.py        # TODO: standard interface for Churn models
 │   └── experiment_runner.py
 ├── chatbot_pipeline/
 │   ├── __init__.py
 │   ├── user_input_handler.py          # TODO: implement input parsing and validation
 │   ├── query_processor.py             # TODO: implement query formatting for each model
-│   ├── churn_prediction_interface.py  # TODO: connect to Churn model pipeline
-│   ├── security_model_interface.py    # TODO: connect to Security pipeline
-│   ├── it_model_interface.py          # TODO: connect to IT pipeline
+│   ├── churn_prediction_interface.py  # TODO: connect to Churn model pipeline interface
+│   ├── security_model_interface.py    # TODO: connect to Security pipeline interface
+│   ├── it_model_interface.py          # TODO: connect to IT pipeline interface
 │   └── response_generator.py          # TODO: implement response formatting and templates
 ├── security_pipeline/
 │   ├── __init__.py
@@ -119,7 +118,6 @@ prototype/
 │   ├── threat_preprocessor.py         # TODO: implement cleaning and preprocessing
 │   ├── feature_engineer.py            # TODO: implement security-specific feature extraction
 │   ├── anomaly_detector.py            # TODO: implement anomaly detection model
-│   ├── model_interface.py             # TODO: standard interface for Security models
 │   └── experiment_runner.py           # TODO: implement experimentation framework
 ├── it_pipeline/
 │   ├── __init__.py
@@ -127,17 +125,22 @@ prototype/
 │   ├── it_preprocessor.py             # TODO: implement IT data cleaning and preprocessing
 │   ├── feature_engineer.py            # TODO: implement IT-specific feature engineering
 │   ├── predictive_model.py            # TODO: implement predictive model for IT metrics/outages
-│   ├── model_interface.py             # TODO: standard interface for IT models
 │   └── experiment_runner.py           # TODO: implement experimentation framework
+├── interfaces/
+│   ├── __init__.py
+│   ├── churn_model_interface.py       # TODO: define standard methods like train(), predict(), evaluate()
+│   ├── security_model_interface.py    # TODO: define standard methods like train(), predict(), evaluate()
+│   └── it_model_interface.py          # TODO: define standard methods like train(), predict(), evaluate()
 ├── utils/
 │   └── utils.py                        # TODO: add additional shared utility functions
 ├── notebooks/
-│   ├── churn_pipeline_lab.ipynb
+│   ├── churn_pipeline_lab.ipynb        # TODO: Clean up
 │   ├── chatbot_pipeline_lab.ipynb      # TODO: set up lab for multi-model chatbot experimentation
 │   ├── security_pipeline_lab.ipynb     # TODO: set up lab for security experimentation
 │   └── it_pipeline_lab.ipynb           # TODO: set up lab for IT experimentation
 ├── BasePipeline.py                     # TODO: implement base class for pipelines
 └── README.md
+
 ```
 
 ## 📋 Requirements
