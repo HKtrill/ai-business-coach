@@ -1,5 +1,5 @@
 # =============================================================================
-# 7. /content/churn_pipeline/modules/experiment_runner.py (FIXED)
+# 7. /content/churn_pipeline/modules/experiment_runner.py (FINAL COMPLETE VERSION - CLEANED MODULAR)
 # =============================================================================
 import os
 import random
@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, roc_auc_score
 
 from data_loader import DataLoader
-from leakage_monitor import DataLeakageMonitor
+from leakage_monitor import DataLeakageMonitor # The updated monitor
 from preprocessor import Preprocessor
 from cascade_model import CascadeModel
 
@@ -47,13 +47,37 @@ class ExperimentRunner:
         if data is None:
             return None
         
+        # ====================================================================
+        # FEATURE SELECTION BLOCK
+        # ====================================================================
+        selected_features = [
+            'tenure', 
+            'MonthlyCharges', 
+            'TotalCharges',
+            'Contract', 
+            'InternetService', 
+            'Partner',
+            'gender',
+            'PaperlessBilling',
+            'Churn' # Always include the target!
+        ]
+        
+        missing_cols = [col for col in selected_features if col not in data.columns]
+        if missing_cols:
+            print(f"\nWARNING: Skipping feature selection. Missing columns: {missing_cols}")
+        else:
+            data = data[selected_features]
+            print(f"\nFeature Selection applied. Data now contains only {len(selected_features)} columns: {selected_features}")
+        
+        # ====================================================================
+        
         current_seed = split_seed if split_seed is not None else random.randint(1,10000)
         set_seed(current_seed)
         
         X = data.drop(columns=['Churn'])
         y = data['Churn']
         
-        # === THIS IS THE FIX: Map the y variable before the split ===
+        # === FIX: Map the y variable before the split ===
         y = y.map({'Yes': 1, 'No': 0})
 
         X_train, X_test, y_train, y_test = train_test_split(
@@ -62,11 +86,17 @@ class ExperimentRunner:
 
         print(f"\nInitial splits created. Train: {len(X_train)}, Test: {len(X_test)}")
         
+        # 1. DATA LEAKAGE & FEATURE ANALYSIS
+        # The monitor now handles printing all the MI, Correlation, and stats immediately
         self.leakage_monitor.record_split_info(X_train, X_test, y_train, y_test)
         
         print("Preprocessing data for modeling...")
+        # NOTE: Assumes self.preprocessor.fit_transform correctly outputs numpy array
         X_train_preprocessed = self.preprocessor.fit_transform(X_train)
         X_test_preprocessed = self.preprocessor.transform(X_test)
+        
+        # 2. PREPROCESSING LEAKAGE CHECK (Structural)
+        self.leakage_monitor.check_preprocessing_leakage(self.preprocessor.pipeline) 
         
         # ============================================
         # DEBUGGING: Print the preprocessed data here
@@ -81,7 +111,7 @@ class ExperimentRunner:
         print(y_test.head())
         # ============================================
 
-        # 4. Train Cascade Model
+        # 3. Train Cascade Model
         y_true, y_pred, y_proba = self.cascade_model.train_cascade_pipeline(
             X_train_preprocessed, y_train, X_test_preprocessed, y_test
         )
@@ -93,7 +123,7 @@ class ExperimentRunner:
         tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
         
         print("\n=== FINAL MODEL EVALUATION ===")
-        print(f"Confusion Matrix:\n  TP: {tp}, FP: {fp}\n  FN: {fn}, TN: {tn}")
+        print(f"Confusion Matrix:\n  TP: {tp}, FP: {fp}\n  FN: {fn}, TN: {tn}")
         
         business_cost = (fn * 750) + (fp * 75)
         
@@ -106,9 +136,9 @@ class ExperimentRunner:
         }
         
         for metric, value in metrics.items():
-            print(f"  {metric}: {value:.4f}")
+            print(f"  {metric}: {value:.4f}")
         
-        print(f"\n  Total Business Cost: ${business_cost:.2f}")
+        print(f"\n  Total Business Cost: ${business_cost:.2f}")
         print("\n" + "="*60)
         print("EXPERIMENT COMPLETED SUCCESSFULLY")
         print("="*60)
