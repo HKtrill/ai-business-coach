@@ -1,93 +1,113 @@
-# 🤖 Project ChurnBot: Turning Churn Into Intelligence
+# 🤖 Project ChurnBot (Research Branch)
 
-**Tech Stack**: 🗄️ SQLite, 📊 Jupyter, 🐍 Python, 🔥 PyTorch, 💻 C++, 🔧 MLOps, 💻 TypeScript, 🐳 Docker, ⚛️ React, 🌐 Node.js
+## Branch Purpose
+This branch is **not production-ready**.  
+It exists for:
+- Daily experiment notes ("standups")
+- Scratch notebooks (messy, trial-and-error work)
+- Draft versions of clean, paper-style notebooks
+- Logs of dataset experiments and generalization performance
 
-**Author**: 👤 Phillip Harris
+The `main` branch remains the **clean, reproducible, thesis-ready pipeline**.  
+This branch is for **research in-progress**.
+
+---
+
+## 🛠 Tech Stack
+🗄️ SQLite • 📊 Jupyter • 🐍 Python • 🔥 PyTorch • 💻 C++  
+🔧 MLOps • 💻 TypeScript • 🐳 Docker • ⚛️ React • 🌐 Node.js  
+
+Author: 👤 Phillip Harris  
+
+---
 
 ## 📖 Synopsis
-ChurnBot transforms telecommunications customer retention from guesswork into precision science. It is an intelligent AI assistant built specifically for telecom churn patterns. Unlike general-purpose models, ChurnBot focuses on telecom-specific behaviors to provide accurate, actionable insights where it matters most.
+ChurnBot transforms telecom customer retention from guesswork into precision science.  
+Unlike general-purpose models, ChurnBot focuses on **telecom-specific behaviors** to provide accurate, actionable insights.
 
-## 🚨 Problem Statement: Traditional AI Approaches Miss Telecom-Specific Signals
-General-purpose models often treat telecom churn like a standard classification task, potentially missing critical domain-specific signals:
+This branch extends that vision with **experiments in cascade architectures, cross-dataset generalization, and feature diagnostics**.  
+It is where raw research happens before findings are formalized.
 
-- Call patterns and usage anomalies
-- Billing disputes and payment behaviors
-- Service degradation indicators
-- Subscription anomalies and plan changes
+---
 
-**Result**: High false positives/negatives → wasted marketing spend & preventable customer churn.
+## 🚨 Problem Statement
+General-purpose models often miss **telecom-specific churn signals**:
 
-ChurnBot addresses these gaps with specialized telecom intelligence that general-purpose models may not fully capture.
-## 🧠 Core Thesis: Domain-Specific Cascade Architectures Achieve Superior Performance-Interpretability Trade-offs
+- 📞 Call pattern anomalies  
+- 💸 Billing disputes & payment behaviors  
+- 📉 Service degradation indicators  
+- 🔄 Subscription anomalies & plan changes  
 
-**Research Hypothesis**: Domain-specific cascade architectures achieve superior performance-interpretability trade-offs compared to general-purpose models for specialized prediction tasks that can be decomposed into interpretable stages, demonstrated through telecom churn prediction.
+The result is **high false positives/negatives** → wasted marketing spend & lost customers.  
+ChurnBot aims to reduce this gap with **domain-specific intelligence**.
 
-**Key Arguments**:
+---
 
-- 🎯 **Architectural Interpretability**: Each cascade stage serves a distinct, interpretable purpose mapping to real telecom business logic - RF for feature ranking, ANN for complex interactions, RNN for temporal patterns
-- ⚡ **Computational Efficiency Trade-offs**: Specialized models achieve comparable accuracy with dramatically lower resource requirements and faster inference times
-- 🔍 **Domain Structure Exploitation**: Cascade design decomposes telecom churn into manageable, interpretable components that avoid the opacity of massive parameter spaces
-- 💡 **Actionable Insights**: Model predictions include clear feature importance and decision paths enabling targeted business interventions rather than black-box outputs
-- 📊 **Measurable Explanations**: Quantifiable interpretability metrics enable direct comparison with general-purpose approaches on explanation quality
+## 🧠 Core Thesis
+**Hypothesis:**  
+Domain-specific cascade architectures achieve superior **performance + interpretability trade-offs** compared to general-purpose models for specialized prediction tasks like telecom churn.
 
-This thesis challenges the current industry assumption that "bigger is always better" by demonstrating measurable advantages in performance, interpretability, resource efficiency, and business actionability for domain-specific applications. The approach works best for problems where business processes can be decomposed into interpretable stages.
-## 🎯 Domain-Specific Intelligence
+Key arguments:
+- 🎯 **Architectural Interpretability** — stages map to telecom business logic  
+- ⚡ **Computational Efficiency** — smaller, faster models rival big LLMs  
+- 🔍 **Domain Structure Exploitation** — decomposed into interpretable sub-tasks  
+- 💡 **Actionable Insights** — feature importance + decision paths for business use  
+- 📊 **Measurable Explanations** — interpretability metrics for direct comparison  
 
-### Three-Stage Cascade Model
-**Random Forest → Artificial Neural Network → Recurrent Neural Network**
+This branch focuses on **validating and refining this thesis**.
 
-This specialized pipeline is optimized for precision + recall in telecom churn, detecting patterns that general-purpose models may not generalize effectively:
+---
 
-1. **Random Forest (RF)**: Quick baseline classification and feature importance ranking
-2. **Artificial Neural Network (ANN)**: Models complex non-linear relationships and feature interactions
-3. **Recurrent Neural Network (RNN)**: Captures temporal sequence patterns in call/data usage behavior
+## 🎯 Cascade Models Under Study
+### Three-Stage Pipeline (baseline)
+Random Forest → Artificial Neural Network → Recurrent Neural Network
 
-### Pipeline Architecture
-```
-data_loader → preprocessor → feature_engineer → leakage_monitor → cascade_model → experiment_runner
-```
+- **RF** — fast baseline classification & feature ranking  
+- **ANN** — nonlinear interactions and feature interactions  
+- **RNN** — temporal sequence patterns in usage/behavior  
 
-## ⚡ C++ Performance Optimization
-ChurnBot leverages custom C++ implementations for maximum inference speed and memory efficiency:
+### Alternative Cascades (experiments in this branch)
+- ANN → ANN → RNN  
+- Logistic Regression → ANN → RNN  
+- RF → ANN → RNN (with feature balancing)  
 
-- **Hand-optimized models**: RF, ANN, and RNN written from scratch in C++
-- **CS Theory Optimizations**: Branch & bound algorithms, SIMD matrix operations, cache-friendly data structures
-- **Custom Memory Management**: Specialized allocators for telecom data patterns
-- **Python Integration**: Seamless pybind11 bindings maintain Python development experience
-- **Boundary Elimination**: Direct C++ pipeline execution eliminates Python interface overhead
+---
 
-**Expected Performance Gains**: 5-20x faster inference compared to traditional Python ML libraries.
+## 📊 Current Research Focus
+- ✅ **Feature Diagnostics** — correlation, AUC, IV, PSI per dataset  
+- ✅ **Cross-Dataset Generalization** — WA vs Iranian datasets  
+- ✅ **False Positive Reduction** — threshold tuning + class balancing  
+- ✅ **Semantic Buckets** — grouping features into `business`, `technical`, `spending`, `temporal`  
+- 🔄 **Daily Logs** — track findings and failed experiments  
 
-## 🎯 Choose Your Experience
-⚡ **Terminal Version (Light)**: For telecom analysts and technical teams — fast, efficient insights through command-line interaction.
+---
 
-📈 **Dashboard Version (Heavy)**: For telecom executives — rich visualizations and executive-ready presentations.
+## ⚡ C++ Optimizations
+Custom C++ implementations for RF, ANN, and RNN:  
+- SIMD matrix ops, cache-friendly data structures  
+- Branch & bound optimizations  
+- Specialized memory allocators for telecom data  
+- Python integration via **pybind11**  
 
-Both versions are specialized for telecom churn, analyzing call patterns, data usage shifts, billing disputes, and service degradation that general-purpose models may not capture. All computations run locally, keeping sensitive subscriber data on your network.
+Goal: **5–20x faster inference** vs Python ML libs.  
 
-## 🔒 Privacy & Security: Local-First Philosophy
-ChurnBot runs entirely on your machine with zero cloud dependencies:
+---
 
-✅ No external data transfers — sensitive subscriber data never leaves your network
-✅ No monthly fees or API costs
-✅ Full data sovereignty — maintain compliance and avoid regulatory penalties
-✅ Immediate analysis — no network latency or downtime
-✅ C++ Performance — enterprise-grade speed with local execution
+## 🔒 Privacy & Security
+- Local-first execution (no cloud dependencies)  
+- No API costs, no external data exposure  
+- Full compliance & data sovereignty  
+- Enterprise-grade inference speed  
 
-Compare this to general-purpose models that may rely on cloud APIs with inherent data exposure risks.
+---
 
-## 📊 Benchmark Superiority
-💼 **Real-World Impact**
-**Business ROI**:
-- 📉 Reduce churn-related losses through precise targeting
-- 📈 Improve executive decision-making with actionable insights
-- 🛡️ Maintain full data sovereignty → avoid compliance penalties
-- 💰 Eliminate cloud API costs and subscription fees
+## 📈 Business ROI
+- 📉 Reduce churn losses via precise targeting  
+- 📈 Actionable insights for executives  
+- 🛡️ Regulatory compliance maintained  
+- 💰 Eliminate recurring cloud API fees  
 
-**Security ROI**:
-- 🔒 Complete data privacy — no external data exposure
-- 📋 Regulatory compliance maintained
-- 🏢 Enterprise-grade security through local execution
+---
 
 ## ⬇️ Clone or Download
 ```bash
