@@ -1,14 +1,37 @@
-# 🤖 Project ChurnBot: Turning Churn Into Intelligence
+# 🤖 Project ChurnBot (Research Branch)
 
-**Tech Stack**: 🗄️ SQLite, 📊 Jupyter, 🐍 Python, 🔥 PyTorch, 💻 C++, 🔧 MLOps, 💻 TypeScript, 🐳 Docker, ⚛️ React, 🌐 Node.js
+## Branch Purpose
+This branch is **not production-ready**.  
+It exists for:
+- Daily experiment notes ("standups")
+- Scratch notebooks (messy, trial-and-error work)
+- Draft versions of clean, paper-style notebooks
+- Logs of dataset experiments and generalization performance
 
-**Author**: 👤 Phillip Harris
+The `main` branch remains the **clean, reproducible, thesis-ready pipeline**.  
+This branch is for **research in-progress**.
+
+---
+
+## 🛠 Tech Stack
+🗄️ SQLite • 📊 Jupyter • 🐍 Python • 🔥 PyTorch • 💻 C++  
+🔧 MLOps • 💻 TypeScript • 🐳 Docker • ⚛️ React • 🌐 Node.js  
+
+Author: 👤 Phillip Harris  
+
+---
 
 ## 📖 Synopsis
-ChurnBot transforms telecommunications customer retention from guesswork into precision science. It is an intelligent AI assistant built specifically for telecom churn patterns. Unlike general-purpose models, ChurnBot focuses on telecom-specific behaviors to provide accurate, actionable insights where it matters most.
+ChurnBot transforms telecom customer retention from guesswork into precision science.  
+Unlike general-purpose models, ChurnBot focuses on **telecom-specific behaviors** to provide accurate, actionable insights.
 
-## 🚨 Problem Statement: Traditional AI Approaches Miss Telecom-Specific Signals
-General-purpose models often treat telecom churn like a standard classification task, potentially missing critical domain-specific signals:
+This branch extends that vision with **experiments in cascade architectures, cross-dataset generalization, and feature diagnostics**.  
+It is where raw research happens before findings are formalized.
+
+---
+
+## 🚨 Problem Statement
+General-purpose models often miss **telecom-specific churn signals**:
 
 - Call patterns and usage anomalies
 - Billing disputes and payment behaviors
@@ -129,29 +152,21 @@ ChurnBot leverages custom C++ implementations for maximum inference speed and me
 
 Both versions are specialized for telecom churn, analyzing call patterns, data usage shifts, billing disputes, and service degradation that general-purpose models may not capture. All computations run locally, keeping sensitive subscriber data on your network.
 
-## 🔒 Privacy & Security: Local-First Philosophy
-ChurnBot runs entirely on your machine with zero cloud dependencies:
+## 🔒 Privacy & Security
+- Local-first execution (no cloud dependencies)  
+- No API costs, no external data exposure  
+- Full compliance & data sovereignty  
+- Enterprise-grade inference speed  
 
-✅ No external data transfers — sensitive subscriber data never leaves your network
-✅ No monthly fees or API costs
-✅ Full data sovereignty — maintain compliance and avoid regulatory penalties
-✅ Immediate analysis — no network latency or downtime
-✅ C++ Performance — enterprise-grade speed with local execution
+---
 
-Compare this to general-purpose models that may rely on cloud APIs with inherent data exposure risks.
+## 📈 Business ROI
+- 📉 Reduce churn losses via precise targeting  
+- 📈 Actionable insights for executives  
+- 🛡️ Regulatory compliance maintained  
+- 💰 Eliminate recurring cloud API fees  
 
-## 📊 Benchmark Superiority
-💼 **Real-World Impact**
-**Business ROI**:
-- 📉 Reduce churn-related losses through precise targeting
-- 📈 Improve executive decision-making with actionable insights
-- 🛡️ Maintain full data sovereignty → avoid compliance penalties
-- 💰 Eliminate cloud API costs and subscription fees
-
-**Security ROI**:
-- 🔒 Complete data privacy — no external data exposure
-- 📋 Regulatory compliance maintained
-- 🏢 Enterprise-grade security through local execution
+---
 
 ## ⬇️ Clone or Download
 ```bash
