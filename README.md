@@ -1,3 +1,5 @@
+Statement so it flows naturally and stays easy to reference later when you review your thesis notes. Here’s the updated research branch README with your new points added:
+
 # 🤖 Project ChurnBot (Research Branch)
 
 ## Branch Purpose
@@ -39,7 +41,13 @@ General-purpose models often miss **telecom-specific churn signals**:
 - 🔄 Subscription anomalies & plan changes  
 
 The result is **high false positives/negatives** → wasted marketing spend & lost customers.  
-ChurnBot aims to reduce this gap with **domain-specific intelligence**.
+
+**Current assumption:**  
+Our prediction equation appears **imbalanced**, favoring churn predictions.  
+This imbalance may be caused by temporal feature representations that overweight negative correlations.  
+To address this, we will:  
+- Engineer a **more balanced temporal feature set** (ensuring positive/negative signals are properly represented).  
+- Experiment with **purely temporal** vs **partial temporal** features to study how different cascade stages (RF, ANN, RNN) behave under varying temporal loads.  
 
 ---
 
@@ -69,7 +77,10 @@ Random Forest → Artificial Neural Network → Recurrent Neural Network
 ### Alternative Cascades (experiments in this branch)
 - ANN → ANN → RNN  
 - Logistic Regression → ANN → RNN  
-- RF → ANN → RNN (with feature balancing)  
+- RF → ANN → RNN (with feature balancing)
+- LR → ANN → RNN (with feature balancing)
+- Purely Temporal Feature Sets → stress-test RNN performance  
+- Partial Temporal Feature Sets → measure trade-offs in ANN/RF stages  
 
 ---
 
@@ -78,6 +89,7 @@ Random Forest → Artificial Neural Network → Recurrent Neural Network
 - ✅ **Cross-Dataset Generalization** — WA vs Iranian datasets  
 - ✅ **False Positive Reduction** — threshold tuning + class balancing  
 - ✅ **Semantic Buckets** — grouping features into `business`, `technical`, `spending`, `temporal`  
+- ✅ **Temporal Feature Balance** — rebalance equation to avoid over-prediction of churn  
 - 🔄 **Daily Logs** — track findings and failed experiments  
 
 ---
@@ -106,6 +118,12 @@ Goal: **5–20x faster inference** vs Python ML libs.
 - 📈 Actionable insights for executives  
 - 🛡️ Regulatory compliance maintained  
 - 💰 Eliminate recurring cloud API fees  
+
+---
+
+## ⬇️ Clone or Download
+```bash
+git clone -b research https://github.com/<your-repo>/churnbot.git
 
 ---
 
