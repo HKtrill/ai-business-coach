@@ -1,5 +1,3 @@
-Statement so it flows naturally and stays easy to reference later when you review your thesis notes. Here’s the updated research branch README with your new points added:
-
 # 🤖 Project ChurnBot (Research Branch)
 
 ## Branch Purpose
