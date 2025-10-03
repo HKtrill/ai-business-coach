@@ -20,7 +20,7 @@ General-purpose models often treat telecom churn like a standard classification 
 ChurnBot addresses these gaps with specialized telecom intelligence that general-purpose models may not fully capture.
 ## 🧠 Core Thesis: Domain-Specific Cascade Architectures Achieve Superior Performance-Interpretability Trade-offs
 
-**Research Hypothesis**: Domain-specific cascade architectures achieve superior performance-interpretability trade-offs compared to general-purpose models for specialized prediction tasks that can be decomposed into interpretable stages, demonstrated through telecom churn prediction.
+**Research Hypothesis**: Domain-specific cascade architectures may achieve superior performance–interpretability trade-offs compared to general-purpose models for specialized prediction tasks that can be decomposed into interpretable stages, as demonstrated through telecom churn prediction.
 
 **Key Arguments**:
 
