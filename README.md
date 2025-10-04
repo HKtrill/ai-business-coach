@@ -50,7 +50,7 @@ This thesis challenges the current industry assumption that "bigger is always be
 ### Three-Stage Cascade Model
 **Logistic Regression → Random Forest → Recurrent Neural Network**
 
-This specialized pipeline is optimized for precision + recall in telecom churn, detecting patterns that general-purpose models may not generalize effectively, with a target ~20% performance increase (e.g., F1 from 0.636 to 0.763). The cascade leverages:
+This specialized pipeline is optimized for precision + recall in telecom churn, detecting patterns that general-purpose models may not generalize effectively, with a target ~20% performance increase (e.g., F1 from 0.636 to ~0.8). The cascade leverages:
 
 1. **Logistic Regression (LR)**: Establishes a linear baseline, capturing trends like tenure and TotalCharges.
 2. **Random Forest (RF)**: Enhances classification with cluster detection and feature importance ranking, using metrics like FeatureClusterLabel.
