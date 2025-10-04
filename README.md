@@ -18,7 +18,21 @@ General-purpose models often treat telecom churn like a standard classification 
 **Result**: High false positives/negatives → wasted marketing spend & preventable customer churn.
 
 ChurnBot addresses these gaps with specialized telecom intelligence that general-purpose models may not fully capture.
-## 🧠 Core Thesis: Domain-Specific Cascade Architectures Achieve Superior Performance-Interpretability Trade-offs
+
+## 📝 Research Abstract/Proposal
+*Disclaimer: This is a preliminary draft subject to change as the project evolves with further testing and refinement.*
+
+This project explores an innovative approach to churn prediction using a cascaded machine learning pipeline combining Logistic Regression (LR), Random Forest (RF), and Recurrent Neural Networks (RNN), enhanced by geometric feature engineering. The model, dubbed the "ChurnBot," leverages features like tenure, MonthlyCharges, TotalCharges, and novel geometric metrics (e.g., MahalanobisDistance, CosineSimilarity, ChurnEdgeScore) to capture linear trends, cluster structures, and non-linear patterns in customer data. Initial results on a preprocessed dataset yield a PR-AUC of 0.679, Precision of 0.635, Recall of 0.637, and F1 of 0.636, with ongoing efforts to boost performance by 5% through threshold tuning and additional feature engineering.
+
+The pipeline, implemented with object-oriented programming (OOP) principles, systematically avoids overfitting by wiping models and variables clean before each run, ensuring fresh training on new datasets. Three datasets—two dirty and one preprocessed with light engineering—are under investigation. The cascade’s staged learning (LR for linear relationships, RF for clusters, RNN for shapes) outperforms standalone ANN models, highlighting the power of patterning out signals from incoherent raw data (e.g., vertical-line scatter in tenure vs. MonthlyCharges).
+
+### Limitations
+Analysis reveals inherent differences across datasets, such as varying feature distributions or missing values, which challenge model generalization. However, most datasets share common/similar features (e.g., tenure, charges), allowing partial transferability. The current approach assumes feature alignment, and dirty data preprocessing remains manual, potentially introducing bias. Future work will focus on automating cleaning, expanding dataset diversity, and rigorously validating performance across varied churn contexts.
+
+### Next Steps
+Enhance the cascade with deeper RNN layers and cross-validation, test on all three datasets, and refine this proposal with statistical rigor for academic submission.
+
+## 🧠 Core Thesis: Domain-Specific Cascade Architectures May Achieve Superior Performance-Interpretability Trade-offs
 
 **Research Hypothesis**: Domain-specific cascade architectures may achieve superior performance–interpretability trade-offs compared to general-purpose models for specialized prediction tasks that can be decomposed into interpretable stages, as demonstrated through telecom churn prediction.
 
