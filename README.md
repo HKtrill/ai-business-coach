@@ -48,13 +48,13 @@ This thesis challenges the current industry assumption that "bigger is always be
 ## 🎯 Domain-Specific Intelligence
 
 ### Three-Stage Cascade Model
-**Random Forest → Artificial Neural Network → Recurrent Neural Network**
+**Logistic Regression → Random Forest → Recurrent Neural Network**
 
-This specialized pipeline is optimized for precision + recall in telecom churn, detecting patterns that general-purpose models may not generalize effectively:
+This specialized pipeline is optimized for precision + recall in telecom churn, detecting patterns that general-purpose models may not generalize effectively, with a target ~20% performance increase (e.g., F1 from 0.636 to 0.763). The cascade leverages:
 
-1. **Random Forest (RF)**: Quick baseline classification and feature importance ranking
-2. **Artificial Neural Network (ANN)**: Models complex non-linear relationships and feature interactions
-3. **Recurrent Neural Network (RNN)**: Captures temporal sequence patterns in call/data usage behavior
+1. **Logistic Regression (LR)**: Establishes a linear baseline, capturing trends like tenure and TotalCharges.
+2. **Random Forest (RF)**: Enhances classification with cluster detection and feature importance ranking, using metrics like FeatureClusterLabel.
+3. **Recurrent Neural Network (RNN)**: Models temporal sequences and non-linear shapes, refining predictions with geometric features like CosineSimilarity and ChurnEdgeScore.
 
 ### Pipeline Architecture
 ```
