@@ -34,7 +34,7 @@ This project explores an innovative approach to churn prediction using a cascade
 Initial models on the original dataset showed moderate performance, with F1 scores ranging from 0.575 to 0.594, highlighting limitations in capturing complex churn patterns.
 
 ### Enhanced Cascade Performance on Geometric Features
-| Stage         | PR-AUC  | Precision | Recall | F1    |
+| Stages         | PR-AUC  | Precision | Recall | F1    |
 |---------------|---------|-----------|--------|-------|
 | **LR-RF-RNN** | 0.692   | 0.639     | 0.618  | 0.628 |
 
