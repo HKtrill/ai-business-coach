@@ -23,38 +23,64 @@ ChurnBot addresses these gaps with specialized telecom intelligence that general
 
 *Disclaimer: This is a preliminary draft subject to change as the project evolves with further testing and refinement.*
 
-This project explores an innovative approach to churn prediction using a cascaded machine learning pipeline combining Logistic Regression (LR), Random Forest (RF), and Recurrent Neural Networks (RNN), enhanced by geometric feature engineering. The model, dubbed the "ChurnBot," leverages features like tenure, MonthlyCharges, TotalCharges, and novel geometric metrics (e.g., MahalanobisDistance, CosineSimilarity, ChurnEdgeScore) to capture linear trends, cluster structures, and non-linear patterns in customer data.
+- **Project Goal:**  
+  - Explore an innovative approach to churn prediction using a cascaded machine learning pipeline (Logistic Regression → Random Forest → Recurrent Neural Networks)  
+  - Leverage **feature engineering** to capture customer behavior patterns, including spending trends, tenure segmentation, and charge distributions  
+  - Model dubbed **"ChurnBot"**  
+  - Key features: `tenure`, `MonthlyCharges`, `TotalCharges`, `spending_bin`, `monthly_bin`, `TenureBucket`, `stability_score`, `extreme_spender`, `extreme_monthly`, interaction terms (`monthly_tenure_`), `Contract`, `Dependents`, `SeniorCitizen`, and `OnlineSecurity`
 
 ## Baseline Performance (Original Features)
 
-| Model            | Precision | Recall | F1    |
-|------------------|-----------|--------|-------|
+| Model              | Precision | Recall | F1    |
+|-------------------|-----------|--------|-------|
 | LogisticRegression | 0.672     | 0.532  | 0.594 |
-| RandomForest     | 0.675     | 0.500  | 0.575 |
-| GradientBoosting | 0.651     | 0.519  | 0.577 |
+| RandomForest       | 0.675     | 0.500  | 0.575 |
+| GradientBoosting   | 0.651     | 0.519  | 0.577 |
 
-Initial models on the original dataset showed moderate performance, with F1 scores ranging from 0.575 to 0.594, highlighting limitations in capturing complex churn patterns.
+- Initial models on original dataset showed **moderate performance**  
+- F1 scores ranged from **0.575 to 0.594**, highlighting limitations in capturing complex churn patterns
 
-## Enhanced Cascade Performance on Geometric Features
+## Enhanced Cascade Performance on Engineered Features
 
 | Stages     | PR-AUC | Precision | Recall | F1    |
 |------------|--------|-----------|--------|-------|
 | LR-RF-RNN  | 0.712  | 71.42%    | 75.97% | 72.31% |
 
-The introduction of geometric feature engineering with the LR-RF-RNN cascade yielded a 📊 **LR-RF-RNN Cascade - Test PR-AUC: 0.712, Precision: 71.42%, Recall: 75.97%, F1: 72.31%**, marking an improvement over baseline models in terms of recall-precision tradeoff. This represents a significant leap, with a 20% recall increase from the baseline (e.g., ~52% to 75.97%) and a minimal tradeoff, aligning with the project’s goals. Ongoing efforts aim to boost performance by another 10% in recall (to ~85-86%) through threshold tuning, additional feature engineering, and further refinement while maintaining model stability and avoiding overfitting.
-
-The pipeline, implemented with object-oriented programming (OOP) principles, systematically avoids overfitting by wiping models and variables clean before each run, ensuring fresh training on new datasets. Three datasets—two dirty and one preprocessed with light engineering—are under investigation. The cascade’s staged learning (LR for linear relationships, RF for clusters, RNN for shapes) outperforms standalone ANN models, highlighting the power of patterning out signals from incoherent raw data (e.g., vertical-line scatter in tenure vs. MonthlyCharges).
+- **Improvement over baseline:**  
+  - Recall increased ~20% (from ~52% to 75.97%)  
+  - Minimal precision tradeoff  
+  - Pipeline ensures **stability and generalization** by cleaning variables and models between runs  
+- **Feature Engineering Details:**  
+  - **Spending rate** (`spending_rate`) calculated as `TotalCharges / tenure` (or `MonthlyCharges` for zero tenure), binned into `spending_bin` (LowSpender, MidSpender, HighSpender), with `extreme_spender` flagging top 5%  
+  - **Monthly charges bucketing** (`monthly_bin`) discretizes `MonthlyCharges` into LowMonthly, MidMonthly, HighMonthly, with `extreme_monthly` flagging top 5%  
+  - **Tenure bucketing** (`TenureBucket`) segments `tenure` into year-based buckets  
+  - **Stability score** (`stability_score`) aggregates `Contract`, `Dependents`, and `Partner` indicators  
+  - **Interaction terms** (`monthly_tenure_`) combine `monthly_bin` and `TenureBucket` for nuanced pattern detection  
+  - **Log transformations** applied to `TotalCharges`, `MonthlyCharges`, and `spending_rate` to reduce skewness  
+  - Additional features: `Contract`, `Dependents`, `SeniorCitizen`, and `OnlineSecurity` for customer context  
+- Cascade design:  
+  - **LR** captures linear relationships  
+  - **RF** captures clusters  
+  - **RNN** captures temporal patterns  
+- Outperforms standalone ANN models, especially in extracting signals from transformed data
 
 ## Limitations
 
-Analysis reveals inherent differences across datasets, such as varying feature distributions or missing values, which challenge model generalization. However, most datasets share common or similar features (e.g., tenure, charges), allowing partial transferability. The current approach assumes feature alignment, and dirty data preprocessing remains manual, potentially introducing bias. Achieving a further 10% recall increase may require overcoming dataset noise and ensuring robust cross-validation, with future work focusing on automating cleaning, expanding dataset diversity, and rigorously validating performance.
+- Dataset variability (feature distributions, missing values) challenges generalization  
+- Most datasets share common features, allowing **partial transferability**  
+- Dirty data preprocessing is **manual**, potential for bias  
+- Achieving additional 10% recall (~85-86%) may require:  
+  - Noise reduction  
+  - Robust cross-validation  
+  - Automated cleaning  
+  - Expanding dataset diversity  
 
 ## Next Steps
 
-- Enhance the cascade with deeper RNN layers, optimized hyperparameters, and temporal features.
-- Test on all three datasets with 10-fold cross-validation.
-- Refine this proposal with statistical rigor for academic submission.
-- Explore cost-based threshold tuning to optimize for retention expenses, targeting an average recall of ~85-86%.
+- Enhance cascade with **deeper RNN layers**, optimized hyperparameters, and temporal features  
+- Test on **all three datasets** using 10-fold cross-validation  
+- Refine proposal with **statistical rigor** for academic submission  
+- Explore **cost-based threshold tuning** to optimize retention expenses, targeting recall of ~85-86%
 
 ## 🧠 Core Thesis: Domain-Specific Cascade Architectures May Achieve Superior Performance-Interpretability Trade-offs
 
