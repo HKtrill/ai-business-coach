@@ -53,7 +53,7 @@ ChurnBot addresses these gaps with specialized telecom intelligence that general
 - **Feature Engineering Details:**  
   - **Spending rate** (`spending_rate`) calculated as `TotalCharges / tenure` (or `MonthlyCharges` for zero tenure), binned into `spending_bin` (LowSpender, MidSpender, HighSpender), with `extreme_spender` flagging top 5%  
   - **Monthly charges bucketing** (`monthly_bin`) discretizes `MonthlyCharges` into LowMonthly, MidMonthly, HighMonthly, with `extreme_monthly` flagging top 5%  
-  - **Tenure bucketing** (`TenureBucket`) segments `tenure` into year-based buckets  
+  - **Tenure bucketing** (`TenureBucket`) segments `tenure` into months-based buckets  
   - **Stability score** (`stability_score`) aggregates `Contract`, `Dependents`, and `Partner` indicators  
   - **Interaction terms** (`monthly_tenure_`) combine `monthly_bin` and `TenureBucket` for nuanced pattern detection  
   - **Log transformations** applied to `TotalCharges`, `MonthlyCharges`, and `spending_rate` to reduce skewness  
@@ -62,15 +62,15 @@ ChurnBot addresses these gaps with specialized telecom intelligence that general
   - **LR** captures linear relationships  
   - **RF** captures clusters  
   - **RNN** captures temporal patterns  
-- Outperforms standalone ANN models, especially in extracting signals from transformed data
+- Outperforms standalone models on the original features, especially in precision-recall tradeoff
 
 ## Limitations
 
-- Dataset variability (feature distributions, missing values) challenges generalization  
+- Dataset variability (feature distributions, missing values) impose challenges to generalization  
 - Most datasets share common features, allowing **partial transferability**  
-- Dirty data preprocessing is **manual**, potential for bias  
+- Data preprocessing, especially across sets has the potential for bias  
 - Achieving additional 10% recall (~85-86%) may require:  
-  - Noise reduction  
+  - Innovative noise reduction techniques
   - Robust cross-validation  
   - Automated cleaning  
   - Expanding dataset diversity  
