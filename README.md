@@ -57,7 +57,7 @@ ChurnBot addresses these gaps with specialized telecom intelligence that general
   - **Stability score** (`stability_score`) aggregates `Contract`, `Dependents`, and `Partner` indicators  
   - **Interaction terms** (`monthly_tenure_`) combine `monthly_bin` and `TenureBucket` for nuanced pattern detection  
   - **Log transformations** applied to `TotalCharges`, `MonthlyCharges`, and `spending_rate` to reduce skewness  
-  - Additional features: `Contract`, `Dependents`, `SeniorCitizen`, and `OnlineSecurity` these will be used to engineer additional features and interations to further boost model performance without overfitting the models  
+  - Additional features: `Contract`, `Dependents`, `SeniorCitizen`, and `OnlineSecurity` these will be used to engineer additional features
 - Cascade design:  
   - **LR** captures linear relationships  
   - **RF** captures clusters  
