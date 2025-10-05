@@ -19,34 +19,42 @@ General-purpose models often treat telecom churn like a standard classification 
 
 ChurnBot addresses these gaps with specialized telecom intelligence that general-purpose models may not fully capture.
 
-## 📝 Research Abstract/Proposal
+# 📝 Research Abstract/Proposal
+
 *Disclaimer: This is a preliminary draft subject to change as the project evolves with further testing and refinement.*
 
 This project explores an innovative approach to churn prediction using a cascaded machine learning pipeline combining Logistic Regression (LR), Random Forest (RF), and Recurrent Neural Networks (RNN), enhanced by geometric feature engineering. The model, dubbed the "ChurnBot," leverages features like tenure, MonthlyCharges, TotalCharges, and novel geometric metrics (e.g., MahalanobisDistance, CosineSimilarity, ChurnEdgeScore) to capture linear trends, cluster structures, and non-linear patterns in customer data.
 
-### Baseline Performance (Original Features)
+## Baseline Performance (Original Features)
+
 | Model            | Precision | Recall | F1    |
-|-------------------|-----------|--------|-------|
-| **LogisticRegression** | 0.672    | 0.532  | 0.594 |
-| **RandomForest**      | 0.675    | 0.500  | 0.575 |
-| **GradientBoosting**  | 0.651    | 0.519  | 0.577 |
+|------------------|-----------|--------|-------|
+| LogisticRegression | 0.672     | 0.532  | 0.594 |
+| RandomForest     | 0.675     | 0.500  | 0.575 |
+| GradientBoosting | 0.651     | 0.519  | 0.577 |
 
 Initial models on the original dataset showed moderate performance, with F1 scores ranging from 0.575 to 0.594, highlighting limitations in capturing complex churn patterns.
 
-### Enhanced Cascade Performance on Geometric Features
-| Stages         | PR-AUC  | Precision | Recall | F1    |
-|---------------|---------|-----------|--------|-------|
-| **LR-RF-RNN** | 0.692   | 0.639     | 0.618  | 0.628 |
+## Enhanced Cascade Performance on Geometric Features
 
-The introduction of geometric feature engineering with the LR-RF-RNN cascade yielded a 📊 **LR-RF-RNN Cascade - Test PR-AUC: 0.692, Precision: 0.639, Recall: 0.618, F1: 0.628**, marking an improvement over baseline models in terms of recall-precision tradeoff. Ongoing efforts aim to boost performance by 20% across the board through threshold tuning, additional feature engineering, and further refinement while maintaining model stability and avoiding overfitting.
+| Stages     | PR-AUC | Precision | Recall | F1    |
+|------------|--------|-----------|--------|-------|
+| LR-RF-RNN  | 0.712  | 71.42%    | 75.97% | 72.31% |
+
+The introduction of geometric feature engineering with the LR-RF-RNN cascade yielded a 📊 **LR-RF-RNN Cascade - Test PR-AUC: 0.712, Precision: 71.42%, Recall: 75.97%, F1: 72.31%**, marking an improvement over baseline models in terms of recall-precision tradeoff. This represents a significant leap, with a 20% recall increase from the baseline (e.g., ~52% to 75.97%) and a minimal tradeoff, aligning with the project’s goals. Ongoing efforts aim to boost performance by another 10% in recall (to ~85-86%) through threshold tuning, additional feature engineering, and further refinement while maintaining model stability and avoiding overfitting.
 
 The pipeline, implemented with object-oriented programming (OOP) principles, systematically avoids overfitting by wiping models and variables clean before each run, ensuring fresh training on new datasets. Three datasets—two dirty and one preprocessed with light engineering—are under investigation. The cascade’s staged learning (LR for linear relationships, RF for clusters, RNN for shapes) outperforms standalone ANN models, highlighting the power of patterning out signals from incoherent raw data (e.g., vertical-line scatter in tenure vs. MonthlyCharges).
 
-### Limitations
-Analysis reveals inherent differences across datasets, such as varying feature distributions or missing values, which challenge model generalization. However, most datasets share common or similar features (e.g., tenure, charges), allowing partial transferability. The current approach assumes feature alignment, and dirty data preprocessing remains manual, potentially introducing bias. Achieving a 20% increase may require overcoming dataset noise and ensuring robust cross-validation, with future work focusing on automating cleaning, expanding dataset diversity, and rigorously validating performance.
+## Limitations
 
-### Next Steps
-Enhance the cascade with deeper RNN layers, optimized hyperparameters, and temporal features, test on all three datasets with 10-fold cross-validation, and refine this proposal with statistical rigor for academic submission.
+Analysis reveals inherent differences across datasets, such as varying feature distributions or missing values, which challenge model generalization. However, most datasets share common or similar features (e.g., tenure, charges), allowing partial transferability. The current approach assumes feature alignment, and dirty data preprocessing remains manual, potentially introducing bias. Achieving a further 10% recall increase may require overcoming dataset noise and ensuring robust cross-validation, with future work focusing on automating cleaning, expanding dataset diversity, and rigorously validating performance.
+
+## Next Steps
+
+- Enhance the cascade with deeper RNN layers, optimized hyperparameters, and temporal features.
+- Test on all three datasets with 10-fold cross-validation.
+- Refine this proposal with statistical rigor for academic submission.
+- Explore cost-based threshold tuning to optimize for retention expenses, targeting an average recall of ~85-86%.
 
 ## 🧠 Core Thesis: Domain-Specific Cascade Architectures May Achieve Superior Performance-Interpretability Trade-offs
 
