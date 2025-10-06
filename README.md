@@ -16,7 +16,7 @@ General-purpose models often treat telecom churn like a standard classification 
 - Subscription anomalies and plan changes
 
 **Result**: High false positives/negatives → wasted marketing spend & preventable customer churn.
-=======
+
 The result is **high false positives/negatives** → wasted marketing spend & lost customers.  
 
 **Current assumption:**  
