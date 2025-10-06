@@ -15,7 +15,6 @@ General-purpose models often treat telecom churn like a standard classification 
 - Service degradation indicators
 - Subscription anomalies and plan changes
 
-<<<<<<< HEAD
 **Result**: High false positives/negatives → wasted marketing spend & preventable customer churn.
 =======
 The result is **high false positives/negatives** → wasted marketing spend & lost customers.  
@@ -26,7 +25,6 @@ This imbalance may be caused by temporal feature representations that overweight
 To address this, we will:  
 - Engineer a **more balanced temporal feature set** (ensuring positive/negative signals are properly represented).  
 - Experiment with **purely temporal** vs **partial temporal** features to study how different cascade stages (RF, ANN, RNN) behave under varying temporal loads.  
->>>>>>> 16081ed (Update README.md)
 
 ChurnBot addresses these gaps with specialized telecom intelligence that general-purpose models may not fully capture.
 
