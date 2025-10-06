@@ -51,7 +51,7 @@ ChurnBot addresses these gaps with specialized telecom intelligence that general
 - Initial models on original dataset showed **moderate performance**  
 - F1 scores ranged from **0.575 to 0.594**, highlighting limitations in capturing complex churn patterns
 
-<<<<<<< HEAD
+
 ## Enhanced Cascade Performance on Engineered Features
 =======
 ### Alternative Cascades (experiments in this branch)
@@ -61,13 +61,11 @@ ChurnBot addresses these gaps with specialized telecom intelligence that general
 - LR → ANN → RNN (with feature balancing)
 - Purely Temporal Feature Sets → stress-test RNN performance  
 - Partial Temporal Feature Sets → measure trade-offs in ANN/RF stages  
->>>>>>> 16081ed (Update README.md)
 
 | Stages     | PR-AUC | Precision | Recall | F1    |
 |------------|--------|-----------|--------|-------|
 | LR-RF-RNN  | 0.712  | 71.42%    | 75.97% | 72.31% |
 
-<<<<<<< HEAD
 - **Improvement over baseline:**  
   - Recall increased ~20% (from ~52% to 75.97%)  
   - Minimal precision tradeoff  
@@ -85,7 +83,7 @@ ChurnBot addresses these gaps with specialized telecom intelligence that general
   - **RF** captures clusters  
   - **RNN** captures temporal patterns  
 - Outperforms standalone models on the original features, especially in precision-recall tradeoff
-=======
+
 ## 📊 Current Research Focus
 - ✅ **Feature Diagnostics** — correlation, AUC, IV, PSI per dataset  
 - ✅ **Cross-Dataset Generalization** — WA vs Iranian datasets  
@@ -93,7 +91,6 @@ ChurnBot addresses these gaps with specialized telecom intelligence that general
 - ✅ **Semantic Buckets** — grouping features into `business`, `technical`, `spending`, `temporal`  
 - ✅ **Temporal Feature Balance** — rebalance equation to avoid over-prediction of churn  
 - 🔄 **Daily Logs** — track findings and failed experiments  
->>>>>>> 16081ed (Update README.md)
 
 ## Limitations
 
