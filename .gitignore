@@ -1,0 +1,51 @@
+# ----------------------
+# C++ build artifacts
+# ----------------------
+build/
+CMakeFiles/
+CMakeCache.txt
+*.obj
+*.o
+*.exe
+*.dll
+*.lib
+*.pdb
+*.log
+
+# ----------------------
+# Python artifacts
+# ----------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+venv/
+.env
+*.env
+
+# ----------------------
+# VS / IDE specific files
+# ----------------------
+.vs/
+*.sln
+*.user
+*.suo
+*.ncb
+*.ipch
+*.opensdf
+*.VC.db
+*.VC.VC.opendb
+
+# ----------------------
+# OS-specific files
+# ----------------------
+.DS_Store
+Thumbs.db
+
+# ----------------------
+# pybind11 / temporary build files
+# ----------------------
+*.so
+*.pyd
+*.pybind11

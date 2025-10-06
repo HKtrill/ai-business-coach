@@ -15,7 +15,18 @@ General-purpose models often treat telecom churn like a standard classification 
 - Service degradation indicators
 - Subscription anomalies and plan changes
 
+<<<<<<< HEAD
 **Result**: High false positives/negatives → wasted marketing spend & preventable customer churn.
+=======
+The result is **high false positives/negatives** → wasted marketing spend & lost customers.  
+
+**Current assumption:**  
+Our prediction equation appears **imbalanced**, favoring churn predictions.  
+This imbalance may be caused by temporal feature representations that overweight negative correlations.  
+To address this, we will:  
+- Engineer a **more balanced temporal feature set** (ensuring positive/negative signals are properly represented).  
+- Experiment with **purely temporal** vs **partial temporal** features to study how different cascade stages (RF, ANN, RNN) behave under varying temporal loads.  
+>>>>>>> 16081ed (Update README.md)
 
 ChurnBot addresses these gaps with specialized telecom intelligence that general-purpose models may not fully capture.
 
@@ -40,12 +51,23 @@ ChurnBot addresses these gaps with specialized telecom intelligence that general
 - Initial models on original dataset showed **moderate performance**  
 - F1 scores ranged from **0.575 to 0.594**, highlighting limitations in capturing complex churn patterns
 
+<<<<<<< HEAD
 ## Enhanced Cascade Performance on Engineered Features
+=======
+### Alternative Cascades (experiments in this branch)
+- ANN → ANN → RNN  
+- Logistic Regression → ANN → RNN  
+- RF → ANN → RNN (with feature balancing)
+- LR → ANN → RNN (with feature balancing)
+- Purely Temporal Feature Sets → stress-test RNN performance  
+- Partial Temporal Feature Sets → measure trade-offs in ANN/RF stages  
+>>>>>>> 16081ed (Update README.md)
 
 | Stages     | PR-AUC | Precision | Recall | F1    |
 |------------|--------|-----------|--------|-------|
 | LR-RF-RNN  | 0.712  | 71.42%    | 75.97% | 72.31% |
 
+<<<<<<< HEAD
 - **Improvement over baseline:**  
   - Recall increased ~20% (from ~52% to 75.97%)  
   - Minimal precision tradeoff  
@@ -63,6 +85,15 @@ ChurnBot addresses these gaps with specialized telecom intelligence that general
   - **RF** captures clusters  
   - **RNN** captures temporal patterns  
 - Outperforms standalone models on the original features, especially in precision-recall tradeoff
+=======
+## 📊 Current Research Focus
+- ✅ **Feature Diagnostics** — correlation, AUC, IV, PSI per dataset  
+- ✅ **Cross-Dataset Generalization** — WA vs Iranian datasets  
+- ✅ **False Positive Reduction** — threshold tuning + class balancing  
+- ✅ **Semantic Buckets** — grouping features into `business`, `technical`, `spending`, `temporal`  
+- ✅ **Temporal Feature Balance** — rebalance equation to avoid over-prediction of churn  
+- 🔄 **Daily Logs** — track findings and failed experiments  
+>>>>>>> 16081ed (Update README.md)
 
 ## Limitations
 
