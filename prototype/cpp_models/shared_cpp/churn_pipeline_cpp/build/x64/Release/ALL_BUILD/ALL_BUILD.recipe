@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ProjectOutputs>
+    <ProjectOutput>
+      <FullPath>C:\Users\phill\ai-business-coach\ai-business-coach\prototype\cpp_models\shared_cpp\churn_pipeline_cpp\build\x64\Release\ZERO_CHECK</FullPath>
+    </ProjectOutput>
+    <ProjectOutput>
+      <FullPath>C:\Users\phill\ai-business-coach\ai-business-coach\prototype\cpp_models\shared_cpp\churn_pipeline_cpp\build\Release\churn_cascade_cpp.cp311-win_amd64.pyd</FullPath>
+    </ProjectOutput>
+    <ProjectOutput>
+      <FullPath>C:\Users\phill\ai-business-coach\ai-business-coach\prototype\cpp_models\shared_cpp\churn_pipeline_cpp\build\x64\Release\ALL_BUILD</FullPath>
+    </ProjectOutput>
+  </ProjectOutputs>
+  <ContentFiles />
+  <SatelliteDlls />
+  <NonRecipeFileRefs />
+</Project>

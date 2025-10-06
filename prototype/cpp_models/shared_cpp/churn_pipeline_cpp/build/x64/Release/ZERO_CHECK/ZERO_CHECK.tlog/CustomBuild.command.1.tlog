@@ -1,0 +1,10 @@
+^C:\USERS\PHILL\AI-BUSINESS-COACH\AI-BUSINESS-COACH\PROTOTYPE\CPP_MODELS\SHARED_CPP\CHURN_PIPELINE_CPP\BUILD\CMAKEFILES\24844DF4166EA26B3C5DF7582CA1C726\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/phill/ai-business-coach/ai-business-coach/prototype/cpp_models/shared_cpp/churn_pipeline_cpp -BC:/Users/phill/ai-business-coach/ai-business-coach/prototype/cpp_models/shared_cpp/churn_pipeline_cpp/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/phill/ai-business-coach/ai-business-coach/prototype/cpp_models/shared_cpp/churn_pipeline_cpp/build/churn_cascade_cpp.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

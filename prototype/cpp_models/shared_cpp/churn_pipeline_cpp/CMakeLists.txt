@@ -9,11 +9,11 @@ find_package(pybind11 REQUIRED)
 
 # Include directories
 include_directories(
-    ${PROJECT_SOURCE_DIR}/churn_pipeline_cpp/include
+    ${PROJECT_SOURCE_DIR}/include
 )
 
-# Define the Python extension module
 pybind11_add_module(churn_cascade_cpp
-    churn_pipeline_cpp/bindings/python_bindings.cpp
-    churn_pipeline_cpp/src/churn_cascade.cpp
+    bindings/python_bindings.cpp
+    src/churn_cascade.cpp
+    src/recurrent_network.cpp
 )

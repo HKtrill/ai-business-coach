@@ -1,0 +1,10 @@
+^C:\USERS\PHILL\AI-BUSINESS-COACH\AI-BUSINESS-COACH\PROTOTYPE\CPP_MODELS\SHARED_CPP\CHURN_PIPELINE_CPP\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/phill/ai-business-coach/ai-business-coach/prototype/cpp_models/shared_cpp/churn_pipeline_cpp -BC:/Users/phill/ai-business-coach/ai-business-coach/prototype/cpp_models/shared_cpp/churn_pipeline_cpp/build --check-stamp-file C:/Users/phill/ai-business-coach/ai-business-coach/prototype/cpp_models/shared_cpp/churn_pipeline_cpp/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
