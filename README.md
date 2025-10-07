@@ -198,8 +198,8 @@ prototype/
 │   ├── preprocessor.py
 │   ├── feature_engineer.py       # Optimizing
 │   ├── leakage_monitor.py
-│   ├── cascade_model.py          # Optimizing
-│   ├── cascade_model_cpp_wrapper.py    # NEW: TODO: implement C++ model wrapper
+│   ├── cascade_model.py         
+│   ├── cascade_model_cpp_wrapper.py    
 │   └── experiment_runner.py
 ├── chatbot_pipeline/
 │   ├── __init__.py
