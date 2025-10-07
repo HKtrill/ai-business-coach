@@ -35,7 +35,6 @@ ChurnBot addresses these gaps with specialized telecom intelligence that general
 - **Project Goal:**  
   - Explore an innovative approach to churn prediction using a cascaded machine learning pipeline (Logistic Regression → Random Forest → Recurrent Neural Networks)  
   - Leverage **feature engineering** to capture customer behavior patterns, including spending trends, tenure segmentation, and charge distributions  
-  - Model dubbed **"ChurnBot"**  
   - Key features: `tenure`, `MonthlyCharges`, `TotalCharges`, `spending_bin`, `monthly_bin`, `TenureBucket`, `stability_score`, `extreme_spender`, `extreme_monthly`, interaction terms (`monthly_tenure_`), `Contract`, `Dependents`, `SeniorCitizen`, and `OnlineSecurity`
 
 ## Baseline Performance (Original Features)
