@@ -319,7 +319,7 @@ prototype/
 │   │   ├── install_dependencies.sh    # TODO: create dependency installation script
 │   │   ├── run_benchmarks.sh          # TODO: create benchmark execution script
 │   │   └── generate_bindings.sh       # TODO: create Python binding generation script
-│   └── CMakeLists.txt                 # TODO: set up master build configuration
+│   └── CMakeLists.txt                 ✅
 ├── BasePipeline.py                    # TODO: implement base class for pipelines
 └── README.md
 ```
