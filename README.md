@@ -202,7 +202,7 @@ data_loader → preprocessor → feature_engineer → leakage_monitor → cascad
 ## ⚡ C++ Performance Optimization
 ChurnBot leverages custom C++ implementations for maximum inference speed and memory efficiency:
 
-- **Hand-optimized models**: RF, ANN, and RNN written from scratch in C++
+- **Hand-optimized models**: LR, RF, and RNN written from scratch in C++
 - **CS Theory Optimizations**: Branch & bound algorithms, SIMD matrix operations, cache-friendly data structures
 - **Custom Memory Management**: Specialized allocators for telecom data patterns
 - **Python Integration**: Seamless pybind11 bindings maintain Python development experience
