@@ -76,7 +76,7 @@ An innovative approach to churn prediction using a cascaded machine learning pip
 
 ### Core Feature Categories
 
-#### **Base Features (19 features)**
+#### **Base Features (19 features) these will be systematically reduced later**
 ```
 Customer Demographics: SeniorCitizen, Partner, Dependents
 Account Info: tenure, TenureBucket
@@ -137,7 +137,7 @@ Financial: MonthlyCharges, TotalCharges
 
 ### Key Achievements
 - ✅ **Recall increased ~20%** (from 52% to 71.5%)
-- ✅ **Minimal precision tradeoff** (67% to 73%)
+- ✅ **Precision increased ~6% with minimal tradeoff** (67% to 73% with ~1.5% precision-recall tradeoff)
 - ✅ **False positives reduced** to average of 26.2 per fold
 - ✅ **Stable cross-validation** performance (5.63 FP std dev)
 
