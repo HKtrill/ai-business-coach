@@ -509,28 +509,23 @@ python BasePipeline.py --mode dashboard
 # Then navigate to http://localhost:3000
 ```
 
-## 🧪 Testing
-🧪 **Benchmark Testing**
+## 🧪 Testing & Benchmarking
+Robust tests and reproducible benchmarks ensure ChurnBot performs reliably across datasets and scenarios.
 
 ## 🏗️ Architecture
-Project ChurnBot demonstrates production-ready MLOps with careful handling of sensitive data:
+Project ChurnBot combines domain expertise with production-ready MLOps:
 
 **Core Components:**
 
-- Data Pipeline: Secure local processing with leakage monitoring
-- Model Pipeline: Three-stage cascade for optimal precision/recall
-- Interface Pipeline: Dual-mode accessibility (terminal + dashboard)
-- Experiment Pipeline: Reproducible benchmarking and validation
+- **Data Pipeline:** Secure, local processing with leakage monitoring
+- **Model Pipeline:** Three-stage cascade (LR → RF → RNN) for optimal precision & recall
+- **Interface:** Dual-mode access — terminal for analysts, dashboard for executives
+- **Experiments:** Reproducible testing & benchmarking
 
-**Design Principles:**
-
-🛡️ Privacy-first architecture
-🎯 Domain-specific optimization
-⚡ Performance-optimized inference
-🔄 Reproducible experiments
+**Design Principles:** 🛡️ Privacy-first | 🎯 Domain-optimized | ⚡ High-performance | 🔄 Fully reproducible
 
 ## ❓ Why Project ChurnBot Matters
-Project ChurnBot isn't just another AI tool — it's a research-backed, production-ready solution solving real-world telecom challenges:
+A research-backed, production-ready solution solving real telecom customer retention challenges:
 
 - 📊 **Evidence-based:** Clear, reproducible benchmarks over marketing hype
 - 🎓 **Research-grade:** Publication-ready methodology and results
@@ -544,4 +539,4 @@ For questions or issues, please open a GitHub issue or contact the maintainer.
 
 ---
 
-**Project ChurnBot:** Where telecom domain expertise meets cutting-edge ML — turning customer churn from reactive guesswork into proactive intelligence.
+**Project ChurnBot:** Transforming customer churn from reactive guesswork into actionable, proactive intelligence.
