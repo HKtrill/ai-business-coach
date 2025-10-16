@@ -69,11 +69,14 @@ An innovative approach to churn prediction using a cascaded machine learning pip
 
 ### Stability Analysis
 
-- **False Positive Standard Dev:** 5.036
-- **False Negatives Std Dev:** 4.490
-- **Recall Standard Dev:** 0.0323
-- **Precision Std Dev:** 0.0341
-- **F1-Score Std Dev:** 0.0323
+| Metric          | Std Dev |
+| --------------- | ------- |
+| False Positives | 5.036   |
+| False Negatives | 4.490   |
+| Recall          | 0.032   |
+| Precision       | 0.034   |
+| F1-Score        | 0.032   |
+
 - ✅ Consistent performance across folds demonstrates strong generalization
 - 💡 **Identified Weakness:** Churn class underperforms on precision/recall/F1 compared to no-churn — currently under active optimization.
 
