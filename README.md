@@ -274,9 +274,9 @@ Compare this to general-purpose models that may rely on cloud APIs with inherent
 ## 🎯 Current Research Focus
 
 - ✅ Feature diagnostics (correlation, AUC, IV, PSI)
-- ✅ Cross-dataset generalization (WA vs other datasets)
 - ✅ False positive reduction via threshold tuning
 - ✅ Semantic feature grouping (business, technical, spending, temporal)
+- 🔄 Cross-dataset generalization (WA vs other datasets)
 - 🔄 Temporal feature balance optimization
 - 🔄 Daily experimental logs
 
