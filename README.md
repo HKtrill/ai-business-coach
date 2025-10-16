@@ -36,7 +36,7 @@ General-purpose models often treat telecom churn like a standard classification 
 
 ## 📝 Research Abstract/Proposal
 
-*Disclaimer: This is a preliminary draft subject to change as the project evolves with further testing and refinement.*
+*Disclaimer: This is a preliminary draft subject to change as the project evolves. The README will later be condensed for enhanced readability, with full statistical analyses and findings extracted into a research paper intended for publication.*
 
 ### 🎯 Project Overview
 
