@@ -2,15 +2,16 @@
 *Predict, prevent, and proactively respond to churn, threats, and performance issues with a research-backed, production-ready AI assistant*
 
 **Tech Stack:**
-<img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/sqlite.svg" alt="SQLite" width="24" style="fill:#003B57"/> SQLite, 
-<img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/jupyter.svg" alt="Jupyter" width="24" style="fill:#F37626"/> Jupyter, 
-<img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/python.svg" alt="Python" width="24" style="fill:#3776AB"/> Python, 
-<img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/pytorch.svg" alt="PyTorch" width="24" style="fill:#EE4C2C"/> PyTorch, 
-<img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/cplusplus.svg" alt="C++" width="24" style="fill:#00599C"/> C++, 
-<img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/typescript.svg" alt="TypeScript" width="24" style="fill:#3178C6"/> TypeScript, 
-<img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/docker.svg" alt="Docker" width="24" style="fill:#2496ED"/> Docker, 
-<img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/react.svg" alt="React" width="24" style="fill:#61DAFB"/> React, 
-<img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/nodedotjs.svg" alt="Node.js" width="24" style="fill:#339933"/> Node.js
+<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/sqlite.png" alt="SQLite" width="24"/> SQLite, 
+<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/jupyter.png" alt="Jupyter" width="24"/> Jupyter, 
+<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/python.png" alt="Python" width="24"/> Python, 
+<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/pytorch.png" alt="PyTorch" width="24"/> PyTorch, 
+<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/cplusplus.png" alt="C++" width="24"/> C++, 
+<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/typescript.png" alt="TypeScript" width="24"/> TypeScript, 
+<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/docker.png" alt="Docker" width="24"/> Docker, 
+<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/react.png" alt="React" width="24"/> React, 
+<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/nodedotjs.png" alt="Node.js" width="24"/> Node.js
+
 
 
 **Author:** 👤 Phillip Harris
