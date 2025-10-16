@@ -1,9 +1,18 @@
 # 🤖 Project ChurnBot — Turning Telecom Churn Into Actionable Intelligence
 *Predict, prevent, and proactively respond to churn, threats, and performance issues with a research-backed, production-ready AI assistant*
 
-**Tech Stack**: 🗄️ SQLite, 📓 Jupyter, 🐍 Python, 🔥 PyTorch, 💠 C++, 🛠️ MLOps, 🟦 TypeScript, 🐳 Docker, ⚛️ React, 🟢 Node.js
+**Tech Stack:**
+<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/sqlite.svg" alt="SQLite" width="24"/> SQLite, 
+<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/jupyter.svg" alt="Jupyter" width="24"/> Jupyter, 
+<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/python.svg" alt="Python" width="24"/> Python, 
+<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/pytorch.svg" alt="PyTorch" width="24"/> PyTorch, 
+<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/cplusplus.svg" alt="C++" width="24"/> C++, 
+<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/typescript.svg" alt="TypeScript" width="24"/> TypeScript, 
+<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/docker.svg" alt="Docker" width="24"/> Docker, 
+<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/react.svg" alt="React" width="24"/> React, 
+<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/node-dot-js.svg" alt="Node.js" width="24"/> Node.js
 
-**Author**: 👤 Phillip Harris
+**Author:** 👤 Phillip Harris
 
 ---
 
