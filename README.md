@@ -151,11 +151,23 @@ Financial: MonthlyCharges, TotalCharges
 
 ### Key Engineering Insights
 
-1. **UsageSlope Removal**: Original feature conflated premium customers with at-risk customers
-2. **Cohort Normalization**: Tenure-based adjustments reduce bias
-3. **Context-Aware Scoring**: Combines multiple weak signals into strong patterns
-4. **False Positive Reduction**: Protection scores shield stable high-value customers
+1. **UsageSlope Decomposition**:  
+   - Engineered feature to capture customer behavior  
+   - Replaced due to conflating premium and at-risk customers  
+   - Now uses cohort-normalized derivatives and protection scores  
 
+2. **Cohort Normalization**:  
+   - Tenure-based adjustments to reduce bias  
+   - Aligns metrics across different customer segments  
+
+3. **Context-Aware Scoring**:  
+   - Combines multiple weak signals into stronger patterns  
+   - Improves overall prediction reliability  
+
+4. **False Positive Reduction**:  
+   - Protection scores shield stable high-value customers  
+   - Reduces unnecessary interventions and churn misclassification  
+   
 ---
 
 ## 🚀 Improvements Over Baseline
