@@ -32,8 +32,6 @@ General-purpose models often treat telecom churn like a standard classification 
 - Experiment with cascade variations (LR → RF → RNN/GRU), including replacing the RNN with a GRU in the final stage — early results are promising but require further validation
 - Optimize churn-class precision/recall through innovative feature engineering and threshold tuning
   
-Project ChurnBot turns telecom churn into actionable intelligence, detecting patterns general-purpose models miss.
-
 ---
 
 ## 📝 Research Abstract/Proposal
