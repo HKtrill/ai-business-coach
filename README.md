@@ -1,7 +1,7 @@
 # 🤖 Project ChurnBot — Turning Telecom Churn Into Actionable Intelligence
 *Predict, prevent, and proactively respond to churn, threats, and performance issues with a research-backed, production-ready AI assistant*
 
-**Tech Stack**: 🗄️ SQLite, 📊 Jupyter, 🐍 Python, 🔥 PyTorch, 💻 C++, 🔧 MLOps, 💻 TypeScript, 🐳 Docker, ⚛️ React, 🌐 Node.js
+**Tech Stack**: 🗄️ SQLite, 📓 Jupyter, 🐍 Python, 🔥 PyTorch, 💠 C++, 🛠️ MLOps, 🟦 TypeScript, 🐳 Docker, ⚛️ React, 🟢 Node.js
 
 **Author**: 👤 Phillip Harris
 
