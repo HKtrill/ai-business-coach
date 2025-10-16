@@ -8,31 +8,27 @@
 ---
 
 ## 📖 Synopsis
+Project ChurnBot turns telecom data into actionable intelligence. It predicts churn, flags system performance issues, and detects security threats — all locally, securely, and with research-backed precision. Multi-stage modeling and rigorous feature engineering ensure fast, reliable insights that generic AI often misses.
 
-Project ChurnBot turns data into actionable intelligence. It predicts telecom churn, flags system performance issues, and detects security threats — all with domain-specific precision. Unlike generic AI, ChurnBot combines multi-stage modeling and rigurous feature engineering to deliver fast, reliable insights while keeping data fully local and secure.
+## 🚨 Problem: Generic AI May Overlook Critical Signals
+Most AI treats telecom churn and system monitoring as standard tasks, missing domain-specific patterns like:
 
----
+- Unusual call or usage spikes
+- Billing disputes & irregular payments
+- Service degradation & network anomalies
+- Subscription changes & anomalies
+- Security threats and anomalous system behavior
 
-## 🚨 Problem: Generic AI May Miss Critical Signals
-
-General-purpose AI often overlooks domain-specific patterns, potentially missing critical customer retention, system performance, and security signals:
-
-- Unusual call patterns & usage spikes  
-- Billing disputes & irregular payment behavior  
-- Service degradation & network issues  
-- Subscription anomalies & plan changes  
-- Security threats and anomalous system behavior  
-
-**Impact:** High false positives/negatives → wasted marketing spend, operational blind spots, and unrecognized threats.  
+**Impact:** High false positives/negatives → wasted marketing spend, missed customer retention, and unrecognized threats.
 
 **Current Challenge:**  
-- ⚠️ Churn class underperforms on precision, recall, and F1 compared to no-churn — currently under active optimization.  
+⚠️ Churn class underperforms on precision, recall, and F1 compared to no-churn — currently under active optimization.
 
 **Our Approach to Current Challenges:**  
-- Engineer a balanced temporal, behavioral, sliding-window, and geo-feature set to capture churn signals and spatial patterns for RNN/GRU modeling  
-- Apply protection scores and context-aware scoring to reduce false positives  
-- Experiment with cascade variations (LR → RF → RNN/GRU), including replacing the RNN with a GRU in the final stage — early results are promising but require further validation  
-- Optimize churn-class precision/recall through innovative feature engineering and threshold tuning  
+- Balanced temporal, behavioral, sliding-window, and geo-feature sets for RNN/GRU modeling  
+- Protection scores & context-aware scoring to reduce false positives  
+- Cascade experiments (LR → RF → RNN/GRU) with GRU replacement under validation  
+- Threshold tuning and advanced feature engineering to optimize churn-class precision/recall
 
 ---
 
