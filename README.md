@@ -525,10 +525,10 @@ ChurnBot demonstrates production-ready MLOps with careful handling of sensitive 
 ## ❓ Why ChurnBot Matters
 ChurnBot isn't just another AI tool — it's a research-backed, production-ready solution solving real-world telecom challenges:
 
-📊 Evidence-based: Clear, reproducible benchmarks over marketing hype
-🎓 Research-grade: Publication-ready methodology and results
-🏭 Production-ready: Modular, scalable architecture for enterprise deployment
-🔐 Security-first: Local execution addresses real enterprise concerns
+- 📊 **Evidence-based:** Clear, reproducible benchmarks over marketing hype
+- 🎓 **Research-grade:** Publication-ready methodology and results
+- 🏭 **Production-ready:** Modular, scalable architecture for enterprise deployment
+- 🔐 **Security-first:** Local execution addresses real enterprise concerns
 
 This positions ChurnBot as a standout project in a market flooded with generic AI applications.
 
