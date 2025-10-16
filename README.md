@@ -8,7 +8,7 @@
 
 ## 📖 Synopsis
 
-ChurnBot transforms telecommunications customer retention from guesswork into precision science. It is an intelligent AI assistant built specifically for telecom churn patterns. Unlike general-purpose models, ChurnBot focuses on telecom-specific behaviors to provide accurate, actionable insights where it matters most.
+Project ChurnBot transforms telecommunications customer retention from guesswork into precision science. It is an intelligent AI assistant built specifically for telecom churn patterns. Unlike general-purpose models, Project ChurnBot focuses on telecom-specific behaviors to provide accurate, actionable insights where it matters most.
 
 ---
 
