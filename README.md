@@ -1,4 +1,5 @@
-# 🤖 Project ChurnBot: Turning Churn Into Intelligence
+# 🤖 Project ChurnBot — Turning Telecom Churn Into Actionable Intelligence
+*Predict, prevent, and proactively respond to churn, threats, and performance issues with a research-backed, production-ready AI assistant*
 
 **Tech Stack**: 🗄️ SQLite, 📊 Jupyter, 🐍 Python, 🔥 PyTorch, 💻 C++, 🔧 MLOps, 💻 TypeScript, 🐳 Docker, ⚛️ React, 🌐 Node.js
 
@@ -8,29 +9,42 @@
 
 ## 📖 Synopsis
 
-Project ChurnBot transforms telecommunications customer retention from guesswork into precision science. It is an intelligent AI assistant built specifically for telecom churn patterns. Unlike general-purpose models, Project ChurnBot focuses on telecom-specific behaviors to provide accurate, actionable insights where it matters most.
+Project ChurnBot turns data into actionable intelligence. It predicts telecom churn, flags system performance issues, and detects security threats — all with domain-specific precision. Unlike generic AI, ChurnBot combines multi-stage modeling and rigurous feature engineering to deliver fast, reliable insights while keeping data fully local and secure.
 
 ---
 
-## 🚨 Problem: Generic AI Misses Critical Telecom Signals
+## 🚨 Problem: Generic AI May Miss Critical Signals
 
-General-purpose models often treat telecom churn like a standard classification task, overlooking domain-specific signals that matter most:
+General-purpose AI often overlooks domain-specific patterns, potentially missing critical customer retention, system performance, and security signals:
 
-- Unusual call patterns & usage spikes
-- Billing disputes & irregular payment behavior
-- Service degradation & network issues
-- Subscription anomalies & plan changes
+- Unusual call patterns & usage spikes  
+- Billing disputes & irregular payment behavior  
+- Service degradation & network issues  
+- Subscription anomalies & plan changes  
+- Security threats and anomalous system behavior  
 
-**Impact:** High false positives/negatives → wasted marketing spend and preventable customer churn.
+**Impact:** High false positives/negatives → wasted marketing spend, operational blind spots, and unrecognized threats.  
 
 **Current Challenge:**  
-- ⚠️ Churn class underperforms on precision, recall, and F1 compared to no-churn — currently under active optimization.
+- ⚠️ Churn class underperforms on precision, recall, and F1 compared to no-churn — currently under active optimization.  
 
-**Our Approach:**  
-- Engineer a balanced temporal, behavioral, sliding-window, and geo-feature set to capture churn signals and spatial patterns for RNN/GRU modeling
-- Apply protection scores and context-aware scoring to reduce false positives
-- Experiment with cascade variations (LR → RF → RNN/GRU), including replacing the RNN with a GRU in the final stage — early results are promising but require further validation
-- Optimize churn-class precision/recall through innovative feature engineering and threshold tuning
+**Our Approach to Current Challenges:**  
+- Engineer a balanced temporal, behavioral, sliding-window, and geo-feature set to capture churn signals and spatial patterns for RNN/GRU modeling  
+- Apply protection scores and context-aware scoring to reduce false positives  
+- Experiment with cascade variations (LR → RF → RNN/GRU), including replacing the RNN with a GRU in the final stage — early results are promising but require further validation  
+- Optimize churn-class precision/recall through innovative feature engineering and threshold tuning  
+
+---
+
+## 🗣️ User Interface: NLP-Driven Interaction
+
+Project ChurnBot features a natural language processing interface that streamlines user interaction. Users can input queries in plain language, and ChurnBot:
+
+1. **Collects and preprocesses** user input  
+2. **Routes the request** to the relevant model(s) — churn, security, or IT performance  
+3. **Interprets model predictions** and provides actionable results in clear, understandable language  
+
+This allows analysts and executives to interact with complex ML pipelines effortlessly, turning raw predictions into meaningful insights.
   
 ---
 
