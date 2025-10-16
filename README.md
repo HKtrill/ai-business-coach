@@ -18,7 +18,7 @@
 ---
 
 ## 📖 Synopsis
-Project ChurnBot turns telecom data into actionable intelligence. It predicts churn, flags system performance issues, and detects security threats — all locally, securely, and with research-backed precision. Multi-stage modeling and rigorous feature engineering ensure fast, reliable insights that generic AI often misses.
+Project ChurnBot turns telecom data into actionable intelligence. It predicts churn, detects security threats, and flags system performance issues—all locally, securely, and with research-backed precision. Multi-stage modeling and rigorous feature engineering capture critical patterns that generic AI often misses.
 
 ## 🚨 Problem: Generic AI May Overlook Critical Signals
 Most AI treats telecom churn and system monitoring as standard tasks, missing domain-specific patterns like:
