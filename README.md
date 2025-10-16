@@ -12,25 +12,27 @@ ChurnBot transforms telecommunications customer retention from guesswork into pr
 
 ---
 
-## 🚨 Problem Statement: Traditional AI Approaches Miss Telecom-Specific Signals
+## 🚨 Problem: Generic AI Misses Critical Telecom Signals
 
-General-purpose models often treat telecom churn like a standard classification task, potentially missing critical domain-specific signals:
+General-purpose models often treat telecom churn like a standard classification task, overlooking domain-specific signals that matter most:
 
-- Call patterns and usage anomalies
-- Billing disputes and payment behaviors
-- Service degradation indicators
-- Subscription anomalies and plan changes
+- Unusual call patterns & usage spikes
+- Billing disputes & irregular payment behavior
+- Service degradation & network issues
+- Subscription anomalies & plan changes
 
-**Result**: High false positives/negatives → wasted marketing spend & preventable customer churn.
+**Impact:** High false positives/negatives → wasted marketing spend and preventable customer churn.
 
 **Current Challenge:**  
-Our prediction equation appears **imbalanced**, favoring churn predictions. This imbalance may be caused by temporal feature representations that overweight negative correlations.
+- ⚠️ Churn class underperforms on precision, recall, and F1 compared to no-churn — currently under active optimization.
 
 **Our Approach:**  
-- Engineer a **more balanced temporal feature set** (ensuring positive/negative signals are properly represented)
-- Experiment with **purely temporal** vs **partial temporal** features to study how different cascade stages (LR, RF, RNN) behave under varying temporal loads
-
-ChurnBot addresses these gaps with specialized telecom intelligence that general-purpose models may not fully capture.
+- Engineer a balanced temporal, behavioral, sliding-window, and geo-feature set to capture churn signals and spatial patterns for RNN/GRU modeling
+- Apply protection scores and context-aware scoring to reduce false positives
+- Experiment with cascade variations (LR → RF → RNN/GRU), including replacing the RNN with a GRU in the final stage — early results are promising but require further validation
+- Optimize churn-class precision/recall through innovative feature engineering and threshold tuning
+  
+Project ChurnBot turns telecom churn into actionable intelligence, detecting patterns general-purpose models miss.
 
 ---
 
@@ -72,7 +74,7 @@ An innovative approach to churn prediction using a cascaded machine learning pip
 - **False Positive Standard Deviation:** 5.63
 - **Recall Standard Deviation:** 0.0361
 - ✅ Consistent performance across folds demonstrates strong generalization
-- 💡 **Identified Weakness:** Model struggles with churn predictions (lower precision, recall, F1) compared to no-churn — this is the focus of our current improvements.
+- 💡 **Identified Weakness:** Churn class underperforms on precision/recall/F1 compared to no-churn — currently under active optimization.
 
 ---
 
