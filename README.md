@@ -41,7 +41,7 @@ General-purpose AI often overlooks domain-specific patterns, potentially missing
 Project ChurnBot features a natural language processing interface that streamlines user interaction. Users can input queries in plain language, and ChurnBot:
 
 1. **Collects and preprocesses** user input  
-2. **Routes the request** to the relevant model(s) — churn, security, or IT performance  
+2. **Routes the request** to the relevant model(s) — churn, security, or IT models  
 3. **Interprets model predictions** and provides actionable results in clear, understandable language  
 
 This allows analysts and executives to interact with complex ML pipelines effortlessly, turning raw predictions into meaningful insights.
