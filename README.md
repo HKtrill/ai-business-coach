@@ -2,16 +2,15 @@
 *Predict, prevent, and proactively respond to churn, threats, and performance issues with a research-backed, production-ready AI assistant*
 
 **Tech Stack:**
-<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/sqlite.png" alt="SQLite" width="24"/> SQLite, 
-<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/jupyter.png" alt="Jupyter" width="24"/> Jupyter, 
-<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/python.png" alt="Python" width="24"/> Python, 
-<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/pytorch.png" alt="PyTorch" width="24"/> PyTorch, 
-<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/cplusplus.png" alt="C++" width="24"/> C++, 
-<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/typescript.png" alt="TypeScript" width="24"/> TypeScript, 
-<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/docker.png" alt="Docker" width="24"/> Docker, 
-<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/react.png" alt="React" width="24"/> React, 
-<img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/nodedotjs.png" alt="Node.js" width="24"/> Node.js
-
+<img src="https://cdn.simpleicons.org/sqlite/003B57" alt="SQLite" width="24"/> SQLite, 
+<img src="https://cdn.simpleicons.org/jupyter/F37626" alt="Jupyter" width="24"/> Jupyter, 
+<img src="https://cdn.simpleicons.org/python/3776AB" alt="Python" width="24"/> Python, 
+<img src="https://cdn.simpleicons.org/pytorch/EE4C2C" alt="PyTorch" width="24"/> PyTorch, 
+<img src="https://cdn.simpleicons.org/cplusplus/00599C" alt="C++" width="24"/> C++, 
+<img src="https://cdn.simpleicons.org/typescript/3178C6" alt="TypeScript" width="24"/> TypeScript, 
+<img src="https://cdn.simpleicons.org/docker/2496ED" alt="Docker" width="24"/> Docker, 
+<img src="https://cdn.simpleicons.org/react/61DAFB" alt="React" width="24"/> React, 
+<img src="https://cdn.simpleicons.org/nodedotjs/5FA04E" alt="Node.js" width="24"/> Node.js
 
 
 **Author:** 👤 Phillip Harris
