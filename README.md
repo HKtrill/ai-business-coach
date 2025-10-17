@@ -1,9 +1,16 @@
-&nbsp;<br>
-<img src="assets/churnbot_icon.png" align="right" width="104">
-
+<table>
+<tr>
+<td>
 
 # Project ChurnBot — Turning Telecom Churn Into Actionable Intelligence
 *Predict, prevent, and proactively respond to churn, threats, and performance issues with a research-backed, production-ready AI assistant*
+
+</td>
+<td align="right" valign="top">
+<img src="assets/churnbot_icon.png" width="104">
+</td>
+</tr>
+</table>
 
 **Tech Stack:**
 <img src="https://cdn.simpleicons.org/sqlite/003B57" alt="SQLite" width="24"/> SQLite, 
