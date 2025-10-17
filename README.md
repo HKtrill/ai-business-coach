@@ -14,7 +14,6 @@
 <img src="https://cdn.simpleicons.org/docker/2496ED" alt="Docker" width="24"/> Docker, 
 <img src="https://cdn.simpleicons.org/react/61DAFB" alt="React" width="24"/> React, 
 <img src="https://cdn.simpleicons.org/nodedotjs/5FA04E" alt="Node.js" width="24"/> Node.js
-<br><br>
 
 **Author:** 👤 Phillip Harris
 
