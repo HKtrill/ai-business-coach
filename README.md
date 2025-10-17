@@ -1,4 +1,4 @@
-<img src="assets/churnbot_icon.png" align="right" width="110" style="margin-top: -24px; margin-right: 0;">
+<img src="assets/churnbot_icon.png" align="right" width="128" style="margin-top: -36px; margin-right: 8px;">
 
 # Project ChurnBot — Turning Telecom Churn Into Actionable Intelligence
 *Predict, prevent, and proactively respond to churn, threats, and performance issues with a research-backed, production-ready AI assistant*
