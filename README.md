@@ -1,5 +1,5 @@
 <div align="center">
-<img src="assets/churnbot_icon_96.png" alt="ChurnBot Logo" width="112"/>
+<img src="assets/churnbot_icon.png" alt="ChurnBot Logo" width="112"/>
 </div>
 <br>
 
