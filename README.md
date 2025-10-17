@@ -1,12 +1,10 @@
+# Project ChurnBot — Turning Telecom Churn Into Actionable Intelligence
+
+*Predict, prevent, and proactively respond to churn, threats, and performance issues with a research-backed, production-ready AI assistant*
 <div align="center">
 <img src="assets/churnbot_icon.png" alt="ChurnBot Logo" width="112"/>
 </div>
 <br>
-
-# Project ChurnBot — Turning Telecom Churn Into Actionable Intelligence
-
-*Predict, prevent, and proactively respond to churn, threats, and performance issues with a research-backed, production-ready AI assistant*
-
 **Tech Stack:**
 <img src="https://cdn.simpleicons.org/sqlite/003B57" alt="SQLite" width="24"/> SQLite, 
 <img src="https://cdn.simpleicons.org/jupyter/F37626" alt="Jupyter" width="24"/> Jupyter, 
