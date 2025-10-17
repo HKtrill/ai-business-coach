@@ -1,4 +1,4 @@
-<img src="assets/churnbot_icon.png" align="right" width="100">
+<img src="assets/churnbot_icon.png" align="right" width="96">
 
 # Project ChurnBot — Turning Telecom Churn Into Actionable Intelligence
 
