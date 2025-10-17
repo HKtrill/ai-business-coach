@@ -1,4 +1,4 @@
-# <img src="assets/churnbot_icon.png" height="64" width="64"> Project ChurnBot — Turning Telecom Churn Into Actionable Intelligence
+# <img src="assets/churnbot_icon.png" height="32" width="32"> Project ChurnBot — Turning Telecom Churn Into Actionable Intelligence
 *Predict, prevent, and proactively respond to churn, threats, and performance issues with a research-backed, production-ready AI assistant*
 
 **Tech Stack:**
