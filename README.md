@@ -201,6 +201,7 @@ Final Prediction
 2. **Standard Scaling** - Feature normalization
 3. **Stability Weighting** - Down-weight high-stability customers (reduces FP)
 4. **Stratified Splitting** - Maintains churn distribution across folds
+5. **Asymmetric Model Tuning** - Maintains high precision for the no-churn class while increasing recall on churners.
 
 ---
 
