@@ -121,22 +121,8 @@ An innovative approach to churn prediction using a cascaded machine learning pip
 ```python
 ['Charges_Ratio', 'Contract_inverted', 'tenure', 'OnlineSecurity', 
  'TechSupport', 'Loyalty_Anchor_Score', 'FP_Early_Warning', 'HighPaymentRisk']
-Stage 2 — Random Forest (12 features)
-python
-Copy code
-['SpendingAccel_Contract_int', 'Contract_Tenure_Interaction', 'Risk_Stability_Interaction',
- 'EarlyStageVelocity', 'EarlyVelocity_Risk_int', 'Veteran_Stability_Score',
- 'ChurnRisk_Concentration', 'Loyalty_Anchor_Score', 'MatureCustomer',
- 'Service_Bundle_Score', 'Silent_Risk_Score', 'Financial_Flight_Risk']
-Stage 3 — RNN (15 features)
-python
-Copy code
-['EarlyStageVelocity', 'EarlyVelocity_Risk_int', 'SpendingAccel_Contract_int',
- 'Veteran_Stability_Score', 'Risk_Stability_Interaction', 'FP_Early_Warning',
- 'ChurnRisk_Concentration', 'tenure', 'TenureBucket', 'Charges_Ratio',
- 'Service_Bundle_Score', 'Early_Regret_Signal', 'Behavioral_Whiplash',
- 'Veteran_Decline', 'Financial_Flight_Risk']
 ```
+
 ### Stage 2 — Random Forest (12 features)
 ```python
 ['SpendingAccel_Contract_int', 'Contract_Tenure_Interaction', 'Risk_Stability_Interaction',
