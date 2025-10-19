@@ -55,18 +55,6 @@ Most AI treats telecom churn and system monitoring as standard tasks, missing do
 
 ---
 
-## 🗣️ User Interface: NLP-Driven Interaction
-
-Project ChurnBot features a natural language processing interface that streamlines user interaction. Users can input queries in plain language, and ChurnBot:
-
-1. **Collects and preprocesses** user input  
-2. **Routes the request** to the relevant model(s) — churn, security, or IT models  
-3. **Interprets model predictions** and provides actionable results in clear, understandable language  
-
-This allows analysts and executives to interact with complex ML pipelines effortlessly, turning raw predictions into meaningful insights.
-  
----
-
 ## 📝 Research Abstract/Proposal
 
 *Disclaimer: This is a preliminary draft subject to change as the project evolves. The README will later be condensed for enhanced readability, with full statistical analyses and findings extracted into a research paper intended for publication.*
@@ -262,6 +250,18 @@ ChurnBot leverages custom C++ implementations for maximum inference speed and me
 
 **Expected Performance Gains**: 5-20x faster inference compared to traditional Python ML libraries.
 
+---
+
+## 🗣️ User Interface: NLP-Driven Interaction
+
+Project ChurnBot features a natural language processing interface that streamlines user interaction. Users can input queries in plain language, and ChurnBot:
+
+1. **Collects and preprocesses** user input  
+2. **Routes the request** to the relevant model(s) — churn, security, or IT models  
+3. **Interprets model predictions** and provides actionable results in clear, understandable language  
+
+This allows analysts and executives to interact with complex ML pipelines effortlessly, turning raw predictions into meaningful insights.
+  
 ---
 
 ## 🎯 Choose Your Experience
