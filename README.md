@@ -389,9 +389,9 @@ prediction_output = {
 
 ### Why This Matters
 
-Industry default: Optimize for global AUC/accuracy → misses asymmetric costs → wastes retention budget
+**Industry default**: Optimize for global AUC/accuracy → misses asymmetric costs → wastes retention budget
 
-This approach: Optimize for business metrics → higher recall on churners → dramatically lower false positives → focused retention spend
+**This approach**: Optimize for business metrics → higher recall on churners → dramatically lower false positives → focused retention spend
 
 ---
 
