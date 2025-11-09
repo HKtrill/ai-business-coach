@@ -52,7 +52,7 @@ Stage 1: Logistic Regression (Linear Algebra – SMOTE + F2)
 Stage 2: Random Forest (Non-linear Geometric Cluster Interactions – No SMOTE + F1)
   ↓ (Identifies feature interactions & protective patterns)
   
-Stage 3: RNN/GRU (Temporal Calculus - No SMOTE)
+Stage 3: RNN (Temporal Calculus – No SMOTE)
   ↓ (Models customer lifecycle evolution & behavioral drift)
   
 Stage 4: XGBoost Meta-Learner (Ensemble Synthesis) ✓ WINNER
