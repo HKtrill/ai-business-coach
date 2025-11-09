@@ -368,20 +368,10 @@ prediction_output = {
 
 **Research Hypothesis**: Specialized cascade architectures designed around domain business logic can outperform general-purpose black-box models on both performance and explainability for decomposable prediction tasks.
 
-### Supporting Evidence
-
-- ✅ **Performance**: Meta-learner achieves 0.9080 F2 vs. 0.8298 best single model (+10.8%)
-- ✅ **Precision Gain**: +32.5% improvement while maintaining high recall
-- ✅ **Interpretability**: 9 meta-features directly map to decision logic; per-customer model attribution
-- ✅ **Efficiency**: 2-mode deployment reduces inference cost by 95% for real-time scoring
-- ✅ **Stability**: Consistent cross-fold performance (±1.6% CV on F2)
-- ✅ **Business Alignment**: Asymmetric thresholds reflect actual retention cost structure
-
-### Why This Matters
-
-**Industry default**: Optimize for global AUC/accuracy → misses asymmetric costs → wastes retention budget
-
-**This approach**: Optimize for business metrics → higher recall on churners → dramatically lower false positives → focused retention spend
+### Evidence Highlights
+- F2: +10.8% vs best single model
+- Precision: +32.5% improvement
+- Real-time deployment with per-customer explainability
 
 ---
 
