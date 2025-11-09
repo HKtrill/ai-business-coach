@@ -503,13 +503,6 @@ Compare this to general-purpose models that may rely on cloud APIs with inherent
 
 ---
 
-## ⬇️ Clone or Download
-
-```bash
-git clone https://github.com/HKtrill/Project-ChurnBot.git
-cd Project-ChurnBot
-npm install # or yarn
-```
 ## 📂 Project Structure
 ```
 prototype/
