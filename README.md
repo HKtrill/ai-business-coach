@@ -211,7 +211,7 @@ lr_features = [
 ```python
 rf_features = [
     # All LR features (inherited baseline)
-    *lr_features,
+    'lr_features',
     'lr_churn_probability',       # Meta-feature from Stage 1
     'lr_confidence',              # abs(lr_prob - 0.5) * 2
     
