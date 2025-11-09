@@ -99,7 +99,13 @@ Each stage serves a distinct interpretable purpose mapping to real telecom busin
 | Best Single Model (LR) | 0.8298 | 0.9460 | 0.5565 | — |
 | Meta-Learner Cascade | 0.9080 | 0.9133 | 0.8880 | **+10.8% F2, +32.5% Precision** |
 
-The cascade achieves higher recall while dramatically reducing false positives—a critical business advantage.
+The cascade improves overall F2 and precision while maintaining high recall. Fold-level results show stable performance across 5-fold cross-validation:
+
+- **F2**: 0.8985 – 0.9163  
+- **Recall**: 0.9037 – 0.9276  
+- **Precision**: 0.8586 – 0.9286  
+
+This demonstrates that the cascade reliably reduces false positives without sacrificing churn coverage. Fewer false positives translate directly to more focused retention spending and higher ROI.
 
 ---
 
