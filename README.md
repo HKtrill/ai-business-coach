@@ -104,24 +104,6 @@ The cascade achieves higher recall while dramatically reducing false positives�
 
 ---
 
-## 🧠 Core Innovation: Knowledge Distillation & Meta-Learner Synthesis
-
-### Why Meta-Learner Beats Distillation
-
-We tested three ensemble synthesis approaches:
-
-1. **Soft Target Knowledge Distillation** (Ridge LR + RF Regressor)
-   - LR MSE: 0.0103 | RF MSE: 0.0004
-   - Result: Underperformed meta-learner approach
-   
-2. **Distilled GRU** (trained on soft targets from ensemble)
-   - Result: Underperformed meta-learner approach, outperformed LR/RF KD
-   
-3. **Meta-Learner (XGBoost)** ✓ **WINNER**
-   - Learns optimal model weighting based on per-sample confidence patterns
-   - Identifies 457 high-disagreement cases for specialized handling
-   - Achieves F2 of 0.9080 across all folds consistently
-
 ### Meta-Learner Feature Engineering
 
 The meta-learner receives 9 meta-features encoding disagreement and confidence signals:
