@@ -140,18 +140,18 @@ meta_features = [
 
 Individual models contribute asymmetrically to final predictions:
 
-- **Logistic Regression**: 76% contribution (strong linear signal)
-- **RNN**: 15.5% contribution (temporal patterns matter)
-- **Random Forest**: 8.5% contribution (non-linear interactions less critical)
+- **Logistic Regression**: 76% contribution – captures strong linear patterns.
+- **RNN**: 15.5% contribution – models temporal and spending-based behavioral dynamics.
+- **Random Forest**: 8.5% contribution – captures non-linear interactions.
 
 Meta-learner learns this weighting adaptively per customer—some high-risk customers require RNN's temporal analysis, while others are confidently flagged by LR's linear patterns.
 
 ### Disagreement Analysis
 
 **457 high-disagreement cases** identified where models strongly diverge. These cases are flagged for:
-- NLP context extraction from customer interaction history
+- NLP-based context extraction from customer interaction history
 - Specialized handling by retention teams
-- Feature importance debugging to understand model conflicts
+- Feature-importance analysis to intuitively understand model conflicts
 
 **Business Value**: These 457 customers receive individualized analysis rather than generic scoring.
 
@@ -288,22 +288,6 @@ rnn_features = [
 **Performance with LR+RF Context**: F2: 0.7815 | Recall: 0.8074 | Precision: 0.6789
 
 ---
-
-## 🚀 Deployment Strategy: Two Modes
-
-### Quick Mode (Real-time)
-- **Model**: XGBoost meta-learner only
-- **Latency**: ~10ms per prediction
-- **Use Case**: API responses, batch scoring, real-time dashboards
-- **Output**: Churn probability + confidence flag
-
-### Deep Analysis Mode (On-demand)
-- **Model**: Full 4-stage cascade
-- **Latency**: 100-200ms per prediction
-- **Use Case**: High-value customer review, retention planning, feature debugging
-- **Output**: Individual model probabilities + disagreement metrics + top contributing features
-
-**Router Logic**: Meta-learner classifies prediction confidence. High-confidence predictions use Quick Mode. Low-confidence or flagged cases route to Deep Analysis.
 
 ### Explainability Exports
 
