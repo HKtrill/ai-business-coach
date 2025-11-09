@@ -366,7 +366,7 @@ prediction_output = {
 
 ## 🧠 Core Thesis: Domain-Specific Cascades Beat Generic Black-Boxes
 
-**Research Hypothesis**: Specialized cascade architectures designed around domain business logic can outperform general-purpose black-box models on both performance and explainability for decomposable prediction tasks.
+**Research Hypothesis**: Specialized cascade architectures designed around domain business logic can outperform general-purpose black-box models on both performance and interpretability for decomposable prediction tasks.
 
 ### Evidence Highlights
 - F2: +10.8% vs best single model
