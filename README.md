@@ -483,23 +483,11 @@ Compare this to general-purpose models that may rely on cloud APIs with inherent
 
 ---
 
-## 🔮 Next Steps
-
-1. Enhance cascade with deeper RNN layers and optimized hyperparameters
-2. Test on multiple datasets using 10-fold cross-validation
-3. Implement cost-based threshold tuning to optimize retention expenses
-4. Target recall improvement to 80-85% through noise reduction techniques
-5. Explore GRU replacement for RNN stage
-6. Prepare statistical rigor for academic submission
-
----
-
 ## ⚠️ Limitations
 
 - Dataset variability imposes generalization challenges
 - Preprocessing introduces potential bias
 - Feature distributions vary across datasets
-- Additional 10-15% recall improvement requires innovative noise reduction techniques
 
 ---
 
