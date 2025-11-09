@@ -21,7 +21,7 @@
 
 ## 📖 Synopsis
 
-Project ChurnBot transforms telecom data into actionable intelligence through a domain-specialized cascade architecture that predicts churn with research-backed precision. Rather than treating churn as a generic classification problem, this multi-stage system decomposes the prediction task into interpretable stages—capturing linear patterns, non-linear interactions, and temporal behaviorial patterns over time. The result: a meta-learner ensemble that achieves superior performance whith interpretable results.
+Project ChurnBot turns telecom data into actionable intelligence using a domain-specialized cascade architecture for churn prediction. Instead of treating churn as a generic classification problem, it decomposes the task into interpretable stages—capturing linear patterns, non-linear interactions, and temporal behavioral trends. The result is a meta-learner ensemble that delivers superior performance and clear, actionable insights.
 
 ![Dataset Overview](assets/dataset_overview.png)
 *Dataset characteristics: churn distribution peaks at early tenure, specific monthly charge ranges, and contract types.*
