@@ -58,7 +58,7 @@ Stage 3: RNN (Temporal Calculus – No SMOTE)
 Stage 4: XGBoost Meta-Learner (Ensemble Synthesis)
   ↓ Routes predictions based on model confidence & disagreement
   
-Final Prediction with Per-Customer Explainability
+Customer-Level Predictions with Clear Insights
 ```
 
 Each stage serves a distinct interpretable purpose mapping to real telecom business logic:
