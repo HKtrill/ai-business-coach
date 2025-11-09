@@ -419,8 +419,6 @@ This approach: Optimize for business metrics → higher recall on churners → d
 
 ---
 
----
-
 ## 🗣️ User Interface: NLP-Driven Interaction
 
 Project ChurnBot features a natural language processing interface that streamlines user interaction. Users can input queries in plain language, and ChurnBot:
