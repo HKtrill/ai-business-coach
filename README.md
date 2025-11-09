@@ -380,12 +380,12 @@ prediction_output = {
 
 ### Supporting Evidence
 
-✅ **Performance**: Meta-learner achieves 0.9080 F2 vs. 0.8298 best single model (+10.8%)
-✅ **Precision Gain**: +32.5% improvement while maintaining high recall
-✅ **Interpretability**: 9 meta-features directly map to decision logic; per-customer model attribution
-✅ **Efficiency**: 2-mode deployment reduces inference cost by 95% for real-time scoring
-✅ **Stability**: Consistent cross-fold performance (±1.6% CV on F2)
-✅ **Business Alignment**: Asymmetric thresholds reflect actual retention cost structure
+- ✅ **Performance**: Meta-learner achieves 0.9080 F2 vs. 0.8298 best single model (+10.8%)
+- ✅ **Precision Gain**: +32.5% improvement while maintaining high recall
+- ✅ **Interpretability**: 9 meta-features directly map to decision logic; per-customer model attribution
+- ✅ **Efficiency**: 2-mode deployment reduces inference cost by 95% for real-time scoring
+- ✅ **Stability**: Consistent cross-fold performance (±1.6% CV on F2)
+- ✅ **Business Alignment**: Asymmetric thresholds reflect actual retention cost structure
 
 ### Why This Matters
 
@@ -411,6 +411,11 @@ This approach: Optimize for business metrics → higher recall on churners → d
 - Apply meta-learner cascade to billing dispute prediction
 - Extend to upgrade propensity and usage spike detection
 - Generalize framework to other telecom KPIs
+
+### **Phase 4: Benchmark Against Large Models**
+- Compare against **GPT-4**, **Claude 3**, and **commercial churn prediction** tools  
+- Measure **data efficiency**, **inference latency**, and **business impact** metrics  
+- Quantify tradeoffs between **ensemble-based meta-learners** and **pre-trained foundation model predictors**
 
 ---
 
