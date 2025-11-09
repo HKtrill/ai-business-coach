@@ -38,7 +38,7 @@ Most off-the-shelf churn models treat telecom patterns as interchangeable classi
 - **Service paradox**: No internet service = lower churn (counterintuitive pattern)
 - **Social anchors**: Referrals + dependents stabilize long-term customers
 
-**Current Industry Practice**: Optimize for AUC or accuracy globally—missing the asymmetric cost structure where false negatives (missed churners) cost 8x more than false positives (over-retention offers).
+**Current Industry Practice**: Optimize for AUC or accuracy globally—missing the asymmetric cost structure where false negatives (missed churners) cost 5-6x more than false positives (over-retention offers).
 
 **Our Solution**: A specialized cascade that learns asymmetric thresholds and domain patterns through multi-stage feature engineering and intelligent ensemble synthesis.
 
