@@ -359,7 +359,7 @@ prediction_output = {
 |-------|-------|-------------------|
 | 1 | Logistic Regression | Aggressive SMOTE (60%, k=5), F2 optimization, L2 regularization (C=1.0), balanced class weights |
 | 2 | Random Forest | No SMOTE, F1 optimization, 100 trees, max_depth=10, class_weight='balanced' |
-| 3 | RNN/GRU | No SMOTE, 64 units, 2 stacked layers, dropout=0.3, batch_size=32 |
+| 3 | RNN | No SMOTE, 64 units, 2 stacked layers, dropout=0.3, batch_size=32 |
 | 4 | XGBoost Meta-Learner | max_depth=5, learning_rate=0.1, n_estimators=100 |
 
 ---
