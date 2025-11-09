@@ -21,10 +21,10 @@
 
 ## 📖 Synopsis
 
-Project ChurnBot transforms telecom data into actionable intelligence through a domain-specialized cascade architecture that predicts churn with research-backed precision. Rather than treating churn as a generic classification problem, this multi-stage system decomposes the prediction task into interpretable stages—capturing linear patterns, non-linear interactions, and temporal behavior evolution. The result: a meta-learner ensemble that achieves superior performance tradeoff while remaining explainable to business stakeholders.
+Project ChurnBot transforms telecom data into actionable intelligence through a domain-specialized cascade architecture that predicts churn with research-backed precision. Rather than treating churn as a generic classification problem, this multi-stage system decomposes the prediction task into interpretable stages—capturing linear patterns, non-linear interactions, and temporal behavior evolution. The result: a meta-learner ensemble that achieves superior performance while remaining explainable to business stakeholders.
 
 ![Dataset Overview](assets/dataset_overview.png)
-*Dataset characteristics: churn distribution peaks at early tenure, specific monthly charge ranges, and contract types. UsageSlope and TenureBucket emerge as critical engineered features.*
+*Dataset characteristics: churn distribution peaks at early tenure, specific monthly charge ranges, and contract types. UsageSlope and TenureBucket emerge as possible features to use at this stage.*
 
 ---
 
@@ -38,7 +38,7 @@ Most off-the-shelf churn models treat telecom patterns as interchangeable classi
 - **Service paradox**: No internet service = lower churn (counterintuitive pattern)
 - **Social anchors**: Referrals + dependents stabilize long-term customers
 
-**Current Industry Practice**: Optimize for AUC or accuracy globally—missing the asymmetric cost structure where false negatives (missed churners) cost 5-6x more than false positives (over-retention offers).
+**Current Industry Practice**: Optimize for AUC or accuracy globally—missing the asymmetric cost structure where false negatives (missed churners) cost 8x more than false positives (over-retention offers).
 
 **Our Solution**: A specialized cascade that learns asymmetric thresholds and domain patterns through multi-stage feature engineering and intelligent ensemble synthesis.
 
@@ -47,10 +47,10 @@ Most off-the-shelf churn models treat telecom patterns as interchangeable classi
 ## 🎯 Architecture: Four-Stage Cascade with Meta-Learner Synthesis
 
 ```
-Stage 1: Logistic Regression (Linear Algebra - SMOTE balanced)
+Stage 1: Logistic Regression (Linear Algebra - SMOTE + F2)
   ↓ (Captures linear relationships & baseline feature importance)
   
-Stage 2: Random Forest (Non-linear Interactions - No SMOTE)
+Stage 2: Random Forest (Non-linear Interactions - No SMOTE +F1 F1)
   ↓ (Identifies feature interactions & protective patterns)
   
 Stage 3: RNN/GRU (Temporal Calculus - No SMOTE)
@@ -115,12 +115,12 @@ We tested three ensemble synthesis approaches:
    - Result: Underperformed meta-learner approach
    
 2. **Distilled GRU** (trained on soft targets from ensemble)
-   - Result: Underperformed meta-learner approach but outperformed LR and RF distillation
+   - Result: Underperformed meta-learner approach, outperformed LR/RF KD
    
 3. **Meta-Learner (XGBoost)** ✓ **WINNER**
    - Learns optimal model weighting based on per-sample confidence patterns
    - Identifies 457 high-disagreement cases for specialized handling
-   - Achieves F2 of 0.9080 across all folds consistently with minimal tradeoff
+   - Achieves F2 of 0.9080 across all folds consistently
 
 ### Meta-Learner Feature Engineering
 
@@ -183,7 +183,32 @@ Meta-learner learns this weighting adaptively per customer—some high-risk cust
 **Focus**: Maximize recall for early churn detection with explainable coefficients
 **Data Strategy**: Aggressive SMOTE balancing (60% sampling, k=5) + F2 metric optimization prioritizes recall over precision
 
-**Core Features**:
+**Feature Set**:
+```python
+lr_features = [
+    'contract_risk',              # M2M=0.85, 1Y=0.40, 2Y=0.10
+    'tenure_phase_0-3m',          # One-hot encoded tenure bins
+    'tenure_phase_3-6m',
+    'tenure_phase_6-12m',
+    'tenure_phase_12-24m',
+    'tenure_phase_24m+',
+    'monthly_risk_tier_low',      # One-hot encoded charge tiers
+    'monthly_risk_tier_medium',
+    'monthly_risk_tier_high',
+    'monthly_risk_tier_very_high',
+    'value_efficiency',           # Total / Expected Lifetime
+    'service_complexity',         # Normalized service count
+    'risk_decay',                 # exp(-tenure/12)
+    'spending_stress',            # (monthly - median) / iqr
+    'critical_new_m2m',           # (tenure ≤ 3m) × (contract=M2M) × (high spend)
+    'protective_established',     # (tenure > 24m) × (contract=2Y)
+    'has_referrals',              # Binary flag
+    'referral_strength',          # log(referrals) / log(max_referrals)
+    'has_dependents'              # Binary flag
+]
+```
+
+**Core Features Explained**:
 - Contract risk mapping: M2M=0.85, 1Y=0.40, 2Y=0.10
 - Tenure phase bins: 0-3m, 3-6m, 6-12m, 12-24m, 24m+ (captures churn cliff at 3m)
 - Monthly charge risk tiers: low/medium/high/very_high
@@ -201,7 +226,36 @@ Meta-learner learns this weighting adaptively per customer—some high-risk cust
 **Focus**: Balanced precision-recall tradeoff with non-linear relationship capture
 **Data Strategy**: No SMOTE balancing + F1 metric optimization for balanced classification
 
-**Key Interactions**:
+**Feature Set**:
+```python
+rf_features = [
+    # All LR features (inherited baseline)
+    *lr_features,
+    'lr_churn_probability',       # Meta-feature from Stage 1
+    'lr_confidence',              # abs(lr_prob - 0.5) * 2
+    
+    # 3-way interaction triangles
+    'critical_risk_triangle',     # (tenure ≤ 3m) × (contract=M2M) × (high spend)
+    'protective_bundle',          # (tenure > 24m) × (contract=2Y) × (services ≥ 3)
+    
+    # Financial patterns
+    'premium_new_customer',       # (high monthly) × (tenure ≤ 6m)
+    'value_disconnect',           # (high monthly) × (total < 0.7 * expected)
+    
+    # Service engagement gaps
+    'internet_no_premiums',       # has_internet × (premium_services = 0)
+    'basic_phone_only',           # has_phone × (multiple_lines = 0)
+    
+    # Social anchors
+    'strong_social_anchor',       # has_referrals × has_dependents
+    'no_social_connections',      # (no referrals) × (no dependents)
+    
+    # Billing behavior
+    'flexible_digital'            # paperless × (contract=M2M)
+]
+```
+
+**Key Interactions Explained**:
 - **3-way risk triangles**: tenure (early) × contract (M2M) × spend (high)
 - **Protective bundles**: tenure (24+) × contract (2Y) × services (3+)
 - **Financial patterns**: premium_new_customer (high spend + new), value_disconnect (high spend but low total)
@@ -215,7 +269,34 @@ Meta-learner learns this weighting adaptively per customer—some high-risk cust
 
 **Focus**: Temporal sequences and customer lifecycle evolution
 
-**Temporal Features**:
+**Feature Set**:
+```python
+rnn_features = [
+    'contract_risk',              # Temporal baseline
+    'tenure_risk',                # 1.0 / sqrt(tenure + 1.0)
+    'spending_stress',            # (monthly - median) / std
+    'value_efficiency',           # Total / Expected Lifetime
+    
+    # Risk decay curves (dual timescales)
+    'risk_decay_early',           # exp(-tenure / 6.0)
+    'risk_decay_late',            # exp(-tenure / 24.0)
+    
+    # Lifecycle patterns
+    'lifecycle_sin',              # sin(2π * tenure / 12)
+    'lifecycle_cos',              # cos(2π * tenure / 12)
+    'renewal_position',           # (tenure % contract_period) / contract_period
+    
+    # Service evolution
+    'service_engagement',         # (service_count) / (max_services)
+    'service_growth',             # service_count * tanh(tenure / 12)
+    
+    # Social stability over time
+    'referral_impact',            # log(referrals) * (1 - exp(-tenure / 12))
+    'dependents_stability'        # dependents * tanh(tenure / 24)
+]
+```
+
+**Temporal Features Explained**:
 - Risk decay curves: early phase (τ=6mo) vs. late phase (τ=24mo) decay rates
 - Lifecycle cycles: sin/cos terms capture seasonal patterns
 - Renewal position: where in contract cycle is customer?
@@ -238,7 +319,7 @@ Meta-learner learns this weighting adaptively per customer—some high-risk cust
 ### Deep Analysis Mode (On-demand)
 - **Model**: Full 4-stage cascade
 - **Latency**: 100-200ms per prediction
-- **Use Case**: High-value customer review, retention planning, feature debugging/optimizing
+- **Use Case**: High-value customer review, retention planning, feature debugging
 - **Output**: Individual model probabilities + disagreement metrics + top contributing features
 
 **Router Logic**: Meta-learner classifies prediction confidence. High-confidence predictions use Quick Mode. Low-confidence or flagged cases route to Deep Analysis.
@@ -351,18 +432,6 @@ This approach: Optimize for business metrics → higher recall on churners → d
 - Generalize framework to other telecom KPIs
 
 ---
-
-## ⚡ C++ Performance Optimization
-
-ChurnBot leverages custom C++ implementations for maximum inference speed and memory efficiency:
-
-- **Hand-optimized models**: LR, RF, and RNN written from scratch in C++
-- **CS Theory Optimizations**: Branch & bound algorithms, SIMD matrix operations, cache-friendly data structures
-- **Custom Memory Management**: Specialized allocators for telecom data patterns
-- **Python Integration**: Seamless pybind11 bindings maintain Python development experience
-- **Boundary Elimination**: Direct C++ pipeline execution eliminates Python interface overhead
-
-**Expected Performance Gains**: 5-20x faster inference compared to traditional Python ML libraries.
 
 ---
 
