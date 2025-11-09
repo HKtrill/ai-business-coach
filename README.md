@@ -89,7 +89,7 @@ Each stage serves a distinct interpretable purpose mapping to real telecom busin
 |-------|-----|--------|-----------|--------------|
 | Logistic Regression (SMOTE) | 0.8298 | 0.9460 | 0.5565 | High recall, interpretable coefficients |
 | Random Forest | 0.7759 | 0.7860 | 0.7530 | Balanced precision-recall |
-| RNN/GRU + LR+RF Context | 0.7815 | 0.8074 | 0.6789 | Temporal pattern capture |
+| RNN + LR+RF Context | 0.7815 | 0.8074 | 0.6789 | Temporal pattern capture |
 | **Meta-Learner Cascade** | **0.9080** | **0.9133** | **0.8880** | **Optimal ensemble weighting** |
 
 ### Cascade vs. Single-Model Baselines
