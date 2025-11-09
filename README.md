@@ -46,17 +46,17 @@ Most off-the-shelf churn models treat telecom patterns as interchangeable classi
 ## 🎯 Architecture: Four-Stage Cascade with Meta-Learner Synthesis
 
 ```
-Stage 1: Logistic Regression (Linear Algebra - SMOTE + F2)
+Stage 1: Logistic Regression (Linear Algebra – SMOTE + F2)
   ↓ (Captures linear relationships & baseline feature importance)
   
-Stage 2: Random Forest (Non-linear Interactions - No SMOTE +F1 F1)
+Stage 2: Random Forest (Non-linear Geometric Cluster Interactions – No SMOTE + F1)
   ↓ (Identifies feature interactions & protective patterns)
   
 Stage 3: RNN/GRU (Temporal Calculus - No SMOTE)
-  ↓ (Models lifecycle evolution & behavioral drift)
+  ↓ (Models customer lifecycle evolution & behavioral drift)
   
 Stage 4: XGBoost Meta-Learner (Ensemble Synthesis) ✓ WINNER
-  ↓ (Routes between models based on confidence & disagreement)
+  ↓ (Routes predictions based on model confidence & disagreement)
   
 Final Prediction with Per-Customer Explainability
 ```
