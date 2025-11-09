@@ -55,7 +55,7 @@ Stage 2: Random Forest (Non-linear Geometric Cluster Interactions – No SMOTE +
 Stage 3: RNN (Temporal Calculus – No SMOTE)
   ↓ Models customer lifecycle evolution & behavioral drift
   
-Stage 4: XGBoost Meta-Learner (Ensemble Synthesis) ✓ WINNER
+Stage 4: XGBoost Meta-Learner (Ensemble Synthesis)
   ↓ Routes predictions based on model confidence & disagreement
   
 Final Prediction with Per-Customer Explainability
