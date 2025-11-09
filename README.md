@@ -72,7 +72,7 @@ Each stage serves a distinct interpretable purpose mapping to real telecom busin
 
 ## 📊 Performance Metrics
 
-### Meta-Learner Final Results ✓ WINNER
+### Meta-Learner Final Results 
 
 | Metric | Score |
 |--------|-------|
