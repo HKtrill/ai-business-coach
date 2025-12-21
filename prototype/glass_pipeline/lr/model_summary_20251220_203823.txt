@@ -1,0 +1,54 @@
+
+============================================================
+LOGISTIC REGRESSION MODEL SUMMARY - BANK MARKETING
+============================================================
+
+MODEL INFORMATION:
+Model Type: Logistic Regression (Binary Classification)
+Target: 'y' (1 = 'yes' subscribe, 0 = 'no' don't subscribe)
+Training Date: 2025-12-20 20:38:23
+Training Samples: 36168
+Test Samples: 9043
+Features: 16
+
+TARGET DISTRIBUTION:
+Train - Positives: 4231 (11.7%)
+Test - Positives: 1058 (11.7%)
+
+HYPERPARAMETERS:
+C: 1.0
+Penalty: l2
+Class Weight: balanced
+Solver: liblinear
+Max Iterations: 1000
+
+PERFORMANCE METRICS (TEST SET):
+Accuracy: 0.8236
+Precision: 0.3792
+Recall: 0.7968
+F1-Score: 0.5139
+ROC-AUC: 0.8886
+Baseline Accuracy: 0.8830
+
+FEATURE IMPORTANCE (Top 10 by absolute coefficient):
+duration            : +1.4131 (POSITIVE)
+poutcome            : +0.5936 (POSITIVE)
+contact             : -0.5416 (NEGATIVE)
+housing             : -0.5082 (NEGATIVE)
+campaign            : -0.3690 (NEGATIVE)
+loan                : -0.2652 (NEGATIVE)
+education           : +0.1556 (POSITIVE)
+pdays               : -0.1379 (NEGATIVE)
+marital             : +0.1350 (POSITIVE)
+balance             : +0.0887 (POSITIVE)
+
+SAVED FILES:
+Model file: ./models/logistic_regression_model_20251220_203823.pkl
+Ensemble dict: ./models/lr_ensemble_dict_20251220_203823.pkl
+Joblib file: ./models/lr_ensemble_joblib_20251220_203823.joblib
+
+ENSEMBLE READY:
+Training predictions shape: (36168,)
+Test predictions shape: (9043,)
+Available for meta-ensemble stacking
+============================================================
