@@ -702,3 +702,47 @@ prototype/
 ├── BasePipeline.py                    # TODO: implement base class for pipelines
 └── README.md
 ```
+---
+## 📚 Dataset Sources & Citations
+
+### **1) Bank Marketing – Term Deposit Subscription (Current Benchmark)**
+
+This project uses the **Bank Marketing** dataset for primary empirical evaluation.
+The dataset is publicly available for research use via the UCI Machine Learning Repository.
+According to the dataset documentation, **both citations below are required**.
+
+**Dataset Source:**  
+Moro, S., Rita, P., & Cortez, P. (2014).  
+*Bank Marketing Dataset.*  
+UCI Machine Learning Repository.  
+DOI: https://doi.org/10.24432/C5K306
+
+**Required Citation (Academic):**  
+Moro, S., Laureano, R., & Cortez, P. (2011).  
+*Using Data Mining for Bank Direct Marketing: An Application of the CRISP-DM Methodology.*  
+In P. Novais et al. (Eds.), *Proceedings of the European Simulation and Modelling Conference – ESM’2011*,  
+pp. 117–121, Guimarães, Portugal. EUROSIS.
+
+Available at:  
+- PDF: http://hdl.handle.net/1822/14838  
+- BibTeX: http://www3.dsi.uminho.pt/pcortez/bib/2011-esm-1.txt
+
+**Public Access:**  
+- UCI Machine Learning Repository: https://archive.ics.uci.edu/ml/datasets/bank+marketing
+
+---
+
+### **2) IBM Telco Customer Churn Dataset (Exploratory / Feasibility)**
+
+The IBM Telco Customer Churn dataset was used during early experimentation to validate
+the feasibility of the glass-box cascade architecture. Results derived from this dataset
+should be interpreted as **architectural validation**, not final performance claims.
+
+Originally published by IBM as part of the **IBM Analytics Accelerator Catalog**.
+
+**Original Source (IBM):**  
+https://www.ibm.com/communities/analytics/watson-analytics-blog/guide-to-customer-churn-dataset/
+
+**Public Mirrors:**  
+- Kaggle: https://www.kaggle.com/datasets/blastchar/telco-customer-churn  
+- OpenML: https://www.openml.org/d/42178
