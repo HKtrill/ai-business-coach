@@ -542,7 +542,6 @@ Compare this to black-box cloud APIs with inherent data exposure risks and unexp
 
 This project uses the **Bank Marketing** dataset for primary empirical evaluation.
 The dataset is publicly available for research use via the UCI Machine Learning Repository.
-According to the dataset documentation, **both citations below are required**.
 
 **Dataset Source:**  
 Moro, S., Rita, P., & Cortez, P. (2014).  
