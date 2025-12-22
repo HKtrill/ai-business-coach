@@ -548,6 +548,23 @@ Compare this to black-box cloud APIs with inherent data exposure risks and unexp
 ---
 
 ## 📂 Project Structure
+
+> ⚠️ **Architecture Evolution Notice**
+>
+> This project has undergone active architectural iteration. As a result, some directories
+> and components reflect *earlier experimental designs* and may no longer represent the
+> current modeling approach.
+>
+> Notably:
+> - Certain legacy model paths (e.g., RNN-based components) are retained for reference but
+>   are no longer part of the active pipeline.
+> - The current focus centers on GLASS-BRW, Logistic Regression, Explainable Boosting Machines,
+>   and an abstention-aware Meta-EBM routing layer.
+>
+> Once the core models and system semantics are fully optimized and stabilized, the directory
+> structure will be reconciled to remove deprecated components and align with the final
+> architecture.
+
 ```
 prototype/
 ├── data/
