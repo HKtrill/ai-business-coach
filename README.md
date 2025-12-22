@@ -18,8 +18,31 @@
 **Author:** 👤 Phillip Harris
 
 ---
+> ⚠️ **Research Status & Dataset Transition Notice**
+>
+> This project is under active research and architectural refinement.
+> While the core methodology and glass-box cascade design are stable,
+> results and documentation are currently being revalidated.
+>
+> Notable updates:
+> - The system is transitioning from the widely used synthetic Telco churn dataset
+>   to a **real-world bank marketing subscription dataset** to ensure external validity.
+> - As a result, performance metrics, feature attributions, and examples in this README
+>   will be updated once the next cascade iteration is finalized and validated.
+> - Earlier experimental components (e.g., RNN-based stages) are no longer part of the
+>   canonical pipeline but may remain in the repository for historical reference.
+>
+> **Current research objective:**  
+> Predicting **subscription to term deposits** using a fully interpretable,
+> abstention-aware glass-box ensemble architecture.
+
+---
 ## 📖 Synopsis
-Project ChurnBot turns telecom data into actionable intelligence using a fully interpretable glass box cascade architecture for churn prediction. Instead of treating churn as a generic classification problem, it decomposes the task into interpretable stages—capturing linear patterns, non-linear interactions, and additive shape functions. The result is a meta-learner ensemble that delivers superior performance while maintaining complete transparency at every stage.
+Project ChurnBot is a research-driven, glass-box decision intelligence system for modeling customer retention and subscription behavior using fully interpretable cascade architectures. Rather than treating churn or subscription as a single black-box prediction task, the system decomposes reasoning into explicit, interpretable stages that capture linear effects, interaction-driven rules, and non-linear response curves.
+
+The cascade serves as the core reasoning engine, producing abstention-aware, fully explainable predictions. An NLP-based interface provides a natural language layer for interacting with model outputs and explanations. Ongoing research explores a custom, partially interpretable transformer-based interface, though this component remains experimental and is not required for the core system.
+
+The result is a transparent, high-performance ensemble where every decision can be traced back to human-readable logic—enabling trustworthy deployment without sacrificing predictive power.
 
 ![Dataset Overview](assets/dataset_overview.png)
 *Dataset characteristics: churn distribution peaks at early tenure, specific monthly charge ranges, and contract types.*
@@ -122,10 +145,6 @@ This demonstrates that the cascade reliably reduces false positives without sacr
 - Correlation with original RF: 0.9999 (identical predictions)
 - Every prediction explainable via IF-THEN rules
 - Example rule: `IF tenure≤3 AND contract=M2M AND monthly_charge>75 THEN churn_prob=0.85`
-
-### 2. EBM Replaces RNN (Stage 3)
-
-**Why Not RNN?**: Temporal patterns weren't needed when interaction-aware models (RF + EBM) captured customer lifecycle effectively.
 
 **EBM Advantages**:
 - Additive shape functions show exact non-linear relationships
@@ -439,36 +458,6 @@ prediction_output = {
 
 ---
 
-## 🎯 Next Steps
-
-### Phase 1: Validation Across Churn Domains
-- [ ] Telecom churn (additional datasets)
-- [ ] SaaS subscription churn
-- [ ] Retail customer churn
-- [ ] Financial services attrition
-
-**Goal**: Prove glass box superiority is systematic, not dataset-specific
-
-### Phase 2: Research Publication
-- [ ] Paper: "Glass Box Ensembles Outperform Black Boxes in Churn Prediction"
-- [ ] Generate visualizations (rule networks, shape functions, model weights)
-- [ ] Benchmark against commercial churn prediction tools
-- [ ] Document methodology for reproducibility
-
-### Phase 3: Advanced Interpretability
-- [ ] Interactive rule explorer for retention teams
-- [ ] Real-time explanation API (`explain_prediction()`)
-- [ ] Customer-facing risk factor summaries
-- [ ] Counterfactual analysis ("What if customer upgraded to 2-year contract?")
-
-### Phase 4: Benchmark Against Foundation Models
-- [ ] Compare vs. GPT-4, Claude 3 on churn prediction
-- [ ] Measure data efficiency (samples needed for comparable performance)
-- [ ] Quantify inference latency and computational cost
-- [ ] Evaluate business impact (ROI of retention strategies)
-
----
-
 ## 🗣️ User Interface: NLP-Driven Interaction
 
 Project ChurnBot features a natural language processing interface that streamlines user interaction. Users can input queries in plain language, and ChurnBot:
@@ -547,24 +536,51 @@ Compare this to black-box cloud APIs with inherent data exposure risks and unexp
 
 ---
 
+## 📚 Dataset Sources & Citations
+
+### **1) Bank Marketing – Term Deposit Subscription (Current Benchmark)**
+
+This project uses the **Bank Marketing** dataset for primary empirical evaluation.
+The dataset is publicly available for research use via the UCI Machine Learning Repository.
+According to the dataset documentation, **both citations below are required**.
+
+**Dataset Source:**  
+Moro, S., Rita, P., & Cortez, P. (2014).  
+*Bank Marketing Dataset.*  
+UCI Machine Learning Repository.  
+DOI: https://doi.org/10.24432/C5K306
+
+**Required Citation (Academic):**  
+Moro, S., Laureano, R., & Cortez, P. (2011).  
+*Using Data Mining for Bank Direct Marketing: An Application of the CRISP-DM Methodology.*  
+In P. Novais et al. (Eds.), *Proceedings of the European Simulation and Modelling Conference – ESM’2011*,  
+pp. 117–121, Guimarães, Portugal. EUROSIS.
+
+Available at:  
+- PDF: http://hdl.handle.net/1822/14838  
+- BibTeX: http://www3.dsi.uminho.pt/pcortez/bib/2011-esm-1.txt
+
+**Public Access:**  
+- UCI Machine Learning Repository: https://archive.ics.uci.edu/ml/datasets/bank+marketing
+
+---
+
+### **2) IBM Telco Customer Churn Dataset (Exploratory / Feasibility)**
+
+The IBM Telco Customer Churn dataset was used during early experimentation to validate
+the feasibility of the glass-box cascade architecture. Results derived from this dataset
+should be interpreted as **architectural validation**, not final performance claims.
+
+Originally published by IBM as part of the **IBM Analytics Accelerator Catalog**.
+
+**Original Source (IBM):**  
+https://www.ibm.com/communities/analytics/watson-analytics-blog/guide-to-customer-churn-dataset/
+
+**Public Mirrors:**  
+- Kaggle: https://www.kaggle.com/datasets/blastchar/telco-customer-churn  
+- OpenML: https://www.openml.org/d/42178
+
 ## 📂 Project Structure
-
-> ⚠️ **Architecture Evolution Notice**
->
-> This project has undergone active architectural iteration. As a result, some directories
-> and components reflect *earlier experimental designs* and may no longer represent the
-> current modeling approach.
->
-> Notably:
-> - Certain legacy model paths (e.g., RNN-based components) are retained for reference but
->   are no longer part of the active pipeline.
-> - The current focus centers on GLASS-BRW, Logistic Regression, Explainable Boosting Machines,
->   and an abstention-aware Meta-EBM routing layer.
->
-> Once the core models and system semantics are fully optimized and stabilized, the directory
-> structure will be reconciled to remove deprecated components and align with the final
-> architecture.
-
 ```
 prototype/
 ├── data/
@@ -702,47 +718,3 @@ prototype/
 ├── BasePipeline.py                    # TODO: implement base class for pipelines
 └── README.md
 ```
----
-## 📚 Dataset Sources & Citations
-
-### **1) Bank Marketing – Term Deposit Subscription (Current Benchmark)**
-
-This project uses the **Bank Marketing** dataset for primary empirical evaluation.
-The dataset is publicly available for research use via the UCI Machine Learning Repository.
-According to the dataset documentation, **both citations below are required**.
-
-**Dataset Source:**  
-Moro, S., Rita, P., & Cortez, P. (2014).  
-*Bank Marketing Dataset.*  
-UCI Machine Learning Repository.  
-DOI: https://doi.org/10.24432/C5K306
-
-**Required Citation (Academic):**  
-Moro, S., Laureano, R., & Cortez, P. (2011).  
-*Using Data Mining for Bank Direct Marketing: An Application of the CRISP-DM Methodology.*  
-In P. Novais et al. (Eds.), *Proceedings of the European Simulation and Modelling Conference – ESM’2011*,  
-pp. 117–121, Guimarães, Portugal. EUROSIS.
-
-Available at:  
-- PDF: http://hdl.handle.net/1822/14838  
-- BibTeX: http://www3.dsi.uminho.pt/pcortez/bib/2011-esm-1.txt
-
-**Public Access:**  
-- UCI Machine Learning Repository: https://archive.ics.uci.edu/ml/datasets/bank+marketing
-
----
-
-### **2) IBM Telco Customer Churn Dataset (Exploratory / Feasibility)**
-
-The IBM Telco Customer Churn dataset was used during early experimentation to validate
-the feasibility of the glass-box cascade architecture. Results derived from this dataset
-should be interpreted as **architectural validation**, not final performance claims.
-
-Originally published by IBM as part of the **IBM Analytics Accelerator Catalog**.
-
-**Original Source (IBM):**  
-https://www.ibm.com/communities/analytics/watson-analytics-blog/guide-to-customer-churn-dataset/
-
-**Public Mirrors:**  
-- Kaggle: https://www.kaggle.com/datasets/blastchar/telco-customer-churn  
-- OpenML: https://www.openml.org/d/42178
