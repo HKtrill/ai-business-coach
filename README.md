@@ -21,14 +21,16 @@
 > ⚠️ **Research Status & Dataset Transition Notice**
 >
 > This project is under active research and architectural refinement.
-> While the core methodology and glass-box cascade design are stable,
-> results and documentation are currently being revalidated.
+> While the core glass-box cascade methodology is now established,
+> the current focus has shifted from architectural prototyping to
+> rigorous application and validation on real-world data.
 >
 > Notable updates:
-> - The system is transitioning from the widely used synthetic Telco churn dataset
->   to a **real-world bank marketing subscription dataset** to ensure external validity.
+> - The system is transitioning from the synthetic Telco churn dataset
+>   (used for early architectural validation) to a **real-world bank marketing
+>   subscription dataset** to ensure external validity.
 > - As a result, performance metrics, feature attributions, and examples in this README
->   will be updated once the next cascade iteration is finalized and validated.
+>   will be updated once the current cascade iteration is finalized and validated.
 > - Earlier experimental components (e.g., RNN-based stages) are no longer part of the
 >   canonical pipeline but may remain in the repository for historical reference.
 >
