@@ -50,7 +50,6 @@ The result is a transparent, high-performance ensemble where every decision can 
 *Dataset characteristics: churn distribution peaks at early tenure, specific monthly charge ranges, and contract types.*
 
 ---
-
 ## 🚨 Problem: The Interpretability–Performance Trade-off Myth
 
 The ML industry perpetuates a harmful misconception: **“You must sacrifice accuracy for interpretability.”**  
@@ -67,7 +66,6 @@ This belief leads to:
 **Our Solution**: A fully interpretable glass-box cascade that can **compete with or outperform** traditional black-box approaches while providing complete transparency. Every prediction is grounded in explicit rules, linear coefficients, and additive shape functions, enabling **faithful, exact explanations** rather than approximations.
 
 ---
-
 ## 🎯 Architecture: 100% Glass Box Four-Stage Cascade
 ```
 Stage 1: Logistic Regression (Linear Signals)
@@ -94,23 +92,25 @@ Customer-Level Predictions with End-to-End Explainability
 
 ### Key Innovation: Every Stage is Interpretable
 
-- **Logistic Regression**: Direct coefficient inspection (e.g., "M2M contract increases log-odds by +2.3")
-- **Rule-Based RF**: Explicit rules (e.g., "IF tenure≤3 AND contract=M2M AND charge>$75 THEN 85% churn probability")
-- **EBM**: Additive shape functions (e.g., "Risk drops exponentially after 12 months tenure")
-- **Meta-EBM**: Feature importance reveals model weighting strategy (e.g., "RF predictions weighted 5x higher in disagreement cases")
+- **Logistic Regression**: Direct coefficient inspection 
+- **Sequential GLASS-BRW**: Explicit IF–THEN rules with abstention and routing
+- **EBM**: Additive shape functions exposing non-linear relationships in the data
+- **Meta-EBM**: Interpretable weighting of stage outputs, revealing how and when each model is trusted
 
 ---
 
 ## 🧠 Core Thesis: Glass Boxes Can Outperform Black Boxes
 
-**Research Hypothesis**: Carefully designed glass box ensembles can match or exceed black-box performance while providing complete transparency—particularly in domains with strong structural patterns like churn prediction.
+**Research Hypothesis**: Carefully designed glass-box ensemble architectures can match or exceed black-box performance while preserving full interpretability; especially in structured decision domains such as customer retention and subscription modeling.
 
-### Evidence Highlights
+### Supporting Observations
 
-- **Performance**: Glass box architecture achieved +1.3% F2, +1.4% Recall, +0.8% Precision vs. previous black-box approach
-- **Stability**: Zero variance across 5-fold CV (perfect reproducibility)
-- **Interpretability**: 100% of predictions explainable through linear coefficients, explicit rules, and shape functions
-- **Business Value**: Stakeholders can understand and trust predictions, enabling targeted retention strategies
+- **Competitive performance** observed in prior experimental evaluations relative to black-box baselines
+- **High stability** across validation splits due to deterministic routing and abstention mechanisms
+- **Complete interpretability**: all predictions are decomposable into coefficients, explicit rules, and additive shape functions
+- **Operational value**: transparent decision logic enables trust, auditability, and actionable intervention strategies
+
+This work argues that the perceived **accuracy–interpretability trade-off** is an architectural choice, not a fundamental limitation in structured decision-making domains.
 
 ---
 
@@ -128,11 +128,11 @@ This allows analysts and executives to interact with complex ML pipelines effort
 
 ## 🎯 Choose Your Experience
 
-⚡ **Terminal Version (Light)**: For telecom analysts and technical teams — fast, efficient insights through command-line interaction with full rule/coefficient visibility.
+⚡ **Terminal Version (Light)**: For business analysts and technical teams — fast, efficient insights through command-line interaction with full rule/coefficient visibility.
 
-📈 **Dashboard Version (Heavy)**: For telecom executives — rich visualizations of shape functions, rule networks, and model weights for executive-ready presentations.
+📈 **Dashboard Version (Heavy)**: For executives and decision-makers — rich visualizations of shape functions, rule networks, and model weights for executive-ready presentations.
 
-Both versions maintain 100% interpretability, analyzing call patterns, data usage shifts, billing disputes, and service degradation with complete transparency. All computations run locally, keeping sensitive subscriber data on your network.
+Both versions maintain 100% interpretability and transparency. All computations run locally, keeping sensitive subscriber data on your network as opposed to a 3rd-party cloud.
 
 ---
 
@@ -153,15 +153,15 @@ Compare this to black-box cloud APIs with inherent data exposure risks and unexp
 ### 💼 Real-World Impact
 
 **Business ROI**:
-- 📉 Reduce churn-related losses through precise targeting (+1.4% recall improvement)
-- 📈 Improve executive decision-making with actionable insights (explicit rules + shape functions)
+- 📉 Reduce customer acquisition costs through precise sample targeting 
+- 📈 Improve executive decision-making with actionable insights 
 - 🛡️ Maintain full data sovereignty → avoid compliance penalties
 - 💰 Eliminate cloud API costs and subscription fees
-- 🎯 Reduce false positives by 8.4% → more focused retention spending
+- 🎯 Reduce false positives leading to more focused marketing spend
 
 **Security & Compliance ROI**:
 - 🔒 Complete data privacy — no external data exposure
-- 📋 Regulatory compliance through complete audit trail
+- 📋 Regulatory compliance through complete audit trail (every prediction can be traced)
 - 🏢 Enterprise-grade security through local execution
 - 📊 Explainable AI for high-stakes decisions (GDPR, fair lending compliance)
 
