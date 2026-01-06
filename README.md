@@ -5,7 +5,7 @@
 
 **Current Application:** Predicting term deposit subscriptions using glass-box ML
 
-*Predict, prevent, and proactively respond to customer behavior with a research-backed, AI assistant*
+*Predict, prevent, and proactively respond to customer behavior with a research-backed AI assistant*
 
 **Tech Stack:**
 <img src="https://cdn.simpleicons.org/sqlite/003B57" alt="SQLite" width="24"/> SQLite, 
