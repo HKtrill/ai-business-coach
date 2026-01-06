@@ -1,13 +1,11 @@
 <img src="assets/churnbot_icon.png" align="right" width="96">
 
-# Project ChurnBot — Turning Customer Retention Into Actionable Intelligence
-
+# Project ChurnBot — Interpretable Customer Decision Intelligence
 > *Proving that you can have your cake (performance) and eat it too (interpretability).*
 
-**Current Application:** Predicting term deposit subscriptions using fully interpretable ML
+**Current Application:** Predicting term deposit subscriptions using glass-box ML
 
-*Predict, prevent, and proactively respond to customer behavior with a research-backed, 
-production-ready AI assistant*
+*Predict, prevent, and proactively respond to customer behavior with a research-backed, AI assistant*
 
 **Tech Stack:**
 <img src="https://cdn.simpleicons.org/sqlite/003B57" alt="SQLite" width="24"/> SQLite, 
@@ -45,14 +43,15 @@ production-ready AI assistant*
 
 ---
 ## 📖 Synopsis
-Project ChurnBot is a research-driven, glass-box decision intelligence system for customer retention modeling using fully interpretable cascade architectures. Instead of treating retention outcomes as a single black-box prediction task, the system decomposes decision-making into explicit, interpretable stages that capture linear effects, interaction-driven rules, and non-linear response curves.
+Project ChurnBot is a research-driven, glass-box decision intelligence system for customer behavior prediction using fully interpretable cascade architectures. Instead of treating customer decisions as a single black-box prediction task, the system decomposes decision-making into explicit, interpretable stages that capture linear effects, interaction-driven rules, and non-linear response curves.
 
 The cascade serves as the core reasoning engine, producing abstention-aware, fully explainable predictions. A lightweight NLP interface enables natural-language interaction with model outputs and explanations, while remaining optional to the core system.
 
 The result is a transparent, high-performance ensemble where every decision can be traced to human-readable logic—enabling trustworthy deployment without sacrificing predictive power.
 
 ![Dataset Overview](assets/dataset_overview.png)
-*Dataset characteristics: churn distribution peaks at early tenure, specific monthly charge ranges, and contract types.*
+*Dataset visualization from early Telco churn experiments; current bank marketing 
+dataset analysis forthcoming.**
 
 ---
 ## 🚨 Problem: The Interpretability–Performance Trade-off Myth
