@@ -51,7 +51,7 @@ The result is a transparent, high-performance ensemble where every decision can 
 
 ![Dataset Overview](assets/dataset_overview.png)
 *Dataset visualization from early Telco churn experiments; current bank marketing 
-dataset analysis forthcoming.**
+dataset analysis forthcoming.*
 
 ---
 ## 🚨 Problem: The Interpretability–Performance Trade-off Myth
@@ -136,7 +136,7 @@ This allows analysts and executives to interact with complex ML pipelines effort
 
 📈 **Dashboard Version (Heavy)**: For executives and decision-makers — rich visualizations of shape functions, rule networks, and model weights for executive-ready presentations.
 
-Both versions maintain 100% interpretability and transparency. All computations run locally, keeping sensitive subscriber data on your network as opposed to a 3rd-party cloud.
+Both versions maintain 100% interpretability and transparency. All computations run locally, keeping sensitive customer data on your network as opposed to a 3rd-party cloud.
 
 ---
 
@@ -144,7 +144,7 @@ Both versions maintain 100% interpretability and transparency. All computations 
 
 ChurnBot runs entirely on your machine with zero cloud dependencies:
 
-✅ No external data transfers — sensitive subscriber data never leaves your network  
+✅ No external data transfers — sensitive customer data never leaves your network  
 ✅ No monthly fees or API costs  
 ✅ Full data sovereignty — maintain compliance and avoid regulatory penalties  
 ✅ Immediate analysis — no network latency or downtime  
@@ -174,7 +174,7 @@ Compare this to black-box cloud APIs with inherent data exposure risks and unexp
 ## 🎯 Current Research Focus
 
 - ✅ Full glass box architecture achieved
-- ✅ Rule extraction from Random Forest (59k paths → 100 rules)
+- ✅ Rule extraction from Random Forest 
 - ✅ EBM integration for non-linear patterns
 - ✅ Meta-EBM for interpretable ensemble weighting
 - 🔄 Cross-dataset validation (telecom, SaaS, retail)
