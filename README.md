@@ -1,8 +1,13 @@
 <img src="assets/churnbot_icon.png" align="right" width="96">
 
 # Project ChurnBot — Turning Customer Retention Into Actionable Intelligence
-*Predict, prevent, and proactively respond to churn, threats, and performance issues with a research-backed, production-ready AI assistant*
 
+> *Proving that you can have your cake (performance) and eat it too (interpretability).*
+
+**Current Application:** Predicting term deposit subscriptions using fully interpretable ML
+
+*Predict, prevent, and proactively respond to customer behavior with a research-backed, 
+production-ready AI assistant*
 
 **Tech Stack:**
 <img src="https://cdn.simpleicons.org/sqlite/003B57" alt="SQLite" width="24"/> SQLite, 
@@ -185,10 +190,6 @@ Compare this to black-box cloud APIs with inherent data exposure risks and unexp
 - Rule consolidation requires domain expertise for threshold tuning
 - Glass box conversion adds one-time computational overhead
 - Shape function interpretability requires statistical literacy
-
----
-
-*ChurnBot: Proving that you can have your cake (performance) and eat it too (interpretability).*
 
 ---
 
