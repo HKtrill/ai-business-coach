@@ -86,11 +86,11 @@ Stage 3: Explainable Boosting Machine (EBM)
   ↓ Models non-linear effects via additive, interpretable shape functions
   ↓ Resolves uncertainty in routed or abstained samples
 
-Stage 4: Meta-EBM (Abstention-Aware Decision Router)
-  ↓ Learns how to resolve and route predictions from LR, GLASS-BRW, and EBM
-  ↓ Selects the most reliable prediction based on confidence and agreement
+Stage 4: Meta-EBM (Abstention-Aware Decision Arbiter)
+  ↓ Evaluates and arbitrates predictions from LR, GLASS-BRW, and EBM
+  ↓ Selects the most reliable interpretable decision based on confidence and agreement
   ↓ Optionally abstains when no stage is sufficiently certain
-  ↓ Produces a final, interpretable decision signal for downstream consumers (e.g., NLP interface)
+  ↓ Emits a final decision (or abstention) signal to downstream consumers (e.g., NLP interface) 
   ↓ Explicitly communicates uncertainty rather than forcing a prediction
 
 Customer-Level Predictions with End-to-End Explainability
