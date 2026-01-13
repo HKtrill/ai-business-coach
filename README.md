@@ -29,17 +29,31 @@
 > rigorous application and validation on real-world data.
 >
 > Notable updates:
-> - The system is transitioning from the synthetic Telco churn dataset
->   (used for early architectural validation) to a **real-world bank marketing
->   subscription dataset** to ensure external validity.
-> - As a result, performance metrics, feature attributions, and examples in this README
->   will be updated once the current cascade iteration is finalized and validated.
-> - Earlier experimental components (e.g., RNN-based stages) are no longer part of the
->   canonical pipeline but may remain in the repository for historical reference.
+> - The system previously transitioned from the synthetic Telco churn dataset
+>   (used for early architectural validation) to a real-world bank marketing
+>   subscription dataset to improve external validity.
+> - During deeper causal and leakage auditing of the bank marketing dataset,
+>   multiple structural issues were identified that materially limit its suitability
+>   for realistic deployment-oriented modeling:
+>     - **`duration` encodes post-outcome information and constitutes direct label leakage.**
+>     - **`poutcome` contains outcome-derived information from prior campaigns and behaves as a semi-leaky proxy.**
+>     - **`pdays` strongly correlates with `poutcome` and acts as a numeric surrogate for the same leakage signal.**
+>     - Approximately **82% of samples collapse into a single “unknown” regime**, severely limiting meaningful
+>       behavioral segmentation once leaky features are removed.
+>     - Removing these features produces a large and irreversible performance drop, indicating that much of the
+>       dataset’s apparent predictive power is driven by post-event artifacts rather than causal drivers.
+> - These findings are consistent with recent critical literature analyzing this benchmark.
+> - As a result, the project is **actively migrating to a new real-world subscriber / churn dataset that satisfies
+>   strict data integrity, leakage, and interpretability requirements.**
+> - The **core glass-box cascade architecture remains unchanged** and will be revalidated on the new dataset.
+> - Performance metrics, feature attributions, and examples in this README will be updated once the next dataset
+>   passes full audit and validation.
+> - Earlier experimental components (e.g., RNN-based stages) remain in the repository for historical reference
+>   but are not part of the canonical pipeline.
 >
 > **Current research objective:**  
-> Predicting **subscription to term deposits** using a fully interpretable,
-> abstention-aware glass-box ensemble architecture.
+> Develop and validate a fully interpretable, abstention-aware glass-box cascade for
+> real-world customer decision modeling using rigorously audited, leakage-free data.
 
 ---
 ## 📖 Synopsis
