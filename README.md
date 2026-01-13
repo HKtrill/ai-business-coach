@@ -44,6 +44,11 @@
 >       dataset’s apparent predictive power is driven by post-event artifacts rather than causal drivers.
 > - As a result, the project is **actively migrating to a new real-world subscriber / churn dataset that satisfies
 >   strict data integrity, leakage, and interpretability requirements.**
+> - **Notably, these issues were first surfaced by the system itself via the interpretable rule lattice.**  
+>   Following removal of `duration`, rule generation became dominated by `poutcome_success` rules exhibiting
+>   high precision but extremely low coverage — a signature of shortcut or proxy leakage rather than meaningful
+>   behavioral structure. This anomaly triggered deeper causal inspection of `poutcome` and `pdays`, leading to
+>   confirmation of proxy leakage and regime collapse.
 > - The **core glass-box cascade architecture remains unchanged** and will be revalidated on the new dataset.
 > - Performance metrics, feature attributions, and examples in this README will be updated once the next dataset
 >   passes full audit and validation.
