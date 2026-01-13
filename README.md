@@ -59,6 +59,14 @@
 > Develop and validate a fully interpretable, abstention-aware glass-box cascade for
 > real-world customer decision modeling using rigorously audited, leakage-free data.
 
+📊 Leakage & Regime Collapse Diagnostics
+<p align="center"> <img src="assets/pdays_vs_previous.png" width="32%"> <img src="assets/boxplot.png" width="32%"> <img src="assets/job_by_poutcome_conversion.png" width="32%"> </p>
+
+Figure — Structural leakage and regime collapse in the bank marketing dataset.
+(Left) pdays is tightly coupled with previous, indicating that recency largely encodes prior contact history rather than independent behavioral signal.
+(Center) The dominant poutcome=unknown regime collapses near zero pdays, while non-unknown regimes exhibit wide separation — demonstrating that pdays acts as a numeric surrogate for campaign outcome state.
+(Right) Conversion rates sharply diverge only when conditioning on known poutcome, while the dominant unknown regime exhibits weak and compressed signal across job segments — confirming proxy leakage and loss of meaningful segmentation once leaky features are removed.
+
 ---
 ## 📖 Synopsis
 Project ChurnBot is a research-driven, glass-box decision intelligence system for customer behavior prediction using fully interpretable cascade architectures. Instead of treating customer decisions as a single black-box prediction task, the system decomposes decision-making into explicit, interpretable stages that capture linear effects, interaction-driven rules, and non-linear response curves.
