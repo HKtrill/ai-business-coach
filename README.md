@@ -42,7 +42,6 @@
 >       behavioral segmentation once leaky features are removed.
 >     - Removing these features produces a large and irreversible performance drop, indicating that much of the
 >       dataset’s apparent predictive power is driven by post-event artifacts rather than causal drivers.
-> - These findings are consistent with recent critical literature analyzing this benchmark.
 > - As a result, the project is **actively migrating to a new real-world subscriber / churn dataset that satisfies
 >   strict data integrity, leakage, and interpretability requirements.**
 > - The **core glass-box cascade architecture remains unchanged** and will be revalidated on the new dataset.
