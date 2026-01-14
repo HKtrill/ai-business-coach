@@ -19,7 +19,6 @@
 <img src="https://cdn.simpleicons.org/nodedotjs/5FA04E" alt="Node.js" width="24"/> Node.js
 
 **Author:** 👤 Phillip Harris
-
 ---
 > ⚠️ **Research Status & Dataset Transition Notice**
 >
@@ -28,44 +27,69 @@
 > the current focus has shifted from architectural prototyping to
 > rigorous application and validation on real-world data.
 >
-> Notable updates:
+> **Notable updates:**
 > - The system previously transitioned from the synthetic Telco churn dataset
 >   (used for early architectural validation) to a real-world bank marketing
 >   subscription dataset to improve external validity.
-> - During deeper causal and leakage auditing of the bank marketing dataset,
+> - During temporal validity and leakage auditing of the bank marketing dataset,
 >   multiple structural issues were identified that materially limit its suitability
 >   for realistic deployment-oriented modeling:
->     - **`duration` encodes post-outcome information and constitutes direct label leakage.**
->     - **`poutcome` contains outcome-derived information from prior campaigns and behaves as a semi-leaky proxy.**
->     - **`pdays` strongly correlates with `poutcome` and acts as a numeric surrogate for the same leakage signal.**
->     - Approximately **82% of samples collapse into a single “unknown” regime**, severely limiting meaningful
->       behavioral segmentation once leaky features are removed.
->     - Removing these features produces a large and irreversible performance drop, indicating that much of the
->       dataset’s apparent predictive power is driven by post-event artifacts rather than causal drivers.
-> - As a result, the project is **actively migrating to a new real-world subscriber / churn dataset that satisfies
->   strict data integrity, leakage, and interpretability requirements.**
-> - **Notably, these issues were first surfaced by the system itself via the interpretable rule lattice.**  
+>     - **`duration`** encodes post-outcome information and constitutes direct label leakage.
+>     - **`poutcome`** contains outcome-derived information from prior campaigns. While technically
+>       available at prediction time, it creates historically-dependent predictions rather than
+>       learning transferable behavioral patterns.
+>     - **`pdays`** strongly correlates with `poutcome` and acts as a numeric surrogate for the same signal.
+>     - Approximately **82% of samples collapse into a single "unknown" regime** (prospects with no
+>       prior campaign history), severely limiting meaningful behavioral segmentation.
+>     - Removing these features produces a large and irreversible performance drop, indicating that
+>       the dataset's apparent predictive power is driven by historical artifacts rather than
+>       generalizable behavioral drivers.
+> - As a result, the project is **actively migrating to a new real-world subscriber/churn dataset**
+>   that satisfies strict temporal validity, data integrity, and interpretability requirements.
+> - **Critically, these issues were first surfaced by the system itself via the interpretable rule lattice.**  
 >   Following removal of `duration`, rule generation became dominated by `poutcome_success` rules exhibiting
->   high precision but extremely low coverage — a signature of shortcut or proxy leakage rather than meaningful
->   behavioral structure. This anomaly triggered deeper causal inspection of `poutcome` and `pdays`, leading to
->   confirmation of proxy leakage and regime collapse.
+>   high precision but extremely low coverage — a signature of shortcut learning rather than meaningful
+>   behavioral structure. This anomaly triggered deeper temporal inspection of `poutcome` and `pdays`,
+>   leading to confirmation of historical dependency and regime collapse.
 > - The **core glass-box cascade architecture remains unchanged** and will be revalidated on the new dataset.
-> - Performance metrics, feature attributions, and examples in this README will be updated once the next dataset
->   passes full audit and validation.
-> - Earlier experimental components (e.g., RNN-based stages) remain in the repository for historical reference
->   but are not part of the canonical pipeline.
+> - Performance metrics, feature attributions, and examples in this README will be updated once the next
+>   dataset passes full audit and validation.
+> - Earlier experimental components (e.g., RNN-based stages) remain in the repository for historical
+>   reference but are not part of the canonical pipeline.
 >
 > **Current research objective:**  
 > Develop and validate a fully interpretable, abstention-aware glass-box cascade for
-> real-world customer decision modeling using rigorously audited, leakage-free data.
+> real-world customer decision modeling using rigorously audited, temporally-valid data.
+>
+> **⚠️ Broader Implication:**
+>
+> This investigation provides empirical evidence that interpretability and dataset auditing are not optional
+> conveniences, but foundational requirements in applied machine learning. The interpretable rule lattice exposed
+> latent historical dependencies and regime collapse that would almost certainly remain undetected under purely
+> black-box modeling, even in the presence of strong benchmark performance.
+>
+> More broadly, this highlights a critical failure mode observed in both academic research and deployed systems:
+> models may optimize against historical artifacts or proxy signals rather than underlying behavioral mechanisms,
+> leading to misleading confidence and brittle generalization. Interpretable models and rigorous temporal auditing
+> are therefore essential for building reliable, decision-critical systems, particularly in deployment-oriented
+> settings where models must generalize beyond their training distribution.
 
-📊 Leakage & Regime Collapse Diagnostics
-<p align="center"> <img src="assets/pdays_vs_previous.png" width="32%"> <img src="assets/boxplot.png" width="32%"> <img src="assets/job_by_poutcome_conversion.png" width="32%"> </p>
+📊 **Leakage & Regime Collapse Diagnostics**
 
-Figure — Structural leakage and regime collapse in the bank marketing dataset.
-(Left) pdays is tightly coupled with previous, indicating that recency largely encodes prior contact history rather than independent behavioral signal.
-(Center) The dominant poutcome=unknown regime collapses near zero pdays, while non-unknown regimes exhibit wide separation — demonstrating that pdays acts as a numeric surrogate for campaign outcome state.
-(Right) Conversion rates sharply diverge only when conditioning on known poutcome, while the dominant unknown regime exhibits weak and compressed signal across job segments — confirming proxy leakage and loss of meaningful segmentation once leaky features are removed.
+<p align="center">
+  <img src="assets/pdays_vs_previous.png" width="32%">
+  <img src="assets/boxplot.png" width="32%">
+  <img src="assets/job_by_poutcome_conversion.png" width="32%">
+</p>
+
+**Figure** — Structural leakage and regime collapse in the bank marketing dataset.  
+**(Left)** `pdays` is tightly coupled with `previous`, indicating that recency largely encodes prior contact
+history rather than independent behavioral signal.  
+**(Center)** The dominant `poutcome=unknown` regime collapses near zero `pdays`, while non-unknown regimes
+exhibit wide separation — demonstrating that `pdays` acts as a numeric surrogate for campaign outcome state.  
+**(Right)** Conversion rates sharply diverge only when conditioning on known `poutcome`, while the dominant
+unknown regime exhibits weak and compressed signal across job segments — confirming historical dependency
+and loss of meaningful segmentation once history-dependent features are removed.
 
 ---
 ## 📖 Synopsis
