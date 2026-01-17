@@ -25,35 +25,44 @@
 > This project is under active research and architectural refinement.
 > While the core glass-box cascade methodology is now established,
 > the current focus has shifted from architectural prototyping to
-> rigorous application and validation on real-world data.
+> rigorous application, auditing, and validation on real-world data.
+>
+> **Latest development work is tracked on the rule-logging branch.**
 >
 > **Notable updates:**
 > - The system previously transitioned from the synthetic Telco churn dataset
 >   (used for early architectural validation) to a real-world bank marketing
 >   subscription dataset to improve external validity.
 > - During temporal validity and leakage auditing of the bank marketing dataset,
->   multiple structural issues were identified that materially limit its suitability
->   for realistic deployment-oriented modeling:
+>   multiple structural issues were identified that materially affect its suitability
+>   for deployment-oriented modeling:
 >     - **`duration`** encodes post-outcome information and constitutes direct label leakage.
 >     - **`poutcome`** contains outcome-derived information from prior campaigns. While technically
->       available at prediction time, it creates historically-dependent predictions rather than
+>       available at prediction time, it induces historically-dependent predictions rather than
 >       learning transferable behavioral patterns.
 >     - **`pdays`** strongly correlates with `poutcome` and acts as a numeric surrogate for the same signal.
 >     - Approximately **82% of samples collapse into a single "unknown" regime** (prospects with no
 >       prior campaign history), severely limiting meaningful behavioral segmentation.
->     - Removing these features produces a large and irreversible performance drop, indicating that
+>     - Removing these features produces an observed substantial performance drop, indicating that much of
 >       the dataset's apparent predictive power is driven by historical artifacts rather than
 >       generalizable behavioral drivers.
-> - As a result, the project is **actively migrating to a new real-world subscriber/churn dataset**
->   that satisfies strict temporal validity, data integrity, and interpretability requirements.
+> - As a result, the project is **actively evaluating the bank marketing dataset under stricter
+>   temporal and interpretability constraints**, while also exploring alternative real-world
+>   subscriber/churn datasets for comparative validation.
+> - **Performance metrics will not be directly comparable to other published benchmarks on this dataset.**
+>   This system predicts subscription likelihood **before making the call** (using only pre-contact features),
+>   whereas most benchmarks include post-outcome features like `duration` and semi-leaky features like
+>   `poutcome` and `pdays`. This reflects a deliberate choice to solve the harder, deployment-realistic
+>   problem of determining *whether to call* rather than post-hoc analysis of *what happened during the call*.
 > - **Critically, these issues were first surfaced by the system itself via the interpretable rule lattice.**  
 >   Following removal of `duration`, rule generation became dominated by `poutcome_success` rules exhibiting
 >   high precision but extremely low coverage — a signature of shortcut learning rather than meaningful
 >   behavioral structure. This anomaly triggered deeper temporal inspection of `poutcome` and `pdays`,
 >   leading to confirmation of historical dependency and regime collapse.
-> - The **core glass-box cascade architecture remains unchanged** and will be revalidated on the new dataset.
-> - Performance metrics, feature attributions, and examples in this README will be updated once the next
->   dataset passes full audit and validation.
+> - The **core glass-box cascade architecture remains unchanged** and continues to be refined and
+>   evaluated under these stricter constraints.
+> - Performance metrics, feature attributions, and examples in this README will be updated as
+>   constraint tuning stabilizes and dataset suitability is reassessed.
 > - Earlier experimental components (e.g., RNN-based stages) remain in the repository for historical
 >   reference but are not part of the canonical pipeline.
 >
