@@ -19,7 +19,9 @@
 <img src="https://cdn.simpleicons.org/nodedotjs/5FA04E" alt="Node.js" width="24"/> Node.js
 
 **Author:** 👤 Phillip Harris
+
 ---
+
 > ⚠️ **Research Status & Dataset Transition Notice**
 >
 > This project is under active research and architectural refinement.
@@ -28,6 +30,8 @@
 > rigorous application, auditing, and validation on real-world data.
 >
 > **Latest development work is tracked on the rule-logging branch.**
+>
+> ### Research Track: Bank Marketing Dataset
 >
 > **Notable updates:**
 > - The system previously transitioned from the synthetic Telco churn dataset
@@ -59,18 +63,24 @@
 >   high precision but extremely low coverage — a signature of shortcut learning rather than meaningful
 >   behavioral structure. This anomaly triggered deeper temporal inspection of `poutcome` and `pdays`,
 >   leading to confirmation of historical dependency and regime collapse.
-> - The **core glass-box cascade architecture remains unchanged** and continues to be refined and
->   evaluated under these stricter constraints.
-> - Performance metrics, feature attributions, and examples in this README will be updated as
->   constraint tuning stabilizes and dataset suitability is reassessed.
-> - Earlier experimental components (e.g., RNN-based stages) remain in the repository for historical
->   reference but are not part of the canonical pipeline.
 >
-> **Current research objective:**  
+> ### Dataset Strategy
+>
+> **Research validation:** Bank Marketing dataset (UCI ML Repository) with full temporal
+> auditing and leakage analysis documented above.
+>
+> **Deployment demonstration:** Synthetic or permissively-licensed datasets (e.g., IBM Telco
+> Customer Churn) to avoid licensing complications and demonstrate cross-domain generalization.
+>
+> This project is a **methodological framework** that organizations can evaluate and adapt
+> for their own proprietary subscription, churn, or binary decision modeling use cases.
+>
+> ### Current Research Objective
+>
 > Develop and validate a fully interpretable, abstention-aware glass-box cascade for
 > real-world customer decision modeling using rigorously audited, temporally-valid data.
 >
-> **⚠️ Broader Implication:**
+> ### Broader Implication
 >
 > This investigation provides empirical evidence that interpretability and dataset auditing are not optional
 > conveniences, but foundational requirements in applied machine learning. The interpretable rule lattice exposed
