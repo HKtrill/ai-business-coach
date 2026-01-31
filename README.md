@@ -22,6 +22,44 @@
 
 ---
 
+## ⚙️ Installation & Environment Setup
+
+ChurnBot is designed to run fully locally with no external services.
+
+### Prerequisites
+* **Python 3.10+** (recommended)
+* **Git**
+* **Virtual environment tool** (Optional: `venv`, `conda`, etc.)
+
+### Quick Start (Cross-Platform)
+
+```bash
+git clone https://github.com/HKtrill/ai-business-coach.git
+cd ai-business-coach
+python -m venv .venv
+
+python -m venv .venv
+```
+
+### macOS / Linux
+```Bash
+source .venv/bin/activate
+Windows (PowerShell)
+```
+### Windows
+```PowerShell
+.venv\Scripts\activate
+Install Dependencies
+```Bash
+pip install -r requirements.txt
+```
+###📝 Notes
+- Computation: All tasks run locally (CPU/GPU as available).
+
+- Privacy: No API keys or external services required.
+
+- Compatibility: Supported on macOS, Linux, and Windows.
+
 > ⚠️ **Research Status & Dataset Transition Notice**
 >
 > This project is under active research and architectural refinement.
@@ -29,9 +67,9 @@
 > the current focus has shifted from architectural prototyping to
 > rigorous application, auditing, and validation on real-world data.
 >
-> **Latest development work is tracked on the rule-logging branch.**
->
-> ### Research Track: Bank Marketing Dataset
+> **Latest development work is tracked on the `main` branch following the
+> 
+> cascade-refactor-phase1 merge.**
 >
 > **Notable updates:**
 > - The system previously transitioned from the synthetic Telco churn dataset
@@ -64,6 +102,22 @@
 >   behavioral structure. This anomaly triggered deeper temporal inspection of `poutcome` and `pdays`,
 >   leading to confirmation of historical dependency and regime collapse.
 >
+>### Recent Refactor Status (January 2026)
+>
+> A major refactor phase has been completed and merged into `main`,
+> consolidating over one month of end-to-end research and engineering work.
+>
+> Key outcomes:
+> - Full modularization of the four-stage glass-box cascade (Stages 1–4)
+> - Centralized data splitting, preprocessing, training, and evaluation
+> - Dataset upgrade to **bank-additional-full.csv** with macroeconomic context
+> - Significant runtime reductions (Stage 2 rule generation now <2 minutes locally)
+> - Improved non-leaky baseline performance via temporal and macro-context features
+> - One-command reproducible environment via `requirements.txt`
+>
+> The project is now positioned for deeper feature interaction analysis,
+> rigorous statistical validation, and formal research documentation.
+
 > ### Dataset Strategy
 >
 > **Research validation:** Bank Marketing dataset (UCI ML Repository) with full temporal
