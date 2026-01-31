@@ -51,7 +51,7 @@ Install Dependencies
 ```Bash
 pip install -r requirements.txt
 ```
-###📝 Notes
+### 📝 Notes
 - Computation: All tasks run locally (CPU/GPU as available).
 
 - Privacy: No API keys or external services required.
