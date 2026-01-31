@@ -1,0 +1,28 @@
+# requirements.txt
+# ============================================================
+# GLASS-BRW Pipeline Dependencies
+# ============================================================
+
+# Core numerical/data
+numpy>=1.23
+pandas>=1.5
+scipy>=1.9
+
+# Machine Learning
+scikit-learn>=1.2
+
+# Explainable Boosting Machine (EBM) - CRITICAL
+interpret>=0.4
+
+# Optimization (ILP for rule selection)
+pulp>=2.7
+
+# Serialization
+joblib>=1.2
+
+# Visualization
+matplotlib>=3.6
+seaborn>=0.12
+
+# Optional but recommended
+tqdm>=4.64           # Progress bars
