@@ -42,9 +42,8 @@ python -m venv .venv
 ### macOS / Linux
 ```Bash
 source .venv/bin/activate
-Windows (PowerShell)
 ```
-### Windows
+### Windows (PowerShell)
 ```PowerShell
 .venv\Scripts\activate
 Install Dependencies
