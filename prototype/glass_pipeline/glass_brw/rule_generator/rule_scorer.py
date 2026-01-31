@@ -2,8 +2,13 @@
 # GLASS-BRW: RULE SCORER MODULE
 # ============================================================
 # Scores rules for beam search and tracks feature diversity
+# Works with frozenset segments
 # ============================================================
+
+from typing import Dict, List, Tuple, Set, FrozenSet, Union, Optional
 import numpy as np
+
+SegmentType = Union[FrozenSet[Tuple[str, int]], Set[Tuple[str, int]]]
 
 
 class RuleScorer:
@@ -12,8 +17,8 @@ class RuleScorer:
     def __init__(
         self,
         diversity_penalty: float = 0.3,
-        max_feature_reuse_pass1: int = 3,
-        max_feature_reuse_pass2: int = 3,
+        max_feature_reuse_pass1: Optional[int] = 3,
+        max_feature_reuse_pass2: Optional[int] = 3,
     ):
         """
         Initialize rule scorer.
@@ -28,8 +33,8 @@ class RuleScorer:
         self.max_feature_reuse_pass2 = max_feature_reuse_pass2
         
         # Feature usage tracking (reset per generation)
-        self.pass1_feature_usage = {}
-        self.pass2_feature_usage = {}
+        self.pass1_feature_usage: Dict[str, int] = {}
+        self.pass2_feature_usage: Dict[str, int] = {}
     
     def reset_tracking(self):
         """Reset feature usage tracking for new generation."""
@@ -64,7 +69,7 @@ class RuleScorer:
     
     def get_diversity_penalty(
         self,
-        segment: set,
+        segment: SegmentType,
         predicted_class: int,
         validator,
     ) -> float:
@@ -72,7 +77,7 @@ class RuleScorer:
         Compute diversity penalty based on feature reuse.
         
         Args:
-            segment: Set of (feature, level) tuples
+            segment: Set or frozenset of (feature, level) tuples
             predicted_class: Target class (0 or 1)
             validator: FeatureValidator instance
             
@@ -99,8 +104,8 @@ class RuleScorer:
         recall: float,
         coverage: float,
         predicted_class: int,
-        segment: set = None,
-        validator = None,
+        segment: Optional[SegmentType] = None,
+        validator=None,
     ) -> float:
         """
         Compute final score with diversity adjustment.
@@ -126,7 +131,7 @@ class RuleScorer:
     
     def update_feature_usage(
         self,
-        segment: set,
+        segment: SegmentType,
         predicted_class: int,
         validator,
     ):
@@ -134,7 +139,7 @@ class RuleScorer:
         Track feature usage for diversity enforcement.
         
         Args:
-            segment: Set of (feature, level) tuples
+            segment: Set or frozenset of (feature, level) tuples
             predicted_class: Target class (0 or 1)
             validator: FeatureValidator instance
         """
@@ -147,7 +152,7 @@ class RuleScorer:
             base = validator.extract_base_feature(feature)
             feature_usage[base] = feature_usage.get(base, 0) + 1
     
-    def get_usage_summary(self) -> dict:
+    def get_usage_summary(self) -> Dict[str, any]:
         """
         Get summary of feature usage across both passes.
         

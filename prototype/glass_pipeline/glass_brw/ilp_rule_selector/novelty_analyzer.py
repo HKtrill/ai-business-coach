@@ -2,12 +2,22 @@
 # GLASS-BRW: NOVELTY ANALYZER MODULE
 # ============================================================
 # Compute pairwise overlap and novelty metrics for rules
+# Works with EvaluatedRule objects
 # ============================================================
+
+from typing import List, Tuple, Set
 from pulp import lpSum
+
+from glass_brw.core.rule import EvaluatedRule
 
 
 class NoveltyAnalyzer:
-    """Compute novelty and overlap metrics for rule selection."""
+    """
+    Compute novelty and overlap metrics for rule selection.
+    
+    Works with EvaluatedRule objects. Uses _cached_covered_idx if available,
+    otherwise falls back to empty set (should be precomputed by ILPRuleSelector).
+    """
     
     def __init__(self, enable_novelty_constraints: bool = True):
         """
@@ -18,19 +28,42 @@ class NoveltyAnalyzer:
         """
         self.enable_novelty_constraints = enable_novelty_constraints
     
-    def compute_pairwise_overlap(self, rule_i, rule_j) -> tuple:
+    def _get_covered_indices(self, rule: EvaluatedRule) -> Set[int]:
+        """
+        Get covered indices for a rule.
+        
+        Uses _cached_covered_idx if available (set by ILPRuleSelector.precompute).
+        
+        Args:
+            rule: EvaluatedRule object
+            
+        Returns:
+            Set of covered sample indices
+        """
+        # Check for cached indices (set by ILPRuleSelector._precompute_covered_indices)
+        if hasattr(rule, '_cached_covered_idx'):
+            return rule._cached_covered_idx
+        
+        # Fallback: return empty set (should not happen in normal flow)
+        return set()
+    
+    def compute_pairwise_overlap(
+        self, 
+        rule_i: EvaluatedRule, 
+        rule_j: EvaluatedRule
+    ) -> Tuple[float, float, float]:
         """
         Compute overlap ratios between two rules.
         
         Args:
-            rule_i: First Rule object
-            rule_j: Second Rule object
+            rule_i: First EvaluatedRule object
+            rule_j: Second EvaluatedRule object
             
         Returns:
             (overlap_ratio_i, overlap_ratio_j, jaccard) tuple
         """
-        covered_i = set(rule_i.covered_idx)
-        covered_j = set(rule_j.covered_idx)
+        covered_i = self._get_covered_indices(rule_i)
+        covered_j = self._get_covered_indices(rule_j)
         
         if not covered_i or not covered_j:
             return 0.0, 0.0, 0.0
@@ -47,7 +80,7 @@ class NoveltyAnalyzer:
     def add_novelty_constraints(
         self,
         prob,
-        rules: list,
+        rules: List[EvaluatedRule],
         decision_vars: dict,
         min_novelty_ratio: float
     ) -> int:
@@ -59,7 +92,7 @@ class NoveltyAnalyzer:
         
         Args:
             prob: PuLP problem object
-            rules: List of Rule objects
+            rules: List of EvaluatedRule objects
             decision_vars: Dict mapping rule_id to LpVariable
             min_novelty_ratio: Minimum novelty ratio required
             
@@ -114,12 +147,16 @@ class NoveltyAnalyzer:
         
         return constraints_added
     
-    def analyze_selection_novelty(self, selected_rules: list, pass_name: str):
+    def analyze_selection_novelty(
+        self, 
+        selected_rules: List[EvaluatedRule], 
+        pass_name: str
+    ):
         """
         Analyze the novelty of selected rules.
         
         Args:
-            selected_rules: List of selected Rule objects
+            selected_rules: List of selected EvaluatedRule objects
             pass_name: Name of the pass (for logging)
         """
         if len(selected_rules) < 2:
@@ -131,7 +168,7 @@ class NoveltyAnalyzer:
         novelty_ratios = []
         
         for i, rule in enumerate(selected_rules):
-            rule_covered = set(rule.covered_idx)
+            rule_covered = self._get_covered_indices(rule)
             
             if i == 0:
                 novelty = 1.0

@@ -1,121 +1,151 @@
 # ============================================================
 # GLASS-BRW: RULE GENERATOR MODULE (REFACTORED)
 # ============================================================
-# Main orchestrator for rule generation using modular components
+# Generate candidate rules with DEPTH-STAGED CONSTRAINTS
+# 
+# Output: List[CandidateRule] for RuleEvaluator
 # ============================================================
-import pandas as pd
-import numpy as np
+
+from typing import List, Dict, Tuple, Optional
 from collections import defaultdict
 from sklearn.ensemble import RandomForestClassifier
 
-from .rule_metrics import RuleMetrics
 from .feature_validator import FeatureValidator
 from .rule_constraints import RuleConstraints
 from .rule_scorer import RuleScorer
 from .rule_logger import RuleLogger
+from .rule_metrics import RuleMetrics
 from .beam_search import BeamSearch
-from glass_brw.core.rule import Rule
+from glass_brw.core.rule import CandidateRule
 
 
 class RuleGenerator:
     """
     Generate candidate rules with DEPTH-STAGED CONSTRAINTS.
     
+    Output: List[CandidateRule] for RuleEvaluator
+    
     Depth Strategy:
         Depth 1: Structural validity ONLY (no support/precision/recall)
         Depth 2: Light pruning (extreme leakage guardrail, precision floor, coverage cap)
         Depth 3: Quality checks (support, precision, recall, coverage)
                  NO OVERLAP CHECK - ILP handles via novelty constraints
-                 NO NOVEL COVERAGE CHECK - ILP handles diversity
     """
     
     def __init__(
         self,
         # ============================================================
-        # SUPPORT THRESHOLDS - DEPTH 3 ONLY
+        # SUPPORT THRESHOLDS - REQUIRED (tuning params)
         # ============================================================
-        min_support_pass1=270,
-        min_support_pass2=100,
+        min_support_pass1: Optional[int] = None,
+        min_support_pass2: Optional[int] = None,
+        
         # ============================================================
-        # COMPLEXITY BOUNDS
+        # PASS 1: NOT_SUBSCRIBE - REQUIRED (tuning params)
         # ============================================================
-        max_complexity=3,
-        min_complexity=1,
+        min_precision_not_subscribe: Optional[float] = None,
+        max_precision_not_subscribe: Optional[float] = None,
+        max_subscriber_leakage_rate: Optional[float] = None,
+        max_subscriber_leakage_absolute: Optional[int] = None,
+        
         # ============================================================
-        # PASS 1: NOT_SUBSCRIBE (Precision-Focused Filters)
+        # PASS 2: SUBSCRIBE - REQUIRED (tuning params)
         # ============================================================
-        min_complexity_not_subscribe=1,
-        max_coverage_not_subscribe=1.00,
-        min_precision_not_subscribe=0.25,
-        max_precision_not_subscribe=1.00,
-        max_subscriber_leakage_rate=0.99,
-        max_subscriber_leakage_absolute=999,
-        min_seed_precision_not_subscribe=0.05,
+        min_precision_subscribe: Optional[float] = None,
+        max_precision_subscribe: Optional[float] = None,
+        min_recall_subscribe: Optional[float] = None,
+        max_recall_subscribe: Optional[float] = None,
+        
         # ============================================================
-        # PASS 2: SUBSCRIBE (Recall-Focused Detectors)
+        # DEPTH 2: LIGHT STRUCTURAL PRUNING - REQUIRED
         # ============================================================
-        min_complexity_subscribe=1,
-        max_coverage_subscribe=0.99,
-        min_precision_subscribe=0.25,
-        max_precision_subscribe=1.00,
-        min_recall_subscribe=0.15,
-        max_recall_subscribe=0.99,
-        min_seed_precision_subscribe=0.05,
+        max_leakage_rate_depth2: Optional[float] = None,
+        max_leakage_fraction_depth2: Optional[float] = None,
+        
         # ============================================================
-        # DEPTH 2: LIGHT STRUCTURAL PRUNING
+        # SHARED TUNING - REQUIRED
         # ============================================================
-        max_leakage_rate_depth2=0.75,
-        max_leakage_fraction_depth2=0.65,
+        max_complexity: Optional[int] = None,
+        diversity_penalty: Optional[float] = None,
+        max_feature_reuse_pass1: Optional[int] = None,  # Optional - can be None
+        max_feature_reuse_pass2: Optional[int] = None,  # Optional - can be None
+        
         # ============================================================
-        # BEAM SEARCH PARAMETERS
+        # STRUCTURAL/BEHAVIORAL - KEEP DEFAULTS (rarely tuned)
         # ============================================================
-        mode="strict",
-        beam_width=100,
-        # ============================================================
-        # DIVERSITY ENFORCEMENT
-        # ============================================================
-        diversity_penalty=0.3,
-        max_feature_reuse_pass1=3,
-        max_feature_reuse_pass2=3,
-        max_jaccard_overlap=0.35,
-        max_high_overlap_rules=None,
-        # ============================================================
-        # SEGMENT ONTOLOGY
-        # ============================================================
+        min_complexity: int = 1,
+        max_coverage_not_subscribe: float = 1.00,
+        max_coverage_subscribe: float = 0.99,
+        mode: str = "strict",
+        beam_width: int = 100,
+        
+        # Segment builder - REQUIRED
         segment_builder=None,
-        # ============================================================
-        # FEATURE SEMANTICS
-        # ============================================================
-        tier1_prefixes=(
+        
+        # Feature semantics
+        tier1_prefixes: Tuple[str, ...] = (
             'previous', 'nr_employed', 'euribor', 'emp_var', 'cpi', 'cci',
             'month', 'contact', 'age', 'campaign', 'job', 'marital',
             'education', 'dow', 'default', 'housing', 'loan',
             'econ', 'prospect',
         ),
-        # ============================================================
-        # RANDOM FOREST INTEGRATION
-        # ============================================================
-        rf_model=None,
-        feature_importance_threshold=0.00,
-        # ============================================================
-        # DIAGNOSTIC LOGGING
-        # ============================================================
-        verbose_rejection_logging=True,
-        max_rejection_logs_per_constraint=50,
-        verbose_acceptance_logging=True,
-        max_acceptance_logs_per_depth=25,
-    ):
-        """Initialize rule generator with modular components."""
         
-        # Store basic parameters
+        # Random Forest integration
+        rf_model=None,
+        feature_importance_threshold: float = 0.00,
+        
+        # Diagnostic logging
+        verbose_rejection_logging: bool = True,
+        max_rejection_logs_per_constraint: int = 50,
+        verbose_acceptance_logging: bool = True,
+        max_acceptance_logs_per_depth: int = 25,
+    ):
+        """
+        Initialize rule generator with modular components.
+        
+        Raises:
+            ValueError: If any required tuning parameter is None
+            ValueError: If segment_builder is None
+        """
+        # ============================================================
+        # VALIDATE REQUIRED PARAMETERS
+        # ============================================================
+        required_params = {
+            'min_support_pass1': min_support_pass1,
+            'min_support_pass2': min_support_pass2,
+            'min_precision_not_subscribe': min_precision_not_subscribe,
+            'max_precision_not_subscribe': max_precision_not_subscribe,
+            'max_subscriber_leakage_rate': max_subscriber_leakage_rate,
+            'max_subscriber_leakage_absolute': max_subscriber_leakage_absolute,
+            'min_precision_subscribe': min_precision_subscribe,
+            'max_precision_subscribe': max_precision_subscribe,
+            'min_recall_subscribe': min_recall_subscribe,
+            'max_recall_subscribe': max_recall_subscribe,
+            'max_leakage_rate_depth2': max_leakage_rate_depth2,
+            'max_leakage_fraction_depth2': max_leakage_fraction_depth2,
+            'max_complexity': max_complexity,
+            'diversity_penalty': diversity_penalty,
+        }
+        
+        missing = [k for k, v in required_params.items() if v is None]
+        if missing:
+            raise ValueError(
+                f"RuleGenerator missing required parameters: {missing}\n"
+                f"All tuning parameters must be explicitly passed from GLASSBRWConfig."
+            )
+        
+        if segment_builder is None:
+            raise ValueError("RuleGenerator requires a SegmentBuilder instance")
+        
+        # ============================================================
+        # STORE BASIC PARAMETERS
+        # ============================================================
         self.max_complexity = max_complexity
         self.min_complexity = min_complexity
         self.mode = mode
         self.beam_width = beam_width
         
         # Segment builder
-        if segment_builder is None:
-            raise ValueError("RuleGenerator requires a SegmentBuilder instance")
         self.segment_builder = segment_builder
         self.segment_features = list(self.segment_builder.SEGMENT_FEATURES)
         
@@ -127,11 +157,8 @@ class RuleGenerator:
         # ============================================================
         # INITIALIZE MODULAR COMPONENTS
         # ============================================================
-        
-        # Feature validation
         self.validator = FeatureValidator(tier1_prefixes=tier1_prefixes)
         
-        # Constraint checking
         self.constraints = RuleConstraints(
             min_support_pass1=min_support_pass1,
             min_support_pass2=min_support_pass2,
@@ -149,14 +176,12 @@ class RuleGenerator:
             max_leakage_fraction_depth2=max_leakage_fraction_depth2,
         )
         
-        # Rule scoring and diversity
         self.scorer = RuleScorer(
             diversity_penalty=diversity_penalty,
             max_feature_reuse_pass1=max_feature_reuse_pass1,
             max_feature_reuse_pass2=max_feature_reuse_pass2,
         )
         
-        # Diagnostic logging
         self.logger = RuleLogger(
             verbose_rejection_logging=verbose_rejection_logging,
             max_rejection_logs_per_constraint=max_rejection_logs_per_constraint,
@@ -164,20 +189,20 @@ class RuleGenerator:
             max_acceptance_logs_per_depth=max_acceptance_logs_per_depth,
         )
         
-        # Beam search
         self.beam_search = BeamSearch(
             beam_width=beam_width,
             min_complexity=min_complexity,
             max_complexity=max_complexity,
         )
         
-        print(f"🧩 RuleGenerator initialized with {len(self.segment_features)} segment features")
+        print(f"✅ RuleGenerator initialized with {len(self.segment_features)} segment features")
+        print(f"   (all tuning params validated)")
     
     # ============================================================
     # RANDOM FOREST INTEGRATION
     # ============================================================
     
-    def _compute_rf_feature_importance(self, segments_df, y):
+    def _compute_rf_feature_importance(self, segments_df, y) -> Dict[str, float]:
         """Compute or retrieve RF feature importances."""
         if self.rf_model is None:
             print("Training RF for feature importance...")
@@ -209,7 +234,7 @@ class RuleGenerator:
         
         return importances
     
-    def _get_feature_order(self, segments_df, y):
+    def _get_feature_order(self, segments_df, y) -> List[str]:
         """Get features ordered by RF importance."""
         importances = self._compute_rf_feature_importance(segments_df, y)
         
@@ -232,7 +257,11 @@ class RuleGenerator:
     # SEED GENERATION (DEPTH 1)
     # ============================================================
     
-    def _generate_seeds(self, metrics_computer, rule_id_counter):
+    def _generate_seeds(
+        self, 
+        metrics_computer: 'RuleMetrics', 
+        rule_id_counter: Dict[str, int]
+    ) -> Dict[int, List[CandidateRule]]:
         """Generate depth-1 seeds with structural validity only."""
         print(f"\n{'='*60}")
         print(f"DEPTH 1: SEED GENERATION")
@@ -241,7 +270,7 @@ class RuleGenerator:
         print(f"  🚫 NO precision/recall constraints at this depth")
         
         seed_features = list(self.segment_features)
-        current = {0: [], 1: []}
+        current: Dict[int, List[CandidateRule]] = {0: [], 1: []}
         
         debug_stats = {
             'total_considered': 0,
@@ -251,7 +280,7 @@ class RuleGenerator:
         
         for feature in seed_features:
             for level in (1, 0):
-                seg = {(feature, level)}
+                seg = frozenset({(feature, level)})
                 debug_stats['total_considered'] += 1
                 
                 # Depth 1 constraint: Structural validity only
@@ -264,7 +293,7 @@ class RuleGenerator:
                     continue
                 
                 # Compute metrics
-                metrics = metrics_computer.compute_all_metrics(seg, 0)  # Use class 0 for mask
+                metrics = metrics_computer.compute_all_metrics(seg, 0)
                 
                 # Skip if zero support
                 if metrics['support'] == 0:
@@ -276,19 +305,20 @@ class RuleGenerator:
                     
                     debug_stats['accepted'][predicted_class] += 1
                     
-                    # Create rule
-                    rule = Rule(
+                    # Create CandidateRule
+                    rule = CandidateRule(
                         rule_id=rule_id_counter['current'],
                         segment=seg,
                         predicted_class=predicted_class,
                         complexity=1,
-                        pass_assignment="pass1" if predicted_class == 0 else "pass2"
+                        precision=metrics_cls['precision'],
+                        recall=metrics_cls['recall'],
+                        coverage=metrics_cls['coverage'],
+                        support=metrics_cls['support'],
                     )
                     
-                    rule._p = metrics_cls['precision']
-                    rule._r = metrics_cls['recall']
-                    rule._c = metrics_cls['coverage']
-                    rule._s = self.scorer.score_rule(
+                    # Store beam score for internal use
+                    rule._beam_score = self.scorer.score_rule(
                         metrics_cls['precision'],
                         metrics_cls['recall'],
                         metrics_cls['coverage'],
@@ -296,7 +326,6 @@ class RuleGenerator:
                         seg,
                         self.validator,
                     )
-                    rule._cls = predicted_class
                     
                     current[predicted_class].append(rule)
                     rule_id_counter['current'] += 1
@@ -330,9 +359,16 @@ class RuleGenerator:
     # MAIN GENERATION PIPELINE
     # ============================================================
     
-    def generate_candidates(self, segments_df, y):
+    def generate_candidates(self, segments_df, y) -> List[CandidateRule]:
         """
         Generate candidate rules with DEPTH-STAGED CONSTRAINTS.
+        
+        Args:
+            segments_df: DataFrame with segment features
+            y: Target labels
+            
+        Returns:
+            List of CandidateRule objects for RuleEvaluator
         """
         # ============================================================
         # INITIALIZATION
@@ -364,7 +400,7 @@ class RuleGenerator:
         print(f"    • Depth 2: Light pruning ONLY")
         print(f"    • Depth 3: Quality constraints (NO OVERLAP - ILP handles)")
         
-        all_candidates = []
+        all_candidates: List[CandidateRule] = []
         
         # ============================================================
         # DEPTH 1: SEED GENERATION
@@ -382,8 +418,8 @@ class RuleGenerator:
                 print(f"DEPTH {depth}: Quality Constraints")
             print(f"{'='*60}")
             
-            next_rules = {0: [], 1: []}
-            combined_stats = {0: defaultdict(int), 1: defaultdict(int)}
+            next_rules: Dict[int, List[CandidateRule]] = {0: [], 1: []}
+            combined_stats: Dict[int, Dict] = {0: defaultdict(int), 1: defaultdict(int)}
             
             # Expand each class separately
             for predicted_class in (0, 1):
@@ -470,7 +506,7 @@ class RuleGenerator:
         
         return all_candidates
     
-    def _print_depth_summary(self, depth, stats):
+    def _print_depth_summary(self, depth: int, stats: Dict[int, Dict]):
         """Print summary statistics for a depth."""
         print(f"\n{'='*60}")
         print(f"DEPTH {depth} SUMMARY:")
@@ -484,8 +520,15 @@ class RuleGenerator:
             print(f"  Total considered: {cls_stats['total_considered']}")
             print(f"  Accepted: {cls_stats['accepted']}")
             
-            # Print rejection reasons
             rejection_keys = [k for k in cls_stats.keys() if k.startswith('rejected_')]
             for key in sorted(rejection_keys):
                 reason = key.replace('rejected_', '')
                 print(f"  Rejected - {reason}: {cls_stats[key]}")
+    
+    def __repr__(self):
+        return (
+            f"RuleGenerator("
+            f"complexity=[{self.min_complexity}-{self.max_complexity}], "
+            f"beam_width={self.beam_width}, "
+            f"features={len(self.segment_features)})"
+        )

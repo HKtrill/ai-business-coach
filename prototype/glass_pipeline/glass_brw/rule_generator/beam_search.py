@@ -2,8 +2,13 @@
 # GLASS-BRW: BEAM SEARCH MODULE
 # ============================================================
 # Manages beam search expansion with depth-staged constraint checking
+# Creates CandidateRule objects
 # ============================================================
+
+from typing import List, Dict, Tuple, Set
 from collections import defaultdict
+
+from glass_brw.core.rule import CandidateRule
 
 
 class BeamSearch:
@@ -27,49 +32,54 @@ class BeamSearch:
         self.min_complexity = min_complexity
         self.max_complexity = max_complexity
     
-    def deduplicate_rules(self, rules: list) -> list:
+    def deduplicate_rules(self, rules: List[CandidateRule]) -> List[CandidateRule]:
         """
         Remove duplicate rules via segment matching.
         
         Args:
-            rules: List of Rule objects
+            rules: List of CandidateRule objects
             
         Returns:
             Deduplicated list of rules
         """
-        unique = {}
+        unique: Dict[frozenset, CandidateRule] = {}
         for rule in rules:
-            seg_signature = frozenset(rule.segment)
+            seg_signature = rule.segment_frozen
             if seg_signature not in unique:
                 unique[seg_signature] = rule
             else:
-                # Keep rule with higher score
-                if rule._s > unique[seg_signature]._s:
+                # Keep rule with higher beam score
+                if rule._beam_score > unique[seg_signature]._beam_score:
                     unique[seg_signature] = rule
         return list(unique.values())
     
-    def prune_beam(self, rules: list, scorer, validator) -> list:
+    def prune_beam(
+        self, 
+        rules: List[CandidateRule], 
+        scorer, 
+        validator
+    ) -> List[CandidateRule]:
         """
         Sort and prune beam to width limit.
         
         Args:
-            rules: List of Rule objects
+            rules: List of CandidateRule objects
             scorer: RuleScorer instance
             validator: FeatureValidator instance
             
         Returns:
             Pruned list of top rules
         """
-        # Sort by score (highest first)
-        rules = sorted(rules, key=lambda r: r._s, reverse=True)
+        # Sort by beam score (highest first)
+        rules = sorted(rules, key=lambda r: r._beam_score, reverse=True)
         
         # Keep top beam_width rules
         return rules[:self.beam_width]
     
     def expand_rule(
         self,
-        parent_rule,
-        available_features: list,
+        parent_rule: CandidateRule,
+        available_features: List[str],
         depth: int,
         predicted_class: int,
         validator,
@@ -77,13 +87,13 @@ class BeamSearch:
         constraints,
         scorer,
         logger,
-        rule_id_counter: dict,
-    ) -> tuple:
+        rule_id_counter: Dict[str, int],
+    ) -> Tuple[List[CandidateRule], Dict[str, int]]:
         """
         Expand a single parent rule by adding one feature.
         
         Args:
-            parent_rule: Parent Rule object to expand
+            parent_rule: Parent CandidateRule to expand
             available_features: List of features to try adding
             depth: Current depth
             predicted_class: Target class (0 or 1)
@@ -97,13 +107,11 @@ class BeamSearch:
         Returns:
             (accepted_rules, stats) tuple
         """
-        from glass_brw.core.rule import Rule
-        
-        accepted_rules = []
-        stats = defaultdict(int)
+        accepted_rules: List[CandidateRule] = []
+        stats: Dict[str, int] = defaultdict(int)
         
         # Track seen segments to avoid order-dependent duplicates
-        seen_segments = set()
+        seen_segments: Set[frozenset] = set()
         
         # Get features and base features already used in parent
         used_features = {f for f, _ in parent_rule.segment}
@@ -124,16 +132,15 @@ class BeamSearch:
             for level in (1, 0):
                 stats['total_considered'] += 1
                 
-                # Create candidate segment
-                seg = parent_rule.segment | {(feature, level)}
+                # Create candidate segment (frozenset for immutability)
+                seg = frozenset(parent_rule.segment | {(feature, level)})
                 
                 # Check for duplicate segment (order-independent)
-                seg_signature = frozenset(seg)
-                if seg_signature in seen_segments:
+                if seg in seen_segments:
                     stats['rejected_duplicate_segment'] += 1
                     continue
                 
-                seen_segments.add(seg_signature)
+                seen_segments.add(seg)
                 
                 # Compute metrics
                 metrics = metrics_computer.compute_all_metrics(seg, predicted_class)
@@ -169,9 +176,9 @@ class BeamSearch:
                             recall=metrics['recall'],
                             coverage=metrics['coverage'],
                             support=metrics['support'],
-                            parent_precision=parent_rule._p,
-                            parent_recall=parent_rule._r,
-                            parent_coverage=parent_rule._c,
+                            parent_precision=parent_rule.precision,
+                            parent_recall=parent_rule.recall,
+                            parent_coverage=parent_rule.coverage,
                             parent_segment=parent_rule.segment,
                             leakage_rate=metrics['leakage_rate'],
                             subscribers_caught=metrics['subscribers_caught'],
@@ -191,28 +198,28 @@ class BeamSearch:
                     recall=metrics['recall'],
                     coverage=metrics['coverage'],
                     support=metrics['support'],
-                    parent_precision=parent_rule._p,
-                    parent_recall=parent_rule._r,
-                    parent_coverage=parent_rule._c,
+                    parent_precision=parent_rule.precision,
+                    parent_recall=parent_rule.recall,
+                    parent_coverage=parent_rule.coverage,
                     parent_segment=parent_rule.segment,
                     leakage_rate=metrics['leakage_rate'],
                     subscribers_caught=metrics['subscribers_caught'],
                 )
                 
-                # Create Rule object
-                rule = Rule(
+                # Create CandidateRule
+                rule = CandidateRule(
                     rule_id=rule_id_counter['current'],
                     segment=seg,
                     predicted_class=predicted_class,
                     complexity=depth,
-                    pass_assignment="pass1" if predicted_class == 0 else "pass2"
+                    precision=metrics['precision'],
+                    recall=metrics['recall'],
+                    coverage=metrics['coverage'],
+                    support=metrics['support'],
                 )
                 
-                # Store metrics
-                rule._p = metrics['precision']
-                rule._r = metrics['recall']
-                rule._c = metrics['coverage']
-                rule._s = scorer.score_rule(
+                # Store beam score for internal use
+                rule._beam_score = scorer.score_rule(
                     metrics['precision'],
                     metrics['recall'],
                     metrics['coverage'],
@@ -220,17 +227,16 @@ class BeamSearch:
                     seg,
                     validator,
                 )
-                rule._cls = predicted_class
                 
                 accepted_rules.append(rule)
                 rule_id_counter['current'] += 1
         
-        return accepted_rules, stats
+        return accepted_rules, dict(stats)
     
     def expand_depth(
         self,
-        current_rules: list,
-        available_features: list,
+        current_rules: List[CandidateRule],
+        available_features: List[str],
         depth: int,
         predicted_class: int,
         validator,
@@ -238,8 +244,8 @@ class BeamSearch:
         constraints,
         scorer,
         logger,
-        rule_id_counter: dict,
-    ) -> tuple:
+        rule_id_counter: Dict[str, int],
+    ) -> Tuple[List[CandidateRule], Dict[str, int]]:
         """
         Expand all rules at current depth to next depth.
         
@@ -258,8 +264,8 @@ class BeamSearch:
         Returns:
             (next_rules, combined_stats) tuple
         """
-        next_rules = []
-        combined_stats = defaultdict(int)
+        next_rules: List[CandidateRule] = []
+        combined_stats: Dict[str, int] = defaultdict(int)
         
         # Reset logger counters for this depth
         logger.reset_depth_counters()
@@ -285,4 +291,4 @@ class BeamSearch:
             for key, value in stats.items():
                 combined_stats[key] += value
         
-        return next_rules, combined_stats
+        return next_rules, dict(combined_stats)

@@ -5,8 +5,12 @@
 #   Depth 1: Structural validity ONLY
 #   Depth 2: Light pruning (extreme leakage guardrail)
 #   Depth 3: Quality constraints
+# Works with frozenset segments
 # ============================================================
-from collections import defaultdict
+
+from typing import Tuple, Set, FrozenSet, Union, Dict, Optional
+
+SegmentType = Union[FrozenSet[Tuple[str, int]], Set[Tuple[str, int]]]
 
 
 class RuleConstraints:
@@ -51,7 +55,7 @@ class RuleConstraints:
         # Depth 2 light pruning
         self.max_leakage_rate_depth2 = max_leakage_rate_depth2
         self.max_leakage_fraction_depth2 = max_leakage_fraction_depth2
-        self.max_leakage_absolute_depth2 = None  # Set dynamically
+        self.max_leakage_absolute_depth2: Optional[int] = None
     
     def set_total_subscribers(self, total_subscribers: int):
         """Set total subscriber count for computing absolute leakage threshold."""
@@ -59,18 +63,21 @@ class RuleConstraints:
             total_subscribers * self.max_leakage_fraction_depth2
         )
     
-    def check_depth1_constraints(self, segment: set, validator) -> tuple:
+    def check_depth1_constraints(
+        self, 
+        segment: SegmentType, 
+        validator
+    ) -> Tuple[bool, Optional[str]]:
         """
         Check Depth 1 constraints (structural validity only).
         
         Args:
-            segment: Set of (feature, level) tuples
+            segment: Set or frozenset of (feature, level) tuples
             validator: FeatureValidator instance
             
         Returns:
             (is_valid, rejection_reason) tuple
         """
-        # Only check structural validity
         if validator.has_duplicate_base_features(segment):
             return False, "duplicate_base_features"
         
@@ -78,17 +85,17 @@ class RuleConstraints:
     
     def check_depth2_constraints(
         self,
-        segment: set,
+        segment: SegmentType,
         depth: int,
         predicted_class: int,
-        metrics: dict,
+        metrics: Dict[str, any],
         validator,
-    ) -> tuple:
+    ) -> Tuple[bool, Optional[str]]:
         """
         Check Depth 2 constraints (light structural pruning).
         
         Args:
-            segment: Set of (feature, level) tuples
+            segment: Set or frozenset of (feature, level) tuples
             depth: Current depth
             predicted_class: Target class (0 or 1)
             metrics: Dict with computed metrics
@@ -114,8 +121,9 @@ class RuleConstraints:
                 subscribers_caught = metrics['subscribers_caught']
                 
                 if (leakage_rate > self.max_leakage_rate_depth2 or
-                    subscribers_caught > self.max_leakage_absolute_depth2):
-                    return False, f"extreme_leakage_depth2"
+                    (self.max_leakage_absolute_depth2 is not None and 
+                     subscribers_caught > self.max_leakage_absolute_depth2)):
+                    return False, "extreme_leakage_depth2"
             
             # Pass 2: Precision floor + Coverage cap (BLOCKS EXPANSION)
             if predicted_class == 1:
@@ -132,17 +140,17 @@ class RuleConstraints:
     
     def check_depth3_constraints(
         self,
-        segment: set,
+        segment: SegmentType,
         depth: int,
         predicted_class: int,
-        metrics: dict,
+        metrics: Dict[str, any],
         validator,
-    ) -> tuple:
+    ) -> Tuple[bool, Optional[str]]:
         """
         Check Depth 3+ constraints (quality gates).
         
         Args:
-            segment: Set of (feature, level) tuples
+            segment: Set or frozenset of (feature, level) tuples
             depth: Current depth
             predicted_class: Target class (0 or 1)
             metrics: Dict with computed metrics

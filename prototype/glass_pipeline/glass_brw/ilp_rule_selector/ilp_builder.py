@@ -2,12 +2,21 @@
 # GLASS-BRW: ILP BUILDER MODULE
 # ============================================================
 # Construct the Integer Linear Programming optimization problem
+# Works with EvaluatedRule objects
 # ============================================================
+
+from typing import List, Dict
 from pulp import LpProblem, LpVariable, LpMaximize, lpSum, PULP_CBC_CMD, LpStatus
+
+from glass_brw.core.rule import EvaluatedRule
 
 
 class ILPBuilder:
-    """Build and solve Integer Linear Programming problems for rule selection."""
+    """
+    Build and solve Integer Linear Programming problems for rule selection.
+    
+    Works with EvaluatedRule objects.
+    """
     
     def __init__(
         self,
@@ -24,17 +33,48 @@ class ILPBuilder:
         self.lambda_rf_uncertainty = lambda_rf_uncertainty
         self.lambda_rf_misalignment = lambda_rf_misalignment
     
+    def create_problem(self, pass_name: str) -> LpProblem:
+        """
+        Create a new ILP problem.
+        
+        Args:
+            pass_name: Name of the pass (for problem naming)
+            
+        Returns:
+            PuLP LpProblem object
+        """
+        problem_name = f"GLASS_BRW_{pass_name.replace(' ', '_').replace('(', '').replace(')', '')}"
+        return LpProblem(problem_name, LpMaximize)
+    
+    def create_decision_variables(
+        self, 
+        rules: List[EvaluatedRule]
+    ) -> Dict[int, LpVariable]:
+        """
+        Create binary decision variables for each rule.
+        
+        Args:
+            rules: List of EvaluatedRule objects
+            
+        Returns:
+            Dict mapping rule_id to LpVariable
+        """
+        return {
+            r.rule_id: LpVariable(f"x_{r.rule_id}", cat="Binary")
+            for r in rules
+        }
+    
     def build_objective(
         self,
-        rules: list,
-        decision_vars: dict,
+        rules: List[EvaluatedRule],
+        decision_vars: Dict[int, LpVariable],
         scoring_mode: str
-    ) -> list:
+    ) -> List:
         """
         Build objective function terms for ILP.
         
         Args:
-            rules: List of Rule objects
+            rules: List of EvaluatedRule objects
             decision_vars: Dict mapping rule_id to LpVariable
             scoring_mode: "precision_first" or "recall_first"
             
@@ -51,8 +91,8 @@ class ILPBuilder:
                 quality = (rule.recall ** 3) * rule.precision * rule.coverage
             
             # RF penalties
-            rf_uncertainty = 1.0 - getattr(rule, 'rf_confidence', 0.5)
-            rf_misalignment = 1.0 - getattr(rule, 'rf_alignment', 0.0)
+            rf_uncertainty = 1.0 - rule.rf_confidence
+            rf_misalignment = 1.0 - rule.rf_alignment
             
             # Adjusted quality
             adjusted_quality = (
@@ -65,39 +105,11 @@ class ILPBuilder:
         
         return terms
     
-    def create_problem(self, pass_name: str):
-        """
-        Create a new ILP problem.
-        
-        Args:
-            pass_name: Name of the pass (for problem naming)
-            
-        Returns:
-            PuLP LpProblem object
-        """
-        problem_name = f"GLASS_BRW_{pass_name.replace(' ', '_')}"
-        return LpProblem(problem_name, LpMaximize)
-    
-    def create_decision_variables(self, rules: list) -> dict:
-        """
-        Create binary decision variables for each rule.
-        
-        Args:
-            rules: List of Rule objects
-            
-        Returns:
-            Dict mapping rule_id to LpVariable
-        """
-        return {
-            r.rule_id: LpVariable(f"x_{r.rule_id}", cat="Binary")
-            for r in rules
-        }
-    
     def add_cardinality_constraints(
         self,
-        prob,
-        rules: list,
-        decision_vars: dict,
+        prob: LpProblem,
+        rules: List[EvaluatedRule],
+        decision_vars: Dict[int, LpVariable],
         min_rules: int,
         max_rules: int
     ):
@@ -106,7 +118,7 @@ class ILPBuilder:
         
         Args:
             prob: PuLP problem object
-            rules: List of Rule objects
+            rules: List of EvaluatedRule objects
             decision_vars: Dict mapping rule_id to LpVariable
             min_rules: Minimum number of rules to select
             max_rules: Maximum number of rules to select
@@ -115,7 +127,7 @@ class ILPBuilder:
         prob += total_vars >= min_rules, "min_rules"
         prob += total_vars <= max_rules, "max_rules"
     
-    def solve(self, prob, time_limit: int = 300) -> str:
+    def solve(self, prob: LpProblem, time_limit: int = 300) -> str:
         """
         Solve the ILP problem.
         
@@ -132,18 +144,18 @@ class ILPBuilder:
     
     def extract_selected_rules(
         self,
-        rules: list,
-        decision_vars: dict
-    ) -> list:
+        rules: List[EvaluatedRule],
+        decision_vars: Dict[int, LpVariable]
+    ) -> List[EvaluatedRule]:
         """
         Extract rules that were selected in the solution.
         
         Args:
-            rules: List of Rule objects
+            rules: List of EvaluatedRule objects
             decision_vars: Dict mapping rule_id to LpVariable
             
         Returns:
-            List of selected Rule objects
+            List of selected EvaluatedRule objects
         """
         return [
             r for r in rules

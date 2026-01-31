@@ -2,13 +2,22 @@
 # GLASS-BRW: DIVERSITY ANALYZER MODULE
 # ============================================================
 # Compute diversity scores and add diversity constraints
+# Works with EvaluatedRule objects
 # ============================================================
+
+from typing import List, Dict
 from collections import defaultdict
 from pulp import lpSum
 
+from glass_brw.core.rule import EvaluatedRule
+
 
 class DiversityAnalyzer:
-    """Compute diversity metrics and constraints for rule selection."""
+    """
+    Compute diversity metrics and constraints for rule selection.
+    
+    Works with EvaluatedRule objects during ILP selection.
+    """
     
     def __init__(self, validator, max_feature_usage: int = 40):
         """
@@ -21,7 +30,11 @@ class DiversityAnalyzer:
         self.validator = validator
         self.max_feature_usage = max_feature_usage
     
-    def compute_diversity_score(self, rule, selected_rules: list) -> float:
+    def compute_diversity_score(
+        self, 
+        rule: EvaluatedRule, 
+        selected_rules: List[EvaluatedRule]
+    ) -> float:
         """
         Compute diversity score for a rule given already-selected rules.
         
@@ -29,8 +42,8 @@ class DiversityAnalyzer:
         Higher score = more diverse (less overlap).
         
         Args:
-            rule: Rule object to evaluate
-            selected_rules: List of already-selected Rule objects
+            rule: EvaluatedRule object to evaluate
+            selected_rules: List of already-selected EvaluatedRule objects
             
         Returns:
             Diversity score ∈ [0, 1]
@@ -52,8 +65,8 @@ class DiversityAnalyzer:
     def add_diversity_constraints(
         self,
         prob,
-        rules: list,
-        decision_vars: dict,
+        rules: List[EvaluatedRule],
+        decision_vars: Dict[int, any],
         max_base_reuse: int = None
     ):
         """
@@ -61,7 +74,7 @@ class DiversityAnalyzer:
         
         Args:
             prob: PuLP problem object
-            rules: List of Rule objects
+            rules: List of EvaluatedRule objects
             decision_vars: Dict mapping rule_id to LpVariable
             max_base_reuse: Max times a base feature can be used (overrides default)
         """
@@ -81,3 +94,23 @@ class DiversityAnalyzer:
         # Add constraint for each base feature
         for base, rule_ids in base_feature_usage.items():
             prob += lpSum(decision_vars[rid] for rid in rule_ids) <= limit
+    
+    def get_feature_usage_summary(
+        self, 
+        rules: List[EvaluatedRule]
+    ) -> Dict[str, int]:
+        """
+        Get summary of base feature usage across rules.
+        
+        Args:
+            rules: List of EvaluatedRule objects
+            
+        Returns:
+            Dict mapping base feature to usage count
+        """
+        usage = defaultdict(int)
+        for rule in rules:
+            for feature, _ in rule.segment:
+                base = self.validator.extract_base_feature(feature)
+                usage[base] += 1
+        return dict(usage)

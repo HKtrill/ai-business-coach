@@ -2,12 +2,22 @@
 # GLASS-BRW: QUALITY GATE FILTER MODULE
 # ============================================================
 # Apply quality thresholds for Pass 1 and Pass 2 rules
+# Works with EvaluatedRule objects
 # ============================================================
+
+from typing import List, Tuple, Any
 from collections import defaultdict
+
+from glass_brw.core.rule import EvaluatedRule
 
 
 class QualityGateFilter:
-    """Apply quality gate constraints to filter rules."""
+    """
+    Apply quality gate constraints to filter rules.
+    
+    Works with EvaluatedRule objects.
+    Uses _cached_covered_idx for subscriber leakage calculations.
+    """
     
     def __init__(
         self,
@@ -42,13 +52,23 @@ class QualityGateFilter:
         self.min_coverage_pass2 = min_coverage_pass2
         self.max_coverage_pass2 = max_coverage_pass2
     
-    def apply_quality_gates_pass1(self, candidates: list, y_val) -> tuple:
+    def _get_covered_indices(self, rule: EvaluatedRule) -> set:
+        """Get covered indices from cached attribute or empty set."""
+        if hasattr(rule, '_cached_covered_idx'):
+            return rule._cached_covered_idx
+        return set()
+    
+    def apply_quality_gates_pass1(
+        self, 
+        candidates: List[EvaluatedRule], 
+        y_val: Any
+    ) -> Tuple[List[EvaluatedRule], List[Tuple]]:
         """
         Apply Pass 1 quality gates (NOT_SUBSCRIBE rules).
         
         Args:
-            candidates: List of Rule objects
-            y_val: Validation labels
+            candidates: List of EvaluatedRule objects
+            y_val: Validation labels (Series or array)
             
         Returns:
             (valid_rules, rejected_rules) tuple
@@ -58,11 +78,19 @@ class QualityGateFilter:
         reject_reasons = defaultdict(int)
         
         for rule in candidates:
-            # Compute subscriber leakage
-            subscribers_in_rule = sum(
-                1 for idx in rule.covered_idx
-                if (y_val.iloc[idx] if hasattr(y_val, "iloc") else y_val[idx]) == 1
-            )
+            # Compute subscriber leakage using cached covered indices
+            covered_idx = self._get_covered_indices(rule)
+            
+            if covered_idx:
+                subscribers_in_rule = sum(
+                    1 for idx in covered_idx
+                    if (y_val.iloc[idx] if hasattr(y_val, "iloc") else y_val[idx]) == 1
+                )
+            else:
+                # Fallback: estimate from rule metrics
+                # This is approximate but allows filtering without precomputed indices
+                subscribers_in_rule = int(rule.support * (1 - rule.precision))
+            
             leakage_rate = subscribers_in_rule / total_subscribers if total_subscribers > 0 else 0.0
             
             # Check all constraints
@@ -97,12 +125,15 @@ class QualityGateFilter:
         
         return valid, rejected
     
-    def apply_quality_gates_pass2(self, candidates: list) -> tuple:
+    def apply_quality_gates_pass2(
+        self, 
+        candidates: List[EvaluatedRule]
+    ) -> Tuple[List[EvaluatedRule], List[EvaluatedRule]]:
         """
         Apply Pass 2 quality gates (SUBSCRIBE rules).
         
         Args:
-            candidates: List of Rule objects
+            candidates: List of EvaluatedRule objects
             
         Returns:
             (valid_rules, rejected_rules) tuple
@@ -174,5 +205,6 @@ class QualityGateFilter:
         if valid:
             print(f"\n   Sample VALID rules (first 5):")
             for r in sorted(valid, key=lambda x: -x.precision)[:5]:
+                seg_str = r.segment_str if hasattr(r, 'segment_str') else str(list(r.segment)[:2])
                 print(f"     prec={r.precision:.3f}, recall={r.recall:.3f}, "
-                      f"cov={r.coverage:.3f}, segment={list(r.segment)[:2]}")
+                      f"cov={r.coverage:.3f}, segment={seg_str}")

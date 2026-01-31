@@ -2,15 +2,30 @@
 # GLASS-BRW: RULE DIAGNOSTICS MODULE
 # ============================================================
 # Analyze rule-level false negatives and abstain patterns
+# Works with models containing SelectedRule objects
 # ============================================================
+
+from typing import List
 import pandas as pd
 import numpy as np
 
+from glass_brw.core.rule import SelectedRule, SUBSCRIBE, NOT_SUBSCRIBE, ABSTAIN
+
 
 class RuleDiagnostics:
-    """Analyze rule-level false negatives and abstain patterns."""
+    """
+    Analyze rule-level false negatives and abstain patterns.
     
-    def __init__(self, glass_model, subscribe_label=1, not_subscribe_label=0, abstain_label=-1):
+    Works with fitted GLASS-BRW models that contain SelectedRule objects.
+    """
+    
+    def __init__(
+        self, 
+        glass_model, 
+        subscribe_label: int = SUBSCRIBE, 
+        not_subscribe_label: int = NOT_SUBSCRIBE, 
+        abstain_label: int = ABSTAIN
+    ):
         """
         Initialize rule diagnostics.
         
@@ -30,7 +45,7 @@ class RuleDiagnostics:
         X_test: pd.DataFrame,
         y_test: pd.Series,
         test_pred: np.ndarray,
-        test_decisions: list
+        test_decisions: List[str]
     ) -> pd.DataFrame:
         """
         Analyze which rules are causing false negatives.
@@ -59,7 +74,8 @@ class RuleDiagnostics:
         # ======================
         # PASS 1 RULES (DANGEROUS ONES)
         # ======================
-        for ridx, rule in enumerate(self.glass.pass1_rules, 1):
+        pass1_rules: List[SelectedRule] = self.glass.pass1_rules
+        for ridx, rule in enumerate(pass1_rules, 1):
             mask = df_test_analysis.apply(lambda r: self._rule_matches(rule, r), axis=1)
             total = mask.sum()
             fn = ((mask) & (df_test_analysis["y_true"] == self.SUBSCRIBE)).sum()
@@ -67,8 +83,8 @@ class RuleDiagnostics:
             
             rule_stats.append({
                 "pass": "PASS 1",
-                "rule_id": ridx,
-                "segment": " AND ".join(f"{f}={v}" for f, v in rule.segment),
+                "rule_id": rule.rule_id,
+                "segment": rule.segment_str if hasattr(rule, 'segment_str') else " AND ".join(f"{f}={v}" for f, v in rule.segment),
                 "fires": int(total),
                 "false_negatives": int(fn),
                 "true_negatives": int(tn),
@@ -80,7 +96,8 @@ class RuleDiagnostics:
         # ======================
         # PASS 2 RULES
         # ======================
-        for ridx, rule in enumerate(self.glass.pass2_rules, 1):
+        pass2_rules: List[SelectedRule] = self.glass.pass2_rules
+        for ridx, rule in enumerate(pass2_rules, 1):
             mask = df_test_analysis.apply(lambda r: self._rule_matches(rule, r), axis=1)
             total = mask.sum()
             fn = ((mask) & (df_test_analysis["y_true"] == self.SUBSCRIBE) & 
@@ -90,8 +107,8 @@ class RuleDiagnostics:
             
             rule_stats.append({
                 "pass": "PASS 2",
-                "rule_id": ridx,
-                "segment": " AND ".join(f"{f}={v}" for f, v in rule.segment),
+                "rule_id": rule.rule_id,
+                "segment": rule.segment_str if hasattr(rule, 'segment_str') else " AND ".join(f"{f}={v}" for f, v in rule.segment),
                 "fires": int(total),
                 "true_positives": int(tp),
                 "false_negatives": int(fn),
@@ -168,7 +185,7 @@ class RuleDiagnostics:
         X_test: pd.DataFrame,
         y_test: pd.Series,
         test_pred: np.ndarray,
-        test_decisions: list
+        test_decisions: List[str]
     ) -> pd.DataFrame:
         """
         Run all diagnostic analyses.
@@ -195,6 +212,6 @@ class RuleDiagnostics:
         
         return rule_df
     
-    def _rule_matches(self, rule, row):
+    def _rule_matches(self, rule: SelectedRule, row: pd.Series) -> bool:
         """Check if a rule matches a row."""
         return all(row[f] == v for f, v in rule.segment)

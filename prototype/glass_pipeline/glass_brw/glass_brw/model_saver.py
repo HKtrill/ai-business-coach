@@ -2,22 +2,36 @@
 # GLASS-BRW: MODEL SAVER MODULE
 # ============================================================
 # Save GLASS-BRW model, predictions, and metadata
+# Works with models containing SelectedRule objects
 # ============================================================
+
+from typing import Dict, List, Any, Optional
+from datetime import datetime
 import joblib
 import numpy as np
-from datetime import datetime
+
 from glass_brw.segment_builder import BankSegmentBuilder
+from glass_brw.core.rule import SelectedRule
 
 
 class ModelSaver:
-    """Save GLASS-BRW model artifacts and metadata."""
+    """
+    Save GLASS-BRW model artifacts and metadata.
     
-    def __init__(self, glass_model, segment_builder_class=BankSegmentBuilder):
+    Works with fitted models that contain SelectedRule objects
+    in pass1_rules and pass2_rules attributes.
+    """
+    
+    def __init__(
+        self, 
+        glass_model, 
+        segment_builder_class=BankSegmentBuilder
+    ):
         """
         Initialize model saver.
         
         Args:
-            glass_model: Fitted GLASS_BRW instance
+            glass_model: Fitted GLASS_BRW instance (Pipeline or Classifier)
             segment_builder_class: SegmentBuilder class for feature names
         """
         self.glass = glass_model
@@ -25,12 +39,12 @@ class ModelSaver:
     
     def save_model(
         self,
-        train_out: dict,
-        test_out: dict,
+        train_out: Dict[str, Any],
+        test_out: Dict[str, Any],
         train_proba: np.ndarray,
         test_proba: np.ndarray,
-        global_split: dict,
-        output_path: str = None,
+        global_split: Dict[str, Any],
+        output_path: Optional[str] = None,
         y_test=None,
     ) -> str:
         """
@@ -73,7 +87,7 @@ class ModelSaver:
             "test_decisions": test_out["decisions"],
             "test_proba": test_proba,
             # Model metadata
-            "rules": self.glass.get_rule_summary(),
+            "rules": self._serialize_rules(),
             "config": self._build_config(),
             "timestamp": timestamp,
         }
@@ -86,7 +100,49 @@ class ModelSaver:
         
         return output_path
     
-    def _build_config(self) -> dict:
+    def _serialize_rules(self) -> List[Dict[str, Any]]:
+        """Serialize SelectedRule objects to dicts for storage."""
+        rules = []
+        
+        # Pass 1 rules
+        pass1_rules: List[SelectedRule] = self.glass.pass1_rules
+        for r in pass1_rules:
+            rules.append({
+                "rule_id": r.rule_id,
+                "pass": "Pass 1",
+                "pass_assignment": r.pass_assignment,
+                "class": "NOT_SUBSCRIBE (0)",
+                "predicted_class": r.predicted_class,
+                "segment": list(r.segment),
+                "segment_str": r.segment_str if hasattr(r, 'segment_str') else str(r.segment),
+                "precision": r.precision,
+                "recall": r.recall,
+                "coverage": r.coverage,
+                "complexity": r.complexity,
+                "rf_alignment": r.rf_alignment,
+            })
+        
+        # Pass 2 rules
+        pass2_rules: List[SelectedRule] = self.glass.pass2_rules
+        for r in pass2_rules:
+            rules.append({
+                "rule_id": r.rule_id,
+                "pass": "Pass 2",
+                "pass_assignment": r.pass_assignment,
+                "class": "SUBSCRIBE (1)",
+                "predicted_class": r.predicted_class,
+                "segment": list(r.segment),
+                "segment_str": r.segment_str if hasattr(r, 'segment_str') else str(r.segment),
+                "precision": r.precision,
+                "recall": r.recall,
+                "coverage": r.coverage,
+                "complexity": r.complexity,
+                "rf_alignment": r.rf_alignment,
+            })
+        
+        return rules
+    
+    def _build_config(self) -> Dict[str, Any]:
         """Build configuration dict from glass model."""
         return {
             "mode": self.glass.mode,
@@ -106,7 +162,12 @@ class ModelSaver:
             "enable_novelty_constraints": self.glass.enable_novelty_constraints,
         }
     
-    def _print_save_summary(self, output_path: str, bundle: dict, y_test=None):
+    def _print_save_summary(
+        self, 
+        output_path: str, 
+        bundle: Dict[str, Any], 
+        y_test=None
+    ):
         """Print save summary and verification."""
         print("\n" + "="*80)
         print("💾 SAVING ARTIFACTS")
@@ -122,7 +183,12 @@ class ModelSaver:
         if y_test is not None and len(bundle['test_proba']) > 0:
             self._print_sample_predictions(bundle, y_test)
     
-    def _print_sample_predictions(self, bundle: dict, y_test, n_samples: int = 10):
+    def _print_sample_predictions(
+        self, 
+        bundle: Dict[str, Any], 
+        y_test, 
+        n_samples: int = 10
+    ):
         """Print sample predictions for verification."""
         print(f"\n📊 Sample predictions (first {n_samples} test samples):")
         print(f"{'Sample':<8} {'Pass':<12} {'P(NOT_SUB)':<12} {'P(SUB)':<12} {'Pred':<12} {'True':<6}")
@@ -143,7 +209,7 @@ class ModelSaver:
     
     def print_final_summary(
         self,
-        test_out: dict,
+        test_out: Dict[str, Any],
         pass1_blocked_subscribers: int,
         total_subscribers: int,
         overall_recall: float,
@@ -160,7 +226,8 @@ class ModelSaver:
         print(f"   Pass 1: {len(self.glass.pass1_rules)} precision-focused filters")
         print(f"   Pass 2: {len(self.glass.pass2_rules)} recall-focused detectors")
         print(f"   Test Coverage: {test_out['covered'].mean():.1%}")
-        print(f"   Subscriber Leakage (Pass 1): {pass1_blocked_subscribers/total_subscribers:.1%}")
+        if total_subscribers > 0:
+            print(f"   Subscriber Leakage (Pass 1): {pass1_blocked_subscribers/total_subscribers:.1%}")
         print(f"   Overall Subscriber Recall: {overall_recall:.1%}")
         print(f"   Covered Precision: {covered_precision:.3f}")
         print(f"   Covered Recall: {covered_recall:.3f}")

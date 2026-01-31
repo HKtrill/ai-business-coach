@@ -259,30 +259,14 @@ class LRStage:
     
     def save(self, output_dir: str = "./models/lr") -> Dict[str, str]:
         """
-        Save model and metadata.
-        
-        Parameters
-        ----------
-        output_dir : str
-            Directory to save model
-            
-        Returns
-        -------
-        filepaths : dict
-            Paths to saved files
+        Save baseline LR model and metadata.
+        NOTE: Baseline LR does NOT persist predictions or calibration.
         """
         if not self.fitted:
             raise ValueError("Model not fitted. Call fit() first.")
-        
+
         os.makedirs(output_dir, exist_ok=True)
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        
-        # Save model
-        model_path = os.path.join(output_dir, f"lr_model_{timestamp}.pkl")
-        with open(model_path, 'wb') as f:
-            pickle.dump(self.model, f)
-        
-        # Save ensemble dict
         ensemble_dict = {
             'model': self.model,
             'model_name': 'logistic_regression_baseline',
@@ -297,19 +281,14 @@ class LRStage:
             'performance_metrics': self.metrics,
             'training_date': timestamp
         }
-        
-        ensemble_path = os.path.join(output_dir, f"lr_ensemble_{timestamp}.joblib")
-        joblib.dump(ensemble_dict, ensemble_path)
-        
-        print(f"\n💾 Saved:")
-        print(f"  Model:    {model_path}")
-        print(f"  Ensemble: {ensemble_path}")
-        
-        return {
-            'model_path': model_path,
-            'ensemble_path': ensemble_path
-        }
-    
+
+        path = os.path.join(output_dir, f"lr_baseline_{timestamp}.joblib")
+        joblib.dump(ensemble_dict, path)
+
+        print(f"\n💾 Saved baseline LR: {path}")
+        return {'ensemble_path': path}
+
+
     @staticmethod
     def load(ensemble_path: str) -> 'LRStage':
         """
@@ -398,44 +377,3 @@ def train_lr_stage(
     
     print("\n🎯 LR Stage 1 complete")
     return stage, metrics
-
-
-# Example usage
-if __name__ == "__main__":
-    from data.preprocessing.bank_preprocessing import BankPreprocessor
-    from data.global_splits.split_manager import GlobalSplitManager
-    from feature_engineering import engineer_features
-    from correlation_analysis import analyze_and_prune_features
-    
-    # Load and preprocess
-    df = pd.read_csv("../data/raw/bank-additional-full.csv", sep=";")
-    preprocessor = BankPreprocessor(drop_leaky=True)
-    df_processed = preprocessor.fit_transform(df)
-    
-    # Create split
-    manager = GlobalSplitManager()
-    split_dict = manager.create_split(df_processed)
-    
-    # Engineer features
-    X_train_eng, X_test_eng, engineer = engineer_features(
-        split_dict['X_train'],
-        split_dict['X_test']
-    )
-    
-    # Prune correlations
-    X_train_pruned, X_test_pruned, analyzer = analyze_and_prune_features(
-        X_train_eng,
-        X_test_eng,
-        split_dict['y_train'],
-        threshold=0.7,
-        plot=False
-    )
-    
-    # Train LR stage
-    stage, metrics = train_lr_stage(
-        X_train_pruned,
-        X_test_pruned,
-        split_dict['y_train'],
-        split_dict['y_test'],
-        save=True
-    )

@@ -2,9 +2,14 @@
 # GLASS-BRW: RULE METRICS MODULE
 # ============================================================
 # Computes precision, recall, coverage, and leakage metrics for rules
+# Works with frozenset segments
 # ============================================================
+
+from typing import Dict, Tuple, Set, FrozenSet, Union
 import pandas as pd
 import numpy as np
+
+SegmentType = Union[FrozenSet[Tuple[str, int]], Set[Tuple[str, int]]]
 
 
 class RuleMetrics:
@@ -24,24 +29,28 @@ class RuleMetrics:
         self.total_subscribers = (y == 1).sum()
         self.total_non_subscribers = (y == 0).sum()
     
-    def compute_rule_mask(self, segment: set) -> pd.Series:
+    def compute_rule_mask(self, segment: SegmentType) -> pd.Series:
         """
         Compute boolean mask for samples matching rule segment.
         
         Args:
-            segment: Set of (feature, level) tuples
+            segment: Set or frozenset of (feature, level) tuples
             
         Returns:
             Boolean mask indicating which samples match the rule
         """
         mask = pd.Series(True, index=self.segments_df.index)
         for feature, level in segment:
-            mask &= (self.segments_df[feature] == level)
+            if feature in self.segments_df.columns:
+                mask &= (self.segments_df[feature] == level)
+            else:
+                # Feature not in data - return all False
+                return pd.Series(False, index=self.segments_df.index)
         return mask
     
     def compute_support(self, mask: pd.Series) -> int:
         """Compute absolute support (number of matching samples)."""
-        return mask.sum()
+        return int(mask.sum())
     
     def compute_coverage(self, mask: pd.Series) -> float:
         """Compute coverage as fraction of total population."""
@@ -60,7 +69,7 @@ class RuleMetrics:
         """
         if mask.sum() == 0:
             return 0.0
-        return (self.y[mask] == predicted_class).mean()
+        return float((self.y[mask] == predicted_class).mean())
     
     def compute_recall(self, mask: pd.Series, predicted_class: int) -> float:
         """
@@ -77,9 +86,9 @@ class RuleMetrics:
         if total_class == 0:
             return 0.0
         true_positives = ((self.y == predicted_class) & mask).sum()
-        return true_positives / total_class
+        return float(true_positives / total_class)
     
-    def compute_subscriber_leakage(self, mask: pd.Series) -> tuple:
+    def compute_subscriber_leakage(self, mask: pd.Series) -> Tuple[float, int]:
         """
         Compute subscriber leakage for Pass 1 rules.
         
@@ -90,17 +99,21 @@ class RuleMetrics:
             return 0.0, 0
         
         subscriber_mask = (self.y == 1)
-        subscribers_caught = (mask & subscriber_mask).sum()
+        subscribers_caught = int((mask & subscriber_mask).sum())
         leakage_rate = subscribers_caught / self.total_subscribers
         
         return leakage_rate, subscribers_caught
     
-    def compute_all_metrics(self, segment: set, predicted_class: int) -> dict:
+    def compute_all_metrics(
+        self, 
+        segment: SegmentType, 
+        predicted_class: int
+    ) -> Dict[str, any]:
         """
         Compute all metrics for a rule segment.
         
         Args:
-            segment: Set of (feature, level) tuples
+            segment: Set or frozenset of (feature, level) tuples
             predicted_class: Target class (0 or 1)
             
         Returns:

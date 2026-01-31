@@ -3,7 +3,12 @@
 # ============================================================
 # Diagnostic logging for accepted/rejected rules with detailed metrics
 # ============================================================
+
+from typing import Set, FrozenSet, Tuple, Union, Optional
 from collections import defaultdict
+import numpy as np
+
+SegmentType = Union[FrozenSet[Tuple[str, int]], Set[Tuple[str, int]]]
 
 
 class RuleLogger:
@@ -39,24 +44,28 @@ class RuleLogger:
         self.rejection_log_counts = defaultdict(lambda: {0: 0, 1: 0})
         self.acceptance_log_counts = {0: 0, 1: 0}
     
+    def _format_segment(self, seg: SegmentType) -> str:
+        """Format segment for display."""
+        seg_sorted = sorted(seg, key=lambda x: x[0])
+        return "{" + ", ".join([f"({f!r}, {v})" for f, v in seg_sorted]) + "}"
+    
     def log_accepted_rule(
         self,
-        seg: set,
+        seg: SegmentType,
         depth: int,
         predicted_class: int,
         precision: float,
         recall: float,
         coverage: float,
         support: int,
-        parent_precision: float = None,
-        parent_recall: float = None,
-        parent_coverage: float = None,
-        parent_segment: set = None,
-        leakage_rate: float = None,
-        subscribers_caught: int = None,
+        parent_precision: Optional[float] = None,
+        parent_recall: Optional[float] = None,
+        parent_coverage: Optional[float] = None,
+        parent_segment: Optional[SegmentType] = None,
+        leakage_rate: Optional[float] = None,
+        subscribers_caught: Optional[int] = None,
     ):
         """Log comprehensive metrics for an accepted rule."""
-        # Check if we should log this rule
         if not self.verbose_acceptance_logging:
             return
         
@@ -66,8 +75,7 @@ class RuleLogger:
         self.acceptance_log_counts[predicted_class] += 1
         
         pass_name = "Pass1" if predicted_class == 0 else "Pass2"
-        seg_sorted = sorted(seg, key=lambda x: x[0])
-        seg_str = "{" + ", ".join([f"({f!r}, {v})" for f, v in seg_sorted]) + "}"
+        seg_str = self._format_segment(seg)
         
         print(f"\n{'─'*70}")
         print(f"✅ ACCEPTED: {seg_str}")
@@ -75,11 +83,8 @@ class RuleLogger:
         
         # Show parent segment if available
         if parent_segment is not None:
-            parent_sorted = sorted(parent_segment, key=lambda x: x[0])
-            parent_str = "{" + ", ".join([f"({f!r}, {v})" for f, v in parent_sorted]) + "}"
-            
-            # Find the new feature added
-            new_features = seg - parent_segment
+            parent_str = self._format_segment(parent_segment)
+            new_features = set(seg) - set(parent_segment)
             if new_features:
                 new_feat_str = ", ".join([f"({f!r}, {v})" for f, v in new_features])
                 print(f"   Parent: {parent_str}")
@@ -122,7 +127,6 @@ class RuleLogger:
         
         # Score info
         if predicted_class == 0:
-            import numpy as np
             score = (precision ** 3) * np.sqrt(coverage)
             print(f"  Score:     {score:.6f}  (prec³ × √cov)")
         else:
@@ -136,7 +140,7 @@ class RuleLogger:
     
     def log_rejected_rule(
         self,
-        seg: set,
+        seg: SegmentType,
         depth: int,
         rejection_reason: str,
         predicted_class: int,
@@ -147,13 +151,12 @@ class RuleLogger:
         parent_precision: float,
         parent_recall: float,
         parent_coverage: float,
-        parent_segment: set = None,
-        leakage_rate: float = None,
-        subscribers_caught: int = None,
-        threshold_info: str = None,
+        parent_segment: Optional[SegmentType] = None,
+        leakage_rate: Optional[float] = None,
+        subscribers_caught: Optional[int] = None,
+        threshold_info: Optional[str] = None,
     ):
         """Log comprehensive metrics for a rejected rule."""
-        # Check if we should log this rule
         if not self.verbose_rejection_logging:
             return
         
@@ -163,8 +166,7 @@ class RuleLogger:
         self.rejection_log_counts[rejection_reason][predicted_class] += 1
         
         pass_name = "Pass1" if predicted_class == 0 else "Pass2"
-        seg_sorted = sorted(seg, key=lambda x: x[0])
-        seg_str = "{" + ", ".join([f"({f!r}, {v})" for f, v in seg_sorted]) + "}"
+        seg_str = self._format_segment(seg)
         
         print(f"\n{'─'*70}")
         print(f"🔍 REJECTED: {seg_str}")
@@ -172,9 +174,8 @@ class RuleLogger:
         
         # Show parent segment if available
         if parent_segment is not None:
-            parent_sorted = sorted(parent_segment, key=lambda x: x[0])
-            parent_str = "{" + ", ".join([f"({f!r}, {v})" for f, v in parent_sorted]) + "}"
-            new_features = seg - parent_segment
+            parent_str = self._format_segment(parent_segment)
+            new_features = set(seg) - set(parent_segment)
             if new_features:
                 new_feat_str = ", ".join([f"({f!r}, {v})" for f, v in new_features])
                 print(f"   Parent: {parent_str}")

@@ -2,13 +2,18 @@
 # GLASS-BRW: FEATURE VALIDATOR MODULE
 # ============================================================
 # Validates feature composition and structural constraints
+# Works with frozenset segments
 # ============================================================
+
+from typing import Tuple, Set, FrozenSet, Union
+
+SegmentType = Union[FrozenSet[Tuple[str, int]], Set[Tuple[str, int]]]
 
 
 class FeatureValidator:
     """Validate feature usage and structural constraints for rules."""
     
-    def __init__(self, tier1_prefixes: tuple):
+    def __init__(self, tier1_prefixes: Tuple[str, ...]):
         """
         Initialize feature validator.
         
@@ -71,17 +76,17 @@ class FeatureValidator:
         # Binary features (no prefix/suffix)
         return feature_name
     
-    def has_duplicate_base_features(self, segment: set) -> bool:
+    def has_duplicate_base_features(self, segment: SegmentType) -> bool:
         """
         Validate rule structure: no multiple bins from same base feature.
         
         Args:
-            segment: Set of (feature, level) tuples
+            segment: Set or frozenset of (feature, level) tuples
             
         Returns:
             True if segment contains duplicate base features
         """
-        observed_bases = set()
+        observed_bases: Set[str] = set()
         for feature, _ in segment:
             base = self.extract_base_feature(feature)
             if base in observed_bases:
@@ -89,12 +94,12 @@ class FeatureValidator:
             observed_bases.add(base)
         return False
     
-    def has_tier1_feature(self, segment: set) -> bool:
+    def has_tier1_feature(self, segment: SegmentType) -> bool:
         """
         Check if segment contains at least one tier1 feature.
         
         Args:
-            segment: Set of (feature, level) tuples
+            segment: Set or frozenset of (feature, level) tuples
             
         Returns:
             True if segment has tier1 feature
@@ -105,12 +110,12 @@ class FeatureValidator:
             for f in features
         )
     
-    def get_used_base_features(self, segment: set) -> set:
+    def get_used_base_features(self, segment: SegmentType) -> Set[str]:
         """
         Get set of base features used in segment.
         
         Args:
-            segment: Set of (feature, level) tuples
+            segment: Set or frozenset of (feature, level) tuples
             
         Returns:
             Set of base feature names

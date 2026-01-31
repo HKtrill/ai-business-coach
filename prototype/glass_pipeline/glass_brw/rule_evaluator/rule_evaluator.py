@@ -2,7 +2,12 @@
 # GLASS-BRW: RULE EVALUATOR MODULE (REFACTORED)
 # ============================================================
 # Main orchestrator for rule evaluation using modular components
+#
+# Input:  List[CandidateRule] from RuleGenerator
+# Output: List[EvaluatedRule] with validation metrics
 # ============================================================
+
+from typing import List, Optional, Tuple
 import pandas as pd
 import numpy as np
 
@@ -13,12 +18,15 @@ from .rf_integration import RFIntegration
 from .rule_deduplicator import RuleDeduplicator
 from .overlap_analyzer import OverlapAnalyzer
 from glass_brw.rule_generator.feature_validator import FeatureValidator
+from glass_brw.core.rule import CandidateRule, EvaluatedRule
 
 
 class RuleEvaluator:
     """
     Validates and scores candidate rules using held-out validation data.
-    Works exclusively with BINARY features (int8 values 0/1).
+    
+    Input:  List[CandidateRule] from RuleGenerator
+    Output: List[EvaluatedRule] with validation metrics and RF diagnostics
     """
     
     def __init__(
@@ -26,7 +34,7 @@ class RuleEvaluator:
         segment_builder,
         min_support: int = 30,
         n_bootstrap: int = 3,
-        tier1_prefixes: tuple = (
+        tier1_prefixes: Tuple[str, ...] = (
             'previous', 'nr_employed', 'euribor', 'emp_var', 'cpi', 'cci',
             'month', 'contact', 'age', 'campaign', 'job', 'marital',
             'education', 'dow', 'default', 'housing', 'loan',
@@ -45,36 +53,20 @@ class RuleEvaluator:
         self.segment_builder = segment_builder
         self.min_support = min_support
         
-        # ============================================================
-        # INITIALIZE MODULAR COMPONENTS
-        # ============================================================
-        
-        # Feature validation (reused from rule_generator)
+        # Initialize modular components
         self.validator = FeatureValidator(tier1_prefixes=tier1_prefixes)
-        
-        # Rule matching
         self.matcher = RuleMatcher(segment_builder=segment_builder)
-        
-        # Metrics computation
         self.metrics = EvaluationMetrics()
-        
-        # Stability estimation
         self.stability = StabilityEstimator(
             segment_builder=segment_builder,
             n_bootstrap=n_bootstrap
         )
-        
-        # RF integration
         self.rf_integration = RFIntegration()
-        
-        # Deduplication
         self.deduplicator = RuleDeduplicator(validator=self.validator)
-        
-        # Overlap analysis
         self.overlap_analyzer = OverlapAnalyzer(matcher=self.matcher)
     
     # ============================================================
-    # BACKWARD COMPATIBILITY METHODS (OPTIONAL)
+    # BACKWARD COMPATIBILITY METHODS
     # ============================================================
     
     def match_rule(self, rule, segments_df):
@@ -99,71 +91,39 @@ class RuleEvaluator:
     
     def evaluate_candidates(
         self,
-        candidates: list,
+        candidates: List[CandidateRule],
         X_val: pd.DataFrame,
         y_val: pd.Series,
         rf_model=None
-    ) -> list:
+    ) -> List[EvaluatedRule]:
         """
         Evaluate candidate rules on held-out validation data.
         
-        Pipeline:
-            1. Discretize validation features
-            2. For each rule:
-               - Match rule to samples (boolean mask)
-               - Compute precision, recall, coverage
-               - Estimate stability (bootstrap)
-               - Compute RF metrics (if model provided)
-            3. Filter low-coverage rules (< min_support/2)
-            4. Deduplicate (structural + exact segment)
-            5. Compute overlap diagnostics
-        
         Args:
-            candidates: Rule objects from RuleGenerator
+            candidates: CandidateRule objects from RuleGenerator
             X_val: Validation features (raw)
             y_val: Validation labels (0 or 1)
             rf_model: RandomForestClassifier (optional) for confidence metrics
             
         Returns:
-            Evaluated Rule objects with populated metrics:
-                - precision, recall, coverage
-                - stability (bootstrap-based)
-                - rf_confidence, rf_alignment (if RF provided)
-                - covered_idx (sample indices)
-        
-        Example:
-            >>> evaluated = evaluator.evaluate_candidates(
-            ...     candidates, X_val, y_val, rf_model
-            ... )
-            Evaluating 453 candidate rules...
-            Evaluated 387 rules (filtered 66 low-coverage)
-            Deduplicated rules: 387 → 352
+            List of EvaluatedRule objects with populated metrics
         """
-        # ============================================================
-        # STEP 1: DISCRETIZE VALIDATION DATA
-        # ============================================================
+        # Discretize validation data
         segments_val = self.segment_builder.assign_segments(X_val)
         N = len(X_val)
         
-        # ============================================================
-        # STEP 2: GET RF PREDICTIONS (IF PROVIDED)
-        # ============================================================
+        # Get RF predictions if model provided
         rf_proba = self.rf_integration.get_rf_predictions(rf_model, X_val)
         
         print(f"\nEvaluating {len(candidates)} candidate rules...")
         
-        # ============================================================
-        # STEP 3: EVALUATE EACH RULE
-        # ============================================================
-        evaluated_rules = []
+        # Evaluate each rule and convert to EvaluatedRule
+        evaluated_rules: List[EvaluatedRule] = []
         
-        for rule in candidates:
+        for candidate in candidates:
             # Match rule to samples
-            mask = self.matcher.match_rule(rule, segments_val)
+            mask = self.matcher.match_rule(candidate, segments_val)
             n_matches = mask.sum()
-            
-            # Store covered sample indices (for ILP)
-            rule.covered_idx = self.matcher.get_covered_indices(rule, segments_val)
             
             # Quality gate: minimum support
             if n_matches < self.min_support // 2:
@@ -171,51 +131,70 @@ class RuleEvaluator:
             
             # Compute quality metrics
             rule_metrics = self.metrics.compute_all_metrics(
-                mask, y_val, rule.predicted_class, N
+                mask, y_val, candidate.predicted_class, N
             )
-            rule.precision = rule_metrics['precision']
-            rule.recall = rule_metrics['recall']
-            rule.coverage = rule_metrics['coverage']
-            
-            # Estimate stability (SUBSCRIBE rules only)
-            if rule.predicted_class == 1:
-                rule.stability = self.stability.estimate_stability(
-                    rule, X_val, y_val, self.matcher, self.metrics
-                )
-            else:
-                rule.stability = 1.0
             
             # Compute RF metrics (if model provided)
             if rf_proba is not None:
-                rule.rf_confidence, rule.rf_alignment = \
-                    self.rf_integration.compute_rf_metrics(mask, rf_proba)
+                rf_confidence, rf_alignment = self.rf_integration.compute_rf_metrics(
+                    mask, rf_proba
+                )
             else:
-                rule.rf_confidence = 0.5
-                rule.rf_alignment = 0.0
+                rf_confidence = 0.5
+                rf_alignment = 0.0
             
-            evaluated_rules.append(rule)
+            # Convert CandidateRule → EvaluatedRule
+            evaluated = EvaluatedRule(
+                rule_id=candidate.rule_id,
+                segment=candidate.segment,
+                predicted_class=candidate.predicted_class,
+                complexity=candidate.complexity,
+                precision=rule_metrics['precision'],
+                recall=rule_metrics['recall'],
+                coverage=rule_metrics['coverage'],
+                support=n_matches,
+                rf_confidence=rf_confidence,
+                rf_alignment=rf_alignment,
+            )
+            
+            evaluated_rules.append(evaluated)
         
-        # ============================================================
-        # STEP 4: LOG EVALUATION SUMMARY
-        # ============================================================
+        # Log evaluation summary
         print(f"Evaluated {len(evaluated_rules)} rules "
               f"(filtered {len(candidates) - len(evaluated_rules)} low-coverage)")
         
-        # ============================================================
-        # STEP 5: DEDUPLICATE RULES
-        # ============================================================
+        # Deduplicate rules
         before = len(evaluated_rules)
-        evaluated_rules = self.deduplicator.deduplicate_rules(evaluated_rules)
+        evaluated_rules = self._deduplicate_evaluated_rules(evaluated_rules)
         after = len(evaluated_rules)
         
         if after < before:
             print(f"Deduplicated rules: {before} → {after}")
         
-        # ============================================================
-        # STEP 6: COMPUTE OVERLAP DIAGNOSTICS
-        # ============================================================
+        # Compute overlap diagnostics
         self.overlap_analyzer.compute_overlap_diagnostics(
             evaluated_rules, segments_val
         )
         
         return evaluated_rules
+    
+    def _deduplicate_evaluated_rules(
+        self, 
+        rules: List[EvaluatedRule]
+    ) -> List[EvaluatedRule]:
+        """
+        Deduplicate EvaluatedRule objects by segment.
+        
+        Keeps rule with highest precision for ties.
+        """
+        unique = {}
+        
+        for rule in rules:
+            sig = (rule.segment_frozen, rule.predicted_class)
+            
+            if sig not in unique:
+                unique[sig] = rule
+            elif rule.precision > unique[sig].precision:
+                unique[sig] = rule
+        
+        return list(unique.values())

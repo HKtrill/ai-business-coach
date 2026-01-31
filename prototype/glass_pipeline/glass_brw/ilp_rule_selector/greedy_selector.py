@@ -2,12 +2,22 @@
 # GLASS-BRW: GREEDY SELECTOR MODULE
 # ============================================================
 # Greedy fallback selection when ILP fails
+# Works with EvaluatedRule objects
 # ============================================================
+
+from typing import List, Set
 import numpy as np
+
+from glass_brw.core.rule import EvaluatedRule
 
 
 class GreedySelector:
-    """Greedy rule selection with novelty and diversity constraints."""
+    """
+    Greedy rule selection with novelty and diversity constraints.
+    
+    Fallback when ILP solver fails or times out.
+    Works with EvaluatedRule objects.
+    """
     
     def __init__(
         self,
@@ -36,24 +46,34 @@ class GreedySelector:
         self.min_absolute_new_samples = min_absolute_new_samples
         self.diversity_weight = diversity_weight
     
+    def _get_covered_indices(self, rule: EvaluatedRule) -> Set[int]:
+        """
+        Get covered indices for a rule.
+        
+        Uses _cached_covered_idx if available.
+        """
+        if hasattr(rule, '_cached_covered_idx'):
+            return rule._cached_covered_idx
+        return set()
+    
     def greedy_select(
         self,
-        rules: list,
+        rules: List[EvaluatedRule],
         max_rules: int,
         scoring_mode: str
-    ) -> list:
+    ) -> List[EvaluatedRule]:
         """
         Perform greedy selection with HARD novelty cutoff by default.
         
         Each selected rule MUST cover new samples.
         
         Args:
-            rules: List of Rule objects
+            rules: List of EvaluatedRule objects
             max_rules: Maximum number of rules to select
             scoring_mode: "precision_first" or "recall_first"
             
         Returns:
-            List of selected Rule objects
+            List of selected EvaluatedRule objects
         """
         print(f"\n  ⚠️  ILP failed - using greedy fallback with diversity + novelty")
         print(f"      Greedy min novelty: {self.min_novelty_greedy:.0%}")
@@ -61,18 +81,18 @@ class GreedySelector:
         print(f"      Min new samples: {self.min_absolute_new_samples}")
         print(f"      Novelty weight: {self.greedy_novelty_weight}")
         
-        selected = []
+        selected: List[EvaluatedRule] = []
         remaining = rules.copy()
-        covered_samples = set()
+        covered_samples: Set[int] = set()
         
         while len(selected) < max_rules and remaining:
             best_rule = None
             best_score = -np.inf
-            best_novelty = 0
+            best_novelty = 0.0
             best_new_samples = 0
             
             for rule in remaining:
-                rule_covered = set(rule.covered_idx)
+                rule_covered = self._get_covered_indices(rule)
                 
                 # Compute novelty
                 if not covered_samples:
@@ -124,7 +144,7 @@ class GreedySelector:
             
             selected.append(best_rule)
             remaining.remove(best_rule)
-            covered_samples |= set(best_rule.covered_idx)
+            covered_samples |= self._get_covered_indices(best_rule)
         
         print(f"\n  ✅ Selected {len(selected)} rules via greedy")
         print(f"     Total unique samples covered: {len(covered_samples)}")
