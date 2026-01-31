@@ -58,6 +58,8 @@ pip install -r requirements.txt
 
 - Compatibility: Supported on macOS, Linux, and Windows.
 
+---
+
 > ⚠️ **Research Status & Dataset Transition Notice**
 >
 > This project is under active research and architectural refinement.
