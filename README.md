@@ -48,7 +48,6 @@ Windows (PowerShell)
 ```PowerShell
 .venv\Scripts\activate
 Install Dependencies
-```Bash
 pip install -r requirements.txt
 ```
 ### 📝 Notes
