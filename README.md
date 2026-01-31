@@ -37,8 +37,6 @@ ChurnBot is designed to run fully locally with no external services.
 git clone https://github.com/HKtrill/ai-business-coach.git
 cd ai-business-coach
 python -m venv .venv
-
-python -m venv .venv
 ```
 
 ### macOS / Linux
