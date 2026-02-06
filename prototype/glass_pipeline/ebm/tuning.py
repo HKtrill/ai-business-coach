@@ -15,7 +15,7 @@ def tune_ebm(X_train, y_train, interactions, random_state=42):
 
     ebm = ExplainableBoostingClassifier(
         random_state=random_state,
-        n_jobs=-1,
+        n_jobs=1,
         interactions=len(interactions),
     )
 
@@ -27,7 +27,7 @@ def tune_ebm(X_train, y_train, interactions, random_state=42):
         n_iter=15,
         cv=cv,
         scoring='f1',
-        n_jobs=-1,
+        n_jobs=1,
         verbose=2,
         refit=True,
         random_state=random_state,
