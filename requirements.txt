@@ -17,6 +17,9 @@ interpret>=0.4
 # ── Bayesian Hyperparameter Optimization ──────────────────────
 optuna>=3.3
 
+# ── Statistical Analysis ─────────────────────────────────────
+statsmodels>=0.13       # VIF, outlier diagnostics
+
 # ── Optimization (ILP for rule selection) ─────────────────────
 pulp>=2.7
 
