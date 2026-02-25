@@ -31,6 +31,21 @@ ChurnBot is designed to run fully locally with no external services.
 * **Git**
 * **Virtual environment tool** (Optional: `venv`, `conda`, etc.)
 
+### 🖥️ Hardware Requirements
+
+**Minimum (Recommended for Full Training Pipeline):**
+- 16GB RAM  
+- 4+ Core CPU (Ryzen 5 / Intel i5 equivalent)  
+- SSD storage recommended  
+
+**Recommended (For Research & Hyperparameter Optimization):**
+- 32GB RAM  
+- 8+ Core CPU (Ryzen 7 / Intel i7 equivalent)  
+- NVMe SSD  
+
+> ⚠️ Full cascade training with cross-validation and hyperparameter optimization can consume ~12GB RAM and sustain high CPU utilization during model fitting.  
+> Systems with 8GB RAM are not recommended for full training runs.
+
 ### Quick Start (Cross-Platform)
 
 ```bash
