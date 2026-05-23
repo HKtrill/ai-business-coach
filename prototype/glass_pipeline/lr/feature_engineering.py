@@ -2,305 +2,310 @@
 Feature Engineering for Logistic Regression Stage
 ==================================================
 
-Comprehensive feature engineering focusing on economic indicators:
-- PCA on economic features
-- Economic health index (composite indicator)
-- Polynomial and interaction terms
-- Cyclical encoding for temporal features
-- Campaign feature transformations
+Produces the three validated LR Stage 1 features:
+    cellular_crisis        — cellular contact during economic crisis
+    euribor3m_local_rate   — empirical P(subscribe) per euribor quantile bin
+    dow_month_encoded      — smoothed P(subscribe | day_of_week x month)
+
+Replaces the original EconomicFeatureEngineer (PCA / composite approach)
+with the validated feature set ported from the research notebook.
+
+Leakage fixes vs research notebook:
+    euribor3m_local_rate — bin rates fitted on X_train only;
+                           test mapped via stored IntervalIndex.
+    dow_month_encoded    — target encoding fitted on X_train + y_train;
+                           unseen day-month cells fall back to global mean.
 
 Author: Glass Pipeline Team
-Date: 2026-01-29
+Date: 2026-05
 """
 
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-from typing import Tuple, Dict
+from typing import Tuple
 import warnings
 
 warnings.filterwarnings("ignore")
 
+# ---------------------------------------------------------------------------
+# Constants (mirrored from feature_research modules)
+# ---------------------------------------------------------------------------
+_CRISIS_EURIBOR_THRESH: float = 1.5
+_CRISIS_EMP_VAR_THRESH: float = -1.0
+_CRISIS_NR_EMP_THRESH: float = 5100.0
+_CRISIS_SCORE_CUTOFF:  int   = 3
 
-class EconomicFeatureEngineer:
+_N_BINS_DEFAULT:    int = 20
+_SMOOTHING_FACTOR:  int = 100
+
+LR_FEATURES = ['cellular_crisis', 'euribor3m_local_rate', 'dow_month_encoded']
+
+
+# ---------------------------------------------------------------------------
+# Main class
+# ---------------------------------------------------------------------------
+class LRFeatureEngineer:
     """
-    Feature engineer specialized in economic indicators and interactions.
-    
-    Creates interpretable and predictive features from:
-    - Employment variation rate
-    - Consumer price index
-    - Consumer confidence index
-    - Euribor 3-month rate
-    - Number of employees
+    Feature engineer for LR Stage 1.
+
+    Produces exactly three features:
+        cellular_crisis       — no target used; safe to compute on any split.
+        euribor3m_local_rate  — fitted on train only; leakage-free on test.
+        dow_month_encoded     — fitted on train only; leakage-free on test.
+
+    Usage
+    -----
+        engineer = LRFeatureEngineer()
+        X_train_eng = engineer.fit_transform(X_train, y_train)
+        X_test_eng  = engineer.transform(X_test)
     """
-    
-    ECONOMIC_COLS = [
-        'emp.var.rate',
-        'cons.price.idx',
-        'cons.conf.idx',
-        'euribor3m',
-        'nr.employed'
-    ]
-    
-    def __init__(self, n_pca_components: int = 3):
+
+    def __init__(
+        self,
+        n_bins: int = _N_BINS_DEFAULT,
+        smoothing_factor: int = _SMOOTHING_FACTOR,
+    ) -> None:
+        self.n_bins = n_bins
+        self.smoothing_factor = smoothing_factor
+
+        # Fitted state — populated in fit()
+        self._euribor_intervals = None   # IntervalIndex from training qcut
+        self._euribor_bin_rates = None   # Series: interval -> mean(y)
+        self._global_mean       = None   # float: overall train subscribe rate
+        self._dm_smoothed       = None   # Series: "dow_month" key -> smoothed rate
+        self.fitted             = False
+
+    # ------------------------------------------------------------------
+    # Public API
+    # ------------------------------------------------------------------
+    def fit(self, X_train: pd.DataFrame, y_train: pd.Series) -> 'LRFeatureEngineer':
         """
-        Initialize feature engineer.
-        
-        Parameters
-        ----------
-        n_pca_components : int, default=3
-            Number of PCA components to extract from economic indicators
-        """
-        self.n_pca_components = n_pca_components
-        self.econ_scaler = None
-        self.pca = None
-        self.euribor_median = None
-        self.fitted = False
-        
-    def fit(self, X_train: pd.DataFrame) -> 'EconomicFeatureEngineer':
-        """
-        Fit transformers on training data.
-        
+        Fit target-dependent encodings on training data only.
+
         Parameters
         ----------
         X_train : pd.DataFrame
-            Training features
-            
-        Returns
-        -------
-        self : EconomicFeatureEngineer
-            Fitted engineer
+            Must contain: euribor3m, emp.var.rate, nr.employed,
+                          contact, day_of_week, month.
+        y_train : pd.Series
+            Binary target aligned with X_train.
         """
-        print("\n" + "="*80)
-        print("🔧 FITTING ECONOMIC FEATURE ENGINEER")
-        print("="*80)
-        
-        # 1. Fit scaler on economic features
-        self.econ_scaler = StandardScaler()
-        X_econ = X_train[self.ECONOMIC_COLS].values
-        self.econ_scaler.fit(X_econ)
-        
-        # 2. Fit PCA
-        X_econ_scaled = self.econ_scaler.transform(X_econ)
-        self.pca = PCA(n_components=self.n_pca_components)
-        self.pca.fit(X_econ_scaled)
-        
-        print(f"\n📐 PCA on Economic Indicators:")
-        print(f"  Components: {self.n_pca_components}")
-        print(f"  Explained variance: {self.pca.explained_variance_ratio_}")
-        print(f"  Total variance captured: {sum(self.pca.explained_variance_ratio_):.4f}")
-        
-        # Show loadings
-        loadings = pd.DataFrame(
-            self.pca.components_.T,
-            columns=[f'PC{i+1}' for i in range(self.n_pca_components)],
-            index=self.ECONOMIC_COLS
-        )
-        print(f"\n  Component loadings:")
-        print(loadings.round(3).to_string())
-        
-        # 3. Store euribor median for regime detection
-        self.euribor_median = X_train['euribor3m'].median()
-        print(f"\n📊 Euribor median: {self.euribor_median:.4f}")
-        
+        print("\n" + "="*70)
+        print("🔧 FITTING LR FEATURE ENGINEER")
+        print("="*70)
+
+        self._fit_euribor_local_rate(X_train, y_train)
+        self._fit_dow_month_encoded(X_train, y_train)
+
         self.fitted = True
+        print("\n✅ LR feature engineer fitted.")
         return self
-    
+
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
-        Transform features using fitted engineer.
-        
+        Transform a split using fitted state.
+
         Parameters
         ----------
         X : pd.DataFrame
-            Features to transform
-            
+            Train or test split with raw preprocessed columns.
+
         Returns
         -------
-        X_transformed : pd.DataFrame
-            Features with engineered columns added
+        pd.DataFrame
+            Shape (n, 3) with exactly LR_FEATURES columns.
         """
         if not self.fitted:
             raise ValueError("Engineer not fitted. Call fit() first.")
-        
+
         X_eng = X.copy()
-        
-        print("\n" + "="*80)
-        print("🔧 ECONOMIC FEATURE ENGINEERING")
-        print("="*80)
-        
-        # ==============================
-        # 1. PCA FEATURES
-        # ==============================
-        X_econ = X[self.ECONOMIC_COLS].values
-        X_econ_scaled = self.econ_scaler.transform(X_econ)
-        X_pca = self.pca.transform(X_econ_scaled)
-        
-        for i in range(self.n_pca_components):
-            X_eng[f'econ_pc{i+1}'] = X_pca[:, i]
-        
-        print(f"✅ Added: {self.n_pca_components} PCA components")
-        
-        # ==============================
-        # 2. ECONOMIC HEALTH INDEX
-        # Composite indicator: higher = better economic conditions
-        # ==============================
-        econ_z = pd.DataFrame(
-            X_econ_scaled,
-            columns=[f'{c}_z' for c in self.ECONOMIC_COLS],
-            index=X.index
-        )
-        
-        X_eng['econ_health'] = (
-            econ_z['emp.var.rate_z'] * 0.25 +      # Employment growth
-            -econ_z['euribor3m_z'] * 0.30 +        # Lower rates better (inverted)
-            econ_z['cons.conf.idx_z'] * 0.25 +     # Consumer confidence
-            econ_z['nr.employed_z'] * 0.20         # Employment level
-        )
-        print(f"✅ Added: econ_health (weighted composite)")
-        print(f"  Range: [{X_eng['econ_health'].min():.3f}, {X_eng['econ_health'].max():.3f}]")
-        
-        # ==============================
-        # 3. RATE ENVIRONMENT (binary regime indicator)
-        # ==============================
-        X_eng['low_rate_env'] = (X['euribor3m'] < self.euribor_median).astype(int)
-        print(f"✅ Added: low_rate_env (euribor < {self.euribor_median:.2f})")
-        
-        # ==============================
-        # 4. POLYNOMIAL FEATURES
-        # ==============================
-        X_eng['euribor3m_sq'] = X['euribor3m'] ** 2
-        print(f"✅ Added: euribor3m_sq (quadratic term)")
-        
-        # ==============================
-        # 5. INTERACTION TERMS
-        # ==============================
-        X_eng['conf_x_rate'] = X['cons.conf.idx'] * X['euribor3m']
-        print(f"✅ Added: conf_x_rate (interaction)")
-        
-        # ==============================
-        # 6. TEMPORAL FEATURES (cyclical encoding)
-        # ==============================
-        if 'month' in X.columns:
-            X_eng['month_sin'] = np.sin(2 * np.pi * X['month'] / 12)
-            X_eng['month_cos'] = np.cos(2 * np.pi * X['month'] / 12)
-            print(f"✅ Added: month_sin, month_cos")
-        
-        if 'day_of_week' in X.columns:
-            X_eng['dow_sin'] = np.sin(2 * np.pi * X['day_of_week'] / 5)
-            X_eng['dow_cos'] = np.cos(2 * np.pi * X['day_of_week'] / 5)
-            print(f"✅ Added: dow_sin, dow_cos")
-        
-        # ==============================
-        # 7. CAMPAIGN FEATURES
-        # ==============================
-        if 'campaign' in X.columns:
-            X_eng['log_campaign'] = np.log1p(X['campaign'])
-            print(f"✅ Added: log_campaign")
-        
-        if 'previous' in X.columns:
-            X_eng['is_cold'] = (X['previous'] == 0).astype(int)
-            print(f"✅ Added: is_cold (never contacted)")
-        
-        # ==============================
-        # 8. DROP ABSORBED FEATURES
-        # ==============================
-        drop_cols = []
-        if 'month' in X.columns:
-            drop_cols.append('month')
-        if 'day_of_week' in X.columns:
-            drop_cols.append('day_of_week')
-        if 'campaign' in X.columns:
-            drop_cols.append('campaign')
-        
-        if drop_cols:
-            X_eng = X_eng.drop(columns=drop_cols)
-            print(f"\n🗑️ Dropped (absorbed into engineered features): {drop_cols}")
-        
-        print(f"\n✅ Feature engineering complete: {X_eng.shape[1]} features")
-        return X_eng
-    
-    def fit_transform(self, X_train: pd.DataFrame) -> pd.DataFrame:
+        X_eng = self._add_cellular_crisis(X_eng)
+        X_eng = self._transform_euribor_local_rate(X_eng)
+        X_eng = self._transform_dow_month_encoded(X_eng)
+
+        return X_eng[LR_FEATURES]
+
+    def fit_transform(
+        self, X_train: pd.DataFrame, y_train: pd.Series
+    ) -> pd.DataFrame:
+        """Fit on X_train + y_train, then transform X_train."""
+        return self.fit(X_train, y_train).transform(X_train)
+
+    # ------------------------------------------------------------------
+    # cellular_crisis
+    # ------------------------------------------------------------------
+    def _add_cellular_crisis(self, X: pd.DataFrame) -> pd.DataFrame:
         """
-        Fit and transform in one step.
-        
-        Parameters
-        ----------
-        X_train : pd.DataFrame
-            Training features
-            
-        Returns
-        -------
-        X_transformed : pd.DataFrame
-            Transformed training features
+        Cellular contact during economic crisis.
+
+        crisis_score = (euribor3m < 1.5)*3
+                     + (emp.var.rate < -1.0)*2
+                     + (nr.employed < 5100)*1
+
+        cellular_crisis = (contact == 0) AND (crisis_score >= 3)
+
+        No target used — safe to compute directly on any split.
         """
-        return self.fit(X_train).transform(X_train)
-    
-    def get_engineered_feature_names(self) -> list:
-        """Get list of all engineered feature names."""
-        engineered = [
-            f'econ_pc{i+1}' for i in range(self.n_pca_components)
-        ] + [
-            'econ_health',
-            'low_rate_env',
-            'euribor3m_sq',
-            'conf_x_rate',
-            'month_sin',
-            'month_cos',
-            'dow_sin',
-            'dow_cos',
-            'log_campaign',
-            'is_cold'
-        ]
-        return engineered
+        crisis_score = (
+            (X['euribor3m']    < _CRISIS_EURIBOR_THRESH).astype(int) * 3
+            + (X['emp.var.rate'] < _CRISIS_EMP_VAR_THRESH).astype(int) * 2
+            + (X['nr.employed']  < _CRISIS_NR_EMP_THRESH).astype(int) * 1
+        )
+        X['cellular_crisis'] = (
+            (X['contact'] == 0) & (crisis_score >= _CRISIS_SCORE_CUTOFF)
+        ).astype(int)
+
+        print(f"\n✅ cellular_crisis: {X['cellular_crisis'].sum():,} positives "
+              f"({X['cellular_crisis'].mean():.1%})")
+        return X
+
+    # ------------------------------------------------------------------
+    # euribor3m_local_rate
+    # ------------------------------------------------------------------
+    def _fit_euribor_local_rate(
+        self, X_train: pd.DataFrame, y_train: pd.Series
+    ) -> None:
+        """
+        Fit quantile bins and per-bin subscribe rates on training data.
+        Stores IntervalIndex and rate Series for leakage-free test transform.
+        """
+        df_tmp = pd.DataFrame({
+            'feat': X_train['euribor3m'].values,
+            'y':    y_train.values,
+        })
+        try:
+            bins = pd.qcut(df_tmp['feat'], q=self.n_bins, duplicates='drop')
+        except ValueError:
+            bins = pd.cut(df_tmp['feat'], bins=self.n_bins, duplicates='drop')
+
+        self._euribor_intervals  = bins.cat.categories   # IntervalIndex
+        self._euribor_bin_rates  = (
+            df_tmp.groupby(bins, observed=True)['y'].mean()
+        )
+
+        print(f"\n📐 euribor3m_local_rate:")
+        print(f"   Bins fitted : {len(self._euribor_intervals)}")
+        print(f"   Rate range  : [{self._euribor_bin_rates.min():.4f}, "
+              f"{self._euribor_bin_rates.max():.4f}]")
+
+    def _transform_euribor_local_rate(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Map euribor3m values to fitted bin rates.
+        Out-of-training-range values fall back to the training median rate.
+        """
+        mapped = pd.cut(
+            X['euribor3m'],
+            bins=self._euribor_intervals,
+            include_lowest=True,
+        ).map(self._euribor_bin_rates).astype(float)
+
+        fallback = float(self._euribor_bin_rates.median())
+        n_oob    = mapped.isna().sum()
+        X['euribor3m_local_rate'] = mapped.fillna(fallback)
+
+        print(f"✅ euribor3m_local_rate: range [{X['euribor3m_local_rate'].min():.4f}, "
+              f"{X['euribor3m_local_rate'].max():.4f}]"
+              + (f"  ({n_oob} OOB → median fallback)" if n_oob else ""))
+        return X
+
+    # ------------------------------------------------------------------
+    # dow_month_encoded
+    # ------------------------------------------------------------------
+    def _fit_dow_month_encoded(
+        self, X_train: pd.DataFrame, y_train: pd.Series
+    ) -> None:
+        """
+        Fit Laplace-smoothed P(subscribe | day_of_week x month) on training data.
+
+        Formula per (day, month) cell:
+            encoded = (n_cell * P_cell + lambda * P_global) / (n_cell + lambda)
+        where lambda = smoothing_factor.
+        """
+        self._global_mean = float(y_train.mean())
+
+        dm_key = (
+            X_train['day_of_week'].astype(str) + '_'
+            + X_train['month'].astype(str)
+        )
+        df_tmp = pd.DataFrame({'key': dm_key.values, 'y': y_train.values})
+        stats  = df_tmp.groupby('key')['y'].agg(['mean', 'count'])
+
+        self._dm_smoothed = (
+            stats['count'] * stats['mean']
+            + self.smoothing_factor * self._global_mean
+        ) / (stats['count'] + self.smoothing_factor)
+
+        print(f"\n📐 dow_month_encoded:")
+        print(f"   Global mean  : {self._global_mean:.4f}")
+        print(f"   Cells fitted : {len(self._dm_smoothed)}")
+        print(f"   Encoded range: [{self._dm_smoothed.min():.4f}, "
+              f"{self._dm_smoothed.max():.4f}]")
+
+    def _transform_dow_month_encoded(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Map day x month combos to smoothed rates.
+        Unseen combinations (e.g. rare test combos) fall back to global mean.
+        """
+        dm_key = (
+            X['day_of_week'].astype(str) + '_'
+            + X['month'].astype(str)
+        )
+        n_unseen = dm_key.map(self._dm_smoothed).isna().sum()
+        X['dow_month_encoded'] = (
+            dm_key.map(self._dm_smoothed).fillna(self._global_mean)
+        )
+
+        print(f"✅ dow_month_encoded"
+              + (f": {n_unseen} unseen cells → global mean fallback" if n_unseen
+                 else ": all cells mapped"))
+        return X
 
 
+# ---------------------------------------------------------------------------
+# Convenience function (called by Cell 6)
+# ---------------------------------------------------------------------------
 def engineer_features(
     X_train: pd.DataFrame,
-    X_test: pd.DataFrame,
-    n_pca_components: int = 3
-) -> Tuple[pd.DataFrame, pd.DataFrame, EconomicFeatureEngineer]:
+    X_test:  pd.DataFrame,
+    y_train: pd.Series,
+    n_bins:          int = _N_BINS_DEFAULT,
+    smoothing_factor: int = _SMOOTHING_FACTOR,
+) -> Tuple[pd.DataFrame, pd.DataFrame, 'LRFeatureEngineer']:
     """
-    Convenience function to engineer features on train and test sets.
-    
+    Fit on X_train + y_train, transform both splits.
+
     Parameters
     ----------
     X_train : pd.DataFrame
-        Training features
-    X_test : pd.DataFrame
-        Test features
-    n_pca_components : int, default=3
-        Number of PCA components
-        
+    X_test  : pd.DataFrame
+    y_train : pd.Series
+        Training labels — required for leakage-free target encodings.
+    n_bins : int
+        Quantile bins for euribor3m_local_rate. Default 20.
+    smoothing_factor : int
+        Laplace smoothing weight for dow_month_encoded. Default 100.
+
     Returns
     -------
-    X_train_eng : pd.DataFrame
-        Engineered training features
-    X_test_eng : pd.DataFrame
-        Engineered test features
-    engineer : EconomicFeatureEngineer
-        Fitted engineer object
+    X_train_eng : pd.DataFrame   shape (n_train, 3)
+    X_test_eng  : pd.DataFrame   shape (n_test,  3)
+    engineer    : LRFeatureEngineer
     """
-    engineer = EconomicFeatureEngineer(n_pca_components=n_pca_components)
-    
-    # Fit and transform train
-    X_train_eng = engineer.fit_transform(X_train)
-    
-    # Transform test
-    X_test_eng = engineer.transform(X_test)
-    
-    # Summary
-    print("\n" + "="*80)
-    print("📋 FEATURE ENGINEERING SUMMARY")
-    print("="*80)
-    print(f"  Original features: {X_train.shape[1]}")
-    print(f"  Engineered features: {X_train_eng.shape[1]}")
-    print(f"  Features added: {X_train_eng.shape[1] - X_train.shape[1]}")
-    print(f"\n  Engineered feature names:")
-    for feat in engineer.get_engineered_feature_names():
-        if feat in X_train_eng.columns:
-            print(f"    • {feat}")
-    print("="*80)
-    
+    engineer = LRFeatureEngineer(
+        n_bins=n_bins,
+        smoothing_factor=smoothing_factor,
+    )
+
+    X_train_eng = engineer.fit_transform(X_train, y_train)
+    X_test_eng  = engineer.transform(X_test)
+
+    print("\n" + "="*70)
+    print("📋 LR FEATURE ENGINEERING SUMMARY")
+    print("="*70)
+    print(f"  Features : {LR_FEATURES}")
+    print(f"  X_train  : {X_train_eng.shape}  |  X_test: {X_test_eng.shape}")
+    print(f"\n  Train feature stats:")
+    print(X_train_eng.describe().round(4).to_string())
+    print("="*70)
+
     return X_train_eng, X_test_eng, engineer

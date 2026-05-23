@@ -5,7 +5,7 @@
 # Works with EvaluatedRule objects
 # ============================================================
 
-from typing import List, Tuple, Any
+from typing import List, Tuple, Any, Optional
 from collections import defaultdict
 
 from glass_brw.core.rule import EvaluatedRule
@@ -22,19 +22,19 @@ class QualityGateFilter:
     def __init__(
         self,
         # Pass 1 thresholds
-        min_precision_pass1: float = 0.25,
-        max_precision_pass1: float = 1.00,
-        max_subscriber_leakage_rate_pass1: float = 0.15,
-        max_subscriber_leakage_absolute_pass1: int = 150,
-        min_coverage_pass1: float = 0.005,
-        max_coverage_pass1: float = 0.75,
+        min_precision_pass1: Optional[float] = None,
+        max_precision_pass1: Optional[float] = None,
+        max_subscriber_leakage_rate_pass1: Optional[float] = None,
+        max_subscriber_leakage_absolute_pass1: Optional[int] = None,
+        min_coverage_pass1: Optional[float] = None,
+        max_coverage_pass1: Optional[float] = None,
         # Pass 2 thresholds
-        min_precision_pass2: float = 0.05,
-        max_precision_pass2: float = 1.00,
-        min_recall_pass2: float = 0.10,
-        max_recall_pass2: float = 0.99,
-        min_coverage_pass2: float = 0.005,
-        max_coverage_pass2: float = 0.35,
+        min_precision_pass2: Optional[float] = None,
+        max_precision_pass2: Optional[float] = None,
+        min_recall_pass2: Optional[float] = None,
+        max_recall_pass2: Optional[float] = None,
+        min_coverage_pass2: Optional[float] = None,
+        max_coverage_pass2: Optional[float] = None,
     ):
         # Pass 1 constraints
         self.min_precision_pass1 = min_precision_pass1
@@ -63,22 +63,11 @@ class QualityGateFilter:
         candidates: List[EvaluatedRule], 
         y_val: Any
     ) -> Tuple[List[EvaluatedRule], List[Tuple]]:
-        """
-        Apply Pass 1 quality gates (NOT_SUBSCRIBE rules).
-        
-        Args:
-            candidates: List of EvaluatedRule objects
-            y_val: Validation labels (Series or array)
-            
-        Returns:
-            (valid_rules, rejected_rules) tuple
-        """
         valid, rejected = [], []
         total_subscribers = (y_val == 1).sum()
         reject_reasons = defaultdict(int)
         
         for rule in candidates:
-            # Compute subscriber leakage using cached covered indices
             covered_idx = self._get_covered_indices(rule)
             
             if covered_idx:
@@ -87,13 +76,10 @@ class QualityGateFilter:
                     if (y_val.iloc[idx] if hasattr(y_val, "iloc") else y_val[idx]) == 1
                 )
             else:
-                # Fallback: estimate from rule metrics
-                # This is approximate but allows filtering without precomputed indices
                 subscribers_in_rule = int(rule.support * (1 - rule.precision))
             
             leakage_rate = subscribers_in_rule / total_subscribers if total_subscribers > 0 else 0.0
             
-            # Check all constraints
             failed = False
             
             if rule.precision < self.min_precision_pass1:
@@ -108,10 +94,10 @@ class QualityGateFilter:
             if subscribers_in_rule > self.max_subscriber_leakage_absolute_pass1:
                 reject_reasons['leakage_abs'] += 1
                 failed = True
-            if rule.coverage < self.min_coverage_pass1:
+            if self.min_coverage_pass1 is not None and rule.coverage < self.min_coverage_pass1:
                 reject_reasons['coverage_low'] += 1
                 failed = True
-            if rule.coverage > self.max_coverage_pass1:
+            if self.max_coverage_pass1 is not None and rule.coverage > self.max_coverage_pass1:
                 reject_reasons['coverage_high'] += 1
                 failed = True
             
@@ -120,7 +106,6 @@ class QualityGateFilter:
             else:
                 valid.append(rule)
         
-        # Print diagnostics
         self._print_diagnostics_pass1(candidates, valid, rejected, reject_reasons)
         
         return valid, rejected
@@ -129,15 +114,6 @@ class QualityGateFilter:
         self, 
         candidates: List[EvaluatedRule]
     ) -> Tuple[List[EvaluatedRule], List[EvaluatedRule]]:
-        """
-        Apply Pass 2 quality gates (SUBSCRIBE rules).
-        
-        Args:
-            candidates: List of EvaluatedRule objects
-            
-        Returns:
-            (valid_rules, rejected_rules) tuple
-        """
         valid, rejected = [], []
         reject_reasons = defaultdict(int)
         
@@ -156,10 +132,10 @@ class QualityGateFilter:
             if rule.recall > self.max_recall_pass2:
                 reject_reasons['recall_high'] += 1
                 failed = True
-            if rule.coverage < self.min_coverage_pass2:
+            if self.min_coverage_pass2 is not None and rule.coverage < self.min_coverage_pass2:
                 reject_reasons['coverage_low'] += 1
                 failed = True
-            if rule.coverage > self.max_coverage_pass2:
+            if self.max_coverage_pass2 is not None and rule.coverage > self.max_coverage_pass2:
                 reject_reasons['coverage_high'] += 1
                 failed = True
             
@@ -168,13 +144,11 @@ class QualityGateFilter:
             else:
                 valid.append(rule)
         
-        # Print diagnostics
         self._print_diagnostics_pass2(candidates, valid, rejected, reject_reasons)
         
         return valid, rejected
     
     def _print_diagnostics_pass1(self, candidates, valid, rejected, reject_reasons):
-        """Print diagnostic information for Pass 1."""
         print(f"\n🔎 Pass 1 Quality Gate Diagnostics")
         print(f"   Candidates:              {len(candidates)}")
         print(f"   Passed:                  {len(valid)}")
@@ -188,7 +162,6 @@ class QualityGateFilter:
                 print(f"     {reason}: {count}")
     
     def _print_diagnostics_pass2(self, candidates, valid, rejected, reject_reasons):
-        """Print diagnostic information for Pass 2."""
         print("\n🔎 Pass 2 Quality Gate Diagnostics")
         print(f"   Candidates:              {len(candidates)}")
         print(f"   Passed:                  {len(valid)}")

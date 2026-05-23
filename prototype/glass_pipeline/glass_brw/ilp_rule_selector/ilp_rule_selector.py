@@ -84,10 +84,14 @@ class ILPRuleSelector:
         
         # Feature validation
         tier1_prefixes: Tuple[str, ...] = (
-            'previous', 'nr_employed', 'euribor', 'emp_var', 'cpi', 'cci',
-            'month', 'contact', 'age', 'campaign', 'job', 'marital',
-            'education', 'dow', 'default', 'housing', 'loan',
-            'econ', 'prospect',
+            'nsd',       # neighborhood_subscription_density bins
+            'jed',       # joint_economic_decay bins
+            'cci',       # cons.conf.idx bins
+            'eci',       # economic_curvature_intensity bins
+            'dow',       # dow_month_encoded bins
+            'behav',     # behavioral_favorability bins
+            'campaign',  # campaign bins
+            'cpi',       # cpi_high_cellular passthrough
         ),
     ):
         """

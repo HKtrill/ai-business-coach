@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from typing import Tuple, List, Dict
+from typing import Tuple, Dict
 import warnings
 
 warnings.filterwarnings("ignore")

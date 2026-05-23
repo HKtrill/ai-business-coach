@@ -3,7 +3,7 @@
 # Project ChurnBot — Interpretable Customer Decision Intelligence
 > *Proving that you can have your cake (performance) and eat it too (interpretability).*
 
-**Current Application:** Predicting term deposit subscriptions using glass-box ML
+**Current Research Application:** Predicting term deposit subscriptions using interpretable cascade architectures
 
 *Predict, prevent, and proactively respond to customer behavior with a research-backed AI assistant*
 
@@ -33,20 +33,55 @@ ChurnBot is designed to run fully locally with no external services.
 
 ### 🖥️ Hardware Requirements
 
-**Minimum (Recommended for Full Training Pipeline):**
+**Lightweight / Minimal Setup (Tested):**
+- 8GB RAM *(usable with lightweight Windows 10/11 setup)*  
+- Intel i5 or equivalent CPU  
+- SSD strongly recommended  
+- Minimal background applications/services  
+
+> Models have been successfully trained and developed on an optimized Windows 10 installation with 8GB RAM using only VS Code with the training pipeline active. During EBM training, memory usage typically ranges around ~5.5–7GB RAM depending on workload and multitasking.  
+>
+> However, browser usage and additional background applications can quickly exhaust available memory on 8GB systems, especially during Optuna hyperparameter optimization and extended EBM training sessions.
+
+---
+
+**Recommended (Comfortable Development & Full Pipeline Usage):**
 - 16GB RAM  
 - 4+ Core CPU (Ryzen 5 / Intel i5 equivalent)  
-- SSD storage recommended  
+- SSD or NVMe SSD  
 
-**Recommended (For Research & Hyperparameter Optimization):**
-- 32GB RAM  
-- 8+ Core CPU (Ryzen 7 / Intel i7 equivalent)  
+> Cross-device testing found that this configuration provides substantially smoother multitasking, improved notebook responsiveness, and more stable performance during longer research sessions and hyperparameter sweeps.
+
+---
+
+**Recommended for Heavy Research & Hyperparameter Optimization:**
+- 32GB+ RAM  
+- 8+ Core CPU (Ryzen 7 / Intel i7 equivalent or better)  
 - NVMe SSD  
 
-> ⚠️ Full cascade training with cross-validation and hyperparameter optimization can consume ~12GB RAM and sustain high CPU utilization during model fitting.  
-> Systems with 8GB RAM are not recommended for full training runs.
+> Recommended for:
+> - large Optuna sweeps
+> - simultaneous notebooks/browser workloads
+> - extensive EBM tuning
+> - future GlassCUDA experimentation
+> - parallel experimentation and diagnostics
+
+---
 
 ### Quick Start (Cross-Platform)
+
+Open a terminal and navigate to your projects/workspace directory.  
+If you do not already have one, create a directory for local development projects.
+
+Example:
+```text
+C:\Users\User\Projects
+```
+
+Install Python 3.14+ from:  
+https://www.python.org/downloads/
+
+Then run the following commands:
 
 ```bash
 git clone https://github.com/HKtrill/ai-business-coach.git
@@ -54,111 +89,166 @@ cd ai-business-coach
 python -m venv .venv
 ```
 
+> **Important:** Make sure you are inside the `ai-business-coach` root directory when creating the virtual environment.  
+> This helps avoid interpreter conflicts and ensures modular package imports resolve correctly.
+
+> `venv` is Python’s built-in virtual environment system.  
+> Conda environments may also be used as an alternative.
+
 ### macOS / Linux
-```Bash
+```bash
 source .venv/bin/activate
-```
-### Windows (PowerShell)
-```PowerShell
-.venv\Scripts\activate
-# Install dependencies
 pip install -r requirements.txt
 ```
+
+### Windows (PowerShell)
+```powershell
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
 ### 📝 Notes
-- Computation: All tasks run locally (CPU/GPU as available).
+- All computation runs locally (CPU/GPU as available)
+- No API keys or external services required
+- Supported on Windows, macOS, and Linux
+- VS Code is recommended for development and notebook execution
 
-- Privacy: No API keys or external services required.
+---
 
-- Compatibility: Supported on macOS, Linux, and Windows.
+## 📖 Synopsis
+
+Project ChurnBot is a research-driven customer decision intelligence system built around interpretable cascade architectures.
+
+Rather than treating customer behavior as a single black-box prediction task, the system decomposes decision-making into explicit stages that capture:
+- linear effects
+- interaction-driven rules
+- non-linear response curves
+- abstention-aware arbitration
+
+The cascade serves as the core reasoning engine, producing transparent and fully traceable predictions.
+
+An optional natural-language interface enables conversational interaction with model outputs and explanations while remaining independent from the core modeling pipeline.
+
+The result is a transparent, high-performance ensemble where every prediction can be traced to human-readable logic — enabling trustworthy deployment without sacrificing predictive performance.
+
+![Dataset Overview](assets/dataset_overview.png)
+
+*Dataset visualization from early Telco churn experiments. Updated bank marketing visualizations are currently being integrated.*
 
 ---
 
 > ⚠️ **Research Status & Dataset Transition Notice**
 >
-> This project is under active research and architectural refinement.
-> While the core glass-box cascade methodology is now established,
-> the current focus has shifted from architectural prototyping to
-> rigorous application, auditing, and validation on real-world data.
+> This project is under active research and architectural refinement.  
+> While the core glass-box cascade methodology is now established, the current focus has shifted from architectural prototyping toward rigorous application, auditing, and validation on real-world data.
 >
-> **Latest development work is tracked on the `main` branch following the
-> 
-> cascade-refactor-phase1 merge.**
+> **Latest development work is tracked on the `main` branch following merge [#21](https://github.com/HKtrill/ai-business-coach/pull/21).**
 >
-> **Notable updates:**
-> - The system previously transitioned from the synthetic Telco churn dataset
+> ### Notable Updates
+>
+> - The project previously transitioned from the synthetic IBM Telco churn dataset
 >   (used for early architectural validation) to a real-world bank marketing
 >   subscription dataset to improve external validity.
+>
 > - During temporal validity and leakage auditing of the bank marketing dataset,
->   multiple structural issues were identified that materially affect its suitability
->   for deployment-oriented modeling:
->     - **`duration`** encodes post-outcome information and constitutes direct label leakage.
->     - **`poutcome`** contains outcome-derived information from prior campaigns. While technically
->       available at prediction time, it induces historically-dependent predictions rather than
->       learning transferable behavioral patterns.
->     - **`pdays`** strongly correlates with `poutcome` and acts as a numeric surrogate for the same signal.
->     - Approximately **82% of samples collapse into a single "unknown" regime** (prospects with no
->       prior campaign history), severely limiting meaningful behavioral segmentation.
->     - Removing these features produces an observed substantial performance drop, indicating that much of
->       the dataset's apparent predictive power is driven by historical artifacts rather than
->       generalizable behavioral drivers.
-> - As a result, the project is **actively evaluating the bank marketing dataset under stricter
->   temporal and interpretability constraints**, while also exploring alternative real-world
+>   multiple structural issues were identified that materially affect deployment-oriented modeling:
+>
+>   - **`duration`** encodes post-outcome information and constitutes direct label leakage.
+>
+>   - **`poutcome`** contains outcome-derived information from prior campaigns. While technically
+>     available at prediction time, it induces historically-dependent predictions rather than
+>     actionable behavioral patterns.
+>
+>   - **`pdays`** strongly correlates with `poutcome` and acts as a numeric surrogate for the same signal,
+>     effectively encoding prior campaign state through recency information.
+>
+>   - Approximately **82% of samples collapse into a single `unknown` regime**
+>     (prospects with no prior campaign history), severely limiting meaningful segmentation once
+>     history-dependent features are removed.
+>
+>   - Removing these variables produces a substantial performance drop, suggesting that much of the
+>     dataset’s predictive power originates from prior campaign artifacts rather than customer behavior.
+>
+> - As a result, the project is actively evaluating the bank marketing dataset under stricter
+>   temporal and interpretability constraints while also exploring alternative real-world
 >   subscriber/churn datasets for comparative validation.
-> - **Performance metrics will not be directly comparable to other published benchmarks on this dataset.**
->   This system predicts subscription likelihood **before making the call** (using only pre-contact features),
->   whereas most benchmarks include post-outcome features like `duration` and semi-leaky features like
->   `poutcome` and `pdays`. This reflects a deliberate choice to solve the harder, deployment-realistic
->   problem of determining *whether to call* rather than post-hoc analysis of *what happened during the call*.
-> - **Critically, these issues were first surfaced by the system itself via the interpretable rule lattice.**  
->   Following removal of `duration`, rule generation became dominated by `poutcome_success` rules exhibiting
->   high precision but extremely low coverage — a signature of shortcut learning rather than meaningful
->   behavioral structure. This anomaly triggered deeper temporal inspection of `poutcome` and `pdays`,
->   leading to confirmation of historical dependency and regime collapse.
 >
->### Recent Refactor Status (January 2026)
+> - **Performance metrics are intentionally not directly comparable to many published benchmarks on this dataset.**
 >
-> A major refactor phase has been completed and merged into `main`,
-> consolidating over one month of end-to-end research and engineering work.
+>   This system predicts subscription likelihood **before contact occurs** using only pre-contact features,
+>   whereas many benchmark pipelines include post-outcome or history-dependent variables such as
+>   `duration`, `poutcome`, and `pdays`.
 >
-> Key outcomes:
-> - Full modularization of the four-stage glass-box cascade (Stages 1–4)
-> - Centralized data splitting, preprocessing, training, and evaluation
-> - Dataset upgrade to **bank-additional-full.csv** with macroeconomic context
-> - Significant runtime reductions (Stage 2 rule generation now <2 minutes locally)
-> - Improved non-leaky baseline performance via temporal and macro-context features
-> - One-command reproducible environment via `requirements.txt`
+>   This reflects a deliberate choice to solve the harder, deployment-realistic problem of determining
+>   *whether to initiate contact* rather than performing post-hoc analysis of *what happened during the call*.
 >
-> The project is now positioned for deeper feature interaction analysis,
-> rigorous statistical validation, and formal research documentation.
+> - **Critically, these issues were first surfaced by the system itself via the interpretable rule lattice.**
+>
+>   Following removal of `duration`, rule generation became dominated by `poutcome_success`
+>   rules exhibiting high precision but extremely low coverage — a signature of shortcut learning
+>   rather than meaningful behavioral structure.
+>
+>   This anomaly triggered deeper temporal inspection of `poutcome` and `pdays`,
+>   ultimately leading to confirmation of historical dependency and regime collapse.
 
-> ### Dataset Strategy
->
-> **Research validation:** Bank Marketing dataset (UCI ML Repository) with full temporal
-> auditing and leakage analysis documented above.
->
-> **Deployment demonstration:** Synthetic or permissively-licensed datasets (e.g., IBM Telco
-> Customer Churn) to avoid licensing complications and demonstrate cross-domain generalization.
->
-> This project is a **methodological framework** that organizations can evaluate and adapt
-> for their own proprietary subscription, churn, or binary decision modeling use cases.
->
-> ### Current Research Objective
->
-> Develop and validate a fully interpretable, abstention-aware glass-box cascade for
-> real-world customer decision modeling using rigorously audited, temporally-valid data.
->
-> ### Broader Implication
->
-> This investigation provides empirical evidence that interpretability and dataset auditing are not optional
-> conveniences, but foundational requirements in applied machine learning. The interpretable rule lattice exposed
-> latent historical dependencies and regime collapse that would almost certainly remain undetected under purely
-> black-box modeling, even in the presence of strong benchmark performance.
->
-> More broadly, this highlights a critical failure mode observed in both academic research and deployed systems:
-> models may optimize against historical artifacts or proxy signals rather than underlying behavioral mechanisms,
-> leading to misleading confidence and brittle generalization. Interpretable models and rigorous temporal auditing
-> are therefore essential for building reliable, decision-critical systems, particularly in deployment-oriented
-> settings where models must generalize beyond their training distribution.
+### Recent Refactor Status (January 2026)
+
+A major refactor phase has been completed and merged into `main`,
+consolidating over one month of end-to-end research and engineering work.
+
+#### Key Outcomes
+- Full modularization of the four-stage glass-box cascade (Stages 1–4)
+- Centralized data splitting, preprocessing, training, and evaluation
+- Dataset upgrade to `bank-additional-full.csv` with macroeconomic context
+- Significant runtime reductions (Stage 2 rule generation now completes in under 2 minutes locally)
+- Improved non-leaky baseline performance using temporal and macro-context features
+- One-command reproducible environment via `requirements.txt`
+
+The project is now positioned for:
+- deeper feature interaction analysis
+- rigorous statistical validation
+- expanded cross-dataset evaluation
+- formal research documentation
+
+---
+
+### Dataset Strategy
+
+**Research validation:**  
+Bank Marketing dataset (UCI ML Repository) with full temporal auditing and leakage analysis documented above.
+
+**Deployment demonstration:**  
+Synthetic or permissively-licensed datasets (e.g., IBM Telco Customer Churn)
+to avoid licensing complications while demonstrating cross-domain generalization.
+
+This project is designed as a **methodological framework** that organizations can evaluate and adapt
+for proprietary subscription, churn, or binary decision-modeling use cases.
+
+---
+
+### Current Research Objective
+
+Develop and validate an abstention-aware, interpretable cascade architecture for
+real-world customer decision modeling using rigorously audited, temporally-valid data.
+
+---
+
+### Broader Implication
+
+This investigation provides empirical evidence that interpretability and dataset auditing
+are not optional conveniences, but foundational requirements in applied machine learning.
+
+The interpretable rule lattice exposed latent historical dependencies and regime collapse
+that would likely remain undetected under purely black-box modeling despite strong benchmark performance.
+
+More broadly, this highlights a critical failure mode observed in both academic research and deployed systems:
+models may optimize against historical artifacts or proxy signals rather than underlying behavioral mechanisms,
+leading to misleading confidence and brittle generalization.
+
+Interpretable modeling and rigorous temporal auditing are therefore essential for building reliable,
+decision-critical systems that must generalize beyond their training distribution.
+
+---
 
 📊 **Leakage & Regime Collapse Diagnostics**
 
@@ -168,165 +258,173 @@ pip install -r requirements.txt
   <img src="assets/job_by_poutcome_conversion.png" width="32%">
 </p>
 
-**Figure** — Structural leakage and regime collapse in the bank marketing dataset.  
-**(Left)** `pdays` is tightly coupled with `previous`, indicating that recency largely encodes prior contact
-history rather than independent behavioral signal.  
-**(Center)** The dominant `poutcome=unknown` regime collapses near zero `pdays`, while non-unknown regimes
-exhibit wide separation — demonstrating that `pdays` acts as a numeric surrogate for campaign outcome state.  
-**(Right)** Conversion rates sharply diverge only when conditioning on known `poutcome`, while the dominant
-unknown regime exhibits weak and compressed signal across job segments — confirming historical dependency
-and loss of meaningful segmentation once history-dependent features are removed.
+**Figure — Structural leakage and regime collapse in the bank marketing dataset**
+
+**Left:** `pdays` is tightly coupled with `previous`, indicating that recency largely encodes prior contact history rather than independent behavioral signal.
+
+**Center:** The dominant `poutcome=unknown` regime collapses near zero `pdays`, while non-unknown regimes exhibit strong separation — demonstrating that `pdays` acts as a numeric surrogate for campaign outcome state.
+
+**Right:** Conversion rates diverge sharply only when conditioning on known `poutcome`, while the dominant unknown regime exhibits weak and compressed signal across job segments — confirming historical dependency and loss of meaningful segmentation once history-dependent variables are removed.
 
 ---
-## 📖 Synopsis
-Project ChurnBot is a research-driven, glass-box decision intelligence system for customer behavior prediction using fully interpretable cascade architectures. Instead of treating customer decisions as a single black-box prediction task, the system decomposes decision-making into explicit, interpretable stages that capture linear effects, interaction-driven rules, and non-linear response curves.
 
-The cascade serves as the core reasoning engine, producing abstention-aware, fully explainable predictions. A lightweight NLP interface enables natural-language interaction with model outputs and explanations, while remaining optional to the core system.
-
-The result is a transparent, high-performance ensemble where every decision can be traced to human-readable logic—enabling trustworthy deployment without sacrificing predictive power.
-
-![Dataset Overview](assets/dataset_overview.png)
-*Dataset visualization from early Telco churn experiments; current bank marketing 
-dataset analysis forthcoming.*
-
----
 ## 🚨 Problem: The Interpretability–Performance Trade-off Myth
 
-The ML industry perpetuates a harmful misconception: **“You must sacrifice accuracy for interpretability.”**  
-However, this trade-off is **not inherent**.
+The ML industry often treats interpretability and predictive performance as mutually exclusive objectives.
 
-This belief leads to:
-- Black-box models deployed in high-stakes retention settings where transparency is critical
-- Business teams unable to understand or trust model decisions
-- Missed opportunities for actionable retention strategies
-- Increased regulatory and compliance risk in customer intervention policies
+Project ChurnBot challenges that assumption directly.
 
-**Current Industry Practice**: Deploy XGBoost or neural networks and rely on post-hoc explanation methods (e.g., SHAP, LIME) that approximate—rather than reveal—the underlying decision logic.
+### Common Industry Pattern
+- Deploy black-box models in high-stakes decision systems
+- Apply post-hoc explanation tools (SHAP, LIME, etc.)
+- Approximate decision logic after training
+- Sacrifice transparency for benchmark performance
 
-**Our Solution**: A fully interpretable glass-box cascade that can **compete with or outperform** traditional black-box approaches while providing complete transparency. Every prediction is grounded in explicit rules, linear coefficients, and additive shape functions, enabling **faithful, exact explanations** rather than approximations.
+### ChurnBot Approach
+
+Instead of approximating model behavior after deployment, ChurnBot builds interpretability directly into the architecture itself.
+
+Every prediction is grounded in:
+- explicit rules
+- interpretable coefficients
+- additive shape functions
+- abstention-aware routing logic
+
+This enables faithful, exact explanations rather than post-hoc approximations.
 
 ---
-## 🎯 Architecture: 100% Glass Box Four-Stage Cascade
-```
+
+## 🎯 Architecture: Four-Stage Interpretable Cascade
+
+```text
 Stage 1: Logistic Regression (Linear Signals)
   ↓ Captures global linear trends via interpretable coefficients
 
-Stage 2: Sequential GLASS-BRW  
+Stage 2: Sequential GLASS-BRW
         (Gated Logistic Abstention Structured System — Best Rules Win)
   ↓ Routing-first, depth-aware rule lattice
   ↓ Explicitly isolates high false-negative risk regions
-  ↓ Pass 1 routes risky samples forward; abstains on confident non-subscriber regions
-  ↓ Pass 2 predicts SUBSCRIBE only when confident; otherwise abstains
+  ↓ Pass 1 isolates high-risk regions while abstaining on confident non-subscriber regions
+  ↓ Pass 2 predicts SUBSCRIBE only when sufficiently confident; otherwise abstains
 
 Stage 3: Explainable Boosting Machine (EBM)
-  ↓ Models non-linear effects via additive, interpretable shape functions
+  ↓ Models non-linear effects via additive interpretable shape functions
   ↓ Resolves uncertainty in routed or abstained samples
 
 Stage 4: Meta-EBM (Abstention-Aware Decision Arbiter)
-  ↓ Evaluates and arbitrates predictions from LR, GLASS-BRW, and EBM
-  ↓ Selects the most reliable interpretable decision based on confidence and agreement
+  ↓ Evaluates outputs from LR, GLASS-BRW, and EBM
+  ↓ Selects the most reliable interpretable prediction based on confidence and agreement
   ↓ Optionally abstains when no stage is sufficiently certain
-  ↓ Emits a final decision (or abstention) signal to downstream consumers (e.g., NLP interface) 
-  ↓ Explicitly communicates uncertainty rather than forcing a prediction
+  ↓ Explicitly communicates uncertainty rather than forcing predictions
 
 Customer-Level Predictions with End-to-End Explainability
 ```
 
-### Key Innovation: Every Stage is Interpretable
+### Key Innovation: Every Stage Remains Interpretable
 
-- **Logistic Regression**: Direct coefficient inspection 
-- **Sequential GLASS-BRW**: Explicit IF–THEN rules with abstention and routing
-- **EBM**: Additive shape functions exposing non-linear relationships in the data
-- **Meta-EBM**: Interpretable weighting of stage outputs, revealing how and when each model is trusted
+- **Logistic Regression:** Direct coefficient inspection
+- **Sequential GLASS-BRW:** Explicit IF–THEN routing and abstention rules
+- **EBM:** Additive shape functions exposing non-linear relationships
+- **Meta-EBM:** Transparent arbitration between stage outputs
 
 ---
 
-## 🧠 Core Thesis: Glass Boxes Can Outperform Black Boxes
+## 🧠 Core Thesis: Glass Boxes Can Compete with Black Boxes
 
-**Research Hypothesis**: Carefully designed glass-box ensemble architectures can match or exceed black-box performance while preserving full interpretability; especially in structured decision domains such as customer retention and subscription modeling.
+### Research Hypothesis
+
+Carefully designed interpretable ensemble architectures can match or exceed black-box performance while preserving full transparency — particularly in structured decision domains such as subscription modeling and customer retention.
 
 ### Supporting Observations
 
-- **Competitive performance** observed in prior experimental evaluations relative to black-box baselines
-- **High stability** across validation splits due to deterministic routing and abstention mechanisms
-- **Complete interpretability**: all predictions are decomposable into coefficients, explicit rules, and additive shape functions
-- **Operational value**: transparent decision logic enables trust, auditability, and actionable intervention strategies
+- Competitive performance relative to black-box baselines
+- Stable validation behavior due to deterministic routing and abstention
+- Full prediction traceability through interpretable intermediate stages
+- Operational value through transparency, auditability, and actionable intervention logic
 
-This work argues that the perceived **accuracy–interpretability trade-off** is an architectural choice, not a fundamental limitation in structured decision-making domains.
+This work argues that the perceived interpretability–performance trade-off is largely an architectural choice rather than a fundamental limitation.
 
 ---
 
-## 🗣️ User Interface: NLP-Driven Interaction
+## 🗣️ Optional NLP Interface
 
-Project ChurnBot features a natural language processing interface that streamlines user interaction. Users can input queries in plain language, and ChurnBot:
+Project ChurnBot includes an optional natural-language interface that streamlines interaction with model outputs and explanations.
 
-1. **Collects and preprocesses** user input  
-2. **Routes the request** to the relevant model(s) with full glass box transparency
-3. **Interprets model predictions** and provides actionable results with explicit reasoning
+Users can:
+1. Submit natural-language queries
+2. Route requests through interpretable pipeline stages
+3. Receive transparent predictions with explicit reasoning
 
-This allows analysts and executives to interact with complex ML pipelines effortlessly, turning raw predictions into meaningful insights with complete explainability.
+This allows analysts and decision-makers to interact with complex ML systems through conversational workflows while preserving full interpretability.
 
 ---
 
 ## 🎯 Choose Your Experience
 
-⚡ **Terminal Version (Light)**: For business analysts and technical teams — fast, efficient insights through command-line interaction with full rule/coefficient visibility.
+⚡ **Terminal Version (Lightweight)**  
+Designed for analysts and technical users requiring fast, efficient inspection of rules, coefficients, and predictions.
 
-📈 **Dashboard Version (Heavy)**: For executives and decision-makers — rich visualizations of shape functions, rule networks, and model weights for executive-ready presentations.
+📈 **Dashboard Version (Heavyweight)**  
+Designed for executive and presentation-oriented workflows with visualizations of:
+- rule networks
+- shape functions
+- routing behavior
+- model arbitration
 
-Both versions maintain 100% interpretability and transparency. All computations run locally, keeping sensitive customer data on your network as opposed to a 3rd-party cloud.
+Both versions maintain full local execution and complete interpretability.
 
 ---
 
 ## 🔒 Privacy & Security: Local-First Philosophy
 
-ChurnBot runs entirely on your machine with zero cloud dependencies:
+ChurnBot runs entirely locally with zero cloud dependencies.
 
-✅ No external data transfers — sensitive customer data never leaves your network  
-✅ No monthly fees or API costs  
-✅ Full data sovereignty — maintain compliance and avoid regulatory penalties  
-✅ Immediate analysis — no network latency or downtime  
-✅ Complete interpretability — every prediction fully explainable for audit trails
+### Advantages
+- No external data transfers
+- No API fees or cloud subscriptions
+- Full data sovereignty and compliance control
+- No network latency or cloud downtime
+- Fully auditable predictions and decision traces
 
-Compare this to black-box cloud APIs with inherent data exposure risks and unexplainable predictions.
+This contrasts sharply with opaque cloud-hosted black-box systems where both the model logic and data handling are externalized.
 
 ---
 
-### 💼 Real-World Impact
+## 💼 Real-World Impact
 
-**Business ROI**:
-- 📉 Reduce customer acquisition costs through precise sample targeting 
-- 📈 Improve executive decision-making with actionable insights 
-- 🛡️ Maintain full data sovereignty → avoid compliance penalties
-- 💰 Eliminate cloud API costs and subscription fees
-- 🎯 Reduce false positives leading to more focused marketing spend
+### Business ROI
+- Reduce acquisition costs through more precise targeting
+- Improve decision-making with transparent intervention logic
+- Reduce unnecessary marketing spend
+- Eliminate recurring cloud API costs
+- Maintain full organizational data control
 
-**Security & Compliance ROI**:
-- 🔒 Complete data privacy — no external data exposure
-- 📋 Regulatory compliance through complete audit trail (every prediction can be traced)
-- 🏢 Enterprise-grade security through local execution
-- 📊 Explainable AI for high-stakes decisions (GDPR, fair lending compliance)
+### Security & Compliance ROI
+- Complete local data privacy
+- Full auditability for high-stakes decisions
+- Enterprise-friendly deployment model
+- Improved regulatory transparency for explainable AI requirements
 
 ---
 
 ## 🎯 Current Research Focus
 
-- ✅ Full glass box architecture achieved
-- ✅ Rule extraction from Random Forest 
-- ✅ EBM integration for non-linear patterns
-- ✅ Meta-EBM for interpretable ensemble weighting
-- 🔄 Cross-dataset validation (telecom, SaaS, retail)
-- 🔄 Interactive visualization tools
-- 🔄 Research paper preparation
+- ✅ Full interpretable cascade architecture achieved
+- ✅ Rule extraction and routing from Random Forest models
+- ✅ EBM integration for non-linear response modeling
+- ✅ Meta-EBM arbitration layer
+- 🔄 Cross-dataset validation
+- 🔄 Visualization tooling
+- 🔄 Formal research paper preparation
 
 ---
 
 ## ⚠️ Limitations
 
-- Dataset variability imposes generalization challenges
-- Rule consolidation requires domain expertise for threshold tuning
-- Glass box conversion adds one-time computational overhead
-- Shape function interpretability requires statistical literacy
+- Dataset variability introduces generalization challenges
+- Rule consolidation may require domain-specific threshold tuning
+- Interpretable ensemble conversion introduces computational overhead
+- Shape function interpretation still requires statistical literacy
 
 ---
 
@@ -373,7 +471,10 @@ https://www.ibm.com/communities/analytics/watson-analytics-blog/guide-to-custome
 - Kaggle: https://www.kaggle.com/datasets/blastchar/telco-customer-churn  
 - OpenML: https://www.openml.org/d/42178
 
+---
+
 ## 📂 Project Structure
+> ⚠️ The project structure below reflects an earlier development phase and will be updated as the current modular refactor stabilizes near completion.
 ```
 prototype/
 ├── data/
