@@ -1,4 +1,4 @@
-"""
+""""
 feature_research.feature_engineering
 =====================================
 Subpackage for Glass Cascade feature engineering.
@@ -16,8 +16,13 @@ pipeline    — build_features() orchestrator
 
 Public API
 ----------
-Primary entry point:
-    build_features(df, target_col, random_state, n_bins, smoothing_factor) → df
+Primary entry point (research notebook):
+    build_features(df, target_col, random_state, n_bins, smoothing_factor) -> df
+
+Production engineers (glass_cascade pipeline — leakage-free):
+    IntegralFeatureEngineer     fit/transform for neighborhood_subscription_density
+    DerivativeFeatureEngineer   fit/transform for euribor3m_local_rate + curvature
+    TemporalFeatureEngineer     fit/transform for dow_month_encoded
 
 Stage feature registries:
     LIVE_FEATURES  dict[str, list[str]]   keyed by 'lr', 'rf', 'ebm'
@@ -25,12 +30,25 @@ Stage feature registries:
 """
 
 from feature_research.feature_engineering.crisis import add_crisis_features
-from feature_research.feature_engineering.integrals import add_integral_features
-from feature_research.feature_engineering.derivatives import add_derivative_features
-from feature_research.feature_engineering.temporal import add_temporal_features
+from feature_research.feature_engineering.integrals import (
+    add_integral_features,
+    IntegralFeatureEngineer,
+)
+from feature_research.feature_engineering.derivatives import (
+    add_derivative_features,
+    DerivativeFeatureEngineer,
+)
+from feature_research.feature_engineering.temporal import (
+    add_temporal_features,
+    TemporalFeatureEngineer,
+)
 from feature_research.feature_engineering.prior import add_prior_features
 from feature_research.feature_engineering.overlap import add_overlap_features
-from feature_research.feature_engineering.pipeline import build_features, finalize_features, get_stage_df
+from feature_research.feature_engineering.pipeline import (
+    build_features,
+    finalize_features,
+    get_stage_df,
+)
 
 # ---------------------------------------------------------------------------
 # Stage feature registries (from Cell 10G)
@@ -54,20 +72,20 @@ RF_FEATURES: list[str] = [
 ]
 
 EBM_FEATURES: list[str] = [
-    'decay_x_density',            # derivatives.py
-    'euribor3m_sigmoid_slope',    # derivatives.py
+    'decay_x_density',              # derivatives.py
+    'euribor3m_sigmoid_slope',      # derivatives.py
     'economic_curvature_intensity', # derivatives.py
-    'cons.conf.idx',              # raw UCI
-    'age',                        # raw UCI
-    'dow_month_encoded',          # temporal.py
-    'default',                    # raw UCI
-    'prior_x_stress',             # prior.py
-    'campaign',                   # raw UCI
-    'overlap_default_clean',      # overlap.py
-    'overlap_behavioral_score',   # overlap.py
-    'cpi_high_cellular',          # overlap.py
-    'behavioral_favorability',    # overlap.py
-    'emp_var_rate_sigmoid_slope', # derivatives.py
+    'cons.conf.idx',                # raw UCI
+    'age',                          # raw UCI
+    'dow_month_encoded',            # temporal.py
+    'default',                      # raw UCI
+    'prior_x_stress',               # prior.py
+    'campaign',                     # raw UCI
+    'overlap_default_clean',        # overlap.py
+    'overlap_behavioral_score',     # overlap.py
+    'cpi_high_cellular',            # overlap.py
+    'behavioral_favorability',      # overlap.py
+    'emp_var_rate_sigmoid_slope',   # derivatives.py
 ]
 
 LIVE_FEATURES: dict[str, list[str]] = {
@@ -88,6 +106,10 @@ __all__ = [
     'add_temporal_features',
     'add_prior_features',
     'add_overlap_features',
+    # production engineers (fit/transform — leakage-free)
+    'IntegralFeatureEngineer',
+    'DerivativeFeatureEngineer',
+    'TemporalFeatureEngineer',
     # registries
     'LR_FEATURES',
     'RF_FEATURES',

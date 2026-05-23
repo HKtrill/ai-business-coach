@@ -19,11 +19,9 @@ from sklearn.metrics import (
     recall_score,
     f1_score,
     roc_auc_score,
-    confusion_matrix,
-    classification_report
+    confusion_matrix
 )
 from typing import Dict, Tuple
-import pickle
 import joblib
 import os
 from datetime import datetime

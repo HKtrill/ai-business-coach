@@ -26,59 +26,8 @@ class BankSegmentBuilder:
     Enforces STRICT binary contract {0,1} on all segment features.
     Any upstream bitwise artifacts (-1, -2, etc.) are caught explicitly.
     """
-    
-    SEGMENT_FEATURES = [
-        # Previous (4)
-        "previous_zero", "previous_low", "previous_mid", "previous_high",
-        
-        # Economic: nr.employed (3)
-        "nr_employed_low", "nr_employed_mid", "nr_employed_high",
-        
-        # Economic: euribor (3)
-        "euribor_low", "euribor_mid", "euribor_high",
-        
-        # Economic: emp.var.rate (3)
-        "emp_var_very_neg", "emp_var_neg", "emp_var_pos",
-        
-        # Economic: CPI (4)
-        "cpi_low", "cpi_sweet_spot", "cpi_mid", "cpi_high",
-        
-        # Economic: CCI (4)
-        "cci_very_low", "cci_sweet_spot", "cci_mid", "cci_high",
-        
-        # Month (4)
-        "month_hot", "month_warm", "month_neutral", "month_cold",
-        
-        # Contact (2)
-        "contact_cellular", "contact_telephone",
-        
-        # Age (4)
-        "age_young", "age_prime", "age_mid", "age_senior",
-        
-        # Campaign (3)
-        "campaign_first", "campaign_moderate", "campaign_heavy",
-        
-        # Job (4)
-        "job_high_lift", "job_above_avg", "job_neutral", "job_low_lift",
-        
-        # Marital (4)
-        "marital_single", "marital_married", "marital_divorced", "marital_unknown",
-        
-        # Education (3)
-        "education_high", "education_mid", "education_low",
-        
-        # Day of week (2)
-        "dow_midweek", "dow_edges",
-        
-        # Binary (6)
-        "default_no", "default_unknown",
-        "housing_yes", "housing_no",
-        "loan_yes", "loan_no",
-        
-        # Composites (5)
-        "econ_favorable", "econ_unfavorable",
-        "prospect_hot", "prospect_warm", "prospect_cold",
-    ]
+    from glass_brw.rf.binning import RF_FEATURES_BINARY
+    SEGMENT_FEATURES = RF_FEATURES_BINARY
     
     def assign_segments(self, X: pd.DataFrame) -> pd.DataFrame:
         """
