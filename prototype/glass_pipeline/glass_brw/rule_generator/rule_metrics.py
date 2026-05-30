@@ -5,12 +5,10 @@
 # Works with frozenset segments
 # ============================================================
 
-from typing import Dict, Tuple, Set, FrozenSet, Union
+from typing import Dict, Tuple
 import pandas as pd
-import numpy as np
 
-SegmentType = Union[FrozenSet[Tuple[str, int]], Set[Tuple[str, int]]]
-
+from glass_brw.core.rule import SegmentType
 
 class RuleMetrics:
     """Compute quality metrics for rule segments."""

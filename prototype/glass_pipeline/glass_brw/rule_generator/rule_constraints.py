@@ -8,221 +8,258 @@
 # Works with frozenset segments
 # ============================================================
 
-from typing import Tuple, Set, FrozenSet, Union, Dict, Optional
+from typing import Tuple, Dict, Optional, Any
+from wsgiref.validate import validator
 
-SegmentType = Union[FrozenSet[Tuple[str, int]], Set[Tuple[str, int]]]
+from glass_brw.core.rule import SegmentType
 
 
 class RuleConstraints:
     """Check depth-staged constraints for rule validation."""
-    
+
     def __init__(
         self,
-        # Pass 1 constraints (Depth 3)
-        min_support_pass1: int = 270,
-        max_coverage_not_subscribe: float = 1.00,
-        min_precision_not_subscribe: float = 0.25,
-        max_precision_not_subscribe: float = 1.00,
-        max_subscriber_leakage_rate: float = 0.99,
-        max_subscriber_leakage_absolute: int = 999,
-        # Pass 2 constraints (Depth 3)
-        min_support_pass2: int = 100,
-        max_coverage_subscribe: float = 0.99,
-        min_precision_subscribe: float = 0.25,
-        max_precision_subscribe: float = 1.00,
-        min_recall_subscribe: float = 0.15,
-        max_recall_subscribe: float = 0.99,
+        # Pass 1 constraints
+        min_support_pass1: Optional[int] = None,
+        max_coverage_not_subscribe: Optional[float] = None,
+        min_precision_not_subscribe: Optional[float] = None,
+        max_precision_not_subscribe: Optional[float] = None,
+        max_subscriber_leakage_rate: Optional[float] = None,
+        max_subscriber_leakage_absolute: Optional[int] = None,
+
+        # Pass 2 constraints
+        min_support_pass2: Optional[int] = None,
+        max_coverage_subscribe: Optional[float] = None,
+        min_precision_subscribe: Optional[float] = None,
+        max_precision_subscribe: Optional[float] = None,
+        min_recall_subscribe: Optional[float] = None,
+        max_recall_subscribe: Optional[float] = None,
+
         # Depth 2 light pruning
-        max_leakage_rate_depth2: float = 0.75,
-        max_leakage_fraction_depth2: float = 0.65,
+        max_leakage_rate_depth2: Optional[float] = None,
+        max_leakage_fraction_depth2: Optional[float] = None,
+        min_precision_subscribe_depth2: Optional[float] = None,
+        max_coverage_subscribe_depth2: Optional[float] = None,
     ):
-        # Pass 1 (NOT_SUBSCRIBE) thresholds
+        # Pass 1 thresholds
         self.min_support_pass1 = min_support_pass1
         self.max_coverage_not_subscribe = max_coverage_not_subscribe
         self.min_precision_not_subscribe = min_precision_not_subscribe
         self.max_precision_not_subscribe = max_precision_not_subscribe
         self.max_subscriber_leakage_rate = max_subscriber_leakage_rate
         self.max_subscriber_leakage_absolute = max_subscriber_leakage_absolute
-        
-        # Pass 2 (SUBSCRIBE) thresholds
+
+        # Pass 2 thresholds
         self.min_support_pass2 = min_support_pass2
         self.max_coverage_subscribe = max_coverage_subscribe
         self.min_precision_subscribe = min_precision_subscribe
         self.max_precision_subscribe = max_precision_subscribe
         self.min_recall_subscribe = min_recall_subscribe
         self.max_recall_subscribe = max_recall_subscribe
-        
+
         # Depth 2 light pruning
         self.max_leakage_rate_depth2 = max_leakage_rate_depth2
         self.max_leakage_fraction_depth2 = max_leakage_fraction_depth2
+        self.min_precision_subscribe_depth2 = min_precision_subscribe_depth2
+        self.max_coverage_subscribe_depth2 = max_coverage_subscribe_depth2
         self.max_leakage_absolute_depth2: Optional[int] = None
-    
+
     def set_total_subscribers(self, total_subscribers: int):
         """Set total subscriber count for computing absolute leakage threshold."""
         self.max_leakage_absolute_depth2 = int(
             total_subscribers * self.max_leakage_fraction_depth2
         )
-    
+
     def check_depth1_constraints(
-        self, 
-        segment: SegmentType, 
-        validator
+        self,
+        segment: SegmentType,
+        validator,
     ) -> Tuple[bool, Optional[str]]:
         """
         Check Depth 1 constraints (structural validity only).
-        
+
         Args:
             segment: Set or frozenset of (feature, level) tuples
             validator: FeatureValidator instance
-            
+
         Returns:
             (is_valid, rejection_reason) tuple
         """
         if validator.has_duplicate_base_features(segment):
             return False, "duplicate_base_features"
-        
+
         return True, None
-    
+
     def check_depth2_constraints(
         self,
         segment: SegmentType,
         depth: int,
         predicted_class: int,
-        metrics: Dict[str, any],
+        metrics: Dict[str, Any],
         validator,
     ) -> Tuple[bool, Optional[str]]:
         """
         Check Depth 2 constraints (light structural pruning).
-        
+
         Args:
             segment: Set or frozenset of (feature, level) tuples
             depth: Current depth
             predicted_class: Target class (0 or 1)
             metrics: Dict with computed metrics
             validator: FeatureValidator instance
-            
+
         Returns:
             (is_valid, rejection_reason) tuple
         """
         # Structural validity (all depths)
         if validator.has_duplicate_base_features(segment):
             return False, "duplicate_base_features"
-        
-        # Tier1 requirement for Pass 2 at depth >= 2
+
+        # Rule-feature requirement for Pass 2 at depth >= 2
         if predicted_class == 1 and depth >= 2:
-            if not validator.has_tier1_feature(segment):
-                return False, "missing_tier1"
-        
-        # Depth 2 specific: Light pruning
+            if not validator.has_rule_feature(segment):
+                return False, "missing_rule_feature"
+
+        # Depth 2 specific: light pruning
         if depth == 2:
-            # Pass 1: Extreme leakage guardrail (BLOCKS EXPANSION)
+
+            # Pass 1: extreme leakage guardrail
             if predicted_class == 0:
-                leakage_rate = metrics['leakage_rate']
-                subscribers_caught = metrics['subscribers_caught']
-                
-                if (leakage_rate > self.max_leakage_rate_depth2 or
-                    (self.max_leakage_absolute_depth2 is not None and 
-                     subscribers_caught > self.max_leakage_absolute_depth2)):
+                leakage_rate = metrics["leakage_rate"]
+                subscribers_caught = metrics["subscribers_caught"]
+
+                if (
+                    self.max_leakage_rate_depth2 is not None
+                    and leakage_rate > self.max_leakage_rate_depth2
+                ):
                     return False, "extreme_leakage_depth2"
-            
-            # Pass 2: Precision floor + Coverage cap (BLOCKS EXPANSION)
+
+                if (
+                    self.max_leakage_absolute_depth2 is not None
+                    and subscribers_caught > self.max_leakage_absolute_depth2
+                ):
+                    return False, "extreme_leakage_depth2"
+
+            # Pass 2: precision floor + coverage cap
             if predicted_class == 1:
-                min_prec_depth2 = 0.15
-                max_cov_depth2 = 0.50
-                
-                if metrics['precision'] < min_prec_depth2:
+                if (
+                    self.min_precision_subscribe_depth2 is not None
+                    and metrics["precision"] < self.min_precision_subscribe_depth2
+                ):
                     return False, "precision_floor_depth2"
-                
-                if metrics['coverage'] > max_cov_depth2:
+
+                if (
+                    self.max_coverage_subscribe_depth2 is not None
+                    and metrics["coverage"] > self.max_coverage_subscribe_depth2
+                ):
                     return False, "coverage_cap_depth2"
-        
+
         return True, None
-    
+
     def check_depth3_constraints(
         self,
         segment: SegmentType,
         depth: int,
         predicted_class: int,
-        metrics: Dict[str, any],
+        metrics: Dict[str, Any],
         validator,
     ) -> Tuple[bool, Optional[str]]:
         """
         Check Depth 3+ constraints (quality gates).
-        
+
         Args:
             segment: Set or frozenset of (feature, level) tuples
             depth: Current depth
             predicted_class: Target class (0 or 1)
             metrics: Dict with computed metrics
             validator: FeatureValidator instance
-            
+
         Returns:
             (is_valid, rejection_reason) tuple
         """
         # Structural validity
         if validator.has_duplicate_base_features(segment):
             return False, "duplicate_base_features"
-        
-        # Tier1 requirement for Pass 2
+
+        # Rule-feature requirement for Pass 2
         if predicted_class == 1 and depth >= 2:
-            if not validator.has_tier1_feature(segment):
-                return False, "missing_tier1"
-        
+            if not validator.has_rule_feature(segment):
+                return False, "missing_rule_feature"
+
         # Minimum support
-        min_support = (self.min_support_pass1 if predicted_class == 0
-                      else self.min_support_pass2)
-        if metrics['support'] < min_support:
+        min_support = (
+            self.min_support_pass1
+            if predicted_class == 0
+            else self.min_support_pass2
+        )
+        if metrics["support"] < min_support:
             return False, "insufficient_support"
-        
+
         # Coverage caps
         if predicted_class == 0:
-            if metrics['coverage'] > self.max_coverage_not_subscribe:
+            if metrics["coverage"] > self.max_coverage_not_subscribe:
                 return False, "coverage_cap"
         else:
-            if metrics['coverage'] > self.max_coverage_subscribe:
+            if metrics["coverage"] > self.max_coverage_subscribe:
                 return False, "coverage_cap"
-        
+
         # Pass-specific quality gates
         if predicted_class == 0:  # Pass 1: Precision + leakage
-            if (metrics['precision'] < self.min_precision_not_subscribe or
-                metrics['precision'] > self.max_precision_not_subscribe):
+            if (
+                metrics["precision"] < self.min_precision_not_subscribe
+                or metrics["precision"] > self.max_precision_not_subscribe
+            ):
                 return False, "precision_range"
-            
-            if metrics['leakage_rate'] > self.max_subscriber_leakage_rate:
+
+            if metrics["leakage_rate"] > self.max_subscriber_leakage_rate:
                 return False, "leakage_rate"
-            
-            if metrics['subscribers_caught'] > self.max_subscriber_leakage_absolute:
+
+            if metrics["subscribers_caught"] > self.max_subscriber_leakage_absolute:
                 return False, "leakage_absolute"
-        
+
         else:  # Pass 2: Precision + recall
-            if (metrics['precision'] < self.min_precision_subscribe or
-                metrics['precision'] > self.max_precision_subscribe):
+            if (
+                metrics["precision"] < self.min_precision_subscribe
+                or metrics["precision"] > self.max_precision_subscribe
+            ):
                 return False, "precision_range"
-            
-            if metrics['recall'] < self.min_recall_subscribe:
+
+            if metrics["recall"] < self.min_recall_subscribe:
                 return False, "recall_min"
-            
-            if metrics['recall'] > self.max_recall_subscribe:
+
+            if metrics["recall"] > self.max_recall_subscribe:
                 return False, "recall_cap"
-        
+
         return True, None
-    
+
     def get_threshold_info(self, constraint_name: str, predicted_class: int) -> str:
         """Get human-readable threshold info for a constraint."""
         thresholds = {
-            'insufficient_support': (
-                f"min_support={'pass1=' + str(self.min_support_pass1) if predicted_class == 0 else 'pass2=' + str(self.min_support_pass2)}"
+            "insufficient_support": (
+                f"min_support={
+                    'pass1=' + str(self.min_support_pass1)
+                    if predicted_class == 0
+                    else 'pass2=' + str(self.min_support_pass2)
+                }"
             ),
-            'coverage_cap': (
-                f"max_coverage={self.max_coverage_not_subscribe if predicted_class == 0 else self.max_coverage_subscribe}"
+            "coverage_cap": (
+                f"max_coverage={
+                    self.max_coverage_not_subscribe
+                    if predicted_class == 0
+                    else self.max_coverage_subscribe
+                }"
             ),
-            'precision_range': (
-                f"precision_range=[{self.min_precision_not_subscribe if predicted_class == 0 else self.min_precision_subscribe}, "
-                f"{self.max_precision_not_subscribe if predicted_class == 0 else self.max_precision_subscribe}]"
+            "precision_range": (
+                f"precision_range=["
+                f"{self.min_precision_not_subscribe if predicted_class == 0 else self.min_precision_subscribe}, "
+                f"{self.max_precision_not_subscribe if predicted_class == 0 else self.max_precision_subscribe}"
+                f"]"
             ),
-            'leakage_rate': f"max_leakage_rate={self.max_subscriber_leakage_rate}",
-            'leakage_absolute': f"max_leakage_absolute={self.max_subscriber_leakage_absolute}",
-            'recall_min': f"min_recall={self.min_recall_subscribe}",
-            'recall_cap': f"max_recall={self.max_recall_subscribe}",
+            "leakage_rate": f"max_leakage_rate={self.max_subscriber_leakage_rate}",
+            "leakage_absolute": (
+                f"max_leakage_absolute={self.max_subscriber_leakage_absolute}"
+            ),
+            "recall_min": f"min_recall={self.min_recall_subscribe}",
+            "recall_cap": f"max_recall={self.max_recall_subscribe}",
         }
         return thresholds.get(constraint_name, "")

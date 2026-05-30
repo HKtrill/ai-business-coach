@@ -1,287 +1,269 @@
 """
-Bank Marketing Dataset Preprocessing
-====================================
+Bank Marketing Dataset Preprocessor
+=====================================
+Handles all preprocessing for the UCI Bank Marketing dataset:
+  - Target encoding          (yes/no → 1/0)
+  - Binary encoding          (yes/no/unknown → 1/0/-1)
+  - Ordinal encoding         (education, month, day_of_week, poutcome, contact)
+  - Nominal encoding         (job, marital)
+  - Leaky feature removal    (duration, pdays, poutcome)
+  - Final validation         (all-numeric, null-free)
 
-Handles all preprocessing for the UCI Bank Marketing dataset including:
-- Target encoding (yes/no → 1/0)
-- Binary feature encoding with unknown handling
-- Ordinal encoding for education, month, day_of_week
-- Nominal encoding for job, marital
-- Feature validation and type conversion
+Usage
+-----
+    preprocessor = BankPreprocessor(drop_leaky=True)
+    df_processed  = preprocessor.fit_transform(df_raw)
 
 Author: Glass Pipeline Team
-Date: 2026-01-29
 """
 
-import pandas as pd
-import numpy as np
-from typing import Dict, List, Tuple
+from __future__ import annotations
+
 import warnings
+from typing import Dict, List
+
+import numpy as np
+import pandas as pd
 
 warnings.filterwarnings("ignore")
 
 
+# ---------------------------------------------------------------------------
+# Encoding maps  (class-level constants — never mutated)
+# ---------------------------------------------------------------------------
+
+_BINARY_MAP: Dict[str, int] = {"no": 0, "yes": 1, "unknown": -1}
+_CONTACT_MAP: Dict[str, int] = {"cellular": 0, "telephone": 1}
+_MONTH_MAP: Dict[str, int] = {
+    "jan": 1,  "feb": 2,  "mar": 3,  "apr": 4,
+    "may": 5,  "jun": 6,  "jul": 7,  "aug": 8,
+    "sep": 9,  "oct": 10, "nov": 11, "dec": 12,
+}
+_DAY_MAP: Dict[str, int] = {
+    "mon": 0, "tue": 1, "wed": 2, "thu": 3, "fri": 4,
+}
+_POUTCOME_MAP: Dict[str, int] = {
+    "nonexistent": 0,  # never contacted before
+    "failure":     1,  # previous campaign failed
+    "success":     2,  # previous campaign succeeded
+}
+_EDUCATION_MAP: Dict[str, int] = {
+    "illiterate":         0,
+    "basic.4y":           1,
+    "basic.6y":           2,
+    "basic.9y":           3,
+    "high.school":        4,
+    "professional.course": 5,
+    "university.degree":  6,
+    "unknown":            -1,
+}
+_MARITAL_MAP: Dict[str, int] = {
+    "divorced": 0, "married": 1, "single": 2, "unknown": -1,
+}
+
+# Columns that leak post-contact information — excluded by default
+_LEAKY_FEATURES: List[str] = ["duration", "pdays", "poutcome"]
+
+# Reference grouping of all features (used by downstream callers)
+_FEATURE_GROUPS: Dict[str, List[str]] = {
+    "target":           ["y"],
+    "binary":           ["default", "housing", "loan"],
+    "ordinal":          ["education", "poutcome", "contact", "month", "day_of_week"],
+    "nominal":          ["job", "marital"],
+    "numeric_campaign": ["age", "duration", "campaign", "pdays", "previous"],
+    "numeric_economic": [
+        "emp.var.rate", "cons.price.idx", "cons.conf.idx",
+        "euribor3m", "nr.employed",
+    ],
+}
+
+
+# ---------------------------------------------------------------------------
+# BankPreprocessor
+# ---------------------------------------------------------------------------
+
 class BankPreprocessor:
     """
-    Comprehensive preprocessor for Bank Marketing dataset.
-    
-    Handles encoding, validation, and feature type conversion while
-    preserving information in 'unknown' values where appropriate.
-    """
-    
-    # Class-level mapping dictionaries
-    BINARY_MAP = {'no': 0, 'yes': 1, 'unknown': -1}
-    CONTACT_MAP = {'cellular': 0, 'telephone': 1}
-    
-    MONTH_MAP = {
-        'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
-        'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12
-    }
-    
-    DAY_MAP = {'mon': 0, 'tue': 1, 'wed': 2, 'thu': 3, 'fri': 4}
-    
-    POUTCOME_MAP = {
-        'nonexistent': 0,  # Never contacted before
-        'failure': 1,      # Previous campaign failed
-        'success': 2       # Previous campaign succeeded
-    }
-    
-    EDUCATION_MAP = {
-        'illiterate': 0,
-        'basic.4y': 1,
-        'basic.6y': 2,
-        'basic.9y': 3,
-        'high.school': 4,
-        'professional.course': 5,
-        'university.degree': 6,
-        'unknown': -1
-    }
-    
-    MARITAL_MAP = {'divorced': 0, 'married': 1, 'single': 2, 'unknown': -1}
-    
-    # Feature groups for reference
-    FEATURE_GROUPS = {
-        'target': ['y'],
-        'binary': ['default', 'housing', 'loan'],
-        'ordinal': ['education', 'poutcome', 'contact', 'month', 'day_of_week'],
-        'nominal': ['job', 'marital'],
-        'numeric_campaign': ['age', 'duration', 'campaign', 'pdays', 'previous'],
-        'numeric_economic': ['emp.var.rate', 'cons.price.idx', 'cons.conf.idx', 
-                            'euribor3m', 'nr.employed'],
-    }
-    
-    # Known leaky features (should be dropped for production models)
-    LEAKY_FEATURES = ['duration', 'pdays', 'poutcome']
-    
-    def __init__(self, drop_leaky: bool = True):
-        """
-        Initialize preprocessor.
-        
-        Parameters
-        ----------
-        drop_leaky : bool, default=True
-            Whether to drop features that leak information from the future
-            (duration, pdays, poutcome)
-        """
-        self.drop_leaky = drop_leaky
-        self.job_map = None  # Will be created from training data
-        
-    def fit(self, df: pd.DataFrame) -> 'BankPreprocessor':
-        """
-        Fit preprocessor on training data.
-        
-        Creates job category mapping from unique values in training data.
-        
-        Parameters
-        ----------
-        df : pd.DataFrame
-            Raw training dataframe
-            
-        Returns
-        -------
-        self : BankPreprocessor
-            Fitted preprocessor
-        """
-        # Create job mapping from training data
-        job_categories = sorted(df['job'].unique())
-        self.job_map = {cat: i for i, cat in enumerate(job_categories)}
-        
-        return self
-    
-    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Transform dataframe using fitted encodings.
-        
-        Parameters
-        ----------
-        df : pd.DataFrame
-            Raw dataframe to transform
-            
-        Returns
-        -------
-        df_proc : pd.DataFrame
-            Preprocessed dataframe
-        """
-        df_proc = df.copy()
-        
-        print("\n" + "="*80)
-        print("🔧 PREPROCESSING: Bank Marketing Dataset")
-        print("="*80)
-        
-        # 1. Target encoding
-        df_proc['y'] = df_proc['y'].map({'yes': 1, 'no': 0})
-        assert df_proc['y'].notna().all(), "❌ Unexpected values in target y"
-        df_proc['y'] = df_proc['y'].astype('int8')
-        print(f"✅ Target 'y': {df_proc['y'].value_counts().to_dict()}")
-        
-        # 2. Binary columns (with unknown=-1)
-        binary_cols = ['default', 'housing', 'loan']
-        for col in binary_cols:
-            df_proc[col] = df_proc[col].map(self.BINARY_MAP)
-            assert df_proc[col].notna().all(), f"❌ Unmapped values in {col}"
-            df_proc[col] = df_proc[col].astype('int8')
-        print(f"✅ Binary cols (unknown=-1): {binary_cols}")
-        
-        # 3. Contact
-        df_proc['contact'] = df_proc['contact'].map(self.CONTACT_MAP)
-        assert df_proc['contact'].notna().all(), "❌ Unmapped contact values"
-        df_proc['contact'] = df_proc['contact'].astype('int8')
-        print(f"✅ contact: {df_proc['contact'].value_counts().to_dict()}")
-        
-        # 4. Month (ordinal 1-12)
-        df_proc['month'] = df_proc['month'].map(self.MONTH_MAP)
-        assert df_proc['month'].notna().all(), "❌ Unmapped month values"
-        df_proc['month'] = df_proc['month'].astype('int8')
-        print(f"✅ month: {sorted(df_proc['month'].unique())}")
-        
-        # 5. Day of week (ordinal 0-4)
-        df_proc['day_of_week'] = df_proc['day_of_week'].map(self.DAY_MAP)
-        assert df_proc['day_of_week'].notna().all(), "❌ Unmapped day_of_week"
-        df_proc['day_of_week'] = df_proc['day_of_week'].astype('int8')
-        print(f"✅ day_of_week: {sorted(df_proc['day_of_week'].unique())}")
-        
-        # 6. Poutcome
-        df_proc['poutcome'] = df_proc['poutcome'].map(self.POUTCOME_MAP)
-        assert df_proc['poutcome'].notna().all(), "❌ Unmapped poutcome"
-        df_proc['poutcome'] = df_proc['poutcome'].astype('int8')
-        print(f"✅ poutcome: {df_proc['poutcome'].value_counts().sort_index().to_dict()}")
-        
-        # 7. Education (ordinal with unknown=-1)
-        df_proc['education'] = df_proc['education'].map(self.EDUCATION_MAP)
-        assert df_proc['education'].notna().all(), "❌ Unmapped education"
-        df_proc['education'] = df_proc['education'].astype('int8')
-        print(f"✅ education: ordinal 0-6, unknown=-1")
-        
-        # 8. Job (nominal, label encoded)
-        if self.job_map is None:
-            raise ValueError("Preprocessor not fitted. Call fit() first.")
-        
-        df_proc['job'] = df_proc['job'].map(self.job_map)
-        # Handle unknown jobs in test set
-        df_proc['job'] = df_proc['job'].fillna(-1).astype('int8')
-        print(f"✅ job: {len(self.job_map)} categories label-encoded")
-        
-        # 9. Marital
-        df_proc['marital'] = df_proc['marital'].map(self.MARITAL_MAP)
-        assert df_proc['marital'].notna().all(), "❌ Unmapped marital"
-        df_proc['marital'] = df_proc['marital'].astype('int8')
-        print(f"✅ marital: {df_proc['marital'].value_counts().to_dict()}")
-        
-        # 10. Economic features (already numeric)
-        economic_cols = self.FEATURE_GROUPS['numeric_economic']
-        print(f"\n📊 Economic features (already numeric):")
-        for col in economic_cols:
-            df_proc[col] = df_proc[col].astype('float64')
-            print(f"  {col}: [{df_proc[col].min():.3f}, {df_proc[col].max():.3f}]")
-        
-        # 11. Campaign features (already numeric)
-        campaign_cols = self.FEATURE_GROUPS['numeric_campaign']
-        print(f"\n📊 Campaign features (already numeric):")
-        for col in campaign_cols:
-            print(f"  {col}: [{df_proc[col].min()}, {df_proc[col].max()}]")
-        
-        # 12. Drop leaky features if requested
-        if self.drop_leaky:
-            leaky_present = [f for f in self.LEAKY_FEATURES if f in df_proc.columns]
-            if leaky_present:
-                df_proc = df_proc.drop(columns=leaky_present)
-                print(f"⚠️  Dropped leaky features: {leaky_present}")
-        
-        # Final validation
-        non_numeric = df_proc.select_dtypes(exclude=['number']).columns.tolist()
-        assert len(non_numeric) == 0, f"❌ NON-NUMERIC: {non_numeric}"
-        assert df_proc.isnull().sum().sum() == 0, "❌ Nulls detected"
-        
-        print(f"\n✅ df_proc ready: {df_proc.shape}")
-        print(f"Memory: {df_proc.memory_usage().sum() / 1024**2:.2f} MB")
-        
-        # Feature groups for reference
-        print(f"\n📋 Feature Groups:")
-        for group_name, features in self.FEATURE_GROUPS.items():
-            print(f"  {group_name}: {features}")
-        
-        return df_proc
-    
-    def fit_transform(self, df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Fit and transform in one step.
-        
-        Parameters
-        ----------
-        df : pd.DataFrame
-            Raw dataframe
-            
-        Returns
-        -------
-        df_proc : pd.DataFrame
-            Preprocessed dataframe
-        """
-        return self.fit(df).transform(df)
-    
-    def get_feature_groups(self) -> Dict[str, List[str]]:
-        """Return feature groups dictionary."""
-        return self.FEATURE_GROUPS.copy()
+    Sklearn-style fit/transform preprocessor for the UCI Bank Marketing dataset.
 
-
-def inspect_categorical_columns(df: pd.DataFrame) -> None:
-    """
-    Inspect all categorical columns in the dataframe.
-    
     Parameters
     ----------
-    df : pd.DataFrame
-        Raw dataframe
+    drop_leaky : bool, default True
+        Drop features that are unavailable at prediction time
+        (``duration``, ``pdays``, ``poutcome``).
+    verbose : bool, default True
+        Print a step-by-step encoding summary during transform.
     """
-    categorical_cols = df.select_dtypes(include=["object"]).columns.tolist()
-    print("📌 CATEGORICAL COLUMNS\n" + "-"*60)
-    
-    for col in categorical_cols:
-        print(f"\n🔎 Column: {col}")
-        print("-" * 40)
-        values = (
-            df[col]
-            .astype(str)
-            .value_counts(dropna=False)
-            .sort_index()
-        )
-        print(values)
+
+    # Expose constants so callers can inspect without instantiating
+    LEAKY_FEATURES:  List[str]              = _LEAKY_FEATURES
+    FEATURE_GROUPS:  Dict[str, List[str]]   = _FEATURE_GROUPS
+
+    def __init__(self, drop_leaky: bool = True, verbose: bool = True) -> None:
+        self.drop_leaky = drop_leaky
+        self.verbose    = verbose
+        self._job_map:  Dict[str, int] | None = None  # built from training data
+        self._is_fitted: bool = False
+
+    # ------------------------------------------------------------------
+    # Fit
+    # ------------------------------------------------------------------
+
+    def fit(self, df: pd.DataFrame) -> "BankPreprocessor":
+        """
+        Fit on training data.
+
+        Currently learns: job category → integer mapping (sorted, stable).
+
+        Parameters
+        ----------
+        df : raw training DataFrame (must contain 'job' column)
+        """
+        job_categories  = sorted(df["job"].dropna().unique())
+        self._job_map   = {cat: i for i, cat in enumerate(job_categories)}
+        self._is_fitted = True
+        return self
+
+    # ------------------------------------------------------------------
+    # Transform
+    # ------------------------------------------------------------------
+
+    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Apply all encodings to a (possibly held-out) DataFrame.
+
+        Raises
+        ------
+        RuntimeError  if called before ``fit``.
+        AssertionError on unexpected values or residual nulls.
+        """
+        if not self._is_fitted:
+            raise RuntimeError("Call fit() before transform().")
+
+        out = df.copy()
+        log = self._log  # shorthand
+
+        log("\n" + "=" * 70)
+        log("🔧  PREPROCESSING: Bank Marketing Dataset")
+        log("=" * 70)
+
+        # ── 1. Target ──────────────────────────────────────────────────
+        out["y"] = out["y"].map({"yes": 1, "no": 0}).astype("int8")
+        assert out["y"].notna().all(), "Unexpected values in target 'y'."
+        log(f"✅  y  →  {out['y'].value_counts().to_dict()}")
+
+        # ── 2. Binary columns (unknown → -1) ──────────────────────────
+        for col in ["default", "housing", "loan"]:
+            out[col] = out[col].map(_BINARY_MAP).astype("int8")
+            assert out[col].notna().all(), f"Unmapped values in '{col}'."
+        log("✅  binary [default, housing, loan]  (unknown=-1)")
+
+        # ── 3. Contact ────────────────────────────────────────────────
+        out["contact"] = out["contact"].map(_CONTACT_MAP).astype("int8")
+        assert out["contact"].notna().all(), "Unmapped contact values."
+        log("✅  contact")
+
+        # ── 4. Month (1–12) ───────────────────────────────────────────
+        out["month"] = out["month"].map(_MONTH_MAP).astype("int8")
+        assert out["month"].notna().all(), "Unmapped month values."
+        log(f"✅  month  →  {sorted(out['month'].unique())}")
+
+        # ── 5. Day of week (0–4) ──────────────────────────────────────
+        out["day_of_week"] = out["day_of_week"].map(_DAY_MAP).astype("int8")
+        assert out["day_of_week"].notna().all(), "Unmapped day_of_week values."
+        log("✅  day_of_week")
+
+        # ── 6. Poutcome ───────────────────────────────────────────────
+        out["poutcome"] = out["poutcome"].map(_POUTCOME_MAP).astype("int8")
+        assert out["poutcome"].notna().all(), "Unmapped poutcome values."
+        log("✅  poutcome")
+
+        # ── 7. Education (ordinal, unknown → -1) ──────────────────────
+        out["education"] = out["education"].map(_EDUCATION_MAP).astype("int8")
+        assert out["education"].notna().all(), "Unmapped education values."
+        log("✅  education  (ordinal 0-6, unknown=-1)")
+
+        # ── 8. Job (label-encoded from training vocab) ─────────────────
+        out["job"] = out["job"].map(self._job_map).fillna(-1).astype("int8")
+        log(f"✅  job  →  {len(self._job_map)} categories  (unseen → -1)")
+
+        # ── 9. Marital (unknown → -1) ─────────────────────────────────
+        out["marital"] = out["marital"].map(_MARITAL_MAP).astype("int8")
+        assert out["marital"].notna().all(), "Unmapped marital values."
+        log("✅  marital")
+
+        # ── 10. Economic features (already numeric) ───────────────────
+        for col in _FEATURE_GROUPS["numeric_economic"]:
+            out[col] = out[col].astype("float64")
+        log(f"✅  economic features  →  float64")
+
+        # ── 11. Campaign features (already numeric) ───────────────────
+        log(f"✅  campaign features  →  unchanged numeric")
+
+        # ── 12. Drop leaky features ───────────────────────────────────
+        if self.drop_leaky:
+            to_drop = [c for c in _LEAKY_FEATURES if c in out.columns]
+            if to_drop:
+                out.drop(columns=to_drop, inplace=True)
+                log(f"⚠️   dropped leaky features: {to_drop}")
+
+        # ── Final validation ──────────────────────────────────────────
+        non_numeric = out.select_dtypes(exclude=["number"]).columns.tolist()
+        assert not non_numeric, f"Non-numeric columns remain: {non_numeric}"
+        assert out.isnull().sum().sum() == 0, "Null values detected after transform."
+
+        log(f"\n✅  df_processed ready — shape: {out.shape}")
+        log(f"    memory: {out.memory_usage(deep=True).sum() / 1024**2:.2f} MB\n")
+
+        return out
+
+    # ------------------------------------------------------------------
+    # fit_transform  (sklearn convention)
+    # ------------------------------------------------------------------
+
+    def fit_transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Fit on df and return its transformation."""
+        return self.fit(df).transform(df)
+
+    # ------------------------------------------------------------------
+    # Accessors
+    # ------------------------------------------------------------------
+
+    def get_feature_groups(self) -> Dict[str, List[str]]:
+        """Return a copy of the feature-group reference dict."""
+        return _FEATURE_GROUPS.copy()
+
+    @property
+    def job_map(self) -> Dict[str, int] | None:
+        """Learned job → integer mapping (None if not yet fitted)."""
+        return self._job_map
+
+    # ------------------------------------------------------------------
+    # Internal helpers
+    # ------------------------------------------------------------------
+
+    def _log(self, msg: str) -> None:
+        if self.verbose:
+            print(msg)
 
 
-# Example usage
-if __name__ == "__main__":
-    # Load data
-    df = pd.read_csv("../raw/bank-additional-full.csv", sep=";")
-    print(f"Loaded data: {df.shape}")
-    
-    # Inspect categorical columns
-    inspect_categorical_columns(df)
-    
-    # Preprocess
-    preprocessor = BankPreprocessor(drop_leaky=True)
-    df_processed = preprocessor.fit_transform(df)
-    
-    print("\n" + "="*80)
-    print("✅ PREPROCESSING COMPLETE")
-    print("="*80)
-    print(f"Final shape: {df_processed.shape}")
-    print(f"Columns: {list(df_processed.columns)}")
+# ---------------------------------------------------------------------------
+# Standalone inspection helper  (notebook / EDA use)
+# ---------------------------------------------------------------------------
+
+def inspect_raw_categoricals(df: pd.DataFrame) -> None:
+    """
+    Print value-count tables for every object-dtype column.
+
+    Intended for exploratory use before fitting a preprocessor.
+
+    Parameters
+    ----------
+    df : raw DataFrame
+    """
+    cat_cols = df.select_dtypes(include=["object"]).columns.tolist()
+    print("📌  RAW CATEGORICAL COLUMNS")
+    print("-" * 60)
+    for col in cat_cols:
+        print(f"\n🔎  {col}")
+        print(df[col].astype(str).value_counts(dropna=False).sort_index())
