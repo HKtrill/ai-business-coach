@@ -1,4 +1,4 @@
-# ============================================================
+## ============================================================
 # GLASS-BRW: CONFIGURATION MODULE
 # ============================================================
 # Single source of truth for all pipeline tuning parameters.
@@ -90,16 +90,18 @@ class GLASSBRWConfig:
     # ============================================================
     max_feature_reuse_pass1: Optional[int] = None
     max_feature_reuse_pass2: Optional[int] = None
-    
+    lambda_rf_uncertainty: Optional[float] = None
+    lambda_rf_misalignment: Optional[float] = None
+
     def __post_init__(self):
         """Validate that all required parameters are set."""
-        # Parameters that are allowed to be None
         optional_params = {
             'max_feature_reuse_pass1',
             'max_feature_reuse_pass2',
+            'lambda_rf_uncertainty',
+            'lambda_rf_misalignment',
         }
         
-        # Check all required params
         missing = []
         for f in fields(self):
             if f.name not in optional_params:
@@ -112,27 +114,23 @@ class GLASSBRWConfig:
                 f"All tuning parameters must be explicitly set in your notebook."
             )
         
-        # Validate mode
         valid_modes = {"strict", "relaxed", "exploratory"}
         if self.mode not in valid_modes:
             raise ValueError(
                 f"Invalid mode '{self.mode}'. Must be one of: {valid_modes}"
             )
         
-        # Validate ranges
         self._validate_ranges()
     
     def _validate_ranges(self):
         """Validate parameter ranges make sense."""
         errors = []
         
-        # Support must be positive
         if self.min_support_pass1 <= 0:
             errors.append("min_support_pass1 must be > 0")
         if self.min_support_pass2 <= 0:
             errors.append("min_support_pass2 must be > 0")
         
-        # Precision/recall in [0, 1]
         for param in ['min_precision_not_subscribe', 'max_precision_not_subscribe',
                       'min_precision_subscribe', 'max_precision_subscribe',
                       'min_recall_subscribe', 'max_recall_subscribe',
@@ -142,7 +140,6 @@ class GLASSBRWConfig:
             if not 0 <= val <= 1:
                 errors.append(f"{param} must be in [0, 1], got {val}")
         
-        # Min <= Max checks
         if self.min_pass1_rules > self.max_pass1_rules:
             errors.append("min_pass1_rules > max_pass1_rules")
         if self.min_pass2_rules > self.max_pass2_rules:
@@ -153,14 +150,12 @@ class GLASSBRWConfig:
             errors.append("min_precision_subscribe > max_precision_subscribe")
         if self.min_recall_subscribe > self.max_recall_subscribe:
             errors.append("min_recall_subscribe > max_recall_subscribe")
-        
-        # Complexity must be positive
         if self.max_complexity <= 0:
             errors.append("max_complexity must be > 0")
         
         if errors:
             raise ValueError(
-                f"GLASSBRWConfig validation errors:\n" + 
+                f"GLASSBRWConfig validation errors:\n" +
                 "\n".join(f"  - {e}" for e in errors)
             )
     

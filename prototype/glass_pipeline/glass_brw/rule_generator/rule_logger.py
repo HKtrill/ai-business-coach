@@ -4,11 +4,10 @@
 # Diagnostic logging for accepted/rejected rules with detailed metrics
 # ============================================================
 
-from typing import Set, FrozenSet, Tuple, Union, Optional
+from typing import Optional
 from collections import defaultdict
-import numpy as np
 
-SegmentType = Union[FrozenSet[Tuple[str, int]], Set[Tuple[str, int]]]
+from glass_brw.core.rule import SegmentType
 
 
 class RuleLogger:
@@ -16,23 +15,16 @@ class RuleLogger:
     
     def __init__(
         self,
+        enabled: bool = True,
         verbose_rejection_logging: bool = True,
         max_rejection_logs_per_constraint: int = 50,
         verbose_acceptance_logging: bool = True,
         max_acceptance_logs_per_depth: int = 25,
     ):
-        """
-        Initialize rule logger.
-        
-        Args:
-            verbose_rejection_logging: Enable detailed rejection logs
-            max_rejection_logs_per_constraint: Max rejection logs per constraint type
-            verbose_acceptance_logging: Enable detailed acceptance logs
-            max_acceptance_logs_per_depth: Max acceptance logs per depth
-        """
-        self.verbose_rejection_logging = verbose_rejection_logging
+        self.enabled = enabled
+        self.verbose_rejection_logging = verbose_rejection_logging and enabled
+        self.verbose_acceptance_logging = verbose_acceptance_logging and enabled
         self.max_rejection_logs_per_constraint = max_rejection_logs_per_constraint
-        self.verbose_acceptance_logging = verbose_acceptance_logging
         self.max_acceptance_logs_per_depth = max_acceptance_logs_per_depth
         
         # Tracking counters (reset per depth)
@@ -58,6 +50,7 @@ class RuleLogger:
         recall: float,
         coverage: float,
         support: int,
+        beam_score: float = 0.0,
         parent_precision: Optional[float] = None,
         parent_recall: Optional[float] = None,
         parent_coverage: Optional[float] = None,
@@ -125,13 +118,8 @@ class RuleLogger:
             else:
                 print(f"  Subscribers caught: {subscribers_caught} (recall: {leakage_rate:.4f})")
         
-        # Score info
-        if predicted_class == 0:
-            score = (precision ** 3) * np.sqrt(coverage)
-            print(f"  Score:     {score:.6f}  (prec³ × √cov)")
-        else:
-            score = (recall ** 3) * precision * coverage
-            print(f"  Score:     {score:.6f}  (rec³ × prec × cov)")
+        # Score info (computed by RuleScorer)
+        print(f"  Score:     {beam_score:.6f}")
         
         # F1 proxy
         f1 = 2 * precision * recall / (precision + recall + 1e-10)

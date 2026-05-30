@@ -7,13 +7,12 @@
 # Output: List[EvaluatedRule] with validation metrics
 # ============================================================
 
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 import pandas as pd
-import numpy as np
+
 
 from .rule_matcher import RuleMatcher
 from .evaluation_metrics import EvaluationMetrics
-from .stability_estimator import StabilityEstimator
 from .rf_integration import RFIntegration
 from .rule_deduplicator import RuleDeduplicator
 from .overlap_analyzer import OverlapAnalyzer
@@ -32,9 +31,8 @@ class RuleEvaluator:
     def __init__(
         self,
         segment_builder,
-        min_support: int = 30,
-        n_bootstrap: int = 3,
-        tier1_prefixes: Tuple[str, ...] = (
+        min_support: int,
+        rule_prefixes: Tuple[str, ...] = (
             'nsd',       # neighborhood_subscription_density bins
             'jed',       # joint_economic_decay bins
             'cci',       # cons.conf.idx bins
@@ -51,20 +49,15 @@ class RuleEvaluator:
         Args:
             segment_builder: SegmentBuilder instance for discretization
             min_support: Minimum support threshold for filtering rules
-            n_bootstrap: Number of bootstrap samples for stability estimation
             tier1_prefixes: Tuple of tier1 feature prefixes
         """
         self.segment_builder = segment_builder
         self.min_support = min_support
         
         # Initialize modular components
-        self.validator = FeatureValidator(tier1_prefixes=tier1_prefixes)
+        self.validator = FeatureValidator(rule_prefixes=rule_prefixes)
         self.matcher = RuleMatcher(segment_builder=segment_builder)
         self.metrics = EvaluationMetrics()
-        self.stability = StabilityEstimator(
-            segment_builder=segment_builder,
-            n_bootstrap=n_bootstrap
-        )
         self.rf_integration = RFIntegration()
         self.deduplicator = RuleDeduplicator(validator=self.validator)
         self.overlap_analyzer = OverlapAnalyzer(matcher=self.matcher)
@@ -169,7 +162,7 @@ class RuleEvaluator:
         
         # Deduplicate rules
         before = len(evaluated_rules)
-        evaluated_rules = self._deduplicate_evaluated_rules(evaluated_rules)
+        evaluated_rules = self.deduplicator.deduplicate_rules(evaluated_rules)
         after = len(evaluated_rules)
         
         if after < before:
@@ -182,23 +175,3 @@ class RuleEvaluator:
         
         return evaluated_rules
     
-    def _deduplicate_evaluated_rules(
-        self, 
-        rules: List[EvaluatedRule]
-    ) -> List[EvaluatedRule]:
-        """
-        Deduplicate EvaluatedRule objects by segment.
-        
-        Keeps rule with highest precision for ties.
-        """
-        unique = {}
-        
-        for rule in rules:
-            sig = (rule.segment_frozen, rule.predicted_class)
-            
-            if sig not in unique:
-                unique[sig] = rule
-            elif rule.precision > unique[sig].precision:
-                unique[sig] = rule
-        
-        return list(unique.values())

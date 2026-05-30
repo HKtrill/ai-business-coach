@@ -56,8 +56,6 @@ class BeamSearch:
     def prune_beam(
         self, 
         rules: List[CandidateRule], 
-        scorer, 
-        validator
     ) -> List[CandidateRule]:
         """
         Sort and prune beam to width limit.
@@ -186,8 +184,18 @@ class BeamSearch:
                         )
                     continue
                 
-                # All checks passed - create rule
+               # All checks passed - create rule
                 stats['accepted'] += 1
+                
+                # Compute beam score once (single source: scorer)
+                beam_score = scorer.score_rule(
+                    metrics['precision'],
+                    metrics['recall'],
+                    metrics['coverage'],
+                    predicted_class,
+                    seg,
+                    validator,
+                )
                 
                 # Log acceptance if enabled
                 logger.log_accepted_rule(
@@ -198,6 +206,7 @@ class BeamSearch:
                     recall=metrics['recall'],
                     coverage=metrics['coverage'],
                     support=metrics['support'],
+                    beam_score=beam_score,
                     parent_precision=parent_rule.precision,
                     parent_recall=parent_rule.recall,
                     parent_coverage=parent_rule.coverage,
@@ -217,16 +226,7 @@ class BeamSearch:
                     coverage=metrics['coverage'],
                     support=metrics['support'],
                 )
-                
-                # Store beam score for internal use
-                rule._beam_score = scorer.score_rule(
-                    metrics['precision'],
-                    metrics['recall'],
-                    metrics['coverage'],
-                    predicted_class,
-                    seg,
-                    validator,
-                )
+                rule._beam_score = beam_score
                 
                 accepted_rules.append(rule)
                 rule_id_counter['current'] += 1

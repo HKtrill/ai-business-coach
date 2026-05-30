@@ -11,6 +11,15 @@ rather than being extracted from artifacts — labels are always in scope
 in the cascade and this avoids depending on artifact schemas storing them.
 
 LR artifact: use the calibrated path (lr_calibrated_*.joblib), not baseline.
+
+Artifact key contract (canonical names, newest artifacts)
+----------------------------------------------------------
+    train_predictions   calibrated train probabilities
+    test_predictions    calibrated test probabilities
+    optimal_threshold   CV-optimised F2 threshold
+
+Legacy fallbacks are kept in _pick() so that artifacts written before the
+key consolidation (which used _calibrated suffix aliases) still load cleanly.
 """
 
 import numpy as np
@@ -18,7 +27,13 @@ import joblib
 
 
 def _pick(d: dict, keys: list, label: str, path: str):
-    """Try keys in order; raise a clear error if none are found."""
+    """
+    Try keys in order; return the first hit that is present and non-None.
+    Raises a descriptive KeyError if none are found.
+
+    Keys are ordered canonical-first so that new artifacts resolve on the
+    first try and legacy artifacts fall through to their suffix variants.
+    """
     for k in keys:
         if k in d and d[k] is not None:
             return d[k]
@@ -64,30 +79,30 @@ def load_stage_outputs(
     n_test  = len(y_test)
 
     # ------------------------------------------------------------------
-    # LR — calibrated probs preferred
+    # LR — canonical names first, legacy _calibrated suffix as fallback
     # ------------------------------------------------------------------
     lr_prob_train = np.array(_pick(lr,
-        ["train_predictions_calibrated", "train_predictions", "train_proba"],
+        ["train_predictions", "train_predictions_calibrated", "train_proba"],
         "lr_prob_train", lr_path,
     ))
     lr_prob_test = np.array(_pick(lr,
-        ["test_predictions_calibrated", "test_predictions", "test_proba"],
+        ["test_predictions", "test_predictions_calibrated", "test_proba"],
         "lr_prob_test", lr_path,
     ))
     lr_thresh = float(_pick(lr,
-        ["optimal_threshold_calibrated", "optimal_threshold", "threshold"],
+        ["optimal_threshold", "optimal_threshold_calibrated", "threshold"],
         "lr_thresh", lr_path,
     ))
 
     # ------------------------------------------------------------------
-    # EBM — calibrated probs preferred
+    # EBM — canonical names first, legacy _calibrated suffix as fallback
     # ------------------------------------------------------------------
     ebm_prob_train = np.array(_pick(ebm,
-        ["train_predictions_calibrated", "train_predictions", "train_proba"],
+        ["train_predictions", "train_predictions_calibrated", "train_proba"],
         "ebm_prob_train", ebm_path,
     ))
     ebm_prob_test = np.array(_pick(ebm,
-        ["test_predictions_calibrated", "test_predictions", "test_proba"],
+        ["test_predictions", "test_predictions_calibrated", "test_proba"],
         "ebm_prob_test", ebm_path,
     ))
     ebm_thresh = float(_pick(ebm,
@@ -159,16 +174,16 @@ def load_stage_outputs(
         )
 
     return {
-        "y_train":              y_train,
-        "y_test":               y_test,
-        "lr_prob_train":        lr_prob_train,
-        "lr_prob_test":         lr_prob_test,
-        "lr_thresh":            lr_thresh,
-        "ebm_prob_train":       ebm_prob_train,
-        "ebm_prob_test":        ebm_prob_test,
-        "ebm_thresh":           ebm_thresh,
-        "glass_prob_train":     glass_prob_train,
-        "glass_prob_test":      glass_prob_test,
+        "y_train":               y_train,
+        "y_test":                y_test,
+        "lr_prob_train":         lr_prob_train,
+        "lr_prob_test":          lr_prob_test,
+        "lr_thresh":             lr_thresh,
+        "ebm_prob_train":        ebm_prob_train,
+        "ebm_prob_test":         ebm_prob_test,
+        "ebm_thresh":            ebm_thresh,
+        "glass_prob_train":      glass_prob_train,
+        "glass_prob_test":       glass_prob_test,
         "glass_decisions_train": glass_decisions_train,
         "glass_decisions_test":  glass_decisions_test,
     }

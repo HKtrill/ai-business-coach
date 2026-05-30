@@ -7,11 +7,8 @@ Uses Random Forest to identify:
 2. Natural breakpoints for continuous features via lift analysis
 3. Categorical feature lift patterns
 
-Author: Glass Pipeline Team
-Date: 2026-01-29
 """
 
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
@@ -350,7 +347,6 @@ def analyze_rf_lift(
     y_train: pd.Series,
     X_test: pd.DataFrame,
     y_test: pd.Series,
-    global_split: Dict,
     plot: bool = True
 ) -> Tuple[RFLiftAnalyzer, Dict]:
     """

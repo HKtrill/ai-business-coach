@@ -5,15 +5,12 @@
 # 
 # Output: List[CandidateRule] for RuleEvaluator
 # ============================================================
-
 from typing import List, Dict, Tuple, Optional
 from collections import defaultdict
 from sklearn.ensemble import RandomForestClassifier
-
 from .feature_validator import FeatureValidator
 from .rule_constraints import RuleConstraints
 from .rule_scorer import RuleScorer
-from .rule_logger import RuleLogger
 from .rule_metrics import RuleMetrics
 from .beam_search import BeamSearch
 from glass_brw.core.rule import CandidateRule
@@ -83,7 +80,7 @@ class RuleGenerator:
         segment_builder=None,
         
         # New prefixes added
-        tier1_prefixes: Tuple[str, ...] = (
+        rule_prefixes: Tuple[str, ...] = (
             'nsd',       # neighborhood_subscription_density bins
             'jed',       # joint_economic_decay bins
             'cci',       # cons.conf.idx bins
@@ -97,11 +94,8 @@ class RuleGenerator:
         rf_model=None,
         feature_importance_threshold: float = 0.00,
         
-        # Diagnostic logging
-        verbose_rejection_logging: bool = True,
-        max_rejection_logs_per_constraint: int = 50,
-        verbose_acceptance_logging: bool = True,
-        max_acceptance_logs_per_depth: int = 25,
+        # Diagnostic logging - REQUIRED (injected)
+        rule_logger=None,
     ):
         """
         Initialize rule generator with modular components.
@@ -109,6 +103,7 @@ class RuleGenerator:
         Raises:
             ValueError: If any required tuning parameter is None
             ValueError: If segment_builder is None
+            ValueError: If rule_logger is None
         """
         # ============================================================
         # VALIDATE REQUIRED PARAMETERS
@@ -140,6 +135,9 @@ class RuleGenerator:
         if segment_builder is None:
             raise ValueError("RuleGenerator requires a SegmentBuilder instance")
         
+        if rule_logger is None:
+            raise ValueError("RuleGenerator requires a RuleLogger instance")
+        
         # ============================================================
         # STORE BASIC PARAMETERS
         # ============================================================
@@ -160,7 +158,7 @@ class RuleGenerator:
         # ============================================================
         # INITIALIZE MODULAR COMPONENTS
         # ============================================================
-        self.validator = FeatureValidator(tier1_prefixes=tier1_prefixes)
+        self.validator = FeatureValidator(rule_prefixes=rule_prefixes)
         
         self.constraints = RuleConstraints(
             min_support_pass1=min_support_pass1,
@@ -185,12 +183,7 @@ class RuleGenerator:
             max_feature_reuse_pass2=max_feature_reuse_pass2,
         )
         
-        self.logger = RuleLogger(
-            verbose_rejection_logging=verbose_rejection_logging,
-            max_rejection_logs_per_constraint=max_rejection_logs_per_constraint,
-            verbose_acceptance_logging=verbose_acceptance_logging,
-            max_acceptance_logs_per_depth=max_acceptance_logs_per_depth,
-        )
+        self.logger = rule_logger
         
         self.beam_search = BeamSearch(
             beam_width=beam_width,
@@ -395,7 +388,7 @@ class RuleGenerator:
         print("SEQUENTIAL RULE GENERATION WITH DEPTH-STAGED CONSTRAINTS")
         print(f"{'='*60}")
         print(f"  Beam width: {self.beam_width}")
-        print(f"  Complexity: {self.min_complexity}–{self.max_complexity}")
+        print(f"  Complexity: {self.min_complexity}\u2013{self.max_complexity}")
         print(f"  Total samples: {N}")
         print(f"  Total subscribers: {total_subscribers}")
         print(f"\n  ✅ DEPTH-STAGED CONSTRAINT STRATEGY:")
@@ -461,18 +454,17 @@ class RuleGenerator:
                 before = len(next_rules[cls])
                 next_rules[cls] = self.beam_search.deduplicate_rules(next_rules[cls])
                 after_dedup = len(next_rules[cls])
-                
+    
                 if after_dedup < before:
                     print(f"  Pass {2 if cls == 1 else 1}: Deduplicated {before} → {after_dedup} rules")
-                
-                next_rules[cls] = self.beam_search.prune_beam(
-                    next_rules[cls], self.scorer, self.validator
-                )
-                
+    
+                # prune_beam only needs rules because _beam_score is already stored on each rule
+                next_rules[cls] = self.beam_search.prune_beam(next_rules[cls])
+    
                 # Update feature usage
                 for rule in next_rules[cls]:
                     self.scorer.update_feature_usage(rule.segment, cls, self.validator)
-                
+    
                 # Add to candidates if depth >= min_complexity
                 if depth >= self.min_complexity:
                     all_candidates.extend(next_rules[cls])
@@ -502,7 +494,7 @@ class RuleGenerator:
         pass2_count = sum(1 for r in all_candidates if r.predicted_class == 1)
         
         print(f"\n{'='*60}")
-        print(f"✅ Generated {len(all_candidates)} candidate rules (k ≥ {self.min_complexity})")
+        print(f"✅ Generated {len(all_candidates)} candidate rules (k \u2265 {self.min_complexity})")
         print(f"   Pass 1 (NOT_SUBSCRIBE): {pass1_count} rules")
         print(f"   Pass 2 (SUBSCRIBE): {pass2_count} rules")
         print(f"   ⚠️  Diversity handling delegated to ILP")

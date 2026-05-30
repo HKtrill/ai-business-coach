@@ -5,11 +5,12 @@
 # Works with EvaluatedRule objects
 # ============================================================
 
-from typing import List, Dict
+from typing import List, Dict, Any, Optional
 from collections import defaultdict
 from pulp import lpSum
 
 from glass_brw.core.rule import EvaluatedRule
+from .utils import get_base_features
 
 
 class DiversityAnalyzer:
@@ -51,11 +52,11 @@ class DiversityAnalyzer:
         if not selected_rules:
             return 1.0
         
-        rule_bases = {self.validator.extract_base_feature(f) for f, _ in rule.segment}
+        rule_bases = get_base_features(rule, self.validator)
         overlaps = []
         
         for selected in selected_rules:
-            selected_bases = {self.validator.extract_base_feature(f) for f, _ in selected.segment}
+            selected_bases = get_base_features(selected, self.validator)
             overlap = len(rule_bases & selected_bases) / max(len(rule_bases), 1)
             overlaps.append(overlap)
         
@@ -66,8 +67,8 @@ class DiversityAnalyzer:
         self,
         prob,
         rules: List[EvaluatedRule],
-        decision_vars: Dict[int, any],
-        max_base_reuse: int = None
+        decision_vars: Dict[int, Any],
+        max_base_reuse: Optional[int] = None
     ):
         """
         Add constraints to limit feature reuse across rules.

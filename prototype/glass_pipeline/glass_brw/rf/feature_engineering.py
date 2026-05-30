@@ -634,7 +634,7 @@ def engineer_features(
     X_train_eng : pd.DataFrame   Shape (N_train, 29)  29 mutually-exclusive bins
     X_test_eng  : pd.DataFrame   Shape (N_test, 29)   29 mutually-exclusive bins
     """
-    from glass_brw.rf.binning import (
+    from .binning import (
         create_binary_features,
         validate_binary_features,
         RF_FEATURES_BINARY,
@@ -706,7 +706,7 @@ def _apply_binning_thresholds(
     Used for test-set binning where target labels are not available.
     Mirrors the threshold logic in create_binary_features exactly.
     """
-    from glass_brw.rf.binning import BINNING_STRATEGY
+    from .binning import BINNING_STRATEGY
 
     df = df.copy()
     for group_def in BINNING_STRATEGY.values():

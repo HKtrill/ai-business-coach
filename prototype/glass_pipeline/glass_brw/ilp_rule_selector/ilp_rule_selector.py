@@ -44,7 +44,7 @@ class ILPRuleSelector:
         max_precision_pass1: Optional[float] = None,
         max_subscriber_leakage_rate_pass1: Optional[float] = None,
         max_subscriber_leakage_absolute_pass1: Optional[int] = None,
-        max_base_reuse_pass1: Optional[int] = None,  # Optional - can be None
+        max_base_reuse_pass1: Optional[int] = None,
         
         # ============================================================
         # PASS 2 CONSTRAINTS - REQUIRED (tuning params)
@@ -55,7 +55,7 @@ class ILPRuleSelector:
         max_precision_pass2: Optional[float] = None,
         min_recall_pass2: Optional[float] = None,
         max_recall_pass2: Optional[float] = None,
-        max_base_reuse_pass2: Optional[int] = None,  # Optional - can be None
+        max_base_reuse_pass2: Optional[int] = None,
         
         # ============================================================
         # NOVELTY CONSTRAINTS - REQUIRED (tuning params)
@@ -70,11 +70,11 @@ class ILPRuleSelector:
         diversity_weight: Optional[float] = None,
         
         # ============================================================
-        # STRUCTURAL/BEHAVIORAL - KEEP DEFAULTS (rarely tuned)
+        # STRUCTURAL/BEHAVIORAL - OPTIONAL (rarely tuned)
         # ============================================================
         max_feature_usage: int = 40,
-        lambda_rf_uncertainty: float = 0.15,
-        lambda_rf_misalignment: float = 0.08,
+        lambda_rf_uncertainty: Optional[float] = None,
+        lambda_rf_misalignment: Optional[float] = None,
         
         # Greedy fallback controls
         min_novelty_greedy: float = 0.15,
@@ -83,23 +83,17 @@ class ILPRuleSelector:
         min_absolute_new_samples: int = 30,
         
         # Feature validation
-        tier1_prefixes: Tuple[str, ...] = (
-            'nsd',       # neighborhood_subscription_density bins
-            'jed',       # joint_economic_decay bins
-            'cci',       # cons.conf.idx bins
-            'eci',       # economic_curvature_intensity bins
-            'dow',       # dow_month_encoded bins
-            'behav',     # behavioral_favorability bins
-            'campaign',  # campaign bins
-            'cpi',       # cpi_high_cellular passthrough
+        rule_prefixes: Tuple[str, ...] = (
+            'nsd',
+            'jed',
+            'cci',
+            'eci',
+            'dow',
+            'behav',
+            'campaign',
+            'cpi',
         ),
     ):
-        """
-        Initialize ILP rule selector with modular components.
-        
-        Raises:
-            ValueError: If any required tuning parameter is None
-        """
         # ============================================================
         # VALIDATE REQUIRED PARAMETERS
         # ============================================================
@@ -146,7 +140,7 @@ class ILPRuleSelector:
         # ============================================================
         # INITIALIZE MODULAR COMPONENTS
         # ============================================================
-        self.validator = FeatureValidator(tier1_prefixes=tier1_prefixes)
+        self.validator = FeatureValidator(rule_prefixes=rule_prefixes)
         
         self.quality_filter = QualityGateFilter(
             min_precision_pass1=min_precision_pass1,
@@ -169,8 +163,12 @@ class ILPRuleSelector:
         )
         
         self.ilp_builder = ILPBuilder(
-            lambda_rf_uncertainty=lambda_rf_uncertainty,
-            lambda_rf_misalignment=lambda_rf_misalignment,
+            lambda_rf_uncertainty=(
+                0.15 if lambda_rf_uncertainty is None else lambda_rf_uncertainty
+            ),
+            lambda_rf_misalignment=(
+                0.08 if lambda_rf_misalignment is None else lambda_rf_misalignment
+            ),
         )
         
         self.greedy_selector = GreedySelector(
@@ -191,26 +189,15 @@ class ILPRuleSelector:
     # ============================================================
     
     def _filter_invalid_rules(
-        self, 
+        self,
         candidates: List[EvaluatedRule]
     ) -> Tuple[List[EvaluatedRule], List[EvaluatedRule]]:
-        """
-        Filter out structurally invalid rules.
-        
-        Args:
-            candidates: List of EvaluatedRule objects
-            
-        Returns:
-            (valid_rules, rejected_rules) tuple
-        """
         valid, rejected = [], []
-        
         for rule in candidates:
             if self.validator.has_duplicate_base_features(rule.segment):
                 rejected.append(rule)
             else:
                 valid.append(rule)
-        
         return valid, rejected
     
     # ============================================================
@@ -218,21 +205,21 @@ class ILPRuleSelector:
     # ============================================================
     
     def select_rules(
-        self, 
-        evaluated_rules: List[EvaluatedRule], 
+        self,
+        evaluated_rules: List[EvaluatedRule],
         y_val=None,
         X_val=None,
         segment_builder=None,
     ) -> Dict[str, List[SelectedRule]]:
         """
         Public entry point for ILP rule selection.
-        
+
         Args:
             evaluated_rules: List of EvaluatedRule objects from RuleEvaluator
             y_val: Validation labels (required for Pass 1 leakage calculation)
             X_val: Validation features (for computing covered indices)
             segment_builder: Segment builder (for computing covered indices)
-            
+
         Returns:
             Dict with {"pass1_rules": List[SelectedRule], "pass2_rules": List[SelectedRule]}
         """
@@ -244,14 +231,12 @@ class ILPRuleSelector:
         print("🧮 ILP RULE SELECTION")
         print("=" * 80)
         
-        # Precompute covered indices if X_val provided
         if X_val is not None:
             print("  Computing covered indices for novelty analysis...")
             self._precompute_covered_indices(evaluated_rules, X_val, segment_builder)
         
         self._print_configuration()
         
-        # Filter invalid rules
         valid_rules, rejected = self._filter_invalid_rules(evaluated_rules)
         if rejected:
             print(f"  🚫 Rejected {len(rejected)} structurally invalid rules")
@@ -260,7 +245,6 @@ class ILPRuleSelector:
             print("⚠️  No valid rules remain after structural filtering.")
             return {"pass1_rules": [], "pass2_rules": []}
         
-        # Split by pass
         pass1_candidates = [r for r in valid_rules if r.predicted_class == 0]
         pass2_candidates = [r for r in valid_rules if r.predicted_class == 1]
         
@@ -268,7 +252,6 @@ class ILPRuleSelector:
         print(f"  Pass 1 candidates: {len(pass1_candidates)}")
         print(f"  Pass 2 candidates: {len(pass2_candidates)}")
         
-        # Optimize each pass (returns EvaluatedRule lists)
         pass1_evaluated = self._optimize_pass(
             candidates=pass1_candidates,
             min_rules=self.min_pass1_rules,
@@ -291,17 +274,15 @@ class ILPRuleSelector:
             min_novelty_ratio=self.min_novelty_ratio_pass2,
         )
         
-        # Post-selection analysis
         self.novelty_analyzer.analyze_selection_novelty(pass1_evaluated, "Pass 1")
         self.novelty_analyzer.analyze_selection_novelty(pass2_evaluated, "Pass 2")
         
-        # Convert EvaluatedRule → SelectedRule
         pass1_selected = [
-            SelectedRule.from_evaluated(r, pass_assignment="pass1") 
+            SelectedRule.from_evaluated(r, pass_assignment="pass1")
             for r in pass1_evaluated
         ]
         pass2_selected = [
-            SelectedRule.from_evaluated(r, pass_assignment="pass2") 
+            SelectedRule.from_evaluated(r, pass_assignment="pass2")
             for r in pass2_evaluated
         ]
         
@@ -314,21 +295,10 @@ class ILPRuleSelector:
             "pass2_rules": pass2_selected,
         }
     
-    def _precompute_covered_indices(
-        self,
-        rules: List[EvaluatedRule],
-        X_val,
-        segment_builder,
-    ):
-        """
-        Precompute and cache covered indices for novelty calculations.
-        
-        Stores results in a temporary dict on each rule for ILP use.
-        """
+    def _precompute_covered_indices(self, rules, X_val, segment_builder):
+        """Precompute and cache covered indices for novelty calculations."""
         for rule in rules:
-            covered = rule.compute_covered_indices(X_val, segment_builder)
-            # Store temporarily for ILP (will be discarded after selection)
-            rule._cached_covered_idx = covered
+            rule._cached_covered_idx = rule.compute_covered_indices(X_val, segment_builder)
     
     # ============================================================
     # PASS OPTIMIZATION
@@ -345,11 +315,7 @@ class ILPRuleSelector:
         max_base_reuse: Optional[int] = None,
         min_novelty_ratio: float = 0.20,
     ) -> List[EvaluatedRule]:
-        """
-        Optimize a single pass using ILP or greedy fallback.
-        
-        Returns List[EvaluatedRule] (conversion to SelectedRule happens in select_rules)
-        """
+        """Optimize a single pass using ILP or greedy fallback."""
         if not candidates:
             print(f"⚠️  No candidates for {pass_name}")
             return []
@@ -358,7 +324,6 @@ class ILPRuleSelector:
         print("-" * 80)
         print(f"Total incoming candidates: {len(candidates)}")
         
-        # Apply quality gates
         if "Pass 1" in pass_name and y_val is not None:
             valid, rejected = self.quality_filter.apply_quality_gates_pass1(candidates, y_val)
         else:
@@ -371,39 +336,30 @@ class ILPRuleSelector:
             print(f"  ⚠️  No valid candidates after quality gates!")
             return []
         
-        # Deduplicate
         valid = self.deduplicator.deduplicate_by_segment(valid, scoring_mode)
         print(f"  After deduplication: {len(valid)} unique rules")
         
-        # Adjust cardinality bounds
         n_valid = len(valid)
         actual_min = max(0, min(min_rules, n_valid))
         actual_max = max(1, min(max_rules, n_valid))
         if actual_min > actual_max:
             actual_min = actual_max
         
-        # Build ILP
         prob = self.ilp_builder.create_problem(pass_name)
         decision_vars = self.ilp_builder.create_decision_variables(valid)
         
-        # Set objective
-        objective_terms = self.ilp_builder.build_objective(valid, decision_vars, scoring_mode)
-        prob += sum(objective_terms)
+        prob += sum(self.ilp_builder.build_objective(valid, decision_vars, scoring_mode))
         
-        # Add constraints
         self.ilp_builder.add_cardinality_constraints(
             prob, valid, decision_vars, actual_min, actual_max
         )
-        
         self.diversity_analyzer.add_diversity_constraints(
             prob, valid, decision_vars, max_base_reuse
         )
-        
         n_constraints = self.novelty_analyzer.add_novelty_constraints(
             prob, valid, decision_vars, min_novelty_ratio
         )
         
-        # Solve
         print(f"\nSolving ILP for {pass_name}...")
         print(f"  Variables: {len(decision_vars)}")
         print(f"  Cardinality: [{actual_min}, {actual_max}]")
@@ -418,7 +374,6 @@ class ILPRuleSelector:
         if status != "Optimal":
             return self.greedy_selector.greedy_select(valid, actual_max, scoring_mode)
         
-        # Extract solution
         selected = self.ilp_builder.extract_selected_rules(valid, decision_vars)
         print(f"  ✅ Selected {len(selected)} rules")
         
@@ -438,6 +393,8 @@ class ILPRuleSelector:
         print(f"   Greedy min novelty: {self.greedy_selector.min_novelty_greedy:.0%}")
         print(f"   Greedy hard cutoff: {self.greedy_selector.greedy_hard_novelty_cutoff}")
         print(f"   Min absolute new samples: {self.greedy_selector.min_absolute_new_samples}")
+        print(f"   RF uncertainty penalty: {self.ilp_builder.lambda_rf_uncertainty}")
+        print(f"   RF misalignment penalty: {self.ilp_builder.lambda_rf_misalignment}")
         print(f"   Pass 1 coverage: [{self.quality_filter.min_coverage_pass1}, {self.quality_filter.max_coverage_pass1}]")
         print(f"   Pass 2 coverage: [{self.quality_filter.min_coverage_pass2}, {self.quality_filter.max_coverage_pass2}]")
     
