@@ -49,7 +49,7 @@ The cascade serves as the core reasoning engine, producing transparent and fully
 
 An optional natural-language interface enables conversational interaction with model outputs and explanations while remaining independent from the core modeling pipeline.
 
-The result is a transparent, high-performance ensemble where every prediction can be traced to human-readable logic — enabling trustworthy deployment without sacrificing predictive performance.
+The result is a transparent, high-performance cascade where every prediction can be traced to human-readable logic — enabling trustworthy deployment without sacrificing predictive performance.
 
 ---
 
@@ -59,7 +59,7 @@ The result is a transparent, high-performance ensemble where every prediction ca
 >
 > During leakage and temporal-validity auditing, `duration`, `poutcome`, and `pdays` were identified as problematic for deployment-realistic pre-contact prediction. As a result, ChurnBot evaluates the harder task of estimating subscription likelihood before contact occurs, rather than relying on post-call or prior-campaign artifacts.
 >
-> These findings were surfaced through the interpretable rule lattice, demonstrating the value of glass-box models for dataset auditing as well as prediction.
+> These findings were surfaced through the interpretable cascade and symbolic rule diagnostics.
 >
 > See the full research status and dataset audit notes here:  
 > **[Dataset Audit & Research Status](documentation/dataset_audit_and_research_status.md)**
@@ -94,48 +94,57 @@ This enables faithful, exact explanations rather than post-hoc approximations.
 
 ---
 
-## 🎯 Architecture: Four-Stage Interpretable Cascade
+## 🎯 Architecture: GLASS Cascade
+
+**GLASS** stands for **Glass-box Layered Abstention-aware Scoring System**.
+
+GLASS Cascade is a four-stage interpretable decision architecture designed to preserve traceable inference while remaining competitive with black-box baselines.
 
 ```text
-Stage 1: Logistic Regression (Calibrated Linear Generalist)
+Stage 1: Calibrated Logistic Regression
   ↓ Captures global linear trends through interpretable coefficients
   ↓ Provides a balanced, calibrated baseline prediction signal
   ↓ Serves as the transparent linear reference model for downstream arbitration
 
-Stage 2: Sequential GLASS-BRW
-        (Gated Logistic Abstention Structured System — Best Rules Win)
-  ↓ Applies a symbolic, two-pass rule lattice with explicit abstention
-  ↓ Designed to create non-redundant behavior relative to LR and EBM
+Stage 2: Constrained Symbolic Rule Router
+  ↓ Operates over binary predicate atoms derived from audited source features
+  ↓ Searches a constrained symbolic rule lattice with RF-guided feature ordering and beam search
+  ↓ Applies depth-staged feasibility constraints, validation scoring, and ILP rule selection
+  ↓ Routes samples through sequential pass-specific rules with abstention
 
   Pass 1: NOT_SUBSCRIBE Rule Pass
     ↓ Identifies high-confidence non-subscriber regions
     ↓ Samples not captured by Pass 1 are passed forward to Pass 2
 
   Pass 2: SUBSCRIBE Rule Pass
-    ↓ Identifies high-confidence subscriber regions among remaining samples
+    ↓ Identifies subscriber regions among remaining samples
     ↓ Samples not captured by Pass 2 remain abstained
 
-Stage 3: Explainable Boosting Machine (Additive Nonlinear Validator)
+Stage 3: Explainable Boosting Machine
   ↓ Models nonlinear effects through interpretable additive shape functions
   ↓ Provides a complementary nonlinear prediction signal
-  ↓ Strengthens precision-oriented validation through additive feature effects
+  ↓ Captures response curves and limited interaction effects
 
-Stage 4: Meta-EBM (Abstention-Aware Weighted Confidence Arbiter)
+Stage 4: Meta-EBM Arbiter
   ↓ Aligns stage thresholds for comparable arbitration
-  ↓ Computes trust weights from calibration and prediction quality
-  ↓ Combines LR, GLASS-BRW, and EBM through weighted confidence
+  ↓ Computes trust weights from calibration and validation behavior
+  ↓ Combines LR, symbolic-router, and EBM outputs through weighted confidence
   ↓ Selects the final prediction when confidence is sufficient
   ↓ Abstains when confidence is too low
 
 Customer-Level Predictions with Stage-by-Stage Explainability
 ```
 
-### Key Innovation: Every Stage Remains Interpretable
+### Key Innovation: Glass-Box Inference with Stage-Level Traceability
 
-- **Logistic Regression:** Direct coefficient inspection
-- **Sequential GLASS-BRW:** Explicit IF–THEN routing and abstention rules
-- **EBM:** Additive shape functions exposing non-linear relationships
-- **Meta-EBM / Arbiter:** Transparent confidence-weighted arbitration between stage outputs
+* **Logistic Regression:** Direct coefficient inspection and calibrated linear scoring
+* **Constrained Symbolic Rule Router:** Explicit IF–THEN routing rules, pass-level decisions, and abstention behavior
+* **EBM:** Additive shape functions exposing nonlinear feature effects
+* **Meta-EBM Arbiter:** Transparent confidence-weighted arbitration between stage outputs
+
+The goal is not simply to stack interpretable models. The cascade assigns each stage a distinct decision role and evaluates the system through complementarity, disagreement, abstention behavior, and shared-failure reduction.
+
+The cascade is designed as a glass-box inference architecture. Some training-time components, such as Random Forest feature importance, are used to guide symbolic rule discovery, but inference-time decisions remain traceable through calibrated scores, explicit symbolic rules, EBM effects, and Meta-EBM arbitration.
 
 ---
 
@@ -143,7 +152,7 @@ Customer-Level Predictions with Stage-by-Stage Explainability
 
 ### Research Hypothesis
 
-Carefully designed interpretable ensemble architectures can match or exceed black-box performance while preserving full transparency — particularly in structured decision domains such as subscription modeling and customer retention.
+Carefully designed interpretable cascade architectures can match or exceed black-box performance while preserving full transparency — particularly in structured decision domains such as subscription modeling and customer retention.
 
 ### Supporting Observations
 
@@ -220,12 +229,15 @@ This contrasts sharply with opaque cloud-hosted black-box systems where both the
 
 ## 🎯 Current Research Focus
 
-- ✅ Sequential GLASS-BRW rule lattice with explicit abstention
-- ✅ Random Forest-derived rule extraction for symbolic routing
-- ✅ EBM integration for non-linear response modeling
-- ✅ Meta-EBM arbitration layer
-- 🔄 Cross-dataset validation
-- 🔄 Visualization tooling
+- ✅ GLASS Cascade architecture for interpretable staged prediction
+- ✅ Dataset audit for leakage-prone and deployment-inconsistent features
+- ✅ Calibrated Logistic Regression baseline stage
+- ✅ Constrained symbolic rule router with explicit abstention
+- ✅ EBM integration for nonlinear response modeling
+- ✅ Meta-EBM arbitration layer for confidence-weighted abstention
+- 🔄 Validate Stages 1–4 after final configuration updates
+- 🔄 Clean notebook outputs and make stage summaries more readable
+- 🔄 Add fair baseline comparisons under the audited feature setting
 - 🔄 Formal research paper preparation
 
 ---
@@ -234,7 +246,7 @@ This contrasts sharply with opaque cloud-hosted black-box systems where both the
 
 - Dataset variability introduces generalization challenges
 - Rule consolidation may require domain-specific threshold tuning
-- Interpretable ensemble conversion introduces computational overhead
+- Interpretable cascade conversion introduces computational overhead
 - Shape function interpretation still requires statistical literacy
 
 ---
