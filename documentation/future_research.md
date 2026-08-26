@@ -72,13 +72,13 @@ The hypothesis may be confirmed, partially confirmed, or rejected.
 
 ---
 
-# 3. Central Idea: Do Not Compute What Can Be Safely Rejected
+# 3. Central Idea: Do Not Compute What Can Be Safely Eliminated or Approximated
 
 Many optimization strategies perform computation and subsequently determine that some computed values are unimportant.
 
 This research will investigate a more aggressive alternative:
 
-> **Determine that a region of computation is unnecessary before calculating the individual interactions contained within it.**
+> **Determine that a region of computation can be eliminated or approximated before calculating the individual interactions contained within it.**
 
 Conceptually, instead of evaluating an entire attention matrix:
 
@@ -93,10 +93,10 @@ FULL DENSE ATTENTION
 ########################
 ```
 
-the algorithm could identify entire regions that do not require exploration:
+the algorithm could identify entire regions that do not require exact evaluation:
 
 ```text
-HIERARCHICALLY PRUNED ATTENTION
+HIERARCHICALLY REDUCED ATTENTION
 
 ######......######......
 ######......######......
@@ -109,46 +109,46 @@ HIERARCHICALLY PRUNED ATTENTION
 where:
 
 ```text
-# = evaluated interaction region
-. = region rejected before exact evaluation
+# = exact interaction region evaluated
+. = region eliminated or approximated before exact evaluation
 ```
 
 The central optimization target is therefore:
 
-$$
+```math
 C_{\mathrm{effective}}
 =
 C_{\mathrm{pruning}}
 +
 C_{\mathrm{retained}}
-$$
+```
 
 where:
 
-- $C_{\mathrm{pruning}}$ is the cost of searching, bounding, and pruning candidate regions.
-- $C_{\mathrm{retained}}$ is the cost of computing the attention interactions that survive pruning.
+- $C_{\mathrm{pruning}}$ is the cost of searching, bounding, and determining which candidate regions can be eliminated or approximated.
+- $C_{\mathrm{retained}}$ is the cost of computing the attention interactions that still require exact evaluation.
 
 The resulting computational savings are:
 
-$$
+```math
 C_{\mathrm{savings}}
 =
 C_{\mathrm{dense}}
 -
 C_{\mathrm{effective}}
-$$
+```
 
-Therefore, a pruning strategy is beneficial only when:
+Therefore, an optimization strategy is beneficial only when:
 
-$$
+```math
 C_{\mathrm{pruning}}
 +
 C_{\mathrm{retained}}
 <
 C_{\mathrm{dense}}
-$$
+```
 
-In other words, the cost of deciding what not to compute must remain **substantially smaller than the computation that is eliminated**.
+In other words, the cost of deciding what not to compute exactly must remain **substantially smaller than the computation that is avoided**.
 
 ---
 
@@ -197,11 +197,11 @@ For a candidate region $R$:
 
 Instead of bounding only the strongest individual interaction, define an upper bound on the region's possible contribution to the softmax denominator:
 
-$$
+```math
 B_{\mathrm{mass}}(R)
 =
 |R|e^{\hat{s}(R)-m}
-$$
+```
 
 If $B_{\mathrm{drop}}$ represents the accumulated upper bound associated with regions already eliminated, a candidate region may be eliminated only when the total omitted-mass budget remains within a predefined tolerance:
 
@@ -808,13 +808,13 @@ For example, an algorithm that eliminates 80% of attention interactions but spen
 
 Define the effective computational cost of the proposed method as:
 
-$$
+```math
 C_{\mathrm{effective}}
 =
 C_{\mathrm{pruning}}
 +
 C_{\mathrm{retained}}
-$$
+```
 
 where:
 
@@ -824,43 +824,43 @@ where:
 
 The absolute computational savings are therefore:
 
-$$
+```math
 C_{\mathrm{savings}}
 =
 C_{\mathrm{dense}}
 -
 C_{\mathrm{effective}}
-$$
+```
 
 The normalized fraction of work avoided is:
 
-$$
+```math
 S_{\mathrm{relative}}
 =
 1 -
 \frac{C_{\mathrm{effective}}}{C_{\mathrm{dense}}}
-$$
+```
 
 and computational speedup is:
 
-$$
+```math
 \mathrm{Speedup}
 =
 \frac{C_{\mathrm{dense}}}
 {C_{\mathrm{effective}}}
-$$
+```
 
 A successful pruning strategy therefore requires:
 
-$$
+```math
 C_{\mathrm{effective}} < C_{\mathrm{dense}}
-$$
+```
 
 with the stronger practical objective:
 
-$$
+```math
 C_{\mathrm{effective}} \ll C_{\mathrm{dense}}
-$$
+```
 
 while maintaining model quality within a predefined acceptable tolerance.
 
@@ -876,9 +876,9 @@ The research does not require eliminating the quadratic worst case.
 
 Some inputs may genuinely require examination of most possible query-key relationships. Therefore:
 
-$$
+```math
 T_{\mathrm{worst}}(n)=O(n^2)
-$$
+```
 
 may remain possible.
 
@@ -886,13 +886,13 @@ The theoretical target is better expressed using **instance-dependent or output-
 
 For a query $q$, define:
 
-* $k_{\varepsilon}(q)$ as the number of retained keys required to capture a specified fraction of the relevant attention mass under tolerance $\varepsilon$.
-* $N_{\mathrm{vis}}(q)$ as the number of hierarchy or search nodes visited, including nodes that are ultimately rejected.
-* $C_{\mathrm{maint}}$ as the cost of maintaining any search structure or index as the KV cache changes.
+- $k_{\varepsilon}(q)$ as the number of retained keys required to capture a specified fraction of the relevant attention mass under tolerance $\varepsilon$.
+- $N_{\mathrm{vis}}(q)$ as the number of hierarchy or search nodes visited, including nodes that are ultimately rejected.
+- $C_{\mathrm{maint}}$ as the cost of maintaining any search structure or index as the KV cache changes.
 
 For decode, a candidate cost model is:
 
-$$
+```math
 T(q)
 =
 O\left(
@@ -904,13 +904,13 @@ N_{\mathrm{vis}}(q)
 +
 C_{\mathrm{maint}}
 \right)
-$$
+```
 
 where the exact constants and lower-order terms depend on the bound, index structure, memory layout, and hardware implementation.
 
 Across $n$ decode steps:
 
-$$
+```math
 T_{\mathrm{decode}}(n)
 =
 O\left(
@@ -925,15 +925,15 @@ N_{\mathrm{vis}}(q_t)
 \sum_{t=1}^{n}
 C_{\mathrm{maint}}(t)
 \right)
-$$
+```
 
 If the average retained support and number of visited regions remain approximately bounded as context grows, the resulting behavior may approach linear scaling in $n$ when $d$ is treated as fixed.
 
 If these quantities grow approximately logarithmically, behavior closer to:
 
-$$
+```math
 O(n\log n)
-$$
+```
 
 may still represent a substantial improvement over dense quadratic attention.
 
@@ -943,10 +943,10 @@ Alongside this theoretical analysis, experiments should measure **empirical aver
 
 The research will therefore distinguish between:
 
-* conditional worst-case complexity,
-* instance-dependent or output-sensitive theoretical complexity,
-* empirical average-case behavior across representative workloads,
-* and actual end-to-end systems performance.
+- conditional worst-case complexity,
+- instance-dependent or output-sensitive theoretical complexity,
+- empirical average-case behavior across representative workloads,
+- and actual end-to-end systems performance.
 
 The central hypothesis is that real Transformer activations may possess structural properties — such as limited effective support, favorable score separation, or sufficiently low intrinsic geometric complexity — that permit hierarchical search to visit only a small fraction of the possible interaction space.
 
