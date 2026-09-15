@@ -21,7 +21,6 @@ from feature_research.config import (
     apply_global_settings,
     setup_directories,
 )
-from feature_research.data import load_and_preprocess
 from feature_research.metrics import (
     SeparationMetrics,
     cohens_d,
