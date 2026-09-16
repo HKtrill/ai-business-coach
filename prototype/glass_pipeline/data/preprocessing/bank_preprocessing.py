@@ -9,56 +9,63 @@ Handles all preprocessing for the UCI Bank Marketing dataset:
   - Leaky feature removal    (duration, pdays, poutcome)
   - Final validation         (all-numeric, null-free)
 
+Encodings run in SQL (sql/*.sql) against a raw_bank table. raw_bank is read
+from the file-backed database (see data/bank_database.py), or staged in memory
+when a DataFrame is passed.
+
 Usage
 -----
     preprocessor = BankPreprocessor(drop_leaky=True)
-    df_processed  = preprocessor.fit_transform(df_raw)
+    df_processed  = preprocessor.fit_transform()        # reads raw_bank from the database
+    df_processed  = preprocessor.fit_transform(df_raw)  # stages df_raw as raw_bank
 
 Author: Glass Pipeline Team
 """
 
 from __future__ import annotations
 
+import sqlite3
 import warnings
-from typing import Dict, List
+from contextlib import contextmanager
+from pathlib import Path
+from typing import Dict, Iterator, List
 
 import numpy as np
 import pandas as pd
+
+from data.bank_database import (
+    DEFAULT_DB_PATH,
+    RAW_TABLE,
+    raw_bank_exists,
+)
 
 warnings.filterwarnings("ignore")
 
 
 # ---------------------------------------------------------------------------
-# Encoding maps  (class-level constants — never mutated)
+# SQL location and encoded columns
 # ---------------------------------------------------------------------------
 
-_BINARY_MAP: Dict[str, int] = {"no": 0, "yes": 1, "unknown": -1}
-_CONTACT_MAP: Dict[str, int] = {"cellular": 0, "telephone": 1}
-_MONTH_MAP: Dict[str, int] = {
-    "jan": 1,  "feb": 2,  "mar": 3,  "apr": 4,
-    "may": 5,  "jun": 6,  "jul": 7,  "aug": 8,
-    "sep": 9,  "oct": 10, "nov": 11, "dec": 12,
-}
-_DAY_MAP: Dict[str, int] = {
-    "mon": 0, "tue": 1, "wed": 2, "thu": 3, "fri": 4,
-}
-_POUTCOME_MAP: Dict[str, int] = {
-    "nonexistent": 0,  # never contacted before
-    "failure":     1,  # previous campaign failed
-    "success":     2,  # previous campaign succeeded
-}
-_EDUCATION_MAP: Dict[str, int] = {
-    "illiterate":         0,
-    "basic.4y":           1,
-    "basic.6y":           2,
-    "basic.9y":           3,
-    "high.school":        4,
-    "professional.course": 5,
-    "university.degree":  6,
-    "unknown":            -1,
-}
-_MARITAL_MAP: Dict[str, int] = {
-    "divorced": 0, "married": 1, "single": 2, "unknown": -1,
+_SQL_DIR = Path(__file__).resolve().parent / "sql"
+
+# Columns encoded by transform.sql, in the order they are validated
+_ENCODED_COLUMNS: List[str] = [
+    "y", "default", "housing", "loan", "contact", "month",
+    "day_of_week", "poutcome", "education", "job", "marital",
+]
+
+# Assertion messages for columns that must not contain unmapped values
+_UNMAPPED_MESSAGES: Dict[str, str] = {
+    "y":           "Unexpected values in target 'y'.",
+    "default":     "Unmapped values in 'default'.",
+    "housing":     "Unmapped values in 'housing'.",
+    "loan":        "Unmapped values in 'loan'.",
+    "contact":     "Unmapped contact values.",
+    "month":       "Unmapped month values.",
+    "day_of_week": "Unmapped day_of_week values.",
+    "poutcome":    "Unmapped poutcome values.",
+    "education":   "Unmapped education values.",
+    "marital":     "Unmapped marital values.",
 }
 
 # Columns that leak post-contact information — excluded by default
@@ -78,6 +85,10 @@ _FEATURE_GROUPS: Dict[str, List[str]] = {
 }
 
 
+def _read_sql(name: str) -> str:
+    return (_SQL_DIR / name).read_text(encoding="utf-8")
+
+
 # ---------------------------------------------------------------------------
 # BankPreprocessor
 # ---------------------------------------------------------------------------
@@ -93,15 +104,24 @@ class BankPreprocessor:
         (``duration``, ``pdays``, ``poutcome``).
     verbose : bool, default True
         Print a step-by-step encoding summary during transform.
+    db_path : str or Path, default data/db/bank_marketing.db
+        SQLite database containing raw_bank. Used when fit/transform
+        are called without a DataFrame.
     """
 
     # Expose constants so callers can inspect without instantiating
     LEAKY_FEATURES:  List[str]              = _LEAKY_FEATURES
     FEATURE_GROUPS:  Dict[str, List[str]]   = _FEATURE_GROUPS
 
-    def __init__(self, drop_leaky: bool = True, verbose: bool = True) -> None:
+    def __init__(
+        self,
+        drop_leaky: bool = True,
+        verbose: bool = True,
+        db_path: str | Path = DEFAULT_DB_PATH,
+    ) -> None:
         self.drop_leaky = drop_leaky
         self.verbose    = verbose
+        self.db_path    = Path(db_path)
         self._job_map:  Dict[str, int] | None = None  # built from training data
         self._is_fitted: bool = False
 
@@ -109,7 +129,7 @@ class BankPreprocessor:
     # Fit
     # ------------------------------------------------------------------
 
-    def fit(self, df: pd.DataFrame) -> "BankPreprocessor":
+    def fit(self, df: pd.DataFrame | None = None) -> "BankPreprocessor":
         """
         Fit on training data.
 
@@ -117,10 +137,12 @@ class BankPreprocessor:
 
         Parameters
         ----------
-        df : raw training DataFrame (must contain 'job' column)
+        df : raw training DataFrame, or None to read raw_bank from db_path
         """
-        job_categories  = sorted(df["job"].dropna().unique())
-        self._job_map   = {cat: i for i, cat in enumerate(job_categories)}
+        with self._open_raw_bank(df) as conn:
+            rows = conn.execute(_read_sql("fit_job_map.sql")).fetchall()
+
+        self._job_map   = {row[0]: i for i, row in enumerate(rows)}
         self._is_fitted = True
         return self
 
@@ -128,9 +150,13 @@ class BankPreprocessor:
     # Transform
     # ------------------------------------------------------------------
 
-    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, df: pd.DataFrame | None = None) -> pd.DataFrame:
         """
-        Apply all encodings to a (possibly held-out) DataFrame.
+        Apply all encodings to a (possibly held-out) dataset.
+
+        Parameters
+        ----------
+        df : raw DataFrame, or None to read raw_bank from db_path
 
         Raises
         ------
@@ -140,56 +166,39 @@ class BankPreprocessor:
         if not self._is_fitted:
             raise RuntimeError("Call fit() before transform().")
 
-        out = df.copy()
         log = self._log  # shorthand
 
         log("\n" + "=" * 70)
         log("🔧  PREPROCESSING: Bank Marketing Dataset")
         log("=" * 70)
 
-        # ── 1. Target ──────────────────────────────────────────────────
-        out["y"] = out["y"].map({"yes": 1, "no": 0}).astype("int8")
-        assert out["y"].notna().all(), "Unexpected values in target 'y'."
+        # ── 1–9. Categorical encodings (SQLite, from raw_bank) ────────
+        with self._open_raw_bank(df) as conn:
+            conn.execute(
+                "CREATE TEMP TABLE job_map (job TEXT PRIMARY KEY, code INTEGER NOT NULL)"
+            )
+            conn.executemany(
+                "INSERT INTO job_map (job, code) VALUES (?, ?)",
+                list(self._job_map.items()),
+            )
+            out = pd.read_sql_query(_read_sql("transform.sql"), conn)
+
+        if df is not None:
+            out.index = df.index
+
+        for col in _ENCODED_COLUMNS:
+            if col in _UNMAPPED_MESSAGES:
+                assert out[col].notna().all(), _UNMAPPED_MESSAGES[col]
+            out[col] = out[col].astype("int8")
+
         log(f"✅  y  →  {out['y'].value_counts().to_dict()}")
-
-        # ── 2. Binary columns (unknown → -1) ──────────────────────────
-        for col in ["default", "housing", "loan"]:
-            out[col] = out[col].map(_BINARY_MAP).astype("int8")
-            assert out[col].notna().all(), f"Unmapped values in '{col}'."
         log("✅  binary [default, housing, loan]  (unknown=-1)")
-
-        # ── 3. Contact ────────────────────────────────────────────────
-        out["contact"] = out["contact"].map(_CONTACT_MAP).astype("int8")
-        assert out["contact"].notna().all(), "Unmapped contact values."
         log("✅  contact")
-
-        # ── 4. Month (1–12) ───────────────────────────────────────────
-        out["month"] = out["month"].map(_MONTH_MAP).astype("int8")
-        assert out["month"].notna().all(), "Unmapped month values."
         log(f"✅  month  →  {sorted(out['month'].unique())}")
-
-        # ── 5. Day of week (0–4) ──────────────────────────────────────
-        out["day_of_week"] = out["day_of_week"].map(_DAY_MAP).astype("int8")
-        assert out["day_of_week"].notna().all(), "Unmapped day_of_week values."
         log("✅  day_of_week")
-
-        # ── 6. Poutcome ───────────────────────────────────────────────
-        out["poutcome"] = out["poutcome"].map(_POUTCOME_MAP).astype("int8")
-        assert out["poutcome"].notna().all(), "Unmapped poutcome values."
         log("✅  poutcome")
-
-        # ── 7. Education (ordinal, unknown → -1) ──────────────────────
-        out["education"] = out["education"].map(_EDUCATION_MAP).astype("int8")
-        assert out["education"].notna().all(), "Unmapped education values."
         log("✅  education  (ordinal 0-6, unknown=-1)")
-
-        # ── 8. Job (label-encoded from training vocab) ─────────────────
-        out["job"] = out["job"].map(self._job_map).fillna(-1).astype("int8")
         log(f"✅  job  →  {len(self._job_map)} categories  (unseen → -1)")
-
-        # ── 9. Marital (unknown → -1) ─────────────────────────────────
-        out["marital"] = out["marital"].map(_MARITAL_MAP).astype("int8")
-        assert out["marital"].notna().all(), "Unmapped marital values."
         log("✅  marital")
 
         # ── 10. Economic features (already numeric) ───────────────────
@@ -221,8 +230,8 @@ class BankPreprocessor:
     # fit_transform  (sklearn convention)
     # ------------------------------------------------------------------
 
-    def fit_transform(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Fit on df and return its transformation."""
+    def fit_transform(self, df: pd.DataFrame | None = None) -> pd.DataFrame:
+        """Fit on the dataset and return its transformation."""
         return self.fit(df).transform(df)
 
     # ------------------------------------------------------------------
@@ -241,6 +250,23 @@ class BankPreprocessor:
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
+
+    @contextmanager
+    def _open_raw_bank(self, df: pd.DataFrame | None) -> Iterator[sqlite3.Connection]:
+        """Yield a connection exposing raw_bank: the database file, or df staged in memory."""
+        if df is None:
+            if not raw_bank_exists(self.db_path):
+                raise FileNotFoundError(
+                    f"raw_bank not found in {self.db_path}. Run build_database() first."
+                )
+            conn = sqlite3.connect(self.db_path)
+        else:
+            conn = sqlite3.connect(":memory:")
+            df.to_sql(RAW_TABLE, conn, index=False)
+        try:
+            yield conn
+        finally:
+            conn.close()
 
     def _log(self, msg: str) -> None:
         if self.verbose:

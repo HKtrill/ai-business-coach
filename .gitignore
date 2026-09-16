@@ -25,6 +25,12 @@ venv/
 *.env
 
 # ----------------------
+# Generated data
+# ----------------------
+# SQLite database rebuilt from the raw CSV by build_database()
+prototype/glass_pipeline/data/db/
+
+# ----------------------
 # VS / IDE specific files
 # ----------------------
 .vs/

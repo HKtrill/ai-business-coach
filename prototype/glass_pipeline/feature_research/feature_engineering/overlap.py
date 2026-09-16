@@ -34,7 +34,6 @@ Intermediate dependencies (all confirmed in df at call time):
   has_prior_contact      (prior.py)
 """
 
-import numpy as np
 import pandas as pd
 
 __all__ = ["add_overlap_features"]
