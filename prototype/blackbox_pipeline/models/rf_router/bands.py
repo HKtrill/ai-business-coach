@@ -1,0 +1,190 @@
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import List, Optional
+
+import numpy as np
+
+__all__ = ["BandConfidence", "BinnedBandConfidence", "make_band_confidence"]
+
+
+@dataclass
+class BandConfidence:
+    pass1_confidence: float
+    pass2_confidence: float
+    pass1_support: int
+    pass2_support: int
+    ABSTAIN_CONFIDENCE: float = 0.0
+    kind: str = "flat"
+
+    @classmethod
+    def from_oof(cls, *, pass1_proba, pass1_y, t1, pass2_proba, pass2_y, t2,
+                 min_support: int = 1) -> "BandConfidence":
+        p1 = np.asarray(pass1_proba, float); y1 = np.asarray(pass1_y).astype(int)
+        p2 = np.asarray(pass2_proba, float); y2 = np.asarray(pass2_y).astype(int)
+        routed, flagged = p1 < t1, p2 > t2
+        n1, n2 = int(routed.sum()), int(flagged.sum())
+        if n1 < min_support or n2 < min_support:
+            raise ValueError(f"band support too small: pass1={n1}, pass2={n2} "
+                             f"(min_support={min_support})")
+        return cls(float((y1[routed] == 0).mean()), float((y2[flagged] == 1).mean()),
+                   n1, n2)
+
+    def assign(self, decisions, p1=None, p2=None) -> np.ndarray:
+        conf = np.full(len(decisions), self.ABSTAIN_CONFIDENCE, dtype=float)
+        conf[decisions == "pass1"] = self.pass1_confidence
+        conf[decisions == "pass2"] = self.pass2_confidence
+        return conf
+
+    def to_dict(self) -> dict:
+        return {"kind": "flat",
+                "pass1_confidence": float(self.pass1_confidence),
+                "pass2_confidence": float(self.pass2_confidence),
+                "pass1_support": int(self.pass1_support),
+                "pass2_support": int(self.pass2_support)}
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "BandConfidence":
+        return cls(float(d["pass1_confidence"]), float(d["pass2_confidence"]),
+                   int(d["pass1_support"]), int(d["pass2_support"]))
+
+
+def _fit_bins(scores, labels, target_class, n_bins, min_per_bin):
+    # Interior quantile edges over the band's scores; bins with too few rows
+    # are merged into their neighbour so no cell's precision is noise.
+    s = np.asarray(scores, float)
+    y = np.asarray(labels).astype(int)
+    n = len(s)
+    n_bins = max(1, min(int(n_bins), n // max(1, min_per_bin)))
+
+    if n_bins <= 1:
+        return np.array([], float), np.array([float((y == target_class).mean())]), \
+               np.array([n], int)
+
+    qs = np.linspace(0, 1, n_bins + 1)[1:-1]
+    edges = np.unique(np.quantile(s, qs))
+    idx = np.digitize(s, edges, right=False)
+
+    prec, supp, keep = [], [], []
+    for b in range(len(edges) + 1):
+        m = idx == b
+        c = int(m.sum())
+        if c == 0:
+            continue
+        keep.append(b)
+        prec.append(float((y[m] == target_class).mean()))
+        supp.append(c)
+
+    # Drop edges whose bin vanished, then merge undersized bins leftward.
+    if len(keep) < len(edges) + 1:
+        edges = np.array([edges[b - 1] for b in keep if b > 0], float)
+        idx = np.digitize(s, edges, right=False)
+        prec, supp = [], []
+        for b in range(len(edges) + 1):
+            m = idx == b
+            prec.append(float((y[m] == target_class).mean()) if m.any() else 0.0)
+            supp.append(int(m.sum()))
+
+    while len(supp) > 1 and min(supp) < min_per_bin:
+        b = int(np.argmin(supp))
+        drop = b - 1 if b > 0 else 0
+        edges = np.delete(edges, drop)
+        idx = np.digitize(s, edges, right=False)
+        prec, supp = [], []
+        for k in range(len(edges) + 1):
+            m = idx == k
+            prec.append(float((y[m] == target_class).mean()) if m.any() else 0.0)
+            supp.append(int(m.sum()))
+
+    return np.asarray(edges, float), np.asarray(prec, float), np.asarray(supp, int)
+
+
+@dataclass
+class BinnedBandConfidence:
+    pass1_edges: np.ndarray
+    pass1_precision: np.ndarray
+    pass1_support: np.ndarray
+    pass2_edges: np.ndarray
+    pass2_precision: np.ndarray
+    pass2_support: np.ndarray
+    ABSTAIN_CONFIDENCE: float = 0.0
+    kind: str = "binned"
+
+    @classmethod
+    def from_oof(cls, *, pass1_proba, pass1_y, t1, pass2_proba, pass2_y, t2,
+                 n_bins_pass1: int, n_bins_pass2: int,
+                 min_per_bin: int = 50) -> "BinnedBandConfidence":
+        p1 = np.asarray(pass1_proba, float); y1 = np.asarray(pass1_y).astype(int)
+        p2 = np.asarray(pass2_proba, float); y2 = np.asarray(pass2_y).astype(int)
+        routed, flagged = p1 < t1, p2 > t2
+        if not routed.any() or not flagged.any():
+            raise ValueError("empty band; cannot fit binned confidence")
+
+        e1, c1, s1 = _fit_bins(p1[routed], y1[routed], 0, n_bins_pass1, min_per_bin)
+        e2, c2, s2 = _fit_bins(p2[flagged], y2[flagged], 1, n_bins_pass2, min_per_bin)
+        return cls(e1, c1, s1, e2, c2, s2)
+
+    @property
+    def pass1_confidence(self) -> float:
+        return float(np.average(self.pass1_precision, weights=self.pass1_support))
+
+    @property
+    def pass2_confidence(self) -> float:
+        return float(np.average(self.pass2_precision, weights=self.pass2_support))
+
+    @property
+    def n_distinct(self) -> int:
+        return len(self.pass1_precision) + len(self.pass2_precision) + 1
+
+    def assign(self, decisions, p1=None, p2=None) -> np.ndarray:
+        if p1 is None or p2 is None:
+            raise ValueError("BinnedBandConfidence.assign needs p1 and p2 scores")
+        conf = np.full(len(decisions), self.ABSTAIN_CONFIDENCE, dtype=float)
+
+        m1 = decisions == "pass1"
+        if m1.any():
+            b = np.digitize(np.asarray(p1, float)[m1], self.pass1_edges, right=False)
+            conf[m1] = self.pass1_precision[np.clip(b, 0, len(self.pass1_precision) - 1)]
+
+        m2 = decisions == "pass2"
+        if m2.any():
+            s = np.asarray(p2, float)[m2]
+            s = np.where(np.isnan(s), self.pass2_edges[0] if len(self.pass2_edges) else 0.0, s)
+            b = np.digitize(s, self.pass2_edges, right=False)
+            conf[m2] = self.pass2_precision[np.clip(b, 0, len(self.pass2_precision) - 1)]
+
+        return conf
+
+    def to_dict(self) -> dict:
+        return {"kind": "binned",
+                "pass1_edges": self.pass1_edges.tolist(),
+                "pass1_precision": self.pass1_precision.tolist(),
+                "pass1_support": self.pass1_support.tolist(),
+                "pass2_edges": self.pass2_edges.tolist(),
+                "pass2_precision": self.pass2_precision.tolist(),
+                "pass2_support": self.pass2_support.tolist()}
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "BinnedBandConfidence":
+        return cls(np.asarray(d["pass1_edges"], float),
+                   np.asarray(d["pass1_precision"], float),
+                   np.asarray(d["pass1_support"], int),
+                   np.asarray(d["pass2_edges"], float),
+                   np.asarray(d["pass2_precision"], float),
+                   np.asarray(d["pass2_support"], int))
+
+
+def make_band_confidence(*, pass1_proba, pass1_y, t1, pass2_proba, pass2_y, t2,
+                         n_bins_pass1: Optional[int] = None,
+                         n_bins_pass2: Optional[int] = None,
+                         min_support: int = 1, min_per_bin: int = 50):
+    if n_bins_pass1 is None or n_bins_pass2 is None:
+        return BandConfidence.from_oof(
+            pass1_proba=pass1_proba, pass1_y=pass1_y, t1=t1,
+            pass2_proba=pass2_proba, pass2_y=pass2_y, t2=t2,
+            min_support=min_support)
+    return BinnedBandConfidence.from_oof(
+        pass1_proba=pass1_proba, pass1_y=pass1_y, t1=t1,
+        pass2_proba=pass2_proba, pass2_y=pass2_y, t2=t2,
+        n_bins_pass1=n_bins_pass1, n_bins_pass2=n_bins_pass2,
+        min_per_bin=min_per_bin)
