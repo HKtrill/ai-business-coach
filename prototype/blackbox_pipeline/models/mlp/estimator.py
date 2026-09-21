@@ -1,15 +1,17 @@
 """
 blackbox_pipeline.models.mlp.estimator
-=======================================
+
 The sklearn-compatible MLP itself. No tuning, no calibration, no thresholds.
 
-``Stage1MLPClassifier`` is a thin wrapper around ``MLPClassifier`` that adds the
-two things Stage 1 needs and sklearn does not give for free:
+``Stage1MLPClassifier`` wraps ``MLPClassifier`` with the two things Stage 1
+needs and sklearn does not give for free:
 
-* **positive oversampling** inside each fit, at a tuned ``pos_ratio``;
-* **early stopping on ROC-AUC**, measured on an inner stratified split of the
-  fit's own rows, restoring the best epoch's weights.
+* positive oversampling inside each fit, at a tuned ``pos_ratio``;
+* early stopping on ROC-AUC, measured on an inner stratified split of the fit's
+  own rows, restoring the best epoch's weights.
 
+Notes
+-----
 Both happen inside ``fit``, which is what makes them safe under
 ``cross_val_predict`` and ``CalibratedClassifierCV``: every clone re-derives its
 own inner split and its own oversampled copy from whatever rows it was handed,
@@ -38,9 +40,27 @@ def oversample_positives(
     rng: np.random.Generator,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Duplicate positives until they reach ``pos_ratio`` of the negative count.
+    Duplicate positive rows until they reach ``pos_ratio`` of the negative count.
 
-    Returns the inputs unchanged when the target ratio is already met, so a
+    Parameters
+    ----------
+    X : numpy.ndarray of shape (n_samples, n_features)
+        Feature matrix.
+    y : numpy.ndarray of shape (n_samples,)
+        Binary labels, 0/1.
+    pos_ratio : float
+        Target positives-to-negatives ratio.
+    rng : numpy.random.Generator
+        Source of randomness for sampling the duplicates.
+
+    Returns
+    -------
+    X_out, y_out : numpy.ndarray
+        The inputs with duplicated positives appended, or the inputs unchanged.
+
+    Notes
+    -----
+    Returns the inputs untouched when the target ratio is already met, so a
     ``pos_ratio`` below the natural rate is a no-op rather than a downsample.
     """
     pos = np.flatnonzero(y == 1)
@@ -56,16 +76,63 @@ class Stage1MLPClassifier(ClassifierMixin, BaseEstimator):
     """
     Small MLP with positive oversampling and inner-split early stopping.
 
-    Every constructor argument is stored unmodified on ``self`` and nothing is
-    computed in ``__init__`` — that is what lets ``sklearn.base.clone`` round-trip
-    the estimator, which ``cross_val_predict`` and ``CalibratedClassifierCV``
-    both rely on.
+    Parameters
+    ----------
+    hidden_layer_sizes : tuple of int, default (16,)
+        Units per hidden layer.
+    activation : {'relu', 'tanh', 'logistic', 'identity'}, default 'relu'
+        Hidden-layer activation. Passed straight to ``MLPClassifier``, so any
+        value it accepts works here; the Optuna search space in :mod:`~.tuning`
+        only ever draws ``'relu'`` or ``'tanh'``.
+    alpha : float, default 1e-4
+        L2 penalty.
+    learning_rate_init : float, default 1e-3
+        Initial Adam learning rate.
+    batch_size : int, default 256
+        Minibatch size, clipped to the row count. One epoch is one pass over
+        the oversampled rows in minibatches of this size.
+    pos_ratio : float, default 0.5
+        Target positives-to-negatives ratio after oversampling. See
+        :func:`oversample_positives`.
+    max_epochs : int, default 200
+        Epoch ceiling.
+    patience : int, default 15
+        Epochs without inner-validation improvement before stopping. An epoch
+        counts as an improvement only if it beats the running best by more than
+        1e-4, so noise below that margin still burns patience.
+    val_fraction : float, default 0.15
+        Share of the fit's rows held out for early stopping.
+    random_state : int, default 42
+        Seed for the inner split, oversampling and weight initialisation.
 
-    Fitted attributes
-    -----------------
-    net_          the underlying MLPClassifier, weights restored to the best epoch
-    best_epoch_   epoch that produced those weights
-    history_      per-epoch train loss and inner-validation ROC-AUC
+    Attributes
+    ----------
+    net_ : sklearn.neural_network.MLPClassifier
+        The underlying network, weights restored to the best epoch.
+    best_epoch_ : int
+        Epoch that produced those weights.
+    best_val_roc_auc_ : float
+        Inner-validation ROC-AUC at that epoch.
+    history_ : pandas.DataFrame
+        Per-epoch ``epoch``, ``train_loss``, ``val_roc_auc``.
+    classes_ : numpy.ndarray
+        Always ``array([0, 1])``.
+    n_features_in_ : int
+        Feature count seen during ``fit``.
+
+    Notes
+    -----
+    Every constructor argument is stored unmodified on ``self`` and nothing is
+    computed in ``__init__``. That is what lets ``sklearn.base.clone``
+    round-trip the estimator, which ``cross_val_predict`` and
+    ``CalibratedClassifierCV`` both rely on.
+
+    The epoch loop is driven by ``MLPClassifier.partial_fit``, where one call is
+    one full pass over the rows in ``batch_size`` minibatches. Adam's optimizer
+    state persists across calls, so the loop is a genuine multi-epoch fit rather
+    than repeated cold starts. sklearn's own ``early_stopping`` is left off — it
+    is ignored under ``partial_fit``, which is why the stopping logic is
+    hand-rolled here.
     """
 
     def __init__(
@@ -94,6 +161,28 @@ class Stage1MLPClassifier(ClassifierMixin, BaseEstimator):
 
     # ------------------------------------------------------------------
     def fit(self, X, y) -> "Stage1MLPClassifier":
+        """
+        Fit the network, oversampling positives and early-stopping on ROC-AUC.
+
+        Parameters
+        ----------
+        X : array-like of shape (n_samples, n_features)
+            Scaled features. Scaling is the caller's job.
+        y : array-like of shape (n_samples,)
+            Binary labels, 0/1. Both classes must be present.
+
+        Returns
+        -------
+        Stage1MLPClassifier
+            ``self``, with the fitted attributes set.
+
+        Raises
+        ------
+        ValueError
+            If ``X`` and ``y`` differ in length, or ``y`` holds one class.
+        RuntimeError
+            If no epoch was ever recorded as best.
+        """
         X = np.asarray(X, dtype=float)
         y = np.asarray(y).astype(int)
 
@@ -167,6 +256,26 @@ class Stage1MLPClassifier(ClassifierMixin, BaseEstimator):
 
     # ------------------------------------------------------------------
     def predict_proba(self, X) -> np.ndarray:
+        """
+        Class probabilities from the best-epoch weights.
+
+        Parameters
+        ----------
+        X : array-like of shape (n_samples, n_features)
+            Scaled features, same column count and order as ``fit`` saw.
+
+        Returns
+        -------
+        numpy.ndarray of shape (n_samples, 2)
+            Columns are ``P(y=0)`` and ``P(y=1)``.
+
+        Raises
+        ------
+        sklearn.exceptions.NotFittedError
+            If called before ``fit``.
+        ValueError
+            If the feature count does not match ``n_features_in_``.
+        """
         check_is_fitted(self, "net_")
         X = np.asarray(X, dtype=float)
         if X.shape[1] != self.n_features_in_:
@@ -176,11 +285,43 @@ class Stage1MLPClassifier(ClassifierMixin, BaseEstimator):
         return self.net_.predict_proba(X)
 
     def predict(self, X) -> np.ndarray:
+        """
+        Hard labels at the fixed 0.5 cut.
+
+        Parameters
+        ----------
+        X : array-like of shape (n_samples, n_features)
+            Scaled features.
+
+        Returns
+        -------
+        numpy.ndarray of shape (n_samples,)
+            Values drawn from ``classes_``.
+
+        Notes
+        -----
+        0.5 is hard-coded because this estimator is not where the operating
+        point is decided. The tuned Stage 1 threshold lives on
+        ``CalibratedStage1MLP.optimal_threshold`` and is applied by
+        ``CalibratedStage1MLP.predict``.
+        """
         return self.classes_[(self.predict_proba(X)[:, 1] >= 0.5).astype(int)]
 
     # ------------------------------------------------------------------
     @property
     def n_trainable_params_(self) -> int:
+        """
+        Total weights plus biases across every layer.
+
+        Returns
+        -------
+        int
+
+        Raises
+        ------
+        sklearn.exceptions.NotFittedError
+            If accessed before ``fit``.
+        """
         check_is_fitted(self, "net_")
         return int(
             sum(w.size for w in self.net_.coefs_)

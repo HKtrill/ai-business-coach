@@ -1,17 +1,17 @@
 """
 blackbox_pipeline.models.mlp.tuning
-====================================
+
 Optuna hyperparameter search for Stage 1. Training data only.
 
-The objective is mean cross-validated ROC-AUC, matching the GLASS LR stage's
-tuning objective. Every fold fits a fresh ``Stage1MLPClassifier`` on the fold's
-training rows and scores the held-out rows, so no trial ever sees a validation
-row during fitting.
+The objective is mean cross-validated ROC-AUC, matching the GLASS LR stage.
+Every fold fits a fresh ``Stage1MLPClassifier`` on the fold's training rows and
+scores the held-out rows, so no trial ever sees a validation row during fitting.
 
-The search space is separated from the estimator on purpose: the mapping from
-Optuna's flat parameter dict to constructor kwargs (``params_to_kwargs``) is the
-part that gets re-used when reloading a saved model, and it should not require
-importing Optuna to do so.
+Notes
+-----
+The search space is kept separate from the estimator on purpose:
+:func:`params_to_kwargs` is re-used when rebuilding a saved model, and doing so
+should not require importing Optuna.
 """
 
 from __future__ import annotations
@@ -29,7 +29,22 @@ __all__ = ["sample_params", "params_to_kwargs", "tune_stage1_mlp_auc"]
 
 
 def sample_params(trial: "optuna.Trial") -> Dict:
-    """The Stage 1 search space."""
+    """
+    Draw one point from the Stage 1 search space.
+
+    Parameters
+    ----------
+    trial : optuna.Trial
+        The trial to suggest from.
+
+    Returns
+    -------
+    dict
+        ``n_layers`` (1–2), ``width`` (4/8/16/32), ``activation``
+        (relu/tanh), ``alpha`` (1e-6–1e-1, log), ``learning_rate_init``
+        (3e-4–1e-2, log), ``batch_size`` (128/256/512), ``pos_ratio``
+        (0.15–1.0).
+    """
     return {
         "n_layers": trial.suggest_int("n_layers", 1, 2),
         "width": trial.suggest_categorical("width", [4, 8, 16, 32]),
@@ -45,10 +60,26 @@ def sample_params(trial: "optuna.Trial") -> Dict:
 
 def params_to_kwargs(params: Dict, **fixed) -> Dict:
     """
-    Flat Optuna params -> ``Stage1MLPClassifier`` constructor kwargs.
+    Translate flat Optuna params into ``Stage1MLPClassifier`` kwargs.
 
-    A two-layer network halves the width at the second layer, floored at 2.
-    Pure function of its inputs — safe to call when rebuilding a saved model.
+    Parameters
+    ----------
+    params : dict
+        Output of :func:`sample_params`, or ``study.best_params``.
+    **fixed
+        Kwargs held constant across trials, merged in unchanged — see
+        ``Stage1MLPConfig.estimator_fixed_kwargs``.
+
+    Returns
+    -------
+    dict
+        Ready to splat into ``Stage1MLPClassifier(**kwargs)``.
+
+    Notes
+    -----
+    ``n_layers`` and ``width`` become ``hidden_layer_sizes``: a two-layer network
+    halves the width at the second layer, floored at 2. Pure function of its
+    inputs, so it is safe to call when rebuilding a saved model.
     """
     width = int(params["width"])
     n_layers = int(params["n_layers"])
@@ -74,22 +105,46 @@ def tune_stage1_mlp_auc(
     verbose: bool = True,
 ) -> Tuple[Dict, float, pd.DataFrame]:
     """
-    Maximise mean CV ROC-AUC.
+    Maximise mean CV ROC-AUC over the Stage 1 search space.
 
     Parameters
     ----------
-    X_scaled
+    X_scaled : numpy.ndarray of shape (n_samples, n_features)
         Scaled TRAINING features. The scaler must have been fitted on the
         training split only.
-    cv
-        A splitter; the same ``StratifiedKFold`` the stage uses elsewhere.
-    fixed
+    y : array-like of shape (n_samples,)
+        Binary training labels.
+    cv : sklearn splitter
+        The same ``StratifiedKFold`` the stage uses elsewhere.
+    n_trials : int
+        Number of Optuna trials.
+    fixed : dict
         Constructor kwargs held constant across trials (epochs, patience,
         val_fraction, seed) — see ``Stage1MLPConfig.estimator_fixed_kwargs``.
+    random_state : int
+        Seed for the TPE sampler.
+    verbose : bool, default True
+        Show Optuna's progress bar.
 
     Returns
     -------
-    (best_params, best_value, trials_dataframe)
+    best_params : dict
+        ``study.best_params``, ready for :func:`params_to_kwargs`.
+    best_value : float
+        Mean CV ROC-AUC of the winning trial.
+    trials : pandas.DataFrame
+        One row per trial (``number``, ``value``, the parameters, ``state``),
+        with the ``params_`` prefix stripped from the column names.
+
+    Notes
+    -----
+    Pruning: each fold reports the RUNNING mean ROC-AUC so far, not that fold's
+    own score, and the ``MedianPruner`` compares those running means across
+    trials. It is inactive until 5 trials have completed
+    (``n_startup_trials=5``) and, after that, can only fire from the third fold
+    onward (``n_warmup_steps=2``). A pruned trial appears in ``trials`` with
+    state ``PRUNED`` and a NaN ``value``, so filter on state before averaging
+    that column.
     """
     y_arr = np.asarray(y).astype(int)
     optuna.logging.set_verbosity(optuna.logging.WARNING)
@@ -102,6 +157,7 @@ def tune_stage1_mlp_auc(
     )
 
     def objective(trial: "optuna.Trial") -> float:
+        """Mean ROC-AUC over the CV folds, reporting the running mean for pruning."""
         kwargs = params_to_kwargs(sample_params(trial), **fixed)
         scores: list[float] = []
         for k, (tr, va) in enumerate(cv.split(X_scaled, y_arr)):

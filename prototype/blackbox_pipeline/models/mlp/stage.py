@@ -1,33 +1,34 @@
 """
 blackbox_pipeline.models.mlp.stage
-===================================
+
 Stage 1 orchestration — the calibrated MLP stage.
 
 Mirrors the GLASS ``CalibratedLRStage`` protocol step for step:
 
-  0. StandardScaler fitted on the full training split.
-  1. Optuna tuning, objective = mean CV ROC-AUC (training only).
-  2. Final MLP fitted on the full training split with the best parameters.
-  3. Probability calibration via GLASS ``lr.calibration.fit_calibration``.
-  4. Decision threshold from OUT-OF-FOLD calibrated probabilities, F2 sweep
-     over the same grid GLASS uses.
-  5. Evaluation via GLASS ``lr.evaluation.compute_metrics`` (+ PR-AUC).
+0. ``StandardScaler`` fitted on the full training split.
+1. Optuna tuning, objective = mean CV ROC-AUC. Training only.
+2. Final MLP fitted on the full training split with the best parameters.
+3. Probability calibration via GLASS ``lr.calibration.fit_calibration``.
+4. Decision threshold from OUT-OF-FOLD calibrated probabilities, F2 sweep over
+   the same grid GLASS uses.
+5. Reporting via GLASS ``lr.evaluation.compute_metrics``, plus PR-AUC, through
+   the shared helpers in :mod:`~.evaluation`.
 
+Notes
+-----
 This module composes; it does not compute. Every numerical step lives in
-``estimator``, ``tuning``, ``calibration``, ``thresholds`` or ``metrics``.
+:mod:`~.estimator`, :mod:`~.tuning`, :mod:`~.calibration`, :mod:`~.thresholds`
+or :mod:`~.evaluation`.
 
-Train/test protocol
--------------------
-``fit`` takes the training split and nothing else. The scaler, the
-hyperparameters, the calibrator and the threshold are all derived from it.
-There is no method here that accepts test data.
+Train/test protocol: ``fit`` takes the training split and nothing else. The
+scaler, the hyperparameters, the calibrator and the threshold are all derived
+from it. No method here accepts test data.
 """
 
 from __future__ import annotations
 
 from typing import Dict, Optional
 
-import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
@@ -35,7 +36,7 @@ from sklearn.preprocessing import StandardScaler
 from .calibration import fit_stage1_calibration
 from .config import Stage1MLPConfig
 from .estimator import Stage1MLPClassifier
-from .features import STAGE1_FEATURES, select_features
+from .features import STAGE1_FEATURES, check_labels, select_features
 from .evaluation.metrics import metrics_table as _metrics_table
 from .thresholds import oof_probabilities, optimize_threshold_cv
 from .tuning import params_to_kwargs, tune_stage1_mlp_auc
@@ -47,9 +48,78 @@ class CalibratedStage1MLP:
     """
     Optuna (ROC-AUC) → final fit → calibration → CV F2 threshold.
 
+    Parameters
+    ----------
+    calibration_method : {'auto', 'sigmoid', 'isotonic'}, default 'auto'
+        See :class:`~.config.Stage1MLPConfig`.
+    cv_folds : int, default 10
+        Folds for tuning, calibration and the out-of-fold probabilities.
+    n_trials : int, default 100
+        Optuna trials.
+    random_state : int, default 42
+        Seed for Optuna, every split and every fit.
+    max_epochs : int, default 200
+        Epoch ceiling for a single MLP fit.
+    patience : int, default 15
+        Early-stopping patience.
+    n_jobs : int, default -1
+        Parallelism for ``cross_val_predict``.
+    config : Stage1MLPConfig, optional
+        A ready-made config. When given it wins outright: every loose keyword
+        above and every ``config_overrides`` entry is ignored, silently and
+        without error. Pass one or the other, not both.
+    **config_overrides
+        Any other ``Stage1MLPConfig`` field (``val_fraction``,
+        ``threshold_beta``, ``threshold_grid``, ``verbose``, ``strict_oof``).
+        An unknown name raises ``TypeError`` from the dataclass.
+
+    Attributes
+    ----------
+    scaler : sklearn.preprocessing.StandardScaler or None
+        Fitted on the training split.
+    model : Stage1MLPClassifier or None
+        The final MLP.
+    calibrated_model : estimator or None
+        The calibrator wrapping ``model``.
+    best_params : dict
+        Winning Optuna parameters.
+    best_cv_roc_auc : float or None
+        Mean CV ROC-AUC of the winning trial.
+    tuning_trials : pandas.DataFrame or None
+        One row per Optuna trial.
+    calibration_method : str
+        The method actually used — GLASS's pick when ``'auto'`` was requested.
+        ``self.config.calibration_method`` still holds the REQUEST, so after a
+        fit with ``'auto'`` the two disagree on purpose. Report this one.
+    calibration_metrics : dict
+        GLASS's calibration diagnostics.
+    optimal_threshold : float
+        Operating point from the in-stage F2 sweep. 0.5 until fitted.
+    cv_f2 : float or None
+        F2 at that threshold, on out-of-fold probabilities.
+    threshold_sweep : pandas.DataFrame or None
+        The full in-stage sweep.
+    proba_train_oof : pandas.Series or None
+        Training out-of-fold calibrated ``P(y = 1)``.
+    oof_provenance_ : str or None
+        What the leakage guard found. See :mod:`~.calibration`.
+    feature_names_ : list of str
+        ``STAGE1_FEATURES``.
+    fitted : bool
+        Whether ``fit`` has completed.
+
+    Notes
+    -----
     Constructor arguments are kept as loose keywords, matching the original
-    class, so existing notebook cells run unchanged. Passing ``config=`` instead
-    gives the validated dataclass; the two are mutually exclusive.
+    class, so existing notebook cells run unchanged. The config fields are also
+    mirrored onto the instance for the same reason — cells read
+    ``stage1.cv_folds`` and ``stage1.calibration_method`` directly.
+
+    Examples
+    --------
+    >>> stage = CalibratedStage1MLP(cv_folds=10, n_trials=100).fit(X_train, y_train)
+    >>> proba = stage.predict_proba(X_test)
+    >>> pred = stage.predict(X_test)          # at stage.optimal_threshold
     """
 
     def __init__(
@@ -108,10 +178,34 @@ class CalibratedStage1MLP:
     # Fit
     # ------------------------------------------------------------------
     def fit(self, X_train: pd.DataFrame, y_train: pd.Series) -> "CalibratedStage1MLP":
+        """
+        Run the five-step protocol on the training split.
+
+        Parameters
+        ----------
+        X_train : pandas.DataFrame
+            Exactly the ``STAGE1_FEATURES`` columns. Unscaled — the scaler is
+            fitted here.
+        y_train : pandas.Series
+            Binary labels, indexed identically to ``X_train``.
+
+        Returns
+        -------
+        CalibratedStage1MLP
+            ``self``, fitted.
+
+        Raises
+        ------
+        ValueError
+            If the features are not exactly ``STAGE1_FEATURES``, if ``X`` and
+            ``y`` differ in length or index, or if ``y`` is not binary 0/1.
+        CalibrationLeakageError
+            If the calibrator is prefit and ``strict_oof`` is True.
+        """
         cfg = self.config
         X = select_features(X_train)
 
-        y_train = self._check_labels(X, y_train)
+        y_train = check_labels(X, y_train)
 
         # 0. Scaler — training split only.
         self.scaler = StandardScaler().fit(X)
@@ -176,13 +270,50 @@ class CalibratedStage1MLP:
     # Predict
     # ------------------------------------------------------------------
     def predict_proba(self, X: pd.DataFrame) -> pd.Series:
-        """Calibrated ``P(y = 1)``, indexed like ``X``."""
+        """
+        Calibrated ``P(y = 1)``.
+
+        Parameters
+        ----------
+        X : pandas.DataFrame
+            Exactly the ``STAGE1_FEATURES`` columns, unscaled.
+
+        Returns
+        -------
+        pandas.Series
+            Named ``stage1_proba``, indexed like ``X``.
+
+        Raises
+        ------
+        RuntimeError
+            If called before ``fit``.
+        """
         self._check_fitted()
         X_sel = select_features(X)
         proba = self.calibrated_model.predict_proba(self.scaler.transform(X_sel))[:, 1]
         return pd.Series(proba, index=X.index, name="stage1_proba")
 
     def predict(self, X: pd.DataFrame, threshold: Optional[float] = None) -> pd.Series:
+        """
+        Hard labels at the tuned threshold.
+
+        Parameters
+        ----------
+        X : pandas.DataFrame
+            Exactly the ``STAGE1_FEATURES`` columns, unscaled.
+        threshold : float, optional
+            Override the operating point. Defaults to ``optimal_threshold``.
+
+        Returns
+        -------
+        pandas.Series of int8
+            Named ``stage1_pred``, indexed like ``X``.
+
+        Raises
+        ------
+        RuntimeError
+            If called before ``fit``.
+        """
         t = self.optimal_threshold if threshold is None else threshold
         return (self.predict_proba(X) >= t).astype("int8").rename("stage1_pred")
 
@@ -190,7 +321,36 @@ class CalibratedStage1MLP:
     # Reporting
     # ------------------------------------------------------------------
     def metrics_table(self, y_true, proba, label: str) -> pd.DataFrame:
-        """Metrics at 0.50 and at the CV threshold. Row labels unchanged."""
+        """
+        Metrics at 0.50 and at the CV threshold.
+
+        Parameters
+        ----------
+        y_true : array-like
+            Binary labels.
+        proba : array-like
+            Predicted ``P(y = 1)``.
+        label : str
+            Row-label prefix, e.g. ``"test"``.
+
+        Returns
+        -------
+        pandas.DataFrame
+            Two rows, labelled ``"{label} @ 0.50"`` and
+            ``"{label} @ {optimal_threshold:.2f}"``.
+
+        Raises
+        ------
+        RuntimeError
+            If called before ``fit``.
+
+        Notes
+        -----
+        Collapses to ONE row if ``optimal_threshold`` rounds to 0.50, because
+        the two rows would share a label. The in-stage grid stops at 0.49 so
+        this cannot happen after a plain ``fit``; it can if the threshold was
+        overwritten from the wider notebook sweep, which does reach 0.50.
+        """
         self._check_fitted()
         return _metrics_table(
             y_true, proba, label,
@@ -199,6 +359,22 @@ class CalibratedStage1MLP:
         )
 
     def describe(self) -> Dict:
+        """
+        One-line summary of the fitted stage, for the notebook and write-up.
+
+        Returns
+        -------
+        dict
+            Architecture (``layers``, ``trainable_params``, ``best_epoch``), the
+            winning Optuna parameters, ``best_cv_roc_auc``,
+            ``calibration_method``, ``optimal_threshold``, ``cv_f2`` and
+            ``oof_provenance``.
+
+        Raises
+        ------
+        RuntimeError
+            If called before ``fit``.
+        """
         self._check_fitted()
         sizes = [len(STAGE1_FEATURES), *self.model.hidden_layer_sizes, 1]
         return {
@@ -216,22 +392,8 @@ class CalibratedStage1MLP:
     # ------------------------------------------------------------------
     # Internal
     # ------------------------------------------------------------------
-    @staticmethod
-    def _check_labels(X: pd.DataFrame, y) -> pd.Series:
-        y = pd.Series(np.asarray(y), index=X.index) if not isinstance(y, pd.Series) else y
-        if len(X) != len(y):
-            raise ValueError(f"X/y length mismatch: {len(X)} vs {len(y)}")
-        if not X.index.equals(y.index):
-            raise ValueError(
-                "X.index and y.index differ — reindex y to X before fitting "
-                "(y = y.loc[X.index]). Misaligned labels pass every length "
-                "check and silently train on the wrong targets."
-            )
-        if not np.isin(np.asarray(y), (0, 1)).all():
-            raise ValueError("y must be binary 0/1")
-        return y
-
     def _check_fitted(self) -> None:
+        """Raise ``RuntimeError`` if ``fit`` has not run."""
         if not self.fitted:
             raise RuntimeError("Call fit() first.")
 

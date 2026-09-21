@@ -57,7 +57,7 @@ from .router import (
     split_fingerprint,
     unpack_global_split,
 )
-from .thresholds import ThresholdPair, ThresholdResult, ThresholdSolver
+from .threshhold import ThresholdPair, ThresholdResult, ThresholdSolver
 from .artifacts import load_rf_router, save_rf_router
 
 __all__ = [

@@ -1,24 +1,31 @@
 """
 blackbox_pipeline.models.mlp.thresholds
-========================================
+
 Out-of-fold probabilities and the Stage 1 decision threshold.
 
-Two sweeps live here, and they are deliberately different:
+Two sweeps live here, and they are deliberately different.
 
-``sweep_f_beta`` / ``optimize_threshold_cv``
-    The IN-STAGE sweep, run inside ``CalibratedStage1MLP.fit``. Grid 0.05–0.49 in
-    0.01 steps, F2 — identical to the GLASS LR stage, so the two arms pick their
-    thresholds the same way. Result lands on ``stage.optimal_threshold``.
+:func:`sweep_f_beta` / :func:`optimize_threshold_cv`
+    The IN-STAGE sweep, run inside ``CalibratedStage1MLP.fit``. 45 points,
+    0.05–0.49 in 0.01 steps, F2 — identical to the GLASS LR stage, so the two
+    arms pick their thresholds the same way. The result lands on
+    ``stage.optimal_threshold``.
 
-``tune_threshold``
-    The NOTEBOOK sweep (Cell 14/15). Wider grid, 0.05–0.95 in 0.005 steps.
-    Finer, and able to go above 0.5, which the GLASS-matched sweep cannot.
+:func:`tune_threshold`
+    The NOTEBOOK sweep (Cell 14/15). 181 points, 0.05–0.95 in 0.005 steps:
+    finer, and able to go above 0.5, which the GLASS-matched sweep cannot.
 
-They will not always agree, and that is fine — but only one can be the reported
-operating point. Cell 15 overwrites ``STAGE1_OUTPUT["threshold"]`` with the
-notebook sweep's answer, so that is the one in force downstream. Say which you
-used when writing up, because a threshold from the wider grid is no longer
-"the same procedure GLASS used".
+Notes
+-----
+The two will not always agree, and that is fine — but only one can be the
+reported operating point. Cell 15 overwrites ``STAGE1_OUTPUT["threshold"]`` with
+the notebook sweep's answer, so that is the one in force downstream. Say which
+you used when writing up: a threshold from the wider grid is no longer "the same
+procedure GLASS used".
+
+Both sweeps break ties toward the LOWEST threshold, which favours recall —
+consistent with the intent of F2, but worth knowing when two operating points
+score identically.
 
 Both take TRAINING out-of-fold probabilities. Neither accepts test data.
 """
@@ -56,13 +63,47 @@ def oof_probabilities(
     """
     Out-of-fold calibrated ``P(y = 1)`` over the training split.
 
-    Guarded by ``assert_refittable``: if the calibrator would survive cloning
-    with its base model still fitted, these would silently be in-sample
-    predictions. See ``calibration.py`` for why that is the one place Stage 1
-    can leak without anything looking wrong.
+    Parameters
+    ----------
+    calibrated_model : estimator
+        The calibrator from :func:`~.calibration.fit_stage1_calibration`.
+    X_scaled : numpy.ndarray of shape (n_samples, n_features)
+        Scaled TRAINING features.
+    y : array-like of shape (n_samples,)
+        Binary training labels.
+    index : pandas.Index
+        Training index, used to label the returned Series.
+    cv_folds : int
+        Folds for ``cross_val_predict``.
+    random_state : int
+        Seed for the fold split.
+    n_jobs : int, default -1
+        Parallelism for ``cross_val_predict``.
+    strict : bool, default True
+        Passed to :func:`~.calibration.assert_refittable`.
 
-    Returns ``(proba_oof, provenance)`` where provenance records what the guard
-    found, for the fit report.
+    Returns
+    -------
+    proba_oof : pandas.Series
+        Out-of-fold ``P(y = 1)``, named ``stage1_proba_oof`` and indexed like
+        ``index``.
+    provenance : str
+        What the leakage guard found, recorded for the fit report.
+
+    Raises
+    ------
+    CalibrationLeakageError
+        If the calibrator is prefit and ``strict`` is True.
+    AssertionError
+        If ``cross_val_predict`` returns a row count that does not match
+        ``index``.
+
+    Notes
+    -----
+    Guarded by :func:`~.calibration.assert_refittable`: if the calibrator would
+    survive cloning with its base model still fitted, these would silently be
+    in-sample predictions. See :mod:`~.calibration` for why that is the one
+    place Stage 1 can leak without anything looking wrong.
     """
     provenance = assert_refittable(calibrated_model, strict=strict)
 
@@ -90,7 +131,27 @@ def sweep_f_beta(
     beta: float = 2.0,
     grid: Optional[np.ndarray] = None,
 ) -> pd.DataFrame:
-    """F-beta at every threshold in ``grid``. Thresholds that predict nothing are skipped."""
+    """
+    Score F-beta at every threshold in ``grid``.
+
+    Parameters
+    ----------
+    y_true : array-like of shape (n_samples,)
+        Binary labels.
+    proba : array-like of shape (n_samples,)
+        Out-of-fold ``P(y = 1)``.
+    beta : float, default 2.0
+        Recall weight.
+    grid : numpy.ndarray, optional
+        Thresholds to try. Defaults to ``np.arange(0.05, 0.50, 0.01)``.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Columns ``threshold``, ``f_beta``, ``pred_pos_rate``; one row per
+        threshold. Thresholds that predict no positives are skipped, so the
+        frame can be shorter than ``grid`` and can be empty.
+    """
     y = np.asarray(y_true).astype(int)
     p = np.asarray(proba, dtype=float)
     if grid is None:
@@ -118,8 +179,33 @@ def optimize_threshold_cv(
     """
     The GLASS-matched in-stage sweep.
 
-    Returns ``(best_threshold, best_f_beta, sweep_frame)``. Falls back to 0.5
-    when no threshold in the grid predicts a single positive.
+    Parameters
+    ----------
+    y_true : array-like of shape (n_samples,)
+        Binary training labels.
+    proba_oof : array-like of shape (n_samples,)
+        Training out-of-fold ``P(y = 1)``.
+    beta : float, default 2.0
+        Recall weight.
+    grid_spec : tuple of (float, float, float), default (0.05, 0.50, 0.01)
+        ``(start, stop, step)`` handed to ``np.arange``.
+
+    Returns
+    -------
+    best_threshold : float
+        Argmax of F-beta, or 0.5 if no threshold predicted a positive.
+    best_f_beta : float
+        F-beta there, or 0.0 in the fallback case.
+    sweep : pandas.DataFrame
+        The full sweep from :func:`sweep_f_beta`.
+
+    Notes
+    -----
+    Ties go to the lowest threshold: ``idxmax`` takes the first maximum and the
+    sweep is in ascending threshold order. The 0.5 fallback is a degenerate
+    case — every threshold in the grid predicting zero positives means the
+    calibrated probabilities never reach 0.05, which is worth investigating
+    rather than accepting.
     """
     start, stop, step = grid_spec
     sweep = sweep_f_beta(y_true, proba_oof, beta, np.arange(start, stop, step))
@@ -141,8 +227,35 @@ def tune_threshold(
     """
     The wider notebook sweep (Cell 14/15). Training (OOF) probabilities only.
 
-    Kept signature-compatible with the notebook's original definition, including
-    the ``f_beta`` column name, so Cell 15 runs unchanged.
+    Parameters
+    ----------
+    y_true : pandas.Series
+        Binary training labels.
+    proba : pandas.Series
+        Training out-of-fold ``P(y = 1)``.
+    beta : float, default 2.0
+        Recall weight.
+    grid : numpy.ndarray, optional
+        Thresholds to try. Defaults to 0.05–0.95 in 0.005 steps.
+
+    Returns
+    -------
+    best_threshold : float
+        Argmax of F-beta over ``grid``.
+    sweep : pandas.DataFrame
+        Columns ``threshold`` and ``f_beta``, one row per grid point. Unlike
+        :func:`sweep_f_beta`, empty predictions are scored 0 rather than
+        dropped, so the frame always matches ``grid``.
+
+    Notes
+    -----
+    Signature-compatible with the notebook's original definition, including the
+    ``f_beta`` column name, so Cell 15 runs unchanged.
+
+    Ties go to the lowest threshold, since ``np.argmax`` takes the first
+    maximum. There is no 0.5 fallback here: if no threshold predicts a positive
+    the whole ``f_beta`` column is 0 and the first grid point, 0.05, is
+    returned. Check ``sweep['f_beta'].max()`` before trusting the result.
     """
     y = np.asarray(y_true).astype(int)
     p = np.asarray(proba, dtype=float)

@@ -13,6 +13,9 @@ scikit-learn>=1.4,<2
 # ── Explainable Boosting Machine (EBM) ────────────────────────
 interpret>=0.7,<1
 
+# ── Gradient Boosting (Stage 3 black-box counterpart) ─────────
+xgboost>=2.0,<4
+
 # ── Bayesian Hyperparameter Optimization ──────────────────────
 optuna>=4.0,<5
 
