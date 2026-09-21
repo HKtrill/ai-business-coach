@@ -55,3 +55,17 @@ Thumbs.db
 *.so
 *.pyd
 *.pybind11
+
+# ----------------------
+# Notebook model artifacts 
+# ----------------------
+# Match by extension only: models/ folders also contain source packages.
+**/models/**/*.joblib
+**/models/**/*.pkl
+**/models/**/*.json
+
+# ----------------------
+# Jupyter / test caches
+# ----------------------
+.ipynb_checkpoints/
+.pytest_cache/

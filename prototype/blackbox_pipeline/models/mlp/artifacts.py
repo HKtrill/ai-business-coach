@@ -1,11 +1,10 @@
 """
 blackbox_pipeline.models.mlp.artifacts
-=======================================
-Persistence for a fitted Stage 1 stage.
 
-Saves the scaler, the MLP, the calibrator, the frozen threshold, the tuning
-trials and the OOF provenance string — enough to reproduce a prediction and to
-audit how the threshold was chosen.
+Persistence helpers for the fitted Stage 1 MLP.
+
+Saves the model payload, metadata, threshold sweep, tuning trials, and training
+history when available.
 """
 
 from __future__ import annotations
@@ -23,6 +22,7 @@ import sklearn
 
 __all__ = ["save_stage1_mlp", "load_stage1_mlp"]
 
+#: Bumped when the artifact layout changes.
 _ARTIFACT_VERSION = "1.0"
 
 
@@ -33,7 +33,30 @@ def save_stage1_mlp(
     name: str = "stage1_mlp",
     test_metrics: Optional[dict] = None,
 ) -> Path:
-    """Write a fitted CalibratedStage1MLP to ``output_dir``."""
+    """
+    Save a fitted Stage 1 MLP and its diagnostics.
+
+    Parameters
+    ----------
+    stage
+        Fitted ``CalibratedStage1MLP``.
+    output_dir
+        Destination directory.
+    name
+        Shared filename stem.
+    test_metrics
+        Optional held-out metrics to include.
+
+    Returns
+    -------
+    pathlib.Path
+        Path to the saved ``.joblib`` artifact.
+
+    Raises
+    ------
+    ValueError
+        If the stage is not fitted.
+    """
     if not getattr(stage, "fitted", False):
         raise ValueError("Stage is not fitted; nothing to save")
 
@@ -77,8 +100,10 @@ def save_stage1_mlp(
 
     if stage.threshold_sweep is not None:
         stage.threshold_sweep.to_csv(out / f"{name}_threshold_sweep.csv", index=False)
+
     if stage.tuning_trials is not None:
         stage.tuning_trials.to_csv(out / f"{name}_tuning_trials.csv", index=False)
+
     if getattr(stage.model, "history_", None) is not None:
         stage.model.history_.to_csv(out / f"{name}_training_history.csv", index=False)
 
@@ -87,11 +112,30 @@ def save_stage1_mlp(
 
 
 def load_stage1_mlp(path: str | Path) -> dict:
-    """Load a saved Stage 1 artifact as a plain dict."""
+    """
+    Load a saved Stage 1 MLP artifact.
+
+    Parameters
+    ----------
+    path
+        Path to the saved ``.joblib`` file.
+
+    Returns
+    -------
+    dict
+        Raw artifact payload.
+
+    Notes
+    -----
+    A version mismatch produces a warning but does not prevent loading.
+    """
     payload = joblib.load(Path(path))
+
     if payload.get("artifact_version") != _ARTIFACT_VERSION:
         print(
             f"⚠️  artifact version {payload.get('artifact_version')} "
             f"(expected {_ARTIFACT_VERSION}) — fields may have moved"
         )
+
     return payload
+
