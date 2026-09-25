@@ -37,60 +37,66 @@ For installation steps, OS-specific virtual environment commands, and hardware r
 ## 📖 Synopsis
 
 Project ChurnBot is a research-driven customer decision intelligence system built around interpretable cascade architectures.
-
 Rather than treating customer behavior as a single black-box prediction task, the system decomposes decision-making into explicit stages that capture:
 
 - linear effects
-- interaction-driven rules
-- non-linear response curves
-- abstention-aware arbitration
+- interaction-driven symbolic rules
+- nonlinear response curves
+- selective routing and abstention
+- confidence-weighted final arbitration
 
-The cascade serves as the core reasoning engine, producing transparent and fully traceable predictions.
+The primary architecture, **GLASS**, serves as the interpretable reasoning engine. Each stage has a distinct role, and predictions can be traced through calibrated scores, symbolic routing decisions, additive feature effects, and final arbitration. A structurally matched black-box cascade is developed alongside GLASS to measure the predictive cost, if any, of the interpretability constraints imposed at each stage. An optional local natural-language layer is planned for conversational interaction with predictions and explanations while remaining subordinate to — and independent from — the core decision pipeline.
 
-An optional natural-language interface enables conversational interaction with model outputs and explanations while remaining independent from the core modeling pipeline.
-
-The result is a transparent, high-performance cascade where every prediction can be traced to human-readable logic — enabling trustworthy deployment without sacrificing predictive performance.
+The project therefore focuses not only on predictive performance, but on **traceability, abstention, model complementarity, and controlled glass-box vs. black-box comparison**.
 
 ---
 
 > ⚠️ **Research Status & Dataset Audit Notice**
 >
-> ChurnBot is under active research and architectural refinement. The current focus has shifted from early Telco churn prototyping to rigorous validation on the UCI Bank Marketing term-deposit dataset.
+> ChurnBot is under active research and architectural refinement. The current research phase focuses on rigorous validation using the **UCI Bank Marketing term-deposit dataset** before the architecture is transferred back to customer-churn modeling.
 >
-> During leakage and temporal-validity auditing, `duration`, `poutcome`, and `pdays` were identified as problematic for deployment-realistic pre-contact prediction. As a result, ChurnBot evaluates the harder task of estimating subscription likelihood before contact occurs, rather than relying on post-call or prior-campaign artifacts.
+> During leakage and temporal-validity auditing, `duration`, `poutcome`, and `pdays` were identified as problematic for deployment-realistic pre-contact prediction. The current experiment therefore evaluates the harder task of estimating subscription likelihood before contact occurs rather than relying on post-call or prior-campaign artifacts.
 >
-> These findings were surfaced through the interpretable cascade and symbolic rule diagnostics.
+> These issues were surfaced through dataset auditing, interpretable modeling, and symbolic-rule diagnostics.
+>
+> A second audit pass tightened the **stage-to-stage contracts**: every stage now hands downstream stages out-of-fold (OOF) training predictions, operating thresholds are selected on training data only, and every artifact carries split, index, and fold provenance that downstream stages verify before use.
 >
 > See the full research status and dataset audit notes here:  
 > **[Dataset Audit & Research Status](documentation/dataset_audit_and_research_status.md)**
 
 ---
 
-## 🚨 Problem: The Interpretability–Performance Trade-off Myth
+## 🚨 Research Problem: The Interpretability–Performance Trade-off
 
-The ML industry often treats interpretability and predictive performance as mutually exclusive objectives.
+Machine-learning systems often improve predictive flexibility by introducing model structures that are difficult to inspect directly.
 
-Project ChurnBot challenges that assumption directly.
+A common deployment pattern is therefore to:
 
-### Common Industry Pattern
+- train a high-capacity black-box model
+- apply post-hoc explanation tools such as SHAP or LIME
+- approximate the model's reasoning after training
+- accept reduced transparency in exchange for predictive flexibility
 
-- Deploy black-box models in high-stakes decision systems
-- Apply post-hoc explanation tools (SHAP, LIME, etc.)
-- Approximate decision logic after training
-- Sacrifice transparency for benchmark performance
+Project ChurnBot investigates a different question:
+
+> **How much predictive performance is actually lost when interpretability is imposed as an architectural constraint rather than added after training?**
 
 ### ChurnBot Approach
 
-Instead of approximating model behavior after deployment, ChurnBot builds interpretability directly into the architecture itself.
+Instead of relying primarily on post-hoc approximation, GLASS builds interpretability into the inference architecture itself.
 
-Every prediction is grounded in:
+Predictions are grounded in:
 
-- explicit rules
 - interpretable coefficients
+- explicit symbolic rules
 - additive shape functions
-- abstention-aware routing logic
+- explicit routing states
+- confidence-weighted arbitration
+- abstention when confidence is insufficient
 
-This enables faithful, exact explanations rather than post-hoc approximations.
+A matched black-box cascade removes these constraints stage by stage while preserving the same data, splits, feature contracts, and evaluation protocol.
+
+This allows the project to measure the interpretability–performance trade-off directly rather than assume it.
 
 ---
 
@@ -98,41 +104,69 @@ This enables faithful, exact explanations rather than post-hoc approximations.
 
 **GLASS** stands for **Glass-box Layered Abstention-aware Scoring System**.
 
-GLASS Cascade is a four-stage interpretable decision architecture designed to preserve traceable inference while remaining competitive with black-box baselines.
+GLASS is a four-stage interpretable decision architecture designed to preserve traceable inference while remaining competitive with less constrained alternatives.
 
 ```text
 Stage 1: Calibrated Logistic Regression
+
   ↓ Captures global linear trends through interpretable coefficients
-  ↓ Provides a balanced, calibrated baseline prediction signal
-  ↓ Serves as the transparent linear reference model for downstream arbitration
 
-Stage 2: Constrained Symbolic Rule Router
+  ↓ Produces calibrated, out-of-fold training probabilities
+
+  ↓ Provides the transparent linear signal used downstream
+
+
+Stage 2: GLASS Router
+
   ↓ Operates over binary predicate atoms derived from audited source features
-  ↓ Searches a constrained symbolic rule lattice with RF-guided feature ordering and beam search
-  ↓ Applies depth-staged feasibility constraints, validation scoring, and ILP rule selection
-  ↓ Routes samples through sequential pass-specific rules with abstention
 
-  Pass 1: NOT_SUBSCRIBE Rule Pass
-    ↓ Identifies high-confidence non-subscriber regions
-    ↓ Samples not captured by Pass 1 are passed forward to Pass 2
+  ↓ Searches a constrained symbolic rule space using RF-guided ordering,
+    beam pruning, feasibility checks, and rule selection
 
-  Pass 2: SUBSCRIBE Rule Pass
-    ↓ Identifies subscriber regions among remaining samples
-    ↓ Samples not captured by Pass 2 remain abstained
+  ↓ Applies sequential pass-specific symbolic rules
+
+  ↓ Train-side routes come from an outer cross-fit, so every training
+    row is routed by rules that never saw its label
+
+  Pass 1: NOT_SUBSCRIBE
+
+    ↓ Routes high-confidence non-subscriber regions
+
+    ↓ Unresolved samples continue to Pass 2
+
+  Pass 2: SUBSCRIBE
+
+    ↓ Routes subscriber regions among the remainder
+
+    ↓ Unresolved samples remain abstained
+
 
 Stage 3: Explainable Boosting Machine
-  ↓ Models nonlinear effects through interpretable additive shape functions
-  ↓ Provides a complementary nonlinear prediction signal
-  ↓ Captures response curves and limited interaction effects
 
-Stage 4: Meta-EBM Arbiter
-  ↓ Aligns stage thresholds for comparable arbitration
-  ↓ Computes trust weights from calibration and validation behavior
-  ↓ Combines LR, symbolic-router, and EBM outputs through weighted confidence
-  ↓ Selects the final prediction when confidence is sufficient
-  ↓ Abstains when confidence is too low
+  ↓ Models nonlinear effects through additive shape functions
 
-Customer-Level Predictions with Stage-by-Stage Explainability
+  ↓ Captures nonlinear response curves and limited interactions
+
+  ↓ Out-of-fold probabilities, feature engineering refit per fold,
+    OOF-gated fold-nested calibration
+
+  ↓ Provides a complementary interpretable probability signal
+
+
+Stage 4: GLASS Arbiter
+
+  ↓ Receives aligned, verified out-of-fold outputs from Stages 1–3
+
+  ↓ Computes calibration-aware trust weights
+
+  ↓ Combines model signals through weighted confidence
+
+  ↓ Resolves disagreement when confidence is sufficient
+
+  ↓ Abstains when aggregate confidence is too low
+
+
+Customer-Level Prediction with Stage-by-Stage Traceability
 ```
 
 ### Key Innovation: Glass-Box Inference with Stage-Level Traceability
@@ -140,11 +174,36 @@ Customer-Level Predictions with Stage-by-Stage Explainability
 * **Logistic Regression:** Direct coefficient inspection and calibrated linear scoring
 * **Constrained Symbolic Rule Router:** Explicit IF–THEN routing rules, pass-level decisions, and abstention behavior
 * **EBM:** Additive shape functions exposing nonlinear feature effects
-* **Meta-EBM Arbiter:** Transparent confidence-weighted arbitration between stage outputs
+* **GLASS Arbiter:** Transparent, hand-designed confidence-weighted arbitration between stage outputs — every weight, threshold, and abstention cut is an inspectable scalar
 
 The goal is not simply to stack interpretable models. The cascade assigns each stage a distinct decision role and evaluates the system through complementarity, disagreement, abstention behavior, and shared-failure reduction.
 
-The cascade is designed as a glass-box inference architecture. Some training-time components, such as Random Forest feature importance, are used to guide symbolic rule discovery, but inference-time decisions remain traceable through calibrated scores, explicit symbolic rules, EBM effects, and Meta-EBM arbitration.
+The cascade is designed as a glass-box inference architecture. Some training-time components, such as Random Forest feature importance, are used to guide symbolic rule discovery, but inference-time decisions remain traceable through calibrated scores, explicit symbolic rules, EBM effects, and GLASS Arbiter decisions.
+
+---
+
+## ⚖️ Black-Box Counterpart Cascade
+The black-box cascade mirrors GLASS stage for stage. Each stage keeps its GLASS counterpart's inputs, split, folds, objective, and evaluation protocol, and removes one interpretability constraint:
+
+| Stage | GLASS | Black-box counterpart | Constraint removed |
+| --- | --- | --- | --- |
+| 1 | Calibrated Logistic Regression | Calibrated MLP | linearity |
+| 2 | GLASS Router (symbolic rules) | Two-pass RF Router | explicit IF–THEN rules |
+| 3 | Explainable Boosting Machine | XGBoost | additive structure |
+| 4 | GLASS Arbiter (weighted confidence) | Meta-XGB (stacked XGBoost) | explicitly specified arbitration structure |
+
+Stage 4 isolates the arbitration question: **Meta-XGB** receives exactly the same information channels as the GLASS Arbiter — the three stage probabilities and the router's Pass 1 / Pass 2 / abstain state — and nothing else (no raw features, labels, upstream thresholds, or test-derived values).
+
+The GLASS Arbiter combines these signals through an explicitly specified weighted-confidence structure with data-derived weights and operating thresholds, whereas Meta-XGB learns the combination function from training data.
+
+### Shared evaluation protocol
+
+- **One split:** both arms use the same `GLOBAL_SPLIT` (80/20, `random_state=42`); every artifact records a split fingerprint that downstream stages recompute and validate.
+- **One fold plan:** a shared stratified 5-fold partition drives Stage 2–4 cross-fitting in both arms, while Stage 1 uses a shared 10-fold partition.
+- **Out-of-fold hand-offs:** each stage passes OOF training predictions downstream; in-sample predictions are retained for diagnostics only and are rejected by the Stage 4 loader.
+- **Training-only configuration:** thresholds, calibration, trust weights, and abstention cuts are chosen using training data only. The held-out test split is scored after configuration is frozen. Test-fitted thresholds may be recorded for reference but are never used operationally.
+- **Shared Stage 4 contract:** `shared/stage4/` reads and validates both arms' Stage 1–3 artifacts using the same alignment and provenance checks, including split identity, row and index alignment, labels, fold provenance, OOF honesty, and router semantics.
+- **Paired statistics:** arm comparisons use the same held-out rows, paired bootstrap confidence intervals, and McNemar tests. Metric differences are treated as statistically supported only when the corresponding confidence interval excludes zero.
 
 ---
 
@@ -154,14 +213,15 @@ The cascade is designed as a glass-box inference architecture. Some training-tim
 
 Carefully designed interpretable cascade architectures can match or exceed black-box performance while preserving full transparency — particularly in structured decision domains such as subscription modeling and customer retention.
 
-### Supporting Observations
+### How the Hypothesis Is Tested
 
-- Competitive performance relative to black-box baselines
-- Stable validation behavior due to deterministic routing and abstention
-- Full prediction traceability through interpretable intermediate stages
-- Operational value through transparency, auditability, and actionable intervention logic
+- Stage-by-stage comparison against a structurally matched black-box counterpart under one shared protocol
+- Threshold-free (ROC-AUC, PR-AUC) and operating-point (recall, precision, F2) metrics on identical held-out rows
+- Abstention behavior compared at each model's own training-selected configuration
+- Uncertainty reported through paired bootstrap intervals rather than point differences
+- Full prediction traceability retained on the GLASS side through interpretable intermediate stages
 
-This work argues that the perceived interpretability–performance trade-off is largely an architectural choice rather than a fundamental limitation.
+This work argues that the perceived interpretability–performance trade-off is largely an architectural choice rather than a fundamental limitation — a claim the matched comparison is designed to confirm or refute.
 
 ---
 
@@ -227,18 +287,14 @@ This contrasts sharply with opaque cloud-hosted black-box systems where both the
 
 ---
 
-## 🎯 Current Research Focus
+## 🗺️ Research Roadmap
 
-- ✅ GLASS Cascade architecture for interpretable staged prediction
-- ✅ Dataset audit for leakage-prone and deployment-inconsistent features
-- ✅ Calibrated Logistic Regression baseline stage
-- ✅ Constrained symbolic rule router with explicit abstention
-- ✅ EBM integration for nonlinear response modeling
-- ✅ Meta-EBM arbitration layer for confidence-weighted abstention
-- 🔄 Validate Stages 1–4 after final configuration updates
-- 🔄 Clean notebook outputs and make stage summaries more readable
-- 🔄 Add fair baseline comparisons under the audited feature setting
-- 🔄 Formal research paper preparation
+The project is currently completing cascade validation and preparing the
+comparison pipeline.
+
+See the detailed implementation and research roadmap:
+
+[Research Roadmap](prototype/bank_pipeline/documentation/research_roadmap.md)
 
 ---
 
@@ -246,14 +302,17 @@ This contrasts sharply with opaque cloud-hosted black-box systems where both the
 
 - Dataset variability introduces generalization challenges
 - Rule consolidation may require domain-specific threshold tuning
-- Interpretable cascade conversion introduces computational overhead
-- Shape function interpretation still requires statistical literacy
+- The multi-stage cascade introduces additional computational overhead
+- Shape-function interpretation still requires statistical and domain expertise
+- Results currently come from a single train/test split and seed; bootstrap intervals capture test-sampling uncertainty but not training variability
+- The two Stage 4 arbiters select operating points differently (recall-targeted base thresholds vs. an F2-selected threshold), so threshold-dependent metrics partly reflect operating-point choice
+- OOF hand-offs prevent direct training leakage, but any upstream model-selection or tuning decisions not fully nested within the outer folds may introduce mild training-side optimism
 
 ---
 
 ## 📚 Dataset Sources & Citations
 
-### **1) Bank Marketing – Term Deposit Subscription (Current Benchmark)**
+### **1) Bank Marketing – Term Deposit Subscription**
 
 This project uses the **Bank Marketing** dataset for primary empirical evaluation.
 The dataset is publicly available for research use via the UCI Machine Learning Repository.
