@@ -22,7 +22,7 @@
 - [x] Anchor artifact directories to their package roots instead of the notebook working directory
 
 **Feature-research pipeline validation**
-- [ ] Audit the feature-research pipeline end to end
+- [x] Audit the feature-research pipeline end to end
   - [x] Config, separation, interactions, feature engineering, RF training / binning / diagnostics
   - [x] Per-stage tuning modules (remove redundant splits), LR / EBM trainers, cells after 13E
 - [x] Verify every learned feature transformation is fitted on training data only
