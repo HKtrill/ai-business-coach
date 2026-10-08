@@ -11,7 +11,7 @@ import warnings
 
 from typing import Dict
 
-from glass_pipeline.glass_router.rf.binning import RF_FEATURES_BINARY
+from shared.stage2.binning import RF_FEATURES_BINARY
 
 warnings.filterwarnings('ignore')
 

@@ -16,7 +16,7 @@ EBMs — so its calibrated scores came from a different model than the one
 reported, and its calibrated train column was partly in-sample.
 """
 
-from shared.stage_runner import (  # noqa: F401
+from shared.stage3.calibration import (  # noqa: F401
     CalibrationReport,
     Stage3Calibrator,
     calculate_ece,

@@ -35,7 +35,8 @@ import numpy as np
 import pandas as pd
 
 # Same module as glass_pipeline.ebm.config, so both arms run one implementation.
-from shared.stage_runner import Stage3ArtifactStore, Stage3Config, Stage3Runner
+from shared.stage3.config import Stage3Config
+from shared.stage3.runner import Stage3Runner
 
 _INT_PARAMS = ("n_estimators", "max_depth")
 

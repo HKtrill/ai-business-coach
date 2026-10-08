@@ -13,11 +13,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import ClassVar, Optional
 
-from shared.stage_runner import Stage3Config
+from shared.stage3.config import Stage3Config
 
 from .estimator import EBMSearchSpace
-
-__all__ = ["EBMStage3Config"]
 
 
 @dataclass

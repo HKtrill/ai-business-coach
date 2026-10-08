@@ -37,7 +37,6 @@ Stage 3  ``calibration["applied"]`` picks ONE matched pair:
 from __future__ import annotations
 
 import importlib
-from typing import Optional
 
 import joblib
 import numpy as np

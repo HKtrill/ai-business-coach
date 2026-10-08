@@ -1,105 +1,112 @@
 """
 feature_research.feature_engineering.pipeline
 ==============================================
-Orchestrates all feature engineering modules in dependency order.
+FeaturePipeline — the full feature DAG with every target-dependent statistic
+fitted on training rows only:
 
-Full dependency DAG (Cells 10A–10F, complete):
+    crisis       add_crisis_features        deterministic
+    integrals    IntegralFeatureEngineer    fit on train
+    derivatives  DerivativeFeatureEngineer  fit on train (needs integrals)
+    temporal     TemporalFeatureEngineer    fit on train
+    prior        add_prior_features         deterministic (needs integrals)
+    overlap      add_overlap_features       deterministic (needs all above)
 
-    add_crisis_features()               [crisis.py]
-        produces: economic_crisis_score, cellular_crisis (LR live),
-                  high_conversion_month, cellular_contact, default_clean
-
-    add_integral_features()             [integrals.py]
-        produces: economic_stress_integral,
-                  neighborhood_subscription_density (RF live)
-
-    add_derivative_features()           [derivatives.py]
-        requires: neighborhood_subscription_density
-        produces: euribor3m_sigmoid_slope (EBM live),
-                  emp_var_rate_sigmoid_slope (EBM live),
-                  euribor3m_local_rate (LR live),
-                  economic_curvature_intensity (RF + EBM live),
-                  joint_economic_decay (RF live),
-                  decay_x_density (EBM live)
-
-    add_temporal_features()             [temporal.py]
-        produces: dow_month_encoded (LR + RF + EBM live)
-
-    add_prior_features()                [prior.py]
-        requires: economic_stress_integral
-        produces: has_prior_contact,
-                  prior_x_stress (EBM live)
-
-    add_overlap_features()              [overlap.py]
-        requires: economic_stress_integral, cellular_contact,
-                  high_conversion_month, default_clean, has_prior_contact
-        produces: low_stress_zone,
-                  cpi_high_cellular (RF + EBM live),
-                  behavioral_favorability (RF + EBM live),
-                  overlap_default_clean (EBM live),
-                  overlap_behavioral_score (EBM live)
+finalize_features / get_stage_df select the model-ready columns.
 """
 
 import pandas as pd
 
 from feature_research.config import RANDOM_SEED
+from feature_research.feature_engineering._checks import check_xy_aligned
 from feature_research.feature_engineering.crisis import add_crisis_features
-from feature_research.feature_engineering.integrals import add_integral_features
-from feature_research.feature_engineering.derivatives import add_derivative_features
-from feature_research.feature_engineering.temporal import add_temporal_features
+from feature_research.feature_engineering.integrals import IntegralFeatureEngineer
+from feature_research.feature_engineering.derivatives import DerivativeFeatureEngineer
+from feature_research.feature_engineering.temporal import TemporalFeatureEngineer
 from feature_research.feature_engineering.prior import add_prior_features
 from feature_research.feature_engineering.overlap import add_overlap_features
 
-__all__ = ["build_features", "finalize_features", "get_stage_df"]
+__all__ = ["FeaturePipeline", "finalize_features", "get_stage_df"]
 
 
-def build_features(
-    df: pd.DataFrame,
-    target_col: str = 'y',
-    random_state: int = RANDOM_SEED,
-    n_bins: int = 20,
-    smoothing_factor: int = 100,
-) -> pd.DataFrame:
+# ---------------------------------------------------------------------------
+# Fit-on-train / transform orchestrator (use this in the research notebook)
+# ---------------------------------------------------------------------------
+
+class FeaturePipeline:
     """
-    Apply all feature engineering modules in dependency order.
+    Full feature DAG with every target-dependent statistic fitted on the
+    rows passed to fit_transform() only.
 
-    Parameters
-    ----------
-    df : pd.DataFrame
-        Output of load_and_preprocess() — preprocessed, no leaky features.
-    target_col : str
-        Binary target column name.
-    random_state : int
-        Seed for KDE reference-point sampling (integrals).
-    n_bins : int
-        Quantile bins for local-rate and curvature estimation (derivatives).
-    smoothing_factor : int
-        Laplace smoothing weight for day × month encoding (temporal).
+    DAG order:
+        crisis -> integrals -> derivatives -> temporal -> prior -> overlap
 
-    Returns
-    -------
-    pd.DataFrame
-        df with all surviving engineered features appended.
-        Live features ready for model ingestion:
-          LR:  cellular_crisis, euribor3m_local_rate, dow_month_encoded
-          RF:  campaign*, neighborhood_subscription_density, cons.conf.idx*,
-               economic_curvature_intensity, joint_economic_decay,
-               dow_month_encoded, behavioral_favorability, cpi_high_cellular
-          EBM: decay_x_density, euribor3m_sigmoid_slope, economic_curvature_intensity,
-               cons.conf.idx*, age*, dow_month_encoded, default*,
-               prior_x_stress, campaign*, overlap_default_clean,
-               overlap_behavioral_score, cpi_high_cellular,
-               behavioral_favorability, emp_var_rate_sigmoid_slope
-          (* raw UCI features, no engineering needed)
+    Deterministic modules (crisis, prior, overlap) are applied as-is; the
+    three target-dependent modules use their fit/transform engineers.
+
+    Usage
+    -----
+        fp = FeaturePipeline()
+        X_train_fe = fp.fit_transform(X_train, y_train)
+        X_test_fe  = fp.transform(X_test)
+
+    X must NOT contain the target column. transform() output must have
+    exactly the same columns, in the same order and with the same dtypes,
+    as fit_transform() output.
     """
-    df = add_crisis_features(df)
-    df = add_integral_features(df, target_col=target_col, random_state=random_state)
-    df = add_derivative_features(df, target_col=target_col, n_bins=n_bins)
-    df = add_temporal_features(df, target_col=target_col, smoothing_factor=smoothing_factor)
-    df = add_prior_features(df, target_col=target_col)
-    df = add_overlap_features(df)
-    return df
 
+    def __init__(
+        self,
+        random_state: int = RANDOM_SEED,
+        n_bins: int = 20,
+        smoothing_factor: int = 100,
+    ) -> None:
+        self.random_state = random_state
+        self.n_bins = n_bins
+        self.smoothing_factor = smoothing_factor
+        self._integral = IntegralFeatureEngineer(random_state=random_state)
+        self._derivative = DerivativeFeatureEngineer(n_bins=n_bins)
+        self._temporal = TemporalFeatureEngineer(smoothing_factor=smoothing_factor)
+        self.input_columns_: list = None
+        self.output_columns_: list = None
+        self.output_dtypes_: dict = None
+        self.fitted = False
+
+    def fit_transform(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
+        check_xy_aligned(X, y, "FeaturePipeline.fit_transform")
+        self.input_columns_ = list(X.columns)
+        X = add_crisis_features(X)
+        X = self._integral.fit_transform(X, y)
+        X = self._derivative.fit_transform(X, y)
+        X = self._temporal.fit_transform(X, y)
+        X = add_prior_features(X)
+        X = add_overlap_features(X)
+        self.output_columns_ = list(X.columns)
+        self.output_dtypes_ = X.dtypes.astype(str).to_dict()
+        self.fitted = True
+        return X
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        if not self.fitted:
+            raise ValueError("FeaturePipeline not fitted. Call fit_transform() first.")
+        if list(X.columns) != self.input_columns_:
+            raise ValueError(
+                "FeaturePipeline.transform: input columns differ from fit "
+                f"(names or order).\n  fit:  {self.input_columns_}\n  got:  {list(X.columns)}"
+            )
+        X = add_crisis_features(X)
+        X = self._integral.transform(X)
+        X = self._derivative.transform(X)
+        X = self._temporal.transform(X)
+        X = add_prior_features(X)
+        X = add_overlap_features(X)
+        if list(X.columns) != self.output_columns_:
+            raise RuntimeError("FeaturePipeline.transform: output columns differ from fit.")
+        dtypes = X.dtypes.astype(str).to_dict()
+        changed = {c: (self.output_dtypes_[c], dtypes[c])
+                   for c in dtypes if dtypes[c] != self.output_dtypes_[c]}
+        if changed:
+            raise TypeError(f"FeaturePipeline.transform: dtypes differ from fit (fit, got): {changed}")
+        return X
 
 
 # ---------------------------------------------------------------------------
@@ -119,7 +126,7 @@ def finalize_features(
     Parameters
     ----------
     df : pd.DataFrame
-        Output of build_features().
+        Output of FeaturePipeline (plus target column).
     live_features : dict[str, list[str]]
         LIVE_FEATURES registry, e.g. from feature_engineering.__init__.
     target_col : str
@@ -153,7 +160,7 @@ def get_stage_df(
     Parameters
     ----------
     df : pd.DataFrame
-        Output of finalize_features() or build_features().
+        Output of finalize_features().
     stage : str
         One of 'lr', 'rf', 'ebm'.
     live_features : dict[str, list[str]]
@@ -172,6 +179,8 @@ def get_stage_df(
     cols = live_features[stage] + (
         [target_col] if target_col in df.columns else []
     )
+    if len(set(cols)) != len(cols):
+        raise ValueError(f"get_stage_df: duplicated columns in {stage!r} registry: {cols}")
     missing = [c for c in cols if c not in df.columns]
     if missing:
         raise KeyError(f"get_stage_df: columns missing from df: {missing}")

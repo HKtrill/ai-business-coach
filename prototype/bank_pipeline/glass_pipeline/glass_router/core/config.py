@@ -96,6 +96,10 @@ class GlassRouterConfig:
     max_feature_reuse_pass2: Optional[int] = None
     lambda_rf_uncertainty: Optional[float] = None
     lambda_rf_misalignment: Optional[float] = None
+    # Pass 1 UNION leakage cap: subscribers routed by the selected Pass 1 rule
+    # set (each counted once) <= this share of all subscribers. None = off; the
+    # per-rule max_subscriber_leakage_rate / _absolute gates apply either way.
+    max_union_leakage_rate_pass1: Optional[float] = None
 
     # ============================================================
     # PASS 2 POPULATION (optional; default = original behaviour)
@@ -119,6 +123,7 @@ class GlassRouterConfig:
             'max_feature_reuse_pass2',
             'lambda_rf_uncertainty',
             'lambda_rf_misalignment',
+            'max_union_leakage_rate_pass1',
             'pass2_population',
             'pass1_oof_folds',
             'random_state',
@@ -163,6 +168,11 @@ class GlassRouterConfig:
             if not 0 <= val <= 1:
                 errors.append(f"{param} must be in [0, 1], got {val}")
         
+        if self.max_union_leakage_rate_pass1 is not None and not 0 <= self.max_union_leakage_rate_pass1 <= 1:
+            errors.append(
+                f"max_union_leakage_rate_pass1 must be in [0, 1] or None, "
+                f"got {self.max_union_leakage_rate_pass1}"
+            )
         if self.min_pass1_rules > self.max_pass1_rules:
             errors.append("min_pass1_rules > max_pass1_rules")
         if self.min_pass2_rules > self.max_pass2_rules:

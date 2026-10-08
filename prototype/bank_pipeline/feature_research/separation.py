@@ -24,10 +24,14 @@ import pandas as pd
 from scipy.stats import ks_2samp, pointbiserialr
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, mutual_info_score
-from sklearn.preprocessing import KBinsDiscretizer
 
 from feature_research.config import OUTPUT_DIR
-from feature_research.metrics import SeparationMetrics, cohens_d, cramers_v, wilson_ci
+from feature_research.interactions import quantile_bin_codes
+from feature_research.metrics import SeparationMetrics, cohens_d, cramers_v
+
+#: Categories with fewer rows than this are excluded from the target-rate
+#: range — their rates are noise (e.g. default == "yes" has 3 rows).
+MIN_CATEGORY_COUNT: int = 30
 
 
 # ---------------------------------------------------------------------------
@@ -82,11 +86,9 @@ def compute_numeric_separation(
     pb_corr, _ = pointbiserialr(y, df[feature].values)
 
     # Mutual information (requires discretisation)
+    # Tie-robust quantile bins (a dominant value gets its own bin).
     n_bins = max(2, min(10, df[feature].nunique()))
-    discretizer = KBinsDiscretizer(
-        n_bins=n_bins, encode="ordinal", strategy="quantile"
-    )
-    X_binned = discretizer.fit_transform(X).ravel()
+    X_binned = quantile_bin_codes(df[feature], n_bins)
     mi = mutual_info_score(y, X_binned)
 
     # Probe AUC
@@ -128,9 +130,12 @@ def compute_categorical_separation(
     Metrics
     -------
     - **Cramér's V** — χ²-derived association strength in ``[0, 1]``.
-    - **Mutual information** — normalised by ``log(n_categories)``.
-    - **Target-rate range** — ``(min, max)`` subscription rate across categories.
-    - **Probe AUC** — single-feature ordinal logistic regression AUC.
+    - **Mutual information** — normalised by ``log(2)``, same as numeric
+      features, so composite scores are on a comparable scale.
+    - **Target-rate range** — ``(min, max)`` subscription rate across
+      categories with at least ``MIN_CATEGORY_COUNT`` rows.
+    - **Probe AUC** — in-sample AUC of each row's category subscription
+      rate (label codes carry no order for nominal features).
     - **Composite score** — unweighted mean of four normalised sub-scores.
 
     Parameters
@@ -147,23 +152,26 @@ def compute_categorical_separation(
     SeparationMetrics
         Populated metrics container for this feature.
     """
-    X = df[feature].values.reshape(-1, 1)
     y = df[target_col].values
 
     cv = cramers_v(df[feature], df[target_col])
 
     mi = mutual_info_score(y, df[feature].values)
 
-    target_rates = df.groupby(feature)[target_col].mean()
-    tr_range = (float(target_rates.min()), float(target_rates.max()))
+    stats = df.groupby(feature)[target_col].agg(["mean", "count"])
+    stable = stats.loc[stats["count"] >= MIN_CATEGORY_COUNT, "mean"]
+    # No reliable spread if only one category is large enough → range collapses to it.
+    rates_for_range = stable if len(stable) >= 1 else stats["mean"]
+    tr_range = (float(rates_for_range.min()), float(rates_for_range.max()))
 
     n_cats = int(df[feature].nunique())
 
-    lr = LogisticRegression(max_iter=500, random_state=42)
-    lr.fit(X, y)
-    auc = roc_auc_score(y, lr.predict_proba(X)[:, 1])
+    # Score each row by its category's subscription rate — the best
+    # single-feature ranking a nominal feature allows.
+    category_rate = df.groupby(feature)[target_col].transform("mean")
+    auc = roc_auc_score(y, category_rate)
 
-    mi_norm = mi / np.log(n_cats) if n_cats > 1 else 0.0
+    mi_norm = mi / np.log(2) if mi > 0 else 0.0
     composite = float(
         np.mean([
             cv,
@@ -255,84 +263,34 @@ def display_feature_rankings(
     top_n: int = 20,
     save_csv: bool = True,
 ) -> None:
-    """Print formatted ranking tables and optionally persist to CSV.
+    """Print one compact ranking table and optionally persist the full table.
 
-    Outputs three sections:
-    1. **Overall** top-``top_n`` features by composite score.
-    2. **Numeric-only** top-10 with Cohen's d / KS / AUC columns.
-    3. **Categorical-only** top-10 with Cramér's V / n_categories / AUC.
-
-    Parameters
-    ----------
-    df_metrics:
-        Output of :func:`compute_all_separations`.
-    top_n:
-        Number of features shown in the overall ranking section.
-    save_csv:
-        When ``True`` (default), writes the full metrics table to
-        ``research_logs/feature_rankings.csv``.
+    Columns: rank, feature, type, composite score, probe AUC, MI, and the
+    type-specific effect size (Cohen's d for numeric, Cramér's V for
+    categorical). The full metrics table is written to
+    ``research_logs/feature_rankings.csv``.
     """
-    SEP = "=" * 80
-    LINE = "-" * 80
+    rows = df_metrics.head(top_n)
+    n_num = int((df_metrics["type"] == "numeric").sum())
+    n_cat = int((df_metrics["type"] == "categorical").sum())
 
-    print(f"\n{SEP}")
-    print(f"🏆 FEATURE RANKINGS  (Top {top_n})")
-    print(SEP)
+    print(f"\n{'=' * 78}")
+    print(f"FEATURE RANKINGS — top {len(rows)} of {len(df_metrics)}  "
+          f"({n_num} numeric, {n_cat} categorical)")
+    print(f"{'=' * 78}")
+    print(f"  {'#':>2}  {'Feature':<18} {'Type':<5} {'Score':>6} {'AUC':>6} {'MI':>7}  {'Effect':<12}")
+    print(f"  {'-' * 2}  {'-' * 18} {'-' * 5} {'-' * 6} {'-' * 6} {'-' * 7}  {'-' * 12}")
 
-    # -- Overall --------------------------------------------------------------
-    print("\n📊 OVERALL RANKING (by composite score)")
-    print(LINE)
-
-    for rank, (_, row) in enumerate(df_metrics.head(top_n).iterrows(), start=1):
-        print(f"\n{rank:2d}. {row['feature']:20s} ({row['type']})")
-        print(
-            f"    Composite : {row['composite_score']:.4f}  |  "
-            f"AUC : {row['auc_probe']:.4f}  |  "
-            f"MI : {row['mutual_info']:.4f}"
-        )
-        if row["type"] == "numeric":
-            print(
-                f"    Cohen's d : {row['cohens_d']:+.3f}  |  "
-                f"KS : {row['ks_stat']:.3f}  |  "
-                f"r_pb : {row['point_biserial']:+.3f}"
-            )
+    for rank, (_, r) in enumerate(rows.iterrows(), start=1):
+        if r["type"] == "numeric":
+            kind, effect = "num", f"d = {r['cohens_d']:+.2f}"
         else:
-            lo, hi = row["target_rate_range"]
-            print(
-                f"    Cramér's V : {row['cramers_v']:.3f}  |  "
-                f"Categories : {row['n_categories']}  |  "
-                f"TR range : [{lo:.3f}, {hi:.3f}]"
-            )
+            kind, effect = "cat", f"V = {r['cramers_v']:.2f}"
+        print(f"  {rank:>2}  {r['feature']:<18} {kind:<5} {r['composite_score']:>6.3f} "
+              f"{r['auc_probe']:>6.3f} {r['mutual_info']:>7.4f}  {effect:<12}")
 
-    # -- Numeric --------------------------------------------------------------
-    print("\n\n📈 TOP NUMERIC FEATURES")
-    print(LINE)
-    df_num = df_metrics[df_metrics["type"] == "numeric"].head(10)
-    for rank, (_, row) in enumerate(df_num.iterrows(), start=1):
-        print(
-            f"{rank:2d}. {row['feature']:20s}  |  "
-            f"d={row['cohens_d']:+.3f}  |  "
-            f"KS={row['ks_stat']:.3f}  |  "
-            f"AUC={row['auc_probe']:.3f}"
-        )
-
-    # -- Categorical ----------------------------------------------------------
-    print("\n\n📊 TOP CATEGORICAL FEATURES")
-    print(LINE)
-    df_cat = df_metrics[df_metrics["type"] == "categorical"].head(10)
-    if df_cat.empty:
-        print("(No categorical features)")
-    else:
-        for rank, (_, row) in enumerate(df_cat.iterrows(), start=1):
-            print(
-                f"{rank:2d}. {row['feature']:20s}  |  "
-                f"V={row['cramers_v']:.3f}  |  "
-                f"n_cat={row['n_categories']}  |  "
-                f"AUC={row['auc_probe']:.3f}"
-            )
-
-    # -- Persist --------------------------------------------------------------
     if save_csv:
         csv_path = OUTPUT_DIR / "feature_rankings.csv"
         df_metrics.to_csv(csv_path, index=False)
-        print(f"\n💾 Saved rankings to: {csv_path}")
+        print(f"\n  Full table → {csv_path.name}")
+    print(f"{'=' * 78}")

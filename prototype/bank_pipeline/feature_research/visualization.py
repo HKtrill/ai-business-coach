@@ -35,6 +35,7 @@ def plot_numeric_feature(
     feature: str,
     target_col: str,
     save_path: Optional[Path] = None,
+    show: bool = False,
 ) -> None:
     """Three-panel separation plot for a numeric feature.
 
@@ -48,14 +49,15 @@ def plot_numeric_feature(
     Parameters
     ----------
     df:
-        Fully preprocessed DataFrame.
+        Training rows (features + target).
     feature:
         Numeric column to visualise.
     target_col:
         Binary 0/1 target column name.
     save_path:
-        If provided the figure is saved here and the axes are closed;
-        otherwise :func:`matplotlib.pyplot.show` is called.
+        If provided the figure is saved here.
+    show:
+        Display the figure inline (always true when *save_path* is None).
     """
     class_0 = df.loc[df[target_col] == 0, feature]
     class_1 = df.loc[df[target_col] == 1, feature]
@@ -100,7 +102,7 @@ def plot_numeric_feature(
     axes[2].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    _save_or_show(fig, save_path)
+    _save_or_show(fig, save_path, show)
 
 
 # ---------------------------------------------------------------------------
@@ -112,6 +114,7 @@ def plot_categorical_feature(
     feature: str,
     target_col: str,
     save_path: Optional[Path] = None,
+    show: bool = False,
 ) -> None:
     """Two-panel separation plot for a categorical feature.
 
@@ -126,14 +129,15 @@ def plot_categorical_feature(
     Parameters
     ----------
     df:
-        Fully preprocessed DataFrame.
+        Training rows (features + target).
     feature:
         Categorical column to visualise.
     target_col:
         Binary 0/1 target column name.
     save_path:
-        If provided the figure is saved here and the axes are closed;
-        otherwise :func:`matplotlib.pyplot.show` is called.
+        If provided the figure is saved here.
+    show:
+        Display the figure inline (always true when *save_path* is None).
     """
     fig, axes = plt.subplots(1, 2, figsize=(12, 4))
     fig.suptitle(feature, fontsize=13, fontweight="bold")
@@ -182,7 +186,7 @@ def plot_categorical_feature(
     axes[1].grid(True, alpha=0.3, axis="y")
 
     plt.tight_layout()
-    _save_or_show(fig, save_path)
+    _save_or_show(fig, save_path, show)
 
 
 # ---------------------------------------------------------------------------
@@ -194,54 +198,56 @@ def generate_all_plots(
     df_metrics: pd.DataFrame,
     target_col: str,
     top_n: int = 17,
+    show: bool = False,
 ) -> None:
-    """Generate and save separation plots for the top-ranked features.
+    """Save separation plots for the top-ranked features.
 
     Dispatches to :func:`plot_numeric_feature` or
-    :func:`plot_categorical_feature` based on the ``type`` column in
-    *df_metrics*, and saves each figure to :data:`~feature_research.config.FIG_DIR`
-    with a zero-padded rank prefix (e.g. ``01_euribor_3m.png``).
+    :func:`plot_categorical_feature` by the ``type`` column in *df_metrics*
+    and saves each figure to :data:`~feature_research.config.FIG_DIR` with a
+    zero-padded rank prefix (e.g. ``01_euribor3m.png``).
 
     Parameters
     ----------
     df:
-        Fully preprocessed DataFrame.
+        Training rows (features + target). Never pass test rows — the plots
+        are split by class.
     df_metrics:
         Output of :func:`~feature_research.separation.compute_all_separations`.
     target_col:
         Binary 0/1 target column name.
     top_n:
         Number of top-ranked features to plot.
+    show:
+        Also display each figure inline (default False — files only).
     """
-    print("\n" + "=" * 80)
-    print(f"📊 GENERATING PLOTS FOR TOP {top_n} FEATURES")
-    print("=" * 80)
-
-    for rank, (_, row) in enumerate(df_metrics.head(top_n).iterrows(), start=1):
-        feature = row["feature"]
-        feature_type = row["type"]
-        save_path = FIG_DIR / f"{rank:02d}_{feature}.png"
-
-        print(f"\n[{rank}/{top_n}] {feature}  ({feature_type})")
-
-        if feature_type == "numeric":
-            plot_numeric_feature(df, feature, target_col, save_path)
+    ranked = df_metrics.head(top_n)
+    for rank, (_, row) in enumerate(ranked.iterrows(), start=1):
+        save_path = FIG_DIR / f"{rank:02d}_{row['feature']}.png"
+        if row["type"] == "numeric":
+            plot_numeric_feature(df, row["feature"], target_col, save_path, show=show)
         else:
-            plot_categorical_feature(df, feature, target_col, save_path)
+            plot_categorical_feature(df, row["feature"], target_col, save_path, show=show)
 
-        print(f"    💾 {save_path.name}")
-
-    print(f"\n✅ All plots saved to: {FIG_DIR}")
+    n_num = int((ranked["type"] == "numeric").sum())
+    print(f"\n{'=' * 78}")
+    print(f"SEPARATION PLOTS — top {len(ranked)} features "
+          f"({n_num} numeric, {len(ranked) - n_num} categorical), {len(df):,} rows")
+    print(f"{'=' * 78}")
+    print(f"  Saved {len(ranked)} figures → {FIG_DIR}")
+    print(f"  Numeric: violin · density overlay · ECDF   |   Categorical: rate ± Wilson CI · class counts")
+    print(f"{'=' * 78}")
 
 
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
 
-def _save_or_show(fig: plt.Figure, save_path: Optional[Path]) -> None:
-    """Save *fig* to *save_path* or display it interactively."""
+def _save_or_show(fig: plt.Figure, save_path: Optional[Path], show: bool = False) -> None:
+    """Save *fig* to *save_path*; display it if requested (or if not saved)."""
     if save_path is not None:
         fig.savefig(save_path, dpi=150, bbox_inches="tight")
-        plt.close(fig)
-    else:
+    if show or save_path is None:
         plt.show()
+    else:
+        plt.close(fig)

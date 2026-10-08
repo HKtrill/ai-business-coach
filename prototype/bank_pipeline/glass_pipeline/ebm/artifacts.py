@@ -1,14 +1,14 @@
 """
 glass_pipeline.ebm.artifacts
 ============================
-Since PR 33 the EBM writes the shared ``shared.stage_runner.Stage3Artifact``
+Since PR 33 the EBM writes the shared ``shared.stage3.artifacts.Stage3Artifact``
 through ``Stage3ArtifactStore``: ``models/ebm/ebm_stage3_<ts>.joblib`` + a JSON
 sidecar (split / block fingerprints, protocol, metrics) + an
 ``ebm_stage3_latest.joblib`` copy. Load by fingerprint with
-``shared.stage_runner`` — not by modification time.
+``shared.stage3.artifacts`` — not by modification time.
 """
 
-from shared.stage_runner import (  # noqa: F401
+from shared.stage3.artifact import (  # noqa: F401
     Stage3Artifact,
     Stage3ArtifactStore,
     find_stage3_artifact,

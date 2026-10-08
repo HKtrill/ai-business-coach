@@ -20,7 +20,7 @@ Internal modules (not for direct notebook import)
 """
 
 from .lift_analysis import analyze_rf_lift, RFLiftAnalyzer
-from .feature_engineering import engineer_features, RFFeatureEngineer
+from shared.stage2.feature_engineering import engineer_features, RFFeatureEngineer
 from .baseline import train_rf_baseline
 from .rf_training import train_rf_stage, RFResult
 from .evaluation import plot_rf_evaluation

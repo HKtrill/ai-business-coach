@@ -15,10 +15,9 @@ EBM-specific pieces:
 
 from .config import EBMStage3Config
 from .ebm_stage import make_ebm_factory, train_ebm_stage
-from .estimator import EBMFactory, EBMSearchSpace
-from .feature_engineering import EBM_FEATURES, EBMFeaturePipeline
+from .estimator import EBMFactory, EBMSearchSpace, EBM_TUNED_PARAM_NAMES
 
 __all__ = [
     "EBMStage3Config", "train_ebm_stage", "make_ebm_factory",
-    "EBMFactory", "EBMSearchSpace", "EBM_FEATURES", "EBMFeaturePipeline",
+    "EBMFactory", "EBMSearchSpace", "EBM_TUNED_PARAM_NAMES"
 ]

@@ -8,7 +8,7 @@
 from typing import Tuple, Set
 
 from glass_pipeline.glass_router.core.rule import SegmentType
-from glass_pipeline.glass_router.rf.binning import BINNING_STRATEGY
+from shared.stage2.binning import BINNING_STRATEGY
 
 
 def _build_bin_family_map() -> dict:

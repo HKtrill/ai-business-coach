@@ -1,7 +1,7 @@
 """
 glass_pipeline.ebm.estimator
 ============================
-The EBM arm's implementation of ``shared.stage_runner.Stage3Estimator``.
+The EBM arm's implementation of ``shared.stage3.estimator``.
 
 ``EBMFactory`` is the single place an ``ExplainableBoostingClassifier`` is
 built — Optuna objective, 10-fold report, OOF pass and full refit all go
@@ -31,8 +31,6 @@ from typing import Any, Optional
 import numpy as np
 import pandas as pd
 from interpret.glassbox import ExplainableBoostingClassifier
-
-__all__ = ["EBMSearchSpace", "EBMFactory", "EBM_TUNED_PARAM_NAMES"]
 
 EBM_TUNED_PARAM_NAMES: tuple[str, ...] = (
     "learning_rate",

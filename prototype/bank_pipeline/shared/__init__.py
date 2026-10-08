@@ -62,7 +62,7 @@ Examples
 >>> assert_comparable(glass, mlp)
 """
 
-from .calibration_guard import (
+from .stage1.calibration_guard import (
     CalibrationLeakageError,
     assert_refittable,
     is_prefit_calibrator,

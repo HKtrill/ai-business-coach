@@ -108,7 +108,7 @@ class Stage3Metrics:
         if len(np.unique(y)) > 1:
             m = compute_metrics(y, pred, p, float(threshold), probability_space)
         else:
-            from shared.metrics import calculate_ece
+            from prototype.bank_pipeline.shared.metrics import calculate_ece
             m = {"accuracy": float((pred == y).mean()), "precision": float("nan"),
                  "recall": float("nan"), "f1": float("nan"), "f2": float("nan"),
                  "roc_auc": float("nan"), "pr_auc": float("nan"),

@@ -39,28 +39,24 @@ import json
 import os
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Optional
+from typing import Optional
 
 import joblib
 import numpy as np
 import pandas as pd
-
-__all__ = ["Stage3Artifact", "Stage3ArtifactStore"]
 
 
 def _decision_block(proba: np.ndarray, threshold) -> dict[str, np.ndarray]:
     """
     Binary decision, signed margin and normalised confidence.
 
-    ``threshold`` is a scalar or a per-row array (fold-nested thresholds).
+    ``threshold`` is a scalar or per-row array. ``margin = p - t``;
+    ``confidence`` rescales |margin| by the room on that side of the boundary
+    so it lands in [0, 1] wherever the threshold sits.
 
-    ``margin``      ``p - threshold``; sign is the decision, magnitude is the
-                    distance from the boundary.
-    ``confidence``  ``|margin|`` rescaled by the distance available on that
-                    side of the boundary, so it lands in [0, 1] regardless of
-                    where the threshold sits. A row exactly on the boundary has
-                    confidence 0; a row at p=1 with threshold 0.3 has
-                    confidence 1.
+    The keys returned here are the ones ``Stage3Artifact.stage4_frame()`` and
+    ``stage4_test_frame()`` read: ``decision``, ``margin``, ``confidence``,
+    ``state``.
     """
     p = np.asarray(proba, dtype=float)
     t = np.broadcast_to(np.asarray(threshold, dtype=float), p.shape)

@@ -16,6 +16,11 @@ Strategy
    to obtain an *interaction lift* — positive values indicate the pair carries
    supra-additive information not explained by either feature alone.
 
+All MIs are Miller–Madow bias-corrected (see :func:`_mi`). The plug-in MI
+estimate is inflated by roughly (cells − 1) / 2N, so without the correction a
+joint token with many cells (e.g. day_of_week × month ≈ 50) gets a built-in
+lift bonus over its parts regardless of any real interaction.
+
 Provides
 --------
 - :func:`search_interactions_mi`      — full search; returns ranked DataFrame
@@ -30,7 +35,6 @@ from typing import List
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mutual_info_score
-from sklearn.preprocessing import KBinsDiscretizer
 
 from feature_research.config import OUTPUT_DIR
 
@@ -103,27 +107,20 @@ def search_interactions_mi(
         ``lift``
             ``mi_joint - mi_sum``; positive ⟹ supra-additive interaction.
         ``lift_pct``
-            Lift expressed as a percentage of ``mi_sum``.
+            Lift expressed as a percentage of ``mi_sum`` (NaN when
+            ``mi_sum`` is 0, i.e. neither feature is informative alone).
     """
-    print("\n" + "=" * 80)
-    print("🔍 INTERACTION DISCOVERY  (Mutual Information)")
-    print("=" * 80)
-
     numeric_set = set(numeric_features)
     y = df[target_col].values
 
     # ------------------------------------------------------------------
     # Step 1 — individual MIs
     # ------------------------------------------------------------------
-    print("\n📊 Computing individual MIs...")
-
     individual_mis: dict[str, float] = {}
     for feat in features:
         if df[feat].nunique() <= 1:
             continue  # constant feature — MI is always 0
-        individual_mis[feat] = mutual_info_score(
-            y, _discretise(df[feat], feat, numeric_set)
-        )
+        individual_mis[feat] = _mi(y, _discretise(df[feat], feat, numeric_set))
 
     top_feature_names = [
         feat
@@ -131,38 +128,35 @@ def search_interactions_mi(
             individual_mis.items(), key=lambda kv: kv[1], reverse=True
         )[:_TOP_FEATURES_LIMIT]
     ]
-    print(f"✅ Selected top {len(top_feature_names)} features for interaction search")
 
     # ------------------------------------------------------------------
     # Step 2 — enumerate pairs
     # ------------------------------------------------------------------
     pairs = list(combinations(top_feature_names, 2))
+    n_possible = len(pairs)
     if len(pairs) > max_pairs:
-        print(f"⚠️  Limiting to {max_pairs} pairs (from {len(pairs)} possible)")
         pairs = pairs[:max_pairs]
 
-    print(f"\n🔍 Evaluating {len(pairs)} pairs...")
 
     # ------------------------------------------------------------------
     # Step 3 — compute joint MI and lift per pair
     # ------------------------------------------------------------------
     results = []
     for idx, (f1, f2) in enumerate(pairs, start=1):
-        if idx % 50 == 0:
-            print(f"  Progress: {idx}/{len(pairs)}", end="\r")
-
         f1_binned = _discretise(df[f1], f1, numeric_set)
         f2_binned = _discretise(df[f2], f2, numeric_set)
 
         joint = f1_binned * _JOINT_HASH_SCALE + f2_binned
-        mi_joint = mutual_info_score(y, joint)
+        mi_joint = _mi(y, joint)
 
         mi_f1 = individual_mis[f1]
         mi_f2 = individual_mis[f2]
         mi_sum = mi_f1 + mi_f2
 
-        lift = mi_joint - mi_sum if mi_sum > 0 else 0.0
-        lift_pct = (lift / mi_sum * 100.0) if mi_sum > 0 else 0.0
+        # Lift is defined even when neither feature carries signal alone —
+        # that is the purest interaction. Only the percentage needs mi_sum > 0.
+        lift = mi_joint - mi_sum
+        lift_pct = (lift / mi_sum * 100.0) if mi_sum > 0 else float("nan")
 
         results.append(
             {
@@ -177,14 +171,17 @@ def search_interactions_mi(
             }
         )
 
-    print(f"\n✅ Evaluated {len(pairs)} pairs")
 
     df_interactions = (
         pd.DataFrame(results)
         .sort_values("lift", ascending=False)
         .reset_index(drop=True)
     )
-
+    df_interactions.attrs["summary"] = (
+        f"{len(top_feature_names)} features, {len(pairs)} pairs evaluated"
+        + (f" (capped from {n_possible})" if n_possible > len(pairs) else "")
+        + f", {len(df):,} rows"
+    )
     return df_interactions.head(top_k)
 
 
@@ -197,49 +194,73 @@ def display_interaction_rankings(
     top_n: int = 25,
     save_csv: bool = True,
 ) -> None:
-    """Print a formatted interaction ranking table and optionally save to CSV.
+    """Print one compact interaction table and optionally persist it.
 
-    Parameters
-    ----------
-    df_interactions:
-        Output of :func:`search_interactions_mi`.
-    top_n:
-        Number of rows to display.
-    save_csv:
-        When ``True`` (default) writes the full table to
-        ``research_logs/interaction_rankings.csv``.
+    Lift = MI(pair → y) − MI(f1 → y) − MI(f2 → y), Miller–Madow corrected.
+    Positive lift means the pair carries information neither feature has
+    alone. Writes the table to ``research_logs/interaction_rankings.csv``.
     """
-    print("\n" + "=" * 80)
-    print(f"🏆 TOP {top_n} INTERACTION CANDIDATES")
-    print("=" * 80)
+    rows = df_interactions.head(top_n)
+    summary = df_interactions.attrs.get("summary", "")
 
-    for rank, (_, row) in enumerate(df_interactions.head(top_n).iterrows(), start=1):
-        print(f"\n{rank:2d}. {row['feature_1']}  ×  {row['feature_2']}")
-        print(
-            f"    Joint MI : {row['mi_joint']:.4f}  |  "
-            f"Sum MI : {row['mi_sum']:.4f}  |  "
-            f"Lift : {row['lift']:.4f}  ({row['lift_pct']:.1f}%)"
-        )
+    print(f"\n{'=' * 78}")
+    print(f"INTERACTION DISCOVERY — top {len(rows)} by MI lift")
+    if summary:
+        print(f"  {summary}")
+    print(f"{'=' * 78}")
+    print(f"  {'#':>2}  {'Pair':<36} {'Joint MI':>8} {'Sum MI':>8} {'Lift':>8} {'Lift %':>7}")
+    print(f"  {'-' * 2}  {'-' * 36} {'-' * 8} {'-' * 8} {'-' * 8} {'-' * 7}")
+
+    for rank, (_, r) in enumerate(rows.iterrows(), start=1):
+        pair = f"{r['feature_1']} × {r['feature_2']}"
+        pct = "—" if pd.isna(r["lift_pct"]) else f"{r['lift_pct']:+.0f}%"
+        print(f"  {rank:>2}  {pair:<36} {r['mi_joint']:>8.4f} {r['mi_sum']:>8.4f} "
+              f"{r['lift']:>+8.4f} {pct:>7}")
 
     if save_csv:
         csv_path = OUTPUT_DIR / "interaction_rankings.csv"
         df_interactions.to_csv(csv_path, index=False)
-        print(f"\n💾 Saved interactions to: {csv_path}")
+        print(f"\n  Full table → {csv_path.name}")
+    print(f"{'=' * 78}")
 
 
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
 
+def _mi(y: np.ndarray, x: np.ndarray) -> float:
+    """Miller–Madow bias-corrected MI (nats) between binary y and discrete x.
+
+    Subtracts (K_x − 1)(K_y − 1) / 2N, where K are the observed category
+    counts, and clips at 0.
+    """
+    k_x = len(np.unique(x))
+    k_y = len(np.unique(y))
+    correction = (k_x - 1) * (k_y - 1) / (2.0 * len(x))
+    return max(0.0, float(mutual_info_score(y, x)) - correction)
+
+
 def _discretise(series: pd.Series, feat: str, numeric_set: set[str]) -> np.ndarray:
     """Return a 1-D integer array suitable for :func:`mutual_info_score`.
 
-    Continuous features are quantile-binned into :data:`_N_BINS` buckets.
+    Continuous features are quantile-binned into at most :data:`_N_BINS`
+    buckets; tied quantile edges (common for campaign, previous, and the
+    macro indicators) are merged instead of producing zero-width bins.
     Categorical features are passed through as-is (already integer-encoded).
     """
     if feat not in numeric_set:
         return series.values.astype(int)
 
-    n_bins = min(_N_BINS, series.nunique())
-    disc = KBinsDiscretizer(n_bins=n_bins, encode="ordinal", strategy="quantile")
-    return disc.fit_transform(series.values.reshape(-1, 1)).ravel().astype(int)
+    return quantile_bin_codes(series, min(_N_BINS, series.nunique()))
+
+
+def quantile_bin_codes(series: pd.Series, n_bins: int) -> np.ndarray:
+    """Integer bin codes from up to `n_bins` quantile bins, robust to ties.
+
+    Interior quantiles are used as cut points with open outer bins, so a
+    heavily tied value (e.g. previous == 0 for 86 % of rows) forms its own
+    bin instead of every edge collapsing into a single bin.
+    """
+    x = series.to_numpy(dtype=float)
+    interior = np.unique(np.quantile(x, np.linspace(0, 1, n_bins + 1)[1:-1]))
+    return np.searchsorted(interior, x, side="left").astype(int)
