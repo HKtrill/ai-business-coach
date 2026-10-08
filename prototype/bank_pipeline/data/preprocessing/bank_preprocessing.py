@@ -24,7 +24,6 @@ Usage
 from __future__ import annotations
 
 import sqlite3
-import warnings
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Dict, Iterator, List
@@ -37,7 +36,6 @@ from ..bank_database import (
     raw_bank_exists,
 )
 
-warnings.filterwarnings("ignore")
 
 
 # ---------------------------------------------------------------------------

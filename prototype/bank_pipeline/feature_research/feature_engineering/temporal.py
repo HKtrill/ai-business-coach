@@ -17,27 +17,39 @@ as a main effect. Its value is entirely in the month interaction (10.6% MI lift)
 which dow_month_encoded captures through smoothed target encoding of the
 day x month cross.
 
-Leakage note (RESOLVED):
-    The functional add_temporal_features() computes target encoding on whatever
-    df is passed in. In the research notebook this is the full dataset — a known
-    leakage point documented here for transparency.
-
-    In the production pipeline (glass_cascade), use TemporalFeatureEngineer
-    which enforces a fit-on-train / transform pattern:
-        eng = TemporalFeatureEngineer()
-        X_train = eng.fit_transform(X_train, y_train)
-        X_test  = eng.transform(X_test)
-
-    Unseen day-month combinations in the test set fall back to the training
-    global mean rather than the full-dataset mean.
+Target handling:
+    dow_month_encoded is target-derived; TemporalFeatureEngineer fits the
+    smoothed cell rates and global mean on training data only. Unseen
+    day x month cells fall back to the training global mean.
+    Use it via FeaturePipeline.
 """
 
 import numpy as np
 import pandas as pd
 
-__all__ = ["add_temporal_features", "TemporalFeatureEngineer"]
+from feature_research.feature_engineering._checks import check_xy_aligned
+
+__all__ = ["TemporalFeatureEngineer"]
 
 _SMOOTHING_FACTOR: int = 100   # Laplace-style smoothing; tuned in Cell 10D
+
+
+def _dm_key(X: pd.DataFrame) -> pd.Series:
+    """Build the day x month key, requiring integer-encoded inputs.
+
+    The key is built from string forms, so a dtype change between splits
+    (e.g. 5 vs 5.0) would silently turn every lookup into a miss and send
+    all rows to the global-mean fallback. Fail loudly instead.
+    """
+    for col in ('day_of_week', 'month'):
+        if col not in X.columns:
+            raise ValueError(f"dow_month encoding requires '{col}' column.")
+        if not pd.api.types.is_integer_dtype(X[col]):
+            raise TypeError(
+                f"dow_month encoding requires integer-encoded '{col}'; "
+                f"got dtype {X[col].dtype}."
+            )
+    return X['day_of_week'].astype(str) + '_' + X['month'].astype(str)
 
 
 # ---------------------------------------------------------------------------
@@ -82,15 +94,10 @@ class TemporalFeatureEngineer:
         y : pd.Series
             Binary target aligned with X.
         """
-        if 'day_of_week' not in X.columns or 'month' not in X.columns:
-            raise ValueError(
-                "TemporalFeatureEngineer.fit() requires "
-                "'day_of_week' and 'month' columns."
-            )
-
+        check_xy_aligned(X, y, "TemporalFeatureEngineer.fit")
         self._global_mean = float(np.mean(y))
 
-        dm_key = X['day_of_week'].astype(str) + '_' + X['month'].astype(str)
+        dm_key = _dm_key(X)
         df_tmp = pd.DataFrame({'key': dm_key.values, 'y': np.asarray(y)})
         stats  = df_tmp.groupby('key')['y'].agg(['mean', 'count'])
 
@@ -123,14 +130,8 @@ class TemporalFeatureEngineer:
             raise ValueError(
                 "TemporalFeatureEngineer not fitted. Call fit() first."
             )
-        if 'day_of_week' not in X.columns or 'month' not in X.columns:
-            raise ValueError(
-                "TemporalFeatureEngineer.transform() requires "
-                "'day_of_week' and 'month' columns."
-            )
-
         X = X.copy()
-        dm_key = X['day_of_week'].astype(str) + '_' + X['month'].astype(str)
+        dm_key = _dm_key(X)
         X['dow_month_encoded'] = (
             dm_key.map(self._dm_smoothed).fillna(self._global_mean)
         )
@@ -141,71 +142,3 @@ class TemporalFeatureEngineer:
     ) -> pd.DataFrame:
         """Fit on X + y, then transform X."""
         return self.fit(X, y).transform(X)
-
-
-# ---------------------------------------------------------------------------
-# Research / exploratory functional API (kept for notebook compatibility)
-# ---------------------------------------------------------------------------
-def add_temporal_features(
-    df: pd.DataFrame,
-    target_col: str = 'y',
-    smoothing_factor: int = _SMOOTHING_FACTOR,
-) -> pd.DataFrame:
-    """
-    Add day-of-week x month smoothed target encoding.
-
-    Requires columns: day_of_week, month, target_col.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        Dataframe after add_derivative_features().
-    target_col : str
-        Binary target column name.
-    smoothing_factor : int
-        Laplace smoothing weight toward the global mean. Higher = more
-        regularisation for sparse day-month combinations.
-
-    Returns
-    -------
-    pd.DataFrame
-        Copy of df with temporal feature appended.
-
-    New columns
-    -----------
-    dow_month_encoded    float
-        Smoothed P(subscribe | day_of_week, month). Captures campaign
-        timing sweet spots (day + month combos).
-        LIVE — LR Stage 1, RF Stage 2, EBM Stage 3.
-
-        Formula per (day, month) cell:
-            encoded = (n_cell * P_cell + lambda * P_global) / (n_cell + lambda)
-        where lambda = smoothing_factor.
-
-        Unseen combinations fall back to P_global.
-
-    NOTE: This function uses target labels at compute time over whatever df
-    is passed in. In the research notebook this is the full dataset before
-    the train/test split — a known leakage point kept intentionally for
-    exploratory use. In the production pipeline use TemporalFeatureEngineer
-    which resolves this by fitting on training data only.
-    """
-    if 'day_of_week' not in df.columns or 'month' not in df.columns:
-        raise ValueError(
-            "add_temporal_features requires 'day_of_week' and 'month' columns."
-        )
-
-    df = df.copy()
-    global_mean: float = df[target_col].mean()
-
-    dm_key   = df['day_of_week'].astype(str) + '_' + df['month'].astype(str)
-    dm_stats = df.groupby(dm_key)[target_col].agg(['mean', 'count'])
-
-    dm_smoothed = (
-        dm_stats['count'] * dm_stats['mean']
-        + smoothing_factor * global_mean
-    ) / (dm_stats['count'] + smoothing_factor)
-
-    df['dow_month_encoded'] = dm_key.map(dm_smoothed).fillna(global_mean)
-
-    return df

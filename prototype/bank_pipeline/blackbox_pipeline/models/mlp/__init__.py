@@ -74,7 +74,6 @@ __all__ = [
     "oof_probabilities",
     "sweep_f_beta",
     "optimize_threshold_cv",
-    "tune_threshold",
     # orchestration + persistence
     "CalibratedStage1MLP",
     "save_stage1_mlp",

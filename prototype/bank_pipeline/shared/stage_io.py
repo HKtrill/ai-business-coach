@@ -479,8 +479,29 @@ class StageOutput:
         -----
         A version mismatch prints a warning and proceeds.
         """
-        if "__stage_output__" not in d:
-            raise StageOutputError("dict does not hold a StageOutput")
+        if not isinstance(d, dict):
+            raise StageOutputError(
+                f"expected a StageOutput dict, got {type(d).__name__}"
+            )
+        # A model artifact (e.g. save_stage1_mlp's .joblib) nests the contract
+        # under "stage_output" rather than being the contract itself. Unwrap it.
+        if "__stage_output__" not in d and "stage_output" in d:
+            nested = d["stage_output"]
+            if nested is None:
+                raise StageOutputError(
+                    "this is a model artifact saved WITHOUT a StageOutput "
+                    "(its 'stage_output' is None). Re-save it with "
+                    "save_stage1_mlp(stage, out_dir, "
+                    "stage_output=stage.to_stage_output(X_test, y_test)), "
+                    "or save the contract directly with out.save(out_dir)."
+                )
+            d = nested
+        if not isinstance(d, dict) or "__stage_output__" not in d:
+            keys = sorted(d)[:12] if isinstance(d, dict) else type(d).__name__
+            raise StageOutputError(
+                "dict does not hold a StageOutput (no '__stage_output__' "
+                f"marker). Keys found: {keys}"
+            )
         version = d["__stage_output__"]
         if version != STAGE_OUTPUT_VERSION:
             print(

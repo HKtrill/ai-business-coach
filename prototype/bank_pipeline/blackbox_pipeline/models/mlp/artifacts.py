@@ -72,6 +72,13 @@ def save_stage1_mlp(
     if not getattr(stage, "fitted", False):
         raise ValueError("Stage is not fitted; nothing to save")
 
+    if stage_output is None:
+        print(
+            "⚠️  no stage_output passed — this artifact will hold no test "
+            "probabilities, and StageOutput.load() on it will fail. Pass "
+            "stage_output=stage.to_stage_output(X_test, y_test) for Stage 4."
+        )
+
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
 
@@ -160,4 +167,3 @@ def load_stage1_mlp(path: str | Path) -> dict:
         )
 
     return payload
-

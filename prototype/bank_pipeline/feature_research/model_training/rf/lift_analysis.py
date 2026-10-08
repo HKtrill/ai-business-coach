@@ -1,112 +1,33 @@
 """
 model_training.rf.lift_analysis
-================================
-Lift-driven feature analysis for binary binning strategy discovery.
+===============================
+Decile lift of the continuous RF source features, used to find the bin
+thresholds locked in binning.py. Descriptive only: no model is fit.
 
-Used to identify natural breakpoints in continuous RF features before
-encoding them as binary bins for GLASS-BRW input. Thresholds discovered
-here are locked into binning.py — this module is diagnostic/reproducible,
-not part of the training hot path.
+Run it on training rows (df_rf from Cell 10G). Lift for target-derived sources
+(NSD, ECI, dow_month_encoded, …) is measured on encodings fit on those same
+rows, so it reads higher than it would out-of-fold. Keep that in mind when
+re-deriving thresholds at PR 39.
+
+Importance analysis lives in rf_diagnostics (out-of-fold, on the binary space
+the RF is actually trained on).
 
 Public API
 ----------
-compute_lift(df, features, target_col)          → dict[str, pd.DataFrame]
-compute_gini_importance(rf_pipe, X)             → pd.DataFrame
-compute_permutation_importance(rf_pipe, X, y)   → pd.DataFrame
-rf_lift_analysis(df, features, target_col, ...) → dict  (orchestrator)
+compute_lift(df, features, target_col, n_deciles)  → dict[str, pd.DataFrame]
+rf_lift_analysis(df, features, target_col, ...)    → dict  (orchestrator)
 """
 
 from __future__ import annotations
 
-import os
-from typing import Optional
-
-import numpy as np
-import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from sklearn.inspection import permutation_importance as _sklearn_perm_imp
-from sklearn.pipeline import Pipeline
+import pandas as pd
 
 from feature_research.config import FIG_DIR
+from feature_research.model_training.shared.report import in_notebook, title
 
 
 # ── Public helpers ────────────────────────────────────────────────────────────
-
-def compute_gini_importance(
-    rf_pipe: Pipeline,
-    X: pd.DataFrame,
-) -> pd.DataFrame:
-    """
-    Extract Gini (impurity) feature importances from a fitted RF pipeline.
-
-    Parameters
-    ----------
-    rf_pipe : Fitted Pipeline containing a 'clf' RandomForestClassifier step.
-    X       : Feature matrix used for training (column names preserved).
-
-    Returns
-    -------
-    pd.DataFrame — columns: feature, gini. Sorted by gini descending.
-    """
-    clf = rf_pipe.named_steps["clf"]
-    return (
-        pd.DataFrame({
-            "feature": X.columns,
-            "gini": clf.feature_importances_,
-        })
-        .sort_values("gini", ascending=False)
-        .reset_index(drop=True)
-    )
-
-
-def compute_permutation_importance(
-    rf_pipe: Pipeline,
-    X: pd.DataFrame,
-    y: pd.Series,
-    n_repeats: int = 10,
-    random_state: int = 42,
-    holdout_frac: float = 0.2,
-) -> pd.DataFrame:
-    """
-    Compute permutation importance on a held-out slice of the data.
-
-    Uses the last `holdout_frac` of rows as the evaluation set — avoids
-    re-running expensive CV while still giving an out-of-bag-style estimate.
-
-    Parameters
-    ----------
-    rf_pipe      : Fitted Pipeline.
-    X, y         : Full feature matrix and target (holdout sliced internally).
-    n_repeats    : Permutation repeats (default 10, ~30s for 29 features).
-    holdout_frac : Fraction of data held out for evaluation (default 0.20).
-
-    Returns
-    -------
-    pd.DataFrame — columns: feature, perm (mean AUC drop), std. Sorted desc.
-    """
-    split = int(len(X) * (1 - holdout_frac))
-    X_eval = X.iloc[split:]
-    y_eval = y.iloc[split:]
-
-    result = _sklearn_perm_imp(
-        rf_pipe, X_eval, y_eval,
-        n_repeats=n_repeats,
-        random_state=random_state,
-        n_jobs=-1,
-        scoring="roc_auc",
-    )
-    return (
-        pd.DataFrame({
-            "feature": X.columns,
-            "perm": result.importances_mean,
-            "std": result.importances_std,
-        })
-        .sort_values("perm", ascending=False)
-        .reset_index(drop=True)
-    )
-
 
 def compute_lift(
     df: pd.DataFrame,
@@ -115,22 +36,16 @@ def compute_lift(
     n_deciles: int = 10,
 ) -> dict[str, pd.DataFrame]:
     """
-    Compute conversion-rate lift by decile for each continuous feature.
+    Conversion-rate lift by decile for each continuous feature.
 
     Features with fewer than `n_deciles` unique values are binned by value
-    rather than quantile. Features that cannot be binned are skipped silently.
-
-    Parameters
-    ----------
-    df         : DataFrame containing features + target_col.
-    features   : List of continuous feature names to analyse.
-    target_col : Binary 0/1 target column.
-    n_deciles  : Number of quantile bins (default 10).
+    instead of quantile. A feature that cannot be binned is skipped with a
+    printed warning.
 
     Returns
     -------
-    dict mapping feature name → pd.DataFrame with columns:
-        bin, count, conversions, conv_rate, lift.
+    dict: feature → DataFrame [bin, count, conversions, conv_rate, lift, feature],
+    where lift = bin conversion rate / overall conversion rate.
     """
     overall_rate = df[target_col].mean()
     results: dict[str, pd.DataFrame] = {}
@@ -143,7 +58,8 @@ def compute_lift(
                 tmp["bin"] = tmp["val"]
             else:
                 tmp["bin"] = pd.qcut(tmp["val"], q=n_deciles, duplicates="drop")
-        except Exception:
+        except Exception as exc:
+            print(f"   ⚠️  compute_lift: skipped '{feat}' ({type(exc).__name__}: {exc})")
             continue
 
         lift_df = (
@@ -160,102 +76,30 @@ def compute_lift(
 
 # ── Private display / plot helpers ────────────────────────────────────────────
 
-def _print_importance(gini_df: pd.DataFrame, perm_df: Optional[pd.DataFrame], top_n: int = 20) -> None:
-    print(f"\n{'─' * 80}")
-    print("📊 FEATURE IMPORTANCE")
-    print(f"{'─' * 80}")
-
-    print(f"\n   🔝 Gini Importance (Top {top_n}):")
-    print(f"   {'Rank':<6} {'Feature':<40} {'Gini':>8}")
-    print(f"   {'-' * 57}")
-    for i, row in gini_df.head(top_n).iterrows():
-        bar = "█" * int(row["gini"] * 200)
-        print(f"   {i + 1:<6} {row['feature']:<40} {row['gini']:>8.4f}  {bar}")
-
-    if perm_df is not None:
-        print(f"\n   {'Rank':<6} {'Feature':<40} {'Perm AUC Drop':>14} {'Std':>8}")
-        print(f"   {'-' * 70}")
-        for i, row in perm_df.head(top_n).iterrows():
-            flag = "🔥" if row["perm"] > 0.01 else "⚪" if row["perm"] > 0 else "💀"
-            print(f"   {i + 1:<6} {row['feature']:<40} {row['perm']:>14.4f} {row['std']:>8.4f}  {flag}")
+def _mark(lift: float) -> str:
+    return "▲" if lift > 1.5 else "▼" if lift < 0.7 else " "
 
 
-def _print_lift(lift_results: dict[str, pd.DataFrame], overall_rate: float) -> None:
-    print(f"\n{'─' * 80}")
-    print("📈 CONTINUOUS FEATURE LIFT BY DECILE")
-    print(f"{'─' * 80}")
+def _print_lift(lift_results: dict[str, pd.DataFrame]) -> None:
+    """One line per feature: decile lifts low → high value (value bins for low-cardinality features)."""
+    print("Decile lift, low → high value (▲ > 1.5×, ▼ < 0.7×)")
+    rows = []
     for feat, ldf in lift_results.items():
-        print(f"\n   🔹 {feat}")
-        print(f"   {'Bin':<35} {'Count':>7} {'ConvRate':>10} {'Lift':>7}")
-        print(f"   {'-' * 62}")
-        for _, row in ldf.iterrows():
-            flag = "🔥" if row["lift"] > 1.5 else "🟢" if row["lift"] > 1.0 else "🔴"
-            print(
-                f"   {str(row['bin']):<35} {row['count']:>7,} "
-                f"{row['conv_rate']:>10.4f} {row['lift']:>7.2f}x  {flag}"
-            )
-
-
-def _print_recommendations(lift_results: dict[str, pd.DataFrame], overall_rate: float) -> None:
-    print(f"\n{'=' * 80}")
-    print("🎯 BINNING RECOMMENDATIONS")
-    print(f"{'=' * 80}")
-    print(f"\n   Overall conversion rate: {overall_rate:.4f}\n")
-    for feat, ldf in lift_results.items():
-        high = ldf[ldf["lift"] > 1.5]
-        low = ldf[ldf["lift"] < 0.7]
-        print(f"   {feat}:")
-        if len(high):
-            print(f"      🔥 HIGH LIFT bins (>1.5x): {list(high['bin'].astype(str))}")
-        if len(low):
-            print(f"      🔴 LOW LIFT bins  (<0.7x): {list(low['bin'].astype(str))}")
-        if not len(high) and not len(low):
-            print(f"      ⚪ Flat lift — low binning value")
-
-
-def _plot_importance(
-    gini_df: pd.DataFrame,
-    perm_df: Optional[pd.DataFrame],
-    top_n: int = 8,
-) -> None:
-    n_panels = 2 if perm_df is not None else 1
-    fig, axes = plt.subplots(1, n_panels, figsize=(9 * n_panels, 8))
-    if n_panels == 1:
-        axes = [axes]
-
-    fig.suptitle(
-        "RF Feature Importance — Binning Strategy",
-        fontsize=13, fontweight="bold",
-    )
-    top_gini = gini_df.head(top_n)
-    axes[0].barh(top_gini["feature"], top_gini["gini"], color="forestgreen")
-    axes[0].set_xlabel("Gini Importance")
-    axes[0].set_title("Gini Importance", fontweight="bold")
-    axes[0].invert_yaxis()
-    axes[0].grid(axis="x", alpha=0.3)
-
-    if perm_df is not None:
-        top_perm = perm_df.head(top_n)
-        axes[1].barh(
-            top_perm["feature"], top_perm["perm"],
-            xerr=top_perm["std"], color="steelblue",
-        )
-        axes[1].set_xlabel("Permutation Importance (AUC drop)")
-        axes[1].set_title("Permutation Importance", fontweight="bold")
-        axes[1].invert_yaxis()
-        axes[1].grid(axis="x", alpha=0.3)
-
-    plt.tight_layout()
-    save_path = FIG_DIR / "rf_feature_importance.png"
-    plt.savefig(save_path, dpi=150, bbox_inches="tight")
-    plt.close()
-    print(f"\n   ✅ Importance plot saved → {save_path}")
+        if isinstance(ldf["bin"].iloc[0], pd.Interval):
+            rows.append((feat, " ".join(f"{l:5.2f}{_mark(l)}" for l in ldf["lift"])))
+        else:
+            cells = " · ".join(f"{b}: {l:.2f}{_mark(l)}".rstrip() for b, l in zip(ldf["bin"], ldf["lift"]))
+            rows.append((f"{feat} (by value)", cells))
+    width = max((len(label) for label, _ in rows), default=0) + 2
+    for label, cells in rows:
+        print(f"  {label:<{width}}{cells}")
 
 
 def _plot_lift_curves(
     lift_results: dict[str, pd.DataFrame],
     overall_rate: float,
 ) -> None:
+    """Grid of per-decile conversion-rate bars: saved to FIG_DIR/rf_lift_curves.png and shown in a notebook."""
     if not lift_results:
         return
 
@@ -295,8 +139,11 @@ def _plot_lift_curves(
     plt.tight_layout()
     save_path = FIG_DIR / "rf_lift_curves.png"
     plt.savefig(save_path, dpi=150, bbox_inches="tight")
-    plt.close()
-    print(f"   ✅ Lift curves saved → {save_path}")
+    print(f"Lift curves saved → {save_path}")
+    if in_notebook():
+        plt.show()
+    else:
+        plt.close(fig)
 
 
 # ── Orchestrator ──────────────────────────────────────────────────────────────
@@ -305,71 +152,31 @@ def rf_lift_analysis(
     df: pd.DataFrame,
     features: list[str],
     target_col: str,
-    rf_pipe: Optional[Pipeline] = None,
     n_deciles: int = 10,
-    top_n_importance: int = 20,
 ) -> dict:
     """
-    Full lift analysis for binary binning strategy discovery.
-
-    Computes decile lift for all continuous features, and optionally
-    Gini + permutation importances if a fitted RF pipe is provided.
-    Saves importance and lift-curve figures to FIG_DIR.
+    Decile lift for the continuous RF source features: one line per feature,
+    plus the lift-curve figure (saved, and shown in a notebook).
 
     Parameters
     ----------
-    df           : df_engineered (must contain features + target_col).
-    features     : RF_FEATURES — continuous feature list from 10G.
-    target_col   : TARGET_COL string.
-    rf_pipe      : Optional fitted Pipeline — enables importance analysis.
-                   Pass None to run lift-only (no trained model required).
-    n_deciles    : Quantile bins for decile lift (default 10).
-    top_n_importance : Rows shown in importance tables (default 20).
+    df         : df_rf (features + target_col, training rows).
+    features   : RF_FEATURES — the 8 continuous source features from 10G.
+    target_col : TARGET_COL.
+    n_deciles  : Quantile bins per feature.
 
     Returns
     -------
-    dict with keys:
-        overall_rate, lift_results, gini_df (or None), perm_df (or None).
+    dict: overall_rate, lift_results.
     """
-    print(f"\n{'=' * 80}")
-    print("📈 RF LIFT ANALYSIS — BINNING STRATEGY")
-    print(f"{'=' * 80}")
-
-    X = df[features]
-    y = df[target_col]
-    overall_rate = float(y.mean())
-
-    print(f"\n   Overall conversion rate : {overall_rate:.4f} ({overall_rate:.1%})")
-    print(f"   Features in analysis    : {len(features)}")
-
-    # ── Importance (optional — needs fitted pipe) ─────────────────────────────
-    gini_df: Optional[pd.DataFrame] = None
-    perm_df: Optional[pd.DataFrame] = None
-
-    if rf_pipe is not None:
-        rf_pipe.fit(X, y)
-        gini_df = compute_gini_importance(rf_pipe, X)
-        print("\n   🔀 Computing Permutation Importance (~30s)...")
-        perm_df = compute_permutation_importance(rf_pipe, X, y)
-        _print_importance(gini_df, perm_df, top_n_importance)
-        _plot_importance(gini_df, perm_df)
-    else:
-        print("\n   ℹ️  No rf_pipe provided — skipping importance analysis.")
-        print("      Pass rf_result.pipe to enable Gini + permutation importances.")
-
-    # ── Lift by decile ────────────────────────────────────────────────────────
+    overall_rate = float(df[target_col].mean())
     lift_results = compute_lift(df, features, target_col, n_deciles)
-    _print_lift(lift_results, overall_rate)
-    _print_recommendations(lift_results, overall_rate)
-    _plot_lift_curves(lift_results, overall_rate)
 
-    print(f"\n{'=' * 80}")
-    print("✅ Lift analysis complete — review figures then confirm binning.py thresholds")
-    print(f"{'=' * 80}")
+    title(f"RF LIFT ANALYSIS — {len(features)} continuous sources · base rate {overall_rate:.3f}")
+    _print_lift(lift_results)
+    _plot_lift_curves(lift_results, overall_rate)
 
     return {
         "overall_rate": overall_rate,
         "lift_results": lift_results,
-        "gini_df": gini_df,
-        "perm_df": perm_df,
     }

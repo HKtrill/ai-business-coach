@@ -1,7 +1,7 @@
 """
 glass_pipeline.ebm.tuning
 =========================
-Since PR 33 the EBM Optuna search runs through ``shared.stage_runner`` — the
+Since PR 33 the EBM Optuna search runs through ``shared.stage3.tuning`` — the
 same loop the XGBoost arm uses (TPE seed 42, MedianPruner 20/2, 150 trials,
 F2 at the 0.5 cut, balanced weights), on per-fold engineered features.
 
@@ -14,7 +14,7 @@ train, kept no OOF predictions, and returned an in-sample refit. Use
 ``train_ebm_stage(block=..., config=...)``.
 """
 
-from shared.stage_runner import Stage3Tuner, TuningResult  # noqa: F401
+from shared.stage3.tuning import Stage3Tuner, TuningResult  # noqa: F401
 
 from .estimator import EBMFactory, EBMSearchSpace  # noqa: F401
 

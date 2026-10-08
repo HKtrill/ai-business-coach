@@ -22,7 +22,7 @@ almost entirely in the binary "has ever been contacted" split.  previous≥5
 has 60-70% subscribe rate but tiny N; prior_x_stress captures the meaningful
 interaction (prior relationship + economic stress) without tail noise.
 
-DAG position: must run AFTER add_integral_features() (needs economic_stress_integral)
+DAG position: must run AFTER the integrals step (needs economic_stress_integral)
 and BEFORE add_overlap_features() (overlap.py needs has_prior_contact for
 behavioral_favorability).
 """
@@ -44,7 +44,7 @@ def add_prior_features(
     Parameters
     ----------
     df : pd.DataFrame
-        Dataframe after add_integral_features() (needs economic_stress_integral).
+        Dataframe after the integrals step (needs economic_stress_integral).
     target_col : str
         Retained for API symmetry; not used in this module.
 
@@ -71,7 +71,7 @@ def add_prior_features(
     if 'economic_stress_integral' not in df.columns:
         raise ValueError(
             "add_prior_features requires 'economic_stress_integral'. "
-            "Run add_integral_features() first."
+            "Run IntegralFeatureEngineer first (FeaturePipeline does this)."
         )
 
     df = df.copy()

@@ -110,4 +110,6 @@ __all__ = [
     "ArmScores", "Stage3Comparison",
     # runner
     "Stage3Runner",
+    # feature engineering
+    "EBM_FEATURES", "EBMFeaturePipeline",
 ]

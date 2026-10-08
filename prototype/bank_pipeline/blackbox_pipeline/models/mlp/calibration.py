@@ -20,7 +20,7 @@ from typing import Any, Dict, Tuple
 
 import numpy as np
 
-from shared.calibration_guard import (
+from shared.stage1.calibration_guard import (
     CalibrationLeakageError,
     assert_refittable,
     is_prefit_calibrator,

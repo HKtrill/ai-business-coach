@@ -5,7 +5,10 @@ from __future__ import annotations
 import inspect
 
 import numpy as np
-import pytest
+try:
+    import pytest
+except ImportError:  # Allow this test module to be imported without test dependencies.
+    pytest = None
 
 from shared.stage4 import (
     ABSTENTION_GRID, ABSTENTION_MIN_COVERAGE, Stage4InputError, build_stage4_inputs,

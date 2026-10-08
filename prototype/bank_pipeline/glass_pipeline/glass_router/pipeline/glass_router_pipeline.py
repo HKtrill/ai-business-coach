@@ -157,6 +157,7 @@ class GlassRouterPipeline:
             diversity_weight=c.diversity_weight,
             lambda_rf_uncertainty=c.lambda_rf_uncertainty,
             lambda_rf_misalignment=c.lambda_rf_misalignment,
+            max_union_leakage_rate_pass1=getattr(c, "max_union_leakage_rate_pass1", None),
         )
 
     # ================================================================
@@ -278,7 +279,7 @@ class GlassRouterPipeline:
             r.coverage = r.coverage * coverage_scale
         sel2 = self._new_selector().select_rules(
             evaluated_rules=ev2, y_val=y_rem, X_val=X_rem,
-            segment_builder=self.segment_builder,
+            segment_builder=self.segment_builder, passes=("pass2",),
         )
         self.pass2_rules = sel2["pass2_rules"]
 
@@ -305,6 +306,7 @@ class GlassRouterPipeline:
         ev = evaluator.evaluate_candidates(cands, X, y)
         sel = selector.select_rules(
             evaluated_rules=ev, y_val=y, X_val=X, segment_builder=self.segment_builder,
+            passes=("pass1",),
         )
         return sel["pass1_rules"]
 

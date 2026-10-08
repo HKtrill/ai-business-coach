@@ -2,78 +2,91 @@
 
 ### Phase 1 — Finish and Validate the Cascades
 
-#### PR 33 — Implement Stage 4 & Clean Cascades
-
-- [x] Validate Stages 1–3 under a mirrored protocol on both cascades
-- [x] Retire GLASS-BRW naming — modules, variables, artifact keys, notebook markdown, scanned for stragglers
-- [x] Align GLASS train-side Stage 2/3 outputs with the OOF protocol
-- [x] Share Stage 4 input/alignment infrastructure across both arms
-- [x] Verify Stage 3 population policy across both arms
-- [x] Establish OOF stacking-feature policy
-- [x] Finalize matched Stage 4 input contracts
-- [x] Update GLASS Stage 4 to the audited Stage 1–3 artifact contracts
-- [x] Implement Meta-XGB as the black-box Stage 4 counterpart
-- [x] Combine Stage 1–4 signals into complete cascade outputs
-- [x] Freeze and sign off the Stage 2 baseline
-- [x] Validate end-to-end black-box cascade execution
-- [x] Record provisional GLASS Arbiter vs Meta-XGB Stage 4 results
-- [x] Run 2×2 arbiter crossover:
-  - GLASS Arbiter on GLASS upstream outputs
-  - Meta-XGB on GLASS upstream outputs
-  - GLASS Arbiter on black-box upstream outputs
-  - Meta-XGB on black-box upstream outputs
-- [x] Clean cascade pipeline infrastructure, naming, stale compatibility code, and documentation
-
 #### PR 34 — Validation, Research-Pipeline Audit, and Cleanup
 
 **Full pipeline validation**
-- [ ] Clean-kernel top-to-bottom rerun of all three active research notebooks
-- [ ] Verify all notebook outputs are reproducible from the current codebase
-- [ ] Final leakage, split, feature, calibration, threshold, and OOF audits
-- [ ] Verify artifact provenance, library versions, and reload guards
-- [ ] Verify final cascade prediction diversity/correlation
-- [ ] Rerun and record final metrics after validation
+- [x] Clean-kernel top-to-bottom rerun of all three active research notebooks
+- [x] Verify all notebook outputs are reproducible from the current codebase
+- [x] Final leakage, split, feature, calibration, threshold, and OOF audits
+- [x] Verify artifact provenance, library versions, and reload guards
+- [x] Verify final cascade prediction diversity/correlation
+- [x] Correct the GLASS Router ILP selector from per-rule ranking to set-aware union optimization
+- [x] Add selected-set novelty, union-leakage, cardinality, solver/fallback, and lexicographic-selection safeguards
+- [x] Add focused regression coverage for the corrected selector and validate it against exhaustive-search cases
+- [x] Document the corrected GLASS Router selector design, constraints, solver semantics, diagnostics, and empirical behavior
+- [x] Rerun and record final metrics after validation
 
 **Repository cleanup**
-- [ ] Consolidate `shared/stage3/` and `shared/stage_runner.py` into one source of truth; make the other a thin re-export
-- [ ] Unify the two split-fingerprint formats (`stage_io` 12-hex and router 16-hex) into one scheme
-- [ ] Anchor artifact directories to their package roots instead of the notebook working directory
+- [x] Consolidate `shared/stage3/` and `shared/stage_runner.py` into one source of truth; make the other a thin re-export
+- [x] Unify the two split-fingerprint formats (`stage_io` 12-hex and router 16-hex) into one scheme
+- [x] Anchor artifact directories to their package roots instead of the notebook working directory
 
 **Feature-research pipeline validation**
-- [ ] Audit the feature-research pipeline end to end
-- [ ] Verify every learned feature transformation is fitted on training data only
-- [ ] Verify feature names, order, dtypes, and source-feature provenance
-- [ ] Verify feature-block fingerprints / contracts where applicable
-- [ ] Reject missing, extra, duplicated, or reordered feature columns
-- [ ] Verify cached feature artifacts belong to the current split and feature contract
-- [ ] Verify no test-derived statistics enter feature construction
-- [ ] Verify feature-research outputs consumed downstream reproduce exactly after reload
-- [ ] Remove stale feature-research paths, aliases, and compatibility code no longer required
+- [x] Audit the feature-research pipeline end to end
+  - [x] Config, separation, interactions, feature engineering, RF training / binning / diagnostics
+  - [x] Per-stage tuning modules (remove redundant splits), LR / EBM trainers, cells after 13E
+- [x] Verify every learned feature transformation is fitted on training data only
+  - [x] Global split isolated to Cell 5; all redundant split calls are now removed
+  - [x] `FeaturePipeline` fits on train, transforms test; separation (Cell 6) and interaction search (Cell 9) run on train
+- [x] Verify feature names, order, dtypes, and source-feature provenance
+  - [x] Declared raw feature types; stage column order = registry order; integer guard on dow_month key
+- [x] Verify feature-block fingerprints / contracts where applicable
+- [x] Reject missing, extra, duplicated, or reordered feature columns
+- [x] Verify cached feature artifacts belong to the current split and feature contract
+- [x] Verify no test-derived statistics enter feature construction
+  - [x] Runtime: all target statistics train-only; split-median imputation removed
+  - [x] Locked constants checked on train-only data: 25 / 29 bins reproduce, all groups monotone and mutually exclusive
+- ➡️ **Deferred to PR 39:** NSD and ECI show lift drift; re-evaluate and re-derive thresholds if needed using train-only leakage-safe analysis.
+- [x] Verify feature-research outputs consumed downstream reproduce exactly after reload
+- [x] Remove stale feature-research paths, aliases, and compatibility code no longer required
+  - [x] Full-frame target-based API removed; old `research_logs` retired; `_fill_nans` and import-time `matplotlib.use` removed
+  - [x] Replace global `warnings.filterwarnings("ignore")` (config.py, preprocessor)
+- [x] Fix any broken code and document the problem/solution
+  - [x] See "Additional feature-research work" below
+  - [x] Separation metrics: categorical probe AUC, small-category target-rate range
+
+**Additional feature-research work (not in original checklist)**
+- [x] Notebook path bootstrap (`BANK_ROOT`) after relocating the notebook into the package
+- [x] Package-anchored output paths (`OUTPUT_DIR`, `FIG_DIR`)
+- [x] Declared feature typing (`job` categorical, `previous` numeric) replacing cardinality inference
+- [x] DerivativeFeatureEngineer bin-edge rounding bug fixed (measured impact ≤ 1 row; picked up at PR 39 regeneration)
+- [x] X/y index-alignment guards on all fitted engineers
+- [x] Fail-loud NaN/inf check replacing split-statistic imputation; all silent fallbacks removed
+- [x] `FeaturePipeline` fit/transform orchestrator with column and dtype contract; parity with old functional path verified
+- [x] Interaction search: Miller–Madow MI correction; pure interactions no longer zeroed
+- [x] Separation metrics: category-rate probe AUC, ≥ 30-row target-rate range, consistent MI normalization
+- [x] RF lift analysis no longer refits caller's model; permutation importance truly held out
+- [x] RF `recall_at_10fpr` computed out-of-fold (was in-sample)
+- [x] RF diagnostics Gini label-order guard
+- [x] Notebook markdown documentation verified against code and rewritten/condensed for readability
+- [x] Optimize Optuna tuning
+- [x] Formalize the selector with rigurous documentation
+- [x] Apply robust testing on the selector to account for potential problematic edge cases
 
 **Notebook-specific validation**
 
-- [ ] Feature-research notebook
-  - clean-kernel execution
-  - feature-generation contracts
-  - train-only fitting
-  - artifact reload/provenance
-  - deterministic outputs where expected
+- [x] Feature-research notebook
+  - [x] clean-kernel execution
+  - [x] feature-generation contracts
+  - [x] train-only fitting (feature engineering + analysis through Cell 13)
+  - [x] artifact reload/provenance
+  - [x] deterministic outputs where expected
 
-- [ ] GLASS cascade notebook
-  - Stage 1–4 contracts
-  - OOF hand-offs
-  - split/index/fold identity
-  - calibration and threshold provenance
-  - routing / abstention semantics
-  - GLASS Arbiter inputs and outputs
+- [x] GLASS cascade notebook
+  - [x] Stage 1–4 contracts
+  - [x] OOF hand-offs
+  - [x] split/index/fold identity
+  - [x] calibration and threshold provenance
+  - [x] routing / abstention semantics
+  - [x] GLASS Arbiter inputs and outputs
 
-- [ ] Black-box cascade notebook
-  - Stage 1–4 mirror contracts
-  - OOF hand-offs
-  - split/index/fold identity
-  - matched feature/population contracts
-  - Meta-XGB cross-fitting
-  - threshold / calibration / abstention provenance
+- [x] Black-box cascade notebook
+  - [x] Stage 1–4 mirror contracts
+  - [x] OOF hand-offs
+  - [x] split/index/fold identity
+  - [x] matched feature/population contracts
+  - [x] Meta-XGB cross-fitting
+  - [x] threshold / calibration / abstention provenance
 
 #### PR 35 — Automated Pipeline Test Suite
 
@@ -228,6 +241,15 @@
   - `dow_month_encoded` → `subscribe_rate_by_dow_month`
 - [ ] Update feature contracts, documentation, artifacts, and downstream references
 
+**Stage 2 binning revalidation**
+
+- [ ] Re-evaluate NSD and ECI bin thresholds using train-only, leakage-safe lift analysis
+- [ ] Compare current lift behavior against the original threshold rationale
+- [ ] Measure per-bin support, lift, and fold stability
+- [ ] Check conjunction / router utility before merging or removing weak bins
+- [ ] Re-derive thresholds where drift materially changes the intended bin semantics
+- [ ] Freeze the final Stage 2 binning contract before artifact regeneration
+
 **Final regeneration**
 
 - [ ] Regenerate affected Stage 1–3 artifacts under the finalized contracts
@@ -320,6 +342,7 @@
 - [ ] Threshold sensitivity
 - [ ] Abstention / coverage sensitivity
 - [ ] Tuning-budget sensitivity
+- [ ] Temporal-split sensitivity check (train on earlier months, test on later) — macro features are monthly and identify the contact period
 
 ### Phase 4 — Paper Readiness
 

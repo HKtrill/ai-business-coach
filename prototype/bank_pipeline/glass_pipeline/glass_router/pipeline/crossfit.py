@@ -53,7 +53,7 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
 from glass_pipeline.glass_router.core.rule import ABSTAIN, NOT_SUBSCRIBE, SUBSCRIBE
-from glass_pipeline.glass_router.rf.feature_engineering import engineer_features
+from shared.stage2.feature_engineering import engineer_features
 from glass_pipeline.glass_router.rf.rf_training import _build_pipe, _make_sample_weights
 from glass_pipeline.glass_router.rule_generator.rule_logger import RuleLogger
 from .glass_router_pipeline import GlassRouterPipeline

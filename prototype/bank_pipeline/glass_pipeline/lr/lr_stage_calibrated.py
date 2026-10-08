@@ -48,7 +48,7 @@ from .artifacts   import save_artifact
 
 from shared.stage_io import StageOutput, fold_assignment
 from shared.thresholds import optimize_threshold_cv
-from shared.calibration_guard import assert_refittable
+from shared.stage1.calibration_guard import assert_refittable
 from shared.metrics import metrics_table as _metrics_table
 
 warnings.filterwarnings("ignore")

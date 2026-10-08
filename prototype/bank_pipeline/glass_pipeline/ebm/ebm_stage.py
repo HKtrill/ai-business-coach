@@ -31,13 +31,13 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from shared.stage_runner import Stage3Artifact
-from shared.stage_runner import Stage3Block
-from shared.stage_runner import Stage3Runner
+from shared.stage3.artifact import Stage3Artifact
+from shared.stage3.runner import Stage3Block
+from shared.stage3.runner import Stage3Runner
 
 from .config import EBMStage3Config
 from .estimator import EBMFactory
-from .feature_engineering import EBM_FEATURES, EBMFeaturePipeline
+from shared.stage3.feature_engineering import EBM_FEATURES, EBMFeaturePipeline
 from .interactions import define_ebm_interactions
 
 __all__ = ["train_ebm_stage", "make_ebm_factory"]

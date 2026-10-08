@@ -1,4 +1,4 @@
-""""
+"""
 feature_research.feature_engineering
 =====================================
 Subpackage for Glass Cascade feature engineering.
@@ -12,17 +12,18 @@ temporal    — Cell 10D: dow_month_encoded
 prior       — Cell 10E: has_prior_contact, prior_x_stress
 overlap     — Cell 10F: cpi_high_cellular, behavioral_favorability,
               overlap_default_clean, overlap_behavioral_score
-pipeline    — build_features() orchestrator
+pipeline    — FeaturePipeline orchestrator
 
 Public API
 ----------
-Primary entry point (research notebook):
-    build_features(df, target_col, random_state, n_bins, smoothing_factor) -> df
+    FeaturePipeline().fit_transform(X_train, y_train) / .transform(X_test)
 
-Production engineers (glass_cascade pipeline — leakage-free):
-    IntegralFeatureEngineer     fit/transform for neighborhood_subscription_density
-    DerivativeFeatureEngineer   fit/transform for euribor3m_local_rate + curvature
-    TemporalFeatureEngineer     fit/transform for dow_month_encoded
+Fit-on-train engineers (used by FeaturePipeline):
+    IntegralFeatureEngineer     neighborhood_subscription_density
+    DerivativeFeatureEngineer   euribor3m_local_rate + curvature
+    TemporalFeatureEngineer     dow_month_encoded
+
+Deterministic adders: add_crisis_features, add_prior_features, add_overlap_features
 
 Stage feature registries:
     LIVE_FEATURES  dict[str, list[str]]   keyed by 'lr', 'rf', 'ebm'
@@ -30,22 +31,13 @@ Stage feature registries:
 """
 
 from feature_research.feature_engineering.crisis import add_crisis_features
-from feature_research.feature_engineering.integrals import (
-    add_integral_features,
-    IntegralFeatureEngineer,
-)
-from feature_research.feature_engineering.derivatives import (
-    add_derivative_features,
-    DerivativeFeatureEngineer,
-)
-from feature_research.feature_engineering.temporal import (
-    add_temporal_features,
-    TemporalFeatureEngineer,
-)
+from feature_research.feature_engineering.integrals import IntegralFeatureEngineer
+from feature_research.feature_engineering.derivatives import DerivativeFeatureEngineer
+from feature_research.feature_engineering.temporal import TemporalFeatureEngineer
 from feature_research.feature_engineering.prior import add_prior_features
 from feature_research.feature_engineering.overlap import add_overlap_features
 from feature_research.feature_engineering.pipeline import (
-    build_features,
+    FeaturePipeline,
     finalize_features,
     get_stage_df,
 )
@@ -96,17 +88,14 @@ LIVE_FEATURES: dict[str, list[str]] = {
 
 __all__ = [
     # pipeline
-    'build_features',
+    'FeaturePipeline',
     'finalize_features',
     'get_stage_df',
-    # individual adders (DAG order)
+    # deterministic adders
     'add_crisis_features',
-    'add_integral_features',
-    'add_derivative_features',
-    'add_temporal_features',
     'add_prior_features',
     'add_overlap_features',
-    # production engineers (fit/transform — leakage-free)
+    # fit-on-train engineers
     'IntegralFeatureEngineer',
     'DerivativeFeatureEngineer',
     'TemporalFeatureEngineer',

@@ -25,7 +25,7 @@ Stage 4 handoff
     stage.to_stage_output()   → shared.stage_io.StageOutput (indexed, OOF train side)
 """
 
-from .feature_engineering import engineer_features, LRFeatureEngineer
+from shared.stage1.feature_engineering import engineer_features, LRFeatureEngineer
 from .lr_stage_calibrated import train_lr_stage, CalibratedLRStage
 from .lr_stage import train_baseline_lr_stage, LRStage
 from .correlation_analysis import analyze_and_prune_features, CorrelationAnalyzer

@@ -1,33 +1,43 @@
 """
 model_training.rf.binning
-==========================
-Lift-driven binary encoding of continuous RF features for GLASS-BRW input.
+=========================
+Lift-driven binary encoding of continuous RF features for the RF stage and
+the GLASS Router.
 
-Thresholds were derived from Cell 13C lift analysis and are locked here as
-the permanent research record. Each continuous feature is expanded into
-mutually exclusive bins (cold / warm / hot / etc.) that form the 29-column
-binary input space for the Random Forest stage.
+Eight source features are expanded into 29 binary columns: seven groups of
+mutually exclusive bins plus one passthrough flag. Thresholds are fixed
+constants (no fitting), derived from the Cell 15A lift analysis and locked in
+BINNING_STRATEGY. Bins are (lower, upper]; None means unbounded.
+
+The lift figures in the BINNING_STRATEGY comments are from the original
+derivation. On the current train-only frame NSD (nsd_elevated) and ECI
+(eci_warm, eci_hot) have drifted; thresholds are re-derived at PR 39.
 
 Design rationale
 ----------------
-GLASS-BRW operates on binary conjunctions — it requires binary inputs.
-Multi-bin encoding (rather than simple above/below threshold) lets the RF
-learn interactions between levels of the same feature (e.g. nsd_hot AND
-jed_cold) without collapsing the signal into a single flag.
+The GLASS Router is a two-pass symbolic rule router whose rules are
+conjunctions of binary conditions, so it needs binary inputs. Multi-bin
+encoding (rather than a single above/below flag) gives those rules and the RF
+distinct levels of each feature to combine (e.g. nsd_hot AND jed_cold).
 
 Public API
 ----------
-create_binary_features(df, target_col) → (df_rf_binary, RF_FEATURES_BINARY)
-validate_binary_features(df_binned, target_col, verbose)
-RF_FEATURES_BINARY — canonical 29-feature list
-BINNING_STRATEGY   — dict of threshold definitions (source of truth)
+bin_features(df)                        → df with the 29 bin columns added (pure)
+BinaryFeaturePipeline(base_factory)     feature pipeline + binning, for per-fold refits
+create_binary_features(df, target_col)  → (df_rf_binary, RF_FEATURES_BINARY), with lift summary
+bin_lift_table(df_binned, target_col)   → per-bin rows, share, conversion rate, lift
+validate_binary_features(df, target_col, verbose)
+RF_FEATURES_BINARY                      canonical 29-column list
+BINNING_STRATEGY                        threshold definitions (source of truth)
 """
 
 from __future__ import annotations
 
+from typing import Any, Callable
+
 import pandas as pd
 
-# ── Canonical feature list (output of create_binary_features) ─────────────────
+# ── Canonical feature list (output of bin_features) ───────────────────────────
 RF_FEATURES_BINARY: list[str] = [
     # neighborhood_subscription_density → 4 bins
     "nsd_cold", "nsd_warm", "nsd_elevated", "nsd_hot",
@@ -47,7 +57,7 @@ RF_FEATURES_BINARY: list[str] = [
     "cpi_cellular",
 ]
 
-# ── Mutual exclusivity groups (used for validation) ───────────────────────────
+# ── Mutual exclusivity groups (every row must fall in exactly one bin) ────────
 _FEATURE_GROUPS: dict[str, list[str]] = {
     "NSD":      ["nsd_cold", "nsd_warm", "nsd_elevated", "nsd_hot"],
     "JED":      ["jed_cold", "jed_transition", "jed_warm", "jed_hot"],
@@ -58,13 +68,14 @@ _FEATURE_GROUPS: dict[str, list[str]] = {
     "CAMPAIGN": ["campaign_fresh", "campaign_moderate", "campaign_heavy"],
 }
 
-# ── Binning strategy — locked thresholds from 13C lift analysis ───────────────
-# Format: source feature → list of (bin_name, lower_bound_exclusive, upper_bound_inclusive)
-# None bounds mean -inf / +inf.
+# ── Binning strategy — locked thresholds ──────────────────────────────────────
+# Format: group → {"source": column, "bins": [(bin_name, lower_exclusive, upper_inclusive)]}
+#         or {"source": column, "passthrough": output_name} for already-binary sources.
+# None bounds mean -inf / +inf. Lift figures are from the original derivation.
 BINNING_STRATEGY: dict = {
     # ── neighborhood_subscription_density  [0.048, 0.350] ─────────────────────
     # Dead ≤0.052 (0.27–0.49x), transition to 0.19 (~0.9x),
-    # warm 0.19–0.23 (1.04–1.43x), hot >0.23 (4.08x lift)
+    # elevated 0.19–0.23 (1.04–1.43x), hot >0.23 (4.08x lift)
     "NSD": {
         "source": "neighborhood_subscription_density",
         "bins": [
@@ -155,89 +166,127 @@ BINNING_STRATEGY: dict = {
     },
 }
 
+_SOURCES: list[str] = [g["source"] for g in BINNING_STRATEGY.values()]
+
 
 # ── Internal helpers ──────────────────────────────────────────────────────────
 
-def _apply_group(df: pd.DataFrame, group_def: dict) -> pd.DataFrame:
-    """Apply one feature group's binning rules to df in-place."""
+def _apply_group(df: pd.DataFrame, group_def: dict) -> None:
+    """Add one group's bin columns to df in place (int8, (lower, upper])."""
     if "passthrough" in group_def:
         df[group_def["passthrough"]] = df[group_def["source"]].astype("int8")
-        return df
+        return
 
-    source = group_def["source"]
-    col = df[source]
-
+    col = df[group_def["source"]]
     for bin_name, lo, hi in group_def["bins"]:
-        if lo is None and hi is not None:
+        if lo is None:
             mask = col <= hi
-        elif lo is not None and hi is None:
+        elif hi is None:
             mask = col > lo
         else:
             mask = (col > lo) & (col <= hi)
         df[bin_name] = mask.astype("int8")
 
-    return df
-
 
 # ── Public API ────────────────────────────────────────────────────────────────
+
+def bin_features(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Return a copy of df with the 29 RF_FEATURES_BINARY columns added.
+
+    Pure transform: fixed thresholds, no target, no printing. Source columns
+    are kept; slice with RF_FEATURES_BINARY for the model-ready matrix.
+    Raises KeyError if any source feature is missing.
+    """
+    missing = [s for s in _SOURCES if s not in df.columns]
+    if missing:
+        raise KeyError(f"bin_features: missing source features {missing}")
+    out = df.copy()
+    for group_def in BINNING_STRATEGY.values():
+        _apply_group(out, group_def)
+    return out
+
+
+class BinaryFeaturePipeline:
+    """
+    Feature pipeline followed by the locked RF binning.
+
+    base_factory : zero-arg callable returning the feature pipeline,
+                   e.g. make_feature_pipeline (Cell 11).
+
+    fit_transform(X, y) fits a fresh base pipeline and bins its output;
+    transform(X) applies the fitted base pipeline and bins its output.
+    Used as a per-fold feature factory:
+        partial(BinaryFeaturePipeline, make_feature_pipeline)
+    """
+
+    def __init__(self, base_factory: Callable[[], Any]):
+        self.base_factory = base_factory
+
+    def fit_transform(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
+        self.base_ = self.base_factory()
+        return bin_features(self.base_.fit_transform(X, y))
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        return bin_features(self.base_.transform(X))
+
+
+def _group_columns(group_def: dict) -> list[str]:
+    return [b[0] for b in group_def["bins"]] if "bins" in group_def else [group_def["passthrough"]]
+
+
+def bin_lift_table(df_binned: pd.DataFrame, target_col: str) -> pd.DataFrame:
+    """
+    Per-bin lift on df_binned.
+
+    Returns DataFrame [group, bin, rows, share, conv_rate, lift], one row per
+    RF_FEATURES_BINARY column, where lift = bin conversion rate / overall rate.
+    """
+    overall = df_binned[target_col].mean()
+    records = []
+    for group, group_def in BINNING_STRATEGY.items():
+        for col in _group_columns(group_def):
+            on = df_binned[col] == 1
+            conv = float(df_binned.loc[on, target_col].mean()) if on.any() else 0.0
+            records.append({
+                "group": group, "bin": col, "rows": int(on.sum()), "share": float(on.mean()),
+                "conv_rate": conv, "lift": conv / overall if overall > 0 else 0.0,
+            })
+    return pd.DataFrame(records)
+
 
 def create_binary_features(
     df: pd.DataFrame,
     target_col: str,
 ) -> tuple[pd.DataFrame, list[str]]:
     """
-    Transform continuous RF features into 29 mutually exclusive binary bins.
-
-    Reads source features from df (must be df_engineered or equivalent),
-    applies the locked BINNING_STRATEGY thresholds, and returns an augmented
-    copy with binary bin columns appended.
-
-    Does NOT drop the original source columns — caller can slice with
-    RF_FEATURES_BINARY to get the model-ready input.
+    bin_features(df) plus a one-line-per-group lift summary
+    (full detail: bin_lift_table).
 
     Parameters
     ----------
-    df         : df_engineered (source features must be present).
-    target_col : TARGET_COL — used for lift sanity check display only.
+    df         : df_engineered (source features + target_col, training rows).
+    target_col : TARGET_COL — used only for the lift summary.
 
     Returns
     -------
-    df_rf_binary : pd.DataFrame with binary bin columns appended.
-    RF_FEATURES_BINARY : list[str] — canonical 29-bin feature list.
+    df_rf_binary       : copy of df with the 29 bin columns added.
+    RF_FEATURES_BINARY : canonical 29-column list.
     """
-    print(f"\n{'=' * 80}")
-    print("🔀 FEATURE BINNING — LIFT-DRIVEN MULTI-BIN ENCODING")
-    print(f"{'=' * 80}")
-    print("   Converting continuous features → 29 binary bins")
-    print(f"{'─' * 80}")
+    df_binned = bin_features(df)
+    lift = bin_lift_table(df_binned, target_col)
 
-    df_binned = df.copy()
-
-    for group_name, group_def in BINNING_STRATEGY.items():
-        source = group_def["source"]
-        assert source in df_binned.columns, (
-            f"Source feature '{source}' not found in df. "
-            f"Ensure df_engineered contains all RF source features."
-        )
-        _apply_group(df_binned, group_def)
-
-    # ── Lift sanity report ────────────────────────────────────────────────────
-    overall_rate = df_binned[target_col].mean()
-    print(f"\n   Per-bin lift (base rate: {overall_rate:.4f}):")
-    print(f"   {'Bin':25s} {'N':>7s} {'Conv':>8s} {'Lift':>7s}")
-    print(f"   {'-' * 25} {'-' * 7} {'-' * 8} {'-' * 7}")
-    for feat in RF_FEATURES_BINARY:
-        n = int(df_binned[feat].sum())
-        conv = (
-            df_binned.loc[df_binned[feat] == 1, target_col].mean()
-            if n > 0 else 0.0
-        )
-        lift = conv / overall_rate if overall_rate > 0 else 0.0
-        tag = "🔥" if lift > 1.5 else "🔴" if lift < 0.7 else "  "
-        print(f"   {feat:25s} {n:>7,} {conv:>8.4f} {lift:>6.2f}x {tag}")
-
-    print(f"\n✅ {len(RF_FEATURES_BINARY)} binary bins ready → df_rf_binary")
-    print(f"{'=' * 80}")
+    print(f"\nRF BINNING — {len(_SOURCES)} sources → {len(RF_FEATURES_BINARY)} binary columns "
+          f"· base rate {df_binned[target_col].mean():.3f}")
+    print("─" * 78)
+    print("Lift per bin (share of rows); ▲ > 1.5×, ▼ < 0.7×")
+    for group, rows in lift.groupby("group", sort=False):
+        parts = [
+            f"{r.bin.split('_', 1)[1]} {r.lift:.2f}×"
+            f"{'▲' if r.lift > 1.5 else '▼' if r.lift < 0.7 else ''} ({r.share:.0%})"
+            for r in rows.itertuples()
+        ]
+        print(f"  {group:<9} {' · '.join(parts)}")
 
     return df_binned, RF_FEATURES_BINARY
 
@@ -248,57 +297,31 @@ def validate_binary_features(
     verbose: bool = True,
 ) -> bool:
     """
-    Validate mutual exclusivity and completeness of binary bin groups.
+    Hard stop on an invalid binary feature space.
 
-    For each feature group (NSD, JED, CCI, etc.) checks that every row
-    is assigned to exactly one bin (sum == 1). Raises AssertionError on
-    first failure.
+    Raises ValueError unless every RF_FEATURES_BINARY column is 0/1 and every
+    row falls in exactly one bin of each group. Prints a one-line confirmation;
+    verbose=True adds the observed pattern count. target_col is unused (kept
+    for call compatibility).
 
-    Parameters
-    ----------
-    df_binned  : Output of create_binary_features().
-    target_col : Not used directly; kept for signature consistency.
-    verbose    : Print per-group results (default True).
-
-    Returns
-    -------
-    True if all checks pass.
+    Returns True when all checks pass.
     """
-    print(f"\n{'─' * 80}")
-    print("🔍 BINARY FEATURE VALIDATION")
-    print(f"{'─' * 80}")
+    X = df_binned[RF_FEATURES_BINARY]
+    non_binary = [c for c in RF_FEATURES_BINARY if not X[c].isin([0, 1]).all()]
+    if non_binary:
+        raise ValueError(f"Non-binary (or NaN) values in {non_binary}.")
 
-    if verbose:
-        print(f"\n   Shape: {df_binned[RF_FEATURES_BINARY].shape}")
-        all_binary = df_binned[RF_FEATURES_BINARY].isin([0, 1]).all().all()
-        n_patterns = df_binned[RF_FEATURES_BINARY].drop_duplicates().shape[0]
-        print(f"   All binary: {all_binary}")
-        print(f"   Unique patterns: {n_patterns} / {2 ** len(RF_FEATURES_BINARY)} possible")
-
-    print(f"\n   Mutual exclusivity:")
     for grp, cols in _FEATURE_GROUPS.items():
         sums = df_binned[cols].sum(axis=1)
-        ok = (sums == 1).all()
-        icon = "✅" if ok else "⚠️ "
-        if verbose:
-            print(f"      {icon} {grp:10s}: {len(cols)} bins, sum range=[{sums.min()}, {sums.max()}]")
-        assert ok, (
-            f"Group '{grp}' has rows where sum ≠ 1. "
-            f"Check binning thresholds in BINNING_STRATEGY."
-        )
+        if not (sums == 1).all():
+            raise ValueError(
+                f"Group '{grp}' has rows where the bin sum ≠ 1 "
+                f"(range [{sums.min()}, {sums.max()}]). Check the thresholds in BINNING_STRATEGY."
+            )
 
+    msg = (f"Validation ✓ {len(RF_FEATURES_BINARY)} columns are 0/1 · "
+           f"{len(_FEATURE_GROUPS)} groups mutually exclusive and complete")
     if verbose:
-        # Class-conditional activation rates
-        overall_rate = df_binned[target_col].mean()
-        print(f"\n   Class-conditional activation rates (base: {overall_rate:.4f}):")
-        print(f"   {'Feature':25s} {'P(hot|y=0)':>12s} {'P(hot|y=1)':>12s} {'Ratio':>8s}")
-        print(f"   {'-' * 65}")
-        for feat in RF_FEATURES_BINARY:
-            rate_neg = df_binned.loc[df_binned[target_col] == 0, feat].mean()
-            rate_pos = df_binned.loc[df_binned[target_col] == 1, feat].mean()
-            ratio = rate_pos / rate_neg if rate_neg > 0 else float("inf")
-            marker = "🔥" if ratio > 3 else "🟢" if ratio > 1.5 else "  "
-            print(f"   {feat:25s} {rate_neg:12.4f} {rate_pos:12.4f} {ratio:7.2f}x {marker}")
-
-    print(f"\n✅ All binary feature groups valid")
+        msg += f" · {X.drop_duplicates().shape[0]:,} observed patterns"
+    print(msg)
     return True
