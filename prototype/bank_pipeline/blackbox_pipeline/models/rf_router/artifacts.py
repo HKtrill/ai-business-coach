@@ -27,14 +27,19 @@ import platform
 from dataclasses import asdict, is_dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Iterable, Optional, Tuple
 
 import joblib
 import numpy as np
 import pandas as pd
 import sklearn
 
-__all__ = ["save_rf_router", "load_rf_router", "RouterArtifact"]
+__all__ = [
+    "save_rf_router",
+    "load_rf_router",
+    "RouterArtifact",
+    "find_artifact_for_split",
+]
 
 _ARTIFACT_VERSION = "1.0"
 
@@ -172,6 +177,48 @@ def load_rf_router(
             )
 
     return RouterArtifact(payload)
+
+
+# ======================================================================
+def find_artifact_for_split(
+    dirs: Iterable[str | Path],
+    pattern: str,
+    expected_fp: str,
+    *,
+    verbose: bool = True,
+) -> Tuple[Optional[dict], Optional[Path]]:
+    """
+    Newest artifact (by file mtime, across all ``dirs``) whose
+    ``split_fingerprint`` equals ``expected_fp``.
+
+    Formerly ``_latest_matching`` in notebook Cell 18B, used there for the GLASS
+    Router bundle and in Cell 21 for the RF hyperparameter artifact. Behaviour is
+    unchanged: unreadable files and fingerprint mismatches are skipped (and
+    reported when ``verbose``), never used. An artifact fitted under another
+    split may have trained on rows that are now test rows.
+
+    Returns
+    -------
+    (obj, path)
+        The loaded object and its path, or ``(None, None)`` when nothing matches.
+    """
+    files = [f for d in dirs if Path(d).is_dir() for f in Path(d).glob(pattern)]
+
+    for f in sorted(files, key=lambda p: p.stat().st_mtime, reverse=True):
+        try:
+            obj = joblib.load(f)
+        except Exception as exc:  # noqa: BLE001 — any unreadable file is skipped
+            if verbose:
+                print(f"  (skip {f.name}: {type(exc).__name__})")
+            continue
+
+        fp = obj.get("split_fingerprint") if isinstance(obj, dict) else None
+        if fp == expected_fp:
+            return obj, f
+        if verbose:
+            print(f"  (skip {f.name}: split_fingerprint {fp} != {expected_fp})")
+
+    return None, None
 
 
 # ======================================================================

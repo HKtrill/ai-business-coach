@@ -67,6 +67,9 @@ class RFRouter(_BaseRouter):
         # Retained for auditing: the arrays the operating point was solved from.
         self.oof_pass1_proba_: Optional[np.ndarray] = None
         self.oof_pass2_proba_: Optional[np.ndarray] = None
+        # Fold that held out each training row in the Pass 1 OOF run. Lets the
+        # notebook assert the router's folds ARE the shared Stage fold plan.
+        self.oof_pass1_fold_id_: Optional[np.ndarray] = None
 
     # ------------------------------------------------------------------
     def fit(
@@ -149,6 +152,7 @@ class RFRouter(_BaseRouter):
         self.remainder_mask_ = remainder
         self.oof_pass1_proba_ = p1_oof
         self.oof_pass2_proba_ = oof2.proba  # NaN outside the remainder
+        self.oof_pass1_fold_id_ = oof1.fold_id
 
         self.fit_report_ = _FitReport(
             mode="two_pass (GLASS counterpart)",
