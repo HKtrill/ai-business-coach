@@ -308,12 +308,34 @@ class _BaseRouter:
         incomparable. Do not report these as calibrated probabilities.
         """
         self._require_fitted()
-        preds, conf, decisions = self.predict(X)
-        n = len(preds)
+        _, conf, decisions = self.predict(X)
+        return self._proba_from_triple(conf, decisions, base_rate)
 
+    def predict_with_proba(
+        self, X: pd.DataFrame, base_rate: Optional[float] = None
+    ):
+        """
+        ``(preds, conf, decisions, proba)`` from ONE pass over ``X``.
+
+        Identical to calling ``predict`` and then ``predict_proba``, which scores
+        every row twice. Use this wherever both are needed (test outputs, the
+        outer cross-fit).
+        """
+        self._require_fitted()
+        preds, conf, decisions = self.predict(X)
+        return preds, conf, decisions, self._proba_from_triple(
+            conf, decisions, base_rate
+        )
+
+    def _proba_from_triple(
+        self, conf: np.ndarray, decisions: np.ndarray,
+        base_rate: Optional[float] = None,
+    ) -> np.ndarray:
+        """The ``predict_proba`` transform applied to an existing triple."""
         if base_rate is None:
             base_rate = self.training_base_rate
         base_rate = float(base_rate)
+        n = len(decisions)
 
         probas = np.full((n, 2), [1.0 - base_rate, base_rate], dtype=float)
 
@@ -378,6 +400,12 @@ class _BaseRouter:
                                 constraints.min_band_support_pass2),
             )
             self.config.constraints = constraints
+            self.solver = ThresholdSolver(constraints, verbose=self.config.verbose)
+            # Keep the audit record (and anything saved from it) in step with
+            # the operating point predict() now uses.
+            if self.fit_report_ is not None:
+                self.fit_report_.thresholds = pair.to_dict()
+                self.fit_report_.bands = self.bands_.to_dict()
         return pair
 
     # ------------------------------------------------------------------

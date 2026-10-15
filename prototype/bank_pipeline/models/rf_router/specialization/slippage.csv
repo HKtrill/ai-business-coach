@@ -1,0 +1,24 @@
+,GLASS Router,A0 current baseline,B auc | inherit,C auc | auc@remainder,D auc | recall@remainder,E coverage | recall@remainder
+feasible,False,True,True,True,True,True
+evaluation_valid,True,True,True,True,True,True
+max_violation,0.010506465517241381,0.0,0.0,0.0,0.0,0.0
+n_violated,3,0,0,0,0,0
+violated,"npv, leakage, leakage_absolute",,,,,
+undefined,,,,,,
+disabled,"pass1_coverage, pass2_recall","pass1_coverage, pass2_recall","pass1_coverage, pass2_recall","pass1_coverage, pass2_recall","pass1_coverage, pass2_recall","pass1_coverage, pass2_recall"
+npv_margin,0.0005796660873429449,-0.009282703657032765,-0.006453560442646333,-0.006453560442646333,-0.006453560442646333,-0.006459171446698053
+npv_status,violated,ok,ok,ok,ok,ok
+leakage_margin,0.010506465517241381,-0.023976293103448273,-0.012122844827586216,-0.012122844827586216,-0.012122844827586216,-0.008890086206896547
+leakage_status,violated,ok,ok,ok,ok,ok
+leakage_absolute_margin,0.010506465517241381,-0.023976293103448273,-0.012122844827586216,-0.012122844827586216,-0.012122844827586216,-0.008890086206896547
+leakage_absolute_status,violated,ok,ok,ok,ok,ok
+pass1_coverage_margin,,,,,,
+pass1_coverage_status,disabled,disabled,disabled,disabled,disabled,disabled
+pass1_support_margin,-0.3665632560313968,-0.36000826695637855,-0.3680199202702897,-0.3680199202702897,-0.3680199202702897,-0.3776096265096682
+pass1_support_status,ok,ok,ok,ok,ok,ok
+precision_margin,-0.019896128055164608,-0.01600034449062998,-0.007538199771118026,-0.016164587850798884,-0.016035719413015237,-0.0038344200949072538
+precision_status,ok,ok,ok,ok,ok,ok
+pass2_recall_margin,,,,,,
+pass2_recall_status,disabled,disabled,disabled,disabled,disabled,disabled
+pass2_support_margin,-0.23321787593007864,-0.271698089574167,-0.28201612793299197,-0.2727905877533367,-0.2729119764399111,-0.28577917721679874
+pass2_support_status,ok,ok,ok,ok,ok,ok

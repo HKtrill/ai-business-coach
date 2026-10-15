@@ -58,9 +58,13 @@ from .router import (
     unpack_global_split,
 )
 from .threshhold import ThresholdPair, ThresholdResult, ThresholdSolver
-from .artifacts import load_rf_router, save_rf_router
+from .artifacts import find_artifact_for_split, load_rf_router, save_rf_router
+from .crossfit import CrossfitResult, crossfit_rf_router
 
 __all__ = [
+    "find_artifact_for_split",
+    "crossfit_rf_router",
+    "CrossfitResult",
     "OperatingConstraints",
     "RFRouterConfig",
     "DEFAULT_RF_PARAMS",

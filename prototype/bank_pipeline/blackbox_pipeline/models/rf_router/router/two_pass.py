@@ -42,7 +42,7 @@ import pandas as pd
 from ..config import RFRouterConfig
 from ..forest import ForestTrainer
 from ..oof import OOFScorer, nested_cascade_oof
-from ..threshhold import ThresholdPair
+from ..threshhold import ThresholdPair, ThresholdSolver
 from .base import _BaseRouter, _FitReport, apply_cuts
 
 __all__ = ["RFRouter"]
@@ -67,6 +67,9 @@ class RFRouter(_BaseRouter):
         # Retained for auditing: the arrays the operating point was solved from.
         self.oof_pass1_proba_: Optional[np.ndarray] = None
         self.oof_pass2_proba_: Optional[np.ndarray] = None
+        # Fold that held out each training row in the Pass 1 OOF run. Lets the
+        # notebook assert the router's folds ARE the shared Stage fold plan.
+        self.oof_pass1_fold_id_: Optional[np.ndarray] = None
 
     # ------------------------------------------------------------------
     def fit(
@@ -149,6 +152,7 @@ class RFRouter(_BaseRouter):
         self.remainder_mask_ = remainder
         self.oof_pass1_proba_ = p1_oof
         self.oof_pass2_proba_ = oof2.proba  # NaN outside the remainder
+        self.oof_pass1_fold_id_ = oof1.fold_id
 
         self.fit_report_ = _FitReport(
             mode="two_pass (GLASS counterpart)",
@@ -281,6 +285,37 @@ class RFRouter(_BaseRouter):
             self.thresholds_.t1, self.thresholds_.t2,
         )
         return preds, self.bands_.assign(decisions), decisions
+
+    # ------------------------------------------------------------------
+    def resolve_at(self, constraints, apply: bool = False) -> ThresholdPair:
+        """
+        Re-solve from stored OOF — refused when the remainder would change.
+
+        Pass 2's OOF scores, its threshold and its fitted forest all belong to
+        the remainder ``t1`` produced at fit time. A re-solve that moves ``t1``
+        far enough to move any row in or out of that remainder would read ``t2``
+        off the wrong population, and ``predict`` would route a runtime
+        remainder Pass 2 was never trained on. That case raises; refit the
+        router under the new constraints instead. Re-solves that leave the
+        remainder untouched (e.g. a Pass 2-only change) behave as before.
+        """
+        self._require_fitted()
+        y = np.asarray(self._y_train_).astype(int)
+        r1 = ThresholdSolver(constraints).solve_pass1(
+            self.oof_pass1_proba_, y, keep_sweep=False
+        )
+        r1.raise_if_infeasible(context="re-solve Pass 1")
+        new_remainder = self.oof_pass1_proba_ >= r1.threshold
+        moved = int((new_remainder != self.remainder_mask_).sum())
+        if moved:
+            raise ValueError(
+                f"Re-solving moves t1 from {self.thresholds_.t1:.6f} to "
+                f"{r1.threshold:.6f}, which moves {moved} rows across the Pass 1 "
+                "remainder boundary. Pass 2 was fitted and thresholded on the old "
+                "remainder, so its re-solved t2 would be meaningless. Refit the "
+                "router under the new constraints instead."
+            )
+        return super().resolve_at(constraints, apply=apply)
 
     # ------------------------------------------------------------------
     def _oof_for_solving(self):

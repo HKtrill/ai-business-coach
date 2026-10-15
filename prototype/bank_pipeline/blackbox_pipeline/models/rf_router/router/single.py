@@ -34,6 +34,9 @@ class SingleRFRouter(_BaseRouter):
         super().__init__(config)
         self.model_: Optional[Any] = None
         self.oof_proba_: Optional[np.ndarray] = None
+        # Fold that held out each training row in the OOF run. Lets the notebook
+        # assert the router's folds ARE the shared Stage fold plan.
+        self.oof_fold_id_: Optional[np.ndarray] = None
 
     # ------------------------------------------------------------------
     def fit(
@@ -81,6 +84,7 @@ class SingleRFRouter(_BaseRouter):
             print("  refitting on the full training split")
         self.model_ = trainer.fit(X, y)
         self.oof_proba_ = p_oof
+        self.oof_fold_id_ = oof.fold_id
 
         self.fit_report_ = _FitReport(
             mode="single_rf (ablation)",
