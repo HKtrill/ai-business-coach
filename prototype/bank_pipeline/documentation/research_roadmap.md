@@ -2,93 +2,41 @@
 
 ### Phase 1 — Finish and Validate the Cascades
 
-#### PR 34 — Validation, Research-Pipeline Audit, and Cleanup
+#### PR 35 — RF Router Consolidation and Objective Specialization
 
-**Full pipeline validation**
-- [x] Clean-kernel top-to-bottom rerun of all three active research notebooks
-- [x] Verify all notebook outputs are reproducible from the current codebase
-- [x] Final leakage, split, feature, calibration, threshold, and OOF audits
-- [x] Verify artifact provenance, library versions, and reload guards
-- [x] Verify final cascade prediction diversity/correlation
-- [x] Correct the GLASS Router ILP selector from per-rule ranking to set-aware union optimization
-- [x] Add selected-set novelty, union-leakage, cardinality, solver/fallback, and lexicographic-selection safeguards
-- [x] Add focused regression coverage for the corrected selector and validate it against exhaustive-search cases
-- [x] Document the corrected GLASS Router selector design, constraints, solver semantics, diagnostics, and empirical behavior
-- [x] Rerun and record final metrics after validation
+**Context**
 
-**Repository cleanup**
-- [x] Consolidate `shared/stage3/` and `shared/stage_runner.py` into one source of truth; make the other a thin re-export
-- [x] Unify the two split-fingerprint formats (`stage_io` 12-hex and router 16-hex) into one scheme
-- [x] Anchor artifact directories to their package roots instead of the notebook working directory
+The union-aware GLASS Router selector correction originally planned for PR 37 was completed during PR 34. We therefore moved the RF Router consolidation and training-objective experiment ahead of the comprehensive automated testing phase.
 
-**Feature-research pipeline validation**
-- [x] Audit the feature-research pipeline end to end
-  - [x] Config, separation, interactions, feature engineering, RF training / binning / diagnostics
-  - [x] Per-stage tuning modules (remove redundant splits), LR / EBM trainers, cells after 13E
-- [x] Verify every learned feature transformation is fitted on training data only
-  - [x] Global split isolated to Cell 5; all redundant split calls are now removed
-  - [x] `FeaturePipeline` fits on train, transforms test; separation (Cell 6) and interaction search (Cell 9) run on train
-- [x] Verify feature names, order, dtypes, and source-feature provenance
-  - [x] Declared raw feature types; stage column order = registry order; integer guard on dow_month key
-- [x] Verify feature-block fingerprints / contracts where applicable
-- [x] Reject missing, extra, duplicated, or reordered feature columns
-- [x] Verify cached feature artifacts belong to the current split and feature contract
-- [x] Verify no test-derived statistics enter feature construction
-  - [x] Runtime: all target statistics train-only; split-median imputation removed
-  - [x] Locked constants checked on train-only data: 25 / 29 bins reproduce, all groups monotone and mutually exclusive
-- ➡️ **Deferred to PR 39:** NSD and ECI show lift drift; re-evaluate and re-derive thresholds if needed using train-only leakage-safe analysis.
-- [x] Verify feature-research outputs consumed downstream reproduce exactly after reload
-- [x] Remove stale feature-research paths, aliases, and compatibility code no longer required
-  - [x] Full-frame target-based API removed; old `research_logs` retired; `_fill_nans` and import-time `matplotlib.use` removed
-  - [x] Replace global `warnings.filterwarnings("ignore")` (config.py, preprocessor)
-- [x] Fix any broken code and document the problem/solution
-  - [x] See "Additional feature-research work" below
-  - [x] Separation metrics: categorical probe AUC, small-category target-rate range
+This allows the RF Router's training-objective decision to be established before the remaining pipeline tests and final Stage 2 contracts are completed.
 
-**Additional feature-research work (not in original checklist)**
-- [x] Notebook path bootstrap (`BANK_ROOT`) after relocating the notebook into the package
-- [x] Package-anchored output paths (`OUTPUT_DIR`, `FIG_DIR`)
-- [x] Declared feature typing (`job` categorical, `previous` numeric) replacing cardinality inference
-- [x] DerivativeFeatureEngineer bin-edge rounding bug fixed (measured impact ≤ 1 row; picked up at PR 39 regeneration)
-- [x] X/y index-alignment guards on all fitted engineers
-- [x] Fail-loud NaN/inf check replacing split-statistic imputation; all silent fallbacks removed
-- [x] `FeaturePipeline` fit/transform orchestrator with column and dtype contract; parity with old functional path verified
-- [x] Interaction search: Miller–Madow MI correction; pure interactions no longer zeroed
-- [x] Separation metrics: category-rate probe AUC, ≥ 30-row target-rate range, consistent MI normalization
-- [x] RF lift analysis no longer refits caller's model; permutation importance truly held out
-- [x] RF `recall_at_10fpr` computed out-of-fold (was in-sample)
-- [x] RF diagnostics Gini label-order guard
-- [x] Notebook markdown documentation verified against code and rewritten/condensed for readability
-- [x] Optimize Optuna tuning
-- [x] Formalize the selector with rigurous documentation
-- [x] Apply robust testing on the selector to account for potential problematic edge cases
+**Commit A — Stage 2 Consolidation**
 
-**Notebook-specific validation**
+- [x] Consolidate existing RF Router notebook logic into modular Python components
+- [x] Simplify the black-box Stage 2 notebook
+- [x] Preserve existing training, evaluation, and routing behavior
+- [x] Add regression and correctness tests
 
-- [x] Feature-research notebook
-  - [x] clean-kernel execution
-  - [x] feature-generation contracts
-  - [x] train-only fitting (feature engineering + analysis through Cell 13)
-  - [x] artifact reload/provenance
-  - [x] deterministic outputs where expected
+**Commit B — Objective Specialization**
 
-- [x] GLASS cascade notebook
-  - [x] Stage 1–4 contracts
-  - [x] OOF hand-offs
-  - [x] split/index/fold identity
-  - [x] calibration and threshold provenance
-  - [x] routing / abstention semantics
-  - [x] GLASS Arbiter inputs and outputs
+- [x] Implement Pass 1 coverage-at-constraints tuning
+- [x] Implement Pass 2 recall-at-precision tuning
+- [x] Implement matched-budget A0/B/C/D/E ablation
+- [x] Evaluate routing performance, constraint compliance, uncertainty, and tuning diagnostics
+- [x] Pass 94 automated specialization tests
+- [x] Document RQ0–RQ6 and the experimental findings
+- [x] Determine whether specialization justifies replacing the ROC-AUC baseline
+- [x] Complete final end-to-end notebook validation and finalize research artifacts
 
-- [x] Black-box cascade notebook
-  - [x] Stage 1–4 mirror contracts
-  - [x] OOF hand-offs
-  - [x] split/index/fold identity
-  - [x] matched feature/population contracts
-  - [x] Meta-XGB cross-fitting
-  - [x] threshold / calibration / abstention provenance
+**Experimental decision**
 
-#### PR 35 — Automated Pipeline Test Suite
+Neither specialized objective met the pre-registered adoption criteria. Retain the existing ROC-AUC configuration (A0) for both passes.
+
+No Commit C is required. Stage 4 remains unchanged.
+
+**Research record:** Preserve the research questions, results, limitations, and design rationale for the eventual paper.
+
+#### PR 36 — Automated Pipeline Test Suite
 
 **Automated pipeline test suite (`pytest`, independent of notebooks)**
 - [ ] Consolidate existing stage-level validation into one `tests/` suite with shared synthetic-data fixtures
@@ -137,7 +85,7 @@
 - [ ] Standardize GLASS Router / GLASS Arbiter naming
 - [ ] Tighten package and notebook documentation
 
-#### PR 36 — Router Baseline and Stage 2 Operating Contract
+#### PR 37 — Router Baseline and Stage 2 Operating Contract
 
 **Router redundancy diagnosis** — measure before changing Stage 2
 
@@ -156,37 +104,6 @@
 - [ ] Let each router maximize coverage subject to the same constraints
 - [ ] Document the chosen constraints and rationale before viewing final rerun results
 - [ ] Freeze the Stage 2 operating contract for subsequent selector experiments
-
-
-#### PR 37 — GLASS Router Selector Correction
-
-**Union-aware ILP selector**
-
-- [ ] Replace per-rule coverage scoring with useful-row union coverage
-- [ ] Enforce union leakage as a hard set-level constraint
-- [ ] Make ILP optimization lexicographic:
-  1. maximize useful union coverage
-  2. among coverage-equivalent solutions, optimize secondary rule quality / parsimony
-- [ ] Remove or relax pairwise novelty constraints made redundant by union-aware selection
-- [ ] Wire `QualityGateFilter` coverage caps through `ILPRuleSelector`
-- [ ] Make selector λ defaults explicit or remove unused penalties
-- [ ] Log ILP solve status and fallback usage per fold
-- [ ] Update greedy fallback to select rules by marginal union-coverage gain
-
-**Selector validation**
-
-- [ ] Validate the corrected selector on the frozen full-train baseline
-- [ ] Verify selected-set union leakage satisfies the configured cap when feasible
-- [ ] Record solver/fallback behavior when the constraint set is infeasible
-- [ ] Compare before/after:
-  - useful union coverage
-  - subscriber leakage
-  - covered F1
-  - rule redundancy
-  - rule count
-  - solve time
-- [ ] Confirm no regression in rule semantics or artifact contracts
-
 
 #### PR 38 — Stage 2 Cross-Fit and Router Complementarity
 

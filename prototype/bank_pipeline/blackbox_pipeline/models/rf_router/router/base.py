@@ -400,6 +400,12 @@ class _BaseRouter:
                                 constraints.min_band_support_pass2),
             )
             self.config.constraints = constraints
+            self.solver = ThresholdSolver(constraints, verbose=self.config.verbose)
+            # Keep the audit record (and anything saved from it) in step with
+            # the operating point predict() now uses.
+            if self.fit_report_ is not None:
+                self.fit_report_.thresholds = pair.to_dict()
+                self.fit_report_.bands = self.bands_.to_dict()
         return pair
 
     # ------------------------------------------------------------------

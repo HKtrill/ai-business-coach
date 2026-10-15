@@ -1,0 +1,1 @@
+{"utc": "2026-10-15T03:32:21+00:00", "arms": ["A0 current baseline", "B auc | inherit", "C auc | auc@remainder", "D auc | recall@remainder", "E coverage | recall@remainder"], "split_fingerprint": "fc3e73a5ef91aea4", "rule": {"min_effect": 0.01, "noise_multiplier": 2.0, "min_finite_boot": 0.95}, "note": ""}

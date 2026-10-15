@@ -18,6 +18,13 @@ supplies globally resolved RF params. When those were tuned with CV over all of
 ``X_train`` (Cell 22 or the GLASS RF artifact), the held-out fold's labels took
 part in choosing them. The dependence is weak under a ROC-AUC objective; it is
 recorded in ``protocol["hyperparameters"]`` so it is never silent.
+
+It becomes stronger if Stage 2 adopts objective-specialized parameters
+(``tuning.ablation``), because those objectives ARE the Stage 2 operating
+quantities. Before regenerating Stage 4 inputs with specialized parameters, the
+tuning has to be repeated inside each outer fold (nested tuning) so no held-out
+row's label influences the hyperparameters that route it. This module does not
+do that yet.
 """
 
 from __future__ import annotations

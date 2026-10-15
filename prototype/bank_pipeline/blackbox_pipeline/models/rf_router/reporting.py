@@ -150,27 +150,111 @@ def train_oof_summary(routers: Mapping[str, object]) -> pd.DataFrame:
     return pd.DataFrame(out)
 
 
+def _nan_agreement(out: dict, status: str) -> dict:
+    out.update({
+        "rate-matched p1 rows": out.get("pass2 flagged (p2 > t2)", 0),
+        "p1 ties at the matched cut": 0,
+        "agreement": float("nan"), "agreement min over p1 ties": float("nan"),
+        "agreement max over p1 ties": float("nan"),
+        "overlap with p1 top-k": float("nan"), "overlap min over p1 ties": float("nan"),
+        "overlap max over p1 ties": float("nan"),
+        "status": status,
+    })
+    return out
+
+
 def pass_agreement(router) -> dict:
     """
-    How much the Pass 2 forest's ranking differs from Pass 1's on the remainder
-    (former Cell 28).
+    How far the Pass 2 forest's ranking departs from Pass 1's on the remainder.
 
-    If Pass 2 flags nearly the same rows Pass 1's score would have flagged at
-    the same rate, the remainder carries little information the Pass 1 forest
+    If Pass 2 flags nearly the same rows Pass 1's own score would have flagged at
+    the same count, the remainder carries little information the Pass 1 forest
     lacked — and no tuning objective can manufacture it.
+
+    Semantics match the router exactly (``router.base.apply_cuts``):
+
+    * remainder = training rows with ``p1 >= t1`` (Pass 1 routes ``p1 < t1``, so a
+      score EQUAL to ``t1`` stays in the remainder); checked against the router's
+      stored ``remainder_mask_``;
+    * flagged = remainder rows with ``p2 > t2`` (a score EQUAL to ``t2`` is NOT
+      flagged); counted separately as ``pass2 scores equal to t2``.
+
+    The Pass 1 comparison set is the top ``k`` remainder rows by ``p1``, where
+    ``k`` is the number Pass 2 flagged — an exact count, not a quantile. When
+    ``p1`` is tied across the k-th position, the deterministic pick takes the
+    tied rows in training-row order, and the ``min``/``max over p1 ties`` columns
+    give the range ANY tie-break could produce, so ties never masquerade as
+    agreement or disagreement.
+
+    Agreement (share of remainder rows on which both pick the same side) is
+    undefined when Pass 2 flags none or all of the remainder — any ranking agrees
+    then — and is reported as NaN with a ``status``. ``overlap`` (share of the
+    Pass 2-flagged rows that Pass 1's top-k also picks) is the less
+    rate-sensitive summary.
     """
-    rem = router.remainder_mask_
-    p1 = router.oof_pass1_proba_[rem]
-    p2 = router.oof_pass2_proba_[rem]
-    flagged = p2 > router.thresholds_.t2
-    flag_rate = float(flagged.mean())
-    by_p1 = p1 > np.quantile(p1, 1 - flag_rate)
-    return {
-        "spearman(p1, p2) on remainder": float(
-            pd.Series(p1).corr(pd.Series(p2), method="spearman")
-        ),
-        "pass2 flagged by p2 > t2": int(flagged.sum()),
-        "same rate by p1 rank": int(by_p1.sum()),
+    t1, t2 = float(router.thresholds_.t1), float(router.thresholds_.t2)
+    p1_all = np.asarray(router.oof_pass1_proba_, dtype=float)
+    p2_all = np.asarray(router.oof_pass2_proba_, dtype=float)
+    remainder = ~(p1_all < t1)
+    stored = getattr(router, "remainder_mask_", None)
+    if stored is not None and not np.array_equal(remainder, np.asarray(stored, dtype=bool)):
+        raise ValueError(
+            "remainder_mask_ disagrees with oof_pass1_proba_ >= t1 — the router's "
+            "stored state is inconsistent (was t1 changed without a refit?)")
+
+    n = int(remainder.sum())
+    out = {"remainder rows": n}
+    if n == 0:
+        out.update({"pass2 flagged (p2 > t2)": 0, "pass2 scores equal to t2 (not flagged)": 0,
+                    "pass2 flag rate (of remainder)": float("nan"),
+                    "spearman(p1, p2) on remainder": float("nan")})
+        return _nan_agreement(out, "empty remainder — Pass 1 routed every row")
+
+    p1, p2 = p1_all[remainder], p2_all[remainder]
+    if np.isnan(p2).any():
+        raise ValueError(f"{int(np.isnan(p2).sum())} remainder rows have no Pass 2 OOF score")
+    flagged = p2 > t2
+    k = int(flagged.sum())
+    spearman = (float(pd.Series(p1).corr(pd.Series(p2), method="spearman"))
+                if n > 1 and np.ptp(p1) > 0 and np.ptp(p2) > 0 else float("nan"))
+    out.update({
+        "pass2 flagged (p2 > t2)": k,
+        "pass2 scores equal to t2 (not flagged)": int((p2 == t2).sum()),
+        "pass2 flag rate (of remainder)": k / n,
+        "spearman(p1, p2) on remainder": spearman,
+    })
+    if k == 0:
+        return _nan_agreement(out, "Pass 2 flags none of the remainder — rate-matched "
+                                   "comparison undefined")
+    if k == n:
+        return _nan_agreement(out, "Pass 2 flags all of the remainder — rate-matched "
+                                   "comparison undefined")
+
+    # Top-k by p1, descending; ties broken by position (stable, deterministic).
+    order = np.lexsort((np.arange(n), -p1))
+    by_p1 = np.zeros(n, dtype=bool)
+    by_p1[order[:k]] = True
+
+    cut = p1[order[k - 1]]
+    above, tied = p1 > cut, p1 == cut
+    m = int(tied.sum())                    # rows tied at the cut
+    r = k - int(above.sum())               # of which the top-k must take r
+    f = int((flagged & tied).sum())        # tied rows Pass 2 flagged
+    definite = ~tied
+    base_match = int((flagged[definite] == above[definite]).sum())
+    x_hi, x_lo = min(r, f), max(0, r - (m - f))   # flagged rows among the r taken
+    match = lambda x: base_match + 2 * x + (m - f) - r  # noqa: E731
+    overlap_definite = int((flagged & above).sum())
+
+    out.update({
+        "rate-matched p1 rows": k,
+        "p1 ties at the matched cut": m if m > 1 else 0,
         "agreement": float((flagged == by_p1).mean()),
-        "pass2 flag rate (of remainder)": flag_rate,
-    }
+        "agreement min over p1 ties": match(x_lo) / n,
+        "agreement max over p1 ties": match(x_hi) / n,
+        "overlap with p1 top-k": float((flagged & by_p1).sum() / k),
+        "overlap min over p1 ties": (overlap_definite + x_lo) / k,
+        "overlap max over p1 ties": (overlap_definite + x_hi) / k,
+        "status": "ok" if m <= 1 else f"ok — {m} rows tie at the p1 cut; see the range",
+    })
+    return out
