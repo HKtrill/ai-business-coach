@@ -91,16 +91,10 @@ from blackbox_pipeline.models.rf_router.tuning import ablation as ablation_mod
 from blackbox_pipeline.models.rf_router.tuning import objectives as objectives_mod
 from blackbox_pipeline.models.rf_router.tuning import provenance as provenance_mod
 
-try:
-    from stage2_synthetic import (
-        ALT_PARAMS, CONSTRAINTS_DEGENERATE, CONSTRAINTS_OK, N_FOLDS, ROUTER_SEED,
-        SMALL_PARAMS, make_data, router_config,
-    )
-except ImportError:  # tests/ is a package in some layouts
-    from .stage2_synthetic import (  # type: ignore[no-redef]
-        ALT_PARAMS, CONSTRAINTS_DEGENERATE, CONSTRAINTS_OK, N_FOLDS, ROUTER_SEED,
-        SMALL_PARAMS, make_data, router_config,
-    )
+from tests.support.stage2_synthetic import (
+    ALT_PARAMS, CONSTRAINTS_DEGENERATE, CONSTRAINTS_OK, N_FOLDS, ROUTER_SEED,
+    SMALL_PARAMS, make_data, router_config,
+)
 
 TINY_BUDGET = TuningBudget(n_trials=2, sampler_seed=0, n_folds=N_FOLDS,
                            fold_seed=ROUTER_SEED + 1, forest_seed=ROUTER_SEED,

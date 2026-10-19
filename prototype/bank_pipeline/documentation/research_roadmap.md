@@ -2,45 +2,11 @@
 
 ### Phase 1 — Finish and Validate the Cascades
 
-#### PR 35 — RF Router Consolidation and Objective Specialization
-
-**Context**
-
-The union-aware GLASS Router selector correction originally planned for PR 37 was completed during PR 34. We therefore moved the RF Router consolidation and training-objective experiment ahead of the comprehensive automated testing phase.
-
-This allows the RF Router's training-objective decision to be established before the remaining pipeline tests and final Stage 2 contracts are completed.
-
-**Commit A — Stage 2 Consolidation**
-
-- [x] Consolidate existing RF Router notebook logic into modular Python components
-- [x] Simplify the black-box Stage 2 notebook
-- [x] Preserve existing training, evaluation, and routing behavior
-- [x] Add regression and correctness tests
-
-**Commit B — Objective Specialization**
-
-- [x] Implement Pass 1 coverage-at-constraints tuning
-- [x] Implement Pass 2 recall-at-precision tuning
-- [x] Implement matched-budget A0/B/C/D/E ablation
-- [x] Evaluate routing performance, constraint compliance, uncertainty, and tuning diagnostics
-- [x] Pass 94 automated specialization tests
-- [x] Document RQ0–RQ6 and the experimental findings
-- [x] Determine whether specialization justifies replacing the ROC-AUC baseline
-- [x] Complete final end-to-end notebook validation and finalize research artifacts
-
-**Experimental decision**
-
-Neither specialized objective met the pre-registered adoption criteria. Retain the existing ROC-AUC configuration (A0) for both passes.
-
-No Commit C is required. Stage 4 remains unchanged.
-
-**Research record:** Preserve the research questions, results, limitations, and design rationale for the eventual paper.
-
 #### PR 36 — Automated Pipeline Test Suite
 
 **Automated pipeline test suite (`pytest`, independent of notebooks)**
-- [ ] Consolidate existing stage-level validation into one `tests/` suite with shared synthetic-data fixtures
-- [ ] Add focused tests for the feature-research pipeline
+- [x] Consolidate existing stage-level validation into one `tests/` suite with shared synthetic-data fixtures
+- [x] Add focused tests for the feature-research pipeline
 - [ ] Add notebook-contract tests for each active research notebook
 - [ ] Split identity and row alignment:
   - fingerprints match across stages
@@ -74,7 +40,7 @@ No Commit C is required. Stage 4 remains unchanged.
   - indices
   - OOF/refit provenance
 - [ ] Meta-level OOF integrity for Meta-XGB
-- [ ] Fast-running synthetic suite suitable for CI
+- [x] Fast-running synthetic suite suitable for CI
 
 **Cleanup**
 - [ ] Remove dead or duplicated code

@@ -14,7 +14,7 @@ from shared.stage4 import (
     ABSTENTION_GRID, ABSTENTION_MIN_COVERAGE, Stage4InputError, build_stage4_inputs,
     router_stream, stage3_stream, stage_output_stream, tune_min_confidence,
 )
-from shared.stage4.tests.fixtures import (
+from tests.support.stage4_world import (
     ROUTER_FP, build_world, make_router, make_stage1, make_stage3,
 )
 from shared.validation import ValidationError

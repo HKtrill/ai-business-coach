@@ -37,16 +37,10 @@ from blackbox_pipeline.models.rf_router.tuning import (
     suggest_rf_params,
 )
 
-try:
-    from stage2_synthetic import (
-        CONSTRAINTS_DEGENERATE, CONSTRAINTS_OK, N_FOLDS, ROUTER_SEED, SMALL_PARAMS,
-        make_data, router_config,
-    )
-except ImportError:  # tests/ is a package in some layouts
-    from .stage2_synthetic import (  # type: ignore[no-redef]
-        CONSTRAINTS_DEGENERATE, CONSTRAINTS_OK, N_FOLDS, ROUTER_SEED, SMALL_PARAMS,
-        make_data, router_config,
-    )
+from tests.support.stage2_synthetic import (
+    CONSTRAINTS_DEGENERATE, CONSTRAINTS_OK, N_FOLDS, ROUTER_SEED, SMALL_PARAMS,
+    make_data, router_config,
+)
 
 
 @pytest.fixture(scope="module")

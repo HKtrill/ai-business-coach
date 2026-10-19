@@ -79,8 +79,8 @@ class StageOutputError(ValueError):
     """
     A ``StageOutput`` violates the contract.
 
-    Raised on construction or load for: a non-Series field, mismatched
-    indices, NaN or out-of-range probabilities, non-binary labels, an unknown
+    Raised on construction or load for: a non-Series field, mismatched or
+    duplicated indices, NaN or out-of-range probabilities, non-binary labels, an unknown
     ``threshold_source``, a threshold outside (0, 1), or overlapping
     train/test indices. Also raised by :func:`assert_comparable`.
     """
@@ -179,6 +179,11 @@ def split_fingerprint(train_index, test_index, y_train=None, y_test=None) -> str
     Hashes the string form of each value, so it is stable across pandas and
     numpy versions — unlike ``pd.util.hash_pandas_object``. Both notebooks must
     compute it with this function for fingerprints to be comparable.
+
+    Because values pass through ``str()``, the fingerprint follows how they
+    print: int8 and int64 labels agree, but bool labels (``True``), float
+    labels (``1.0``) or a float index give a different fingerprint for the
+    same split. Pass 0/1 integer labels and the original integer index.
 
     Examples
     --------
@@ -337,8 +342,8 @@ class StageOutput:
         """
         Validate one split's probabilities, labels and (train only) fold ids.
 
-        Each must be a Series; all must share one index; probabilities must be
-        finite and in [0, 1]; labels must be 0/1.
+        Each must be a Series; all must share one index with no duplicate
+        labels; probabilities must be finite and in [0, 1]; labels must be 0/1.
         """
         for label, obj in (("proba", proba), ("y", y), ("fold_id", fold)):
             if obj is None:
@@ -349,6 +354,11 @@ class StageOutput:
                     f"{type(obj).__name__}) — Stage 4 joins on the index, and "
                     "a bare array has none"
                 )
+        if not proba.index.is_unique:
+            raise StageOutputError(
+                f"{name}: index has duplicate labels — Stage 4 joins on the "
+                "index, so every row must appear exactly once"
+            )
         if not proba.index.equals(y.index):
             raise StageOutputError(f"{name}: proba.index != y.index")
         if fold is not None and not proba.index.equals(fold.index):

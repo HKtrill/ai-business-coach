@@ -9,7 +9,7 @@
 SELECT
     r.age AS age,
 
-    -- Job (training vocabulary, unseen -> -1)
+    -- Job (vocabulary learned in fit(), unseen -> -1)
     COALESCE(j.code, -1) AS job,
 
     -- Marital (unknown -> -1)

@@ -640,6 +640,14 @@ class Stage3Block:
 
 
 def _as_label_series(y, X: pd.DataFrame, name: str) -> pd.Series:
+    """
+    Labels as an int Series indexed like ``X``.
+
+    A Series must already carry ``X``'s index (same labels, same order). A
+    bare array is accepted and aligned BY POSITION: element i is taken to be
+    the label of row i of ``X``, so the caller is responsible for that order
+    (PR 36 finding F6).
+    """
     if isinstance(y, pd.Series):
         if len(y) != len(X) or not y.index.equals(X.index):
             raise ValueError(

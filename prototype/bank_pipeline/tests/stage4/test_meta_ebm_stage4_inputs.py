@@ -1,10 +1,10 @@
 """
 GLASS Stage 4 (Meta-EBM) — input contract + behaviour.
 
-Fixtures: ``shared.stage4.tests.fixtures`` (real StageOutput / Stage3Artifact
-classes, real router artifact layout). Run from the repo root:
+Fixtures: ``tests.support.stage4_world`` (real StageOutput / Stage3Artifact
+classes, real router artifact layout). Run from ``prototype/bank_pipeline``:
 
-    python -m pytest glass_pipeline/meta_ebm/tests shared/stage4/tests -q
+    pytest tests/stage4 -q
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ import numpy as np
 import pytest
 
 from shared.stage4 import Stage4InputError
-from shared.stage4.tests.fixtures import (
+from tests.support.stage4_world import (
     ROUTER_FP, build_world, make_router, make_stage1, make_stage3,
 )
 from shared.validation import ValidationError
