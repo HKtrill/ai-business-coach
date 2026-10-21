@@ -4,11 +4,15 @@ lr.calibration
 Probability calibration (Platt / isotonic). Shared by both arms — the MLP
 calls ``fit_calibration`` through ``mlp.calibration.fit_stage1_calibration``.
 
-Known limitation (audit F4, unchanged here)
--------------------------------------------
+Known limitation (earlier audit F4; PR 36 registry F16 — unchanged here)
+------------------------------------------------------------------------
 The family is selected by Brier on the SAME training rows the calibrators were
 fitted on, which favours isotonic. The winner is recorded, and the request is
 preserved separately on each stage, so the choice can at least be reported.
+Fixed in PR 36 (F16/F19): the stages no longer call ``fit_calibration``;
+both arms calibrate through ``shared.stage1.oof_calibration`` (nested
+out-of-fold selection, per-fold preprocessing). It is kept for existing
+imports only.
 
 ``calculate_ece`` now lives in ``shared.metrics`` (first bin fixed to include
 p == 0.0) and is re-exported here for existing imports.

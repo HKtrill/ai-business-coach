@@ -21,7 +21,9 @@ black-box XGBoost arm. Relative to the pre-PR-33 stage:
 * the operating threshold is selected on OOF predictions, not ``y_test``
   (the test-fitted value survives only as ``threshold["test_oracle"]``);
 * calibration is gated on OOF ECE and fitted as a fold-nested isotonic map —
-  no refit of unweighted EBMs via ``CalibratedClassifierCV``;
+  no refit of unweighted EBMs via ``CalibratedClassifierCV``; since PR 36
+  (F22) each fold's gate, map and threshold come from inner folds of its
+  training rows;
 * NaN/inf cleaning is learned on train and applied to every scored frame;
 * the artifact carries indexes, split + block fingerprints, fold ids, tuning
   metadata, the fitted feature pipeline, cleaner and calibrator.

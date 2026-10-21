@@ -108,7 +108,8 @@ class Stage3Config:
     nested_oof_threshold: bool = True
 
     # ---- calibration ------------------------------------------------------
-    # Isotonic, gated at OOF ECE > 0.05, fold-nested on the training side.
+    # Isotonic, gated at OOF ECE > 0.05; on the training side gate, map and
+    # nested thresholds come from inner folds of each outer fold (F22).
     calibration_method: str = "isotonic"
     ece_threshold: float = 0.05
     ece_bins: int = 10
@@ -220,13 +221,15 @@ class Stage3Config:
                          f"{self.tuning_decision_threshold}",
             "class_weight": self.class_weight,
             "calibration": f"{self.calibration_method}, gated at OOF ECE > "
-                           f"{self.ece_threshold}, fold-nested on train",
+                           f"{self.ece_threshold}; train side nested per outer fold "
+                           "(gate + map from inner OOF)",
             "threshold_rule": (
                 f"F{self.beta:g}-maximising over "
                 f"[{self.threshold_low}, {self.threshold_high}] in "
                 f"{self.threshold_steps} steps, scored on OUT-OF-FOLD train "
                 f"predictions"
-                + ("; train-side decisions use fold-nested thresholds"
+                + ("; train-side decisions use fold-nested thresholds "
+                   "selected on inner OOF"
                    if self.nested_oof_threshold else "")
             ),
             "shared_implementation": "shared.stage_runner (both arms)",

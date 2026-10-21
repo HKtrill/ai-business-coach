@@ -39,6 +39,12 @@ _SMOOTHING_FACTOR:  int = 100
 
 LR_FEATURES = ['cellular_crisis', 'euribor3m_local_rate', 'dow_month_encoded']
 
+#: The LR features learned from the training LABELS. Fitted once on the whole
+#: training split they are fine for scoring the test split, but inside any
+#: cross-validation they must be refit per fold (audit F3) — see
+#: ``shared.stage1.crossfit``.
+TARGET_ENCODED_FEATURES = ('euribor3m_local_rate', 'dow_month_encoded')
+
 
 # ---------------------------------------------------------------------------
 # Main class

@@ -19,7 +19,10 @@ from sklearn.preprocessing import StandardScaler
 
 from tests.support import mutations as mut
 from tests.support.checks import ProvenanceError, assert_never_fit_on, assert_oof_provenance
-from tests.support.recorders import CallLog, RecordingEstimator, array_row_labels, row_keys
+from tests.support.recorders import (
+    CallLog, RecordingEstimator, RecordingStage3Estimator, RowTaggedEstimator, array_row_labels,
+    row_keys, tag_rows,
+)
 from tests.support.synthetic import BANK_SCHEMA, TARGET, make_bank_frame, split_frame
 
 FOLDS = StratifiedKFold(n_splits=4, shuffle=True, random_state=0)
@@ -275,3 +278,40 @@ def test_per_fold_feature_fitting_check(bank_split):
         scaler.transform(X.iloc[va])
     with pytest.raises(ProvenanceError, match="at least 2"):
         assert_oof_provenance(leaky, X.index, methods=("transform",))
+
+
+def test_stage3_recorder_logs_fits_and_scores_transparently(bank_split):
+    """The shared Stage 3 interface: fit(params, X, y, w) -> model; positive_proba(model, X)."""
+    from blackbox_pipeline.models.xgb.shared_protocol import XGBEstimator
+
+    X_tr, y_tr, X_te = bank_split["X_train"], bank_split["y_train"], bank_split["X_test"]
+    params = {"n_estimators": 10, "learning_rate": 0.1, "max_depth": 2, "min_child_weight": 1.0,
+              "subsample": 1.0, "colsample_bytree": 1.0, "reg_lambda": 1.0}
+    log = CallLog()
+    plain, recorded = XGBEstimator(n_jobs=1), RecordingStage3Estimator(XGBEstimator(n_jobs=1), log)
+    assert recorded.family == "xgboost" and recorded.as_array is False      # delegated
+    model = recorded.fit(params, X_tr.iloc[:200], y_tr.iloc[:200])
+    p = recorded.positive_proba(model, X_te)
+    ref = plain.positive_proba(plain.fit(params, X_tr.iloc[:200], y_tr.iloc[:200]), X_te)
+    np.testing.assert_array_equal(p, ref)
+    assert log.fits() == {1: frozenset(X_tr.index[:200])}
+    assert [(c.method, c.fit_id, c.keys) for c in log[1:]] == [("predict_proba", 1, tuple(X_te.index))]
+
+
+def test_row_tagged_recorder_identifies_duplicate_rows_transparently(bank_split):
+    """Binned features repeat; tags still tell every row apart, and outputs are unchanged."""
+    X = (bank_split["X_train"][["euribor3m", "contact"]] > 1).astype(float).to_numpy()
+    y = bank_split["y_train"]
+    assert len(np.unique(X, axis=0)) < len(X)          # byte hashes could not identify rows
+    with pytest.raises(ValueError, match="duplicate rows"):
+        array_row_labels(X, y.index)
+    log = CallLog()
+    plain = cross_val_predict(LogisticRegression(), X, y, cv=FOLDS, method="predict_proba")
+    tagged = cross_val_predict(RowTaggedEstimator(LogisticRegression(), log), tag_rows(X), y,
+                               cv=FOLDS, method="predict_proba")
+    np.testing.assert_array_equal(tagged, plain)
+    assert_oof_provenance(log, range(len(X)))
+    held_out = [set(va) for _, va in FOLDS.split(X, y)]
+    assert [set(c.keys) for c in log if c.method == "predict_proba"] == held_out
+    with pytest.raises(ValueError, match="tags for"):
+        tag_rows(X, tags=[0, 1])

@@ -272,6 +272,10 @@ class OOFPredictions:
     params: dict[str, Any]
     fit_sizes: list[int] = field(default_factory=list)
     test_proba_by_fold: Optional[np.ndarray] = None   # (n_folds, n_test)
+    # (n_folds, n_rows): row k = inner OOF scores of fold k's training rows,
+    # NaN on fold k's own rows (F22; ``OOFGenerator.generate_inner``)
+    inner_proba: Optional[np.ndarray] = None
+    inner_fit_sizes: list[list[int]] = field(default_factory=list)
 
     @property
     def n_rows(self) -> int:
@@ -313,6 +317,8 @@ class OOFPredictions:
         if self.test_proba_by_fold is not None:
             sd = self.test_proba_by_fold.std(axis=0)
             out["test_fold_spread_mean_sd"] = float(sd.mean())
+        if self.inner_fit_sizes:
+            out["inner_fit_sizes"] = [list(s) for s in self.inner_fit_sizes]
         return out
 
 
@@ -363,6 +369,44 @@ class OOFGenerator:
         )
         result.assert_valid()
         return result
+
+    def generate_inner(self, inner_folds: list[list[FoldFrames]], params: dict[str, Any]
+                       ) -> tuple[np.ndarray, list[list[int]]]:
+        """
+        Inner out-of-fold scores (audit F22): ``(n_folds, n_rows)`` plus fit sizes.
+
+        Row k scores every training row of outer fold k with models (and
+        feature pipelines, see ``Stage3Block.inner_folds``) fitted on inner
+        folds of those rows only; fold k's own rows stay NaN. Fold k's
+        calibration gate, map and nested threshold are fitted on these scores,
+        never on the other folds' outer OOF scores, whose models were trained
+        on fold k's labels.
+        """
+        n, n_folds = self.plan.n_rows, self.plan.n_splits
+        if len(inner_folds) != n_folds:
+            raise ValueError(f"{len(inner_folds)} inner fold sets for {n_folds} outer folds")
+        out = np.full((n_folds, n), np.nan, dtype=float)
+        sizes: list[list[int]] = []
+        for k, (outer_train, outer_val) in enumerate(self.plan):
+            scored, fold_sizes = [], []
+            for f in inner_folds[k]:
+                if np.intersect1d(f.train_idx, f.val_idx).size:
+                    raise AssertionError(f"fold {k}, inner {f.k}: train/val positions overlap")
+                if np.intersect1d(np.union1d(f.train_idx, f.val_idx), outer_val).size:
+                    raise AssertionError(f"fold {k}, inner {f.k}: touches the outer held-out rows")
+                model = self.estimator.fit(params, f.X_tr, f.y_tr, sample_weight=f.w_tr)
+                out[k, f.val_idx] = self.estimator.positive_proba(model, f.X_val)
+                scored.append(f.val_idx)
+                fold_sizes.append(int(len(f.train_idx)))
+                del model
+            if not np.array_equal(np.sort(np.concatenate(scored)), outer_train):
+                raise AssertionError(f"fold {k}: inner folds do not partition its training rows")
+            sizes.append(fold_sizes)
+            if self.verbose:
+                print(f"     inner folds of fold {k + 1}/{n_folds}: {len(fold_sizes)} fits on "
+                      f"{min(fold_sizes):,}–{max(fold_sizes):,} rows → scored "
+                      f"{len(outer_train):,}")
+        return out, sizes
 
 
 def stage3_metric_suite(

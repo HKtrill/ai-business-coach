@@ -9,7 +9,7 @@ Public API
 ----------
 PARAM_KEYS                       canonical EBM hyperparameters
 suggest_params(trial)            Optuna search space
-normalize_params(params)         canonical dict (raises on missing keys)
+normalize_params(params)         canonical dict (raises on missing or unknown keys)
 fit_model(params, X, y, seed)    balanced-weight EBM fitted on (X, y)
 positive_proba(model, X)         P(y=1)
 hard_labels(proba)               0/1 at the 0.5 cut (same as predict())
@@ -46,10 +46,15 @@ def suggest_params(trial: optuna.Trial) -> dict[str, Any]:
 
 
 def normalize_params(params: dict[str, Any]) -> dict[str, Any]:
-    """Canonical params in PARAM_KEYS order; extra keys dropped, missing keys raise."""
+    """Canonical params in PARAM_KEYS order; missing or unknown keys raise (F14)."""
     missing = [k for k in PARAM_KEYS if k not in params]
     if missing:
         raise KeyError(f"EBM params missing {missing}")
+    unknown = [k for k in params if k not in PARAM_KEYS]
+    if unknown:
+        raise KeyError(
+            f"Unknown EBM hyperparameters {unknown}; expected exactly {list(PARAM_KEYS)}"
+        )
     return {k: params[k] for k in PARAM_KEYS}
 
 

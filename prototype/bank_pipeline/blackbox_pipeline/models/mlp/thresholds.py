@@ -37,6 +37,8 @@ from sklearn.model_selection import StratifiedKFold, cross_val_predict
 
 from shared.thresholds import optimize_threshold_cv, sweep_f_beta
 
+from shared.stage1.crossfit import crossfit_proba
+
 from .calibration import assert_refittable
 
 __all__ = [
@@ -55,9 +57,15 @@ def oof_probabilities(
     random_state: int,
     n_jobs: int = -1,
     strict: bool = True,
+    *,
+    folds=None,
 ) -> Tuple[pd.Series, str]:
     """
     Out-of-fold calibrated ``P(y = 1)`` over the training split.
+
+    Not called by the stage since PR 36 (F16/F19): its calibrated OOF
+    probabilities come from ``shared.stage1.oof_calibration``. Kept for
+    existing imports.
 
     Parameters
     ----------
@@ -77,6 +85,11 @@ def oof_probabilities(
         Parallelism for ``cross_val_predict``.
     strict : bool, default True
         Passed to :func:`~.calibration.assert_refittable`.
+    folds : list of shared.stage1.crossfit.FoldDesign, optional
+        Folds whose encoders and scaler were refit on each fold's training
+        rows (audit F3/F4); ``X_scaled`` is then ignored. Without them,
+        ``X_scaled`` is cross-fitted as given, which is only out-of-fold if it
+        carries no statistics fitted on all rows.
 
     Returns
     -------
@@ -108,13 +121,16 @@ def oof_probabilities(
     """
     provenance = assert_refittable(calibrated_model, strict=strict)
 
-    cv = StratifiedKFold(
-        n_splits=cv_folds, shuffle=True, random_state=random_state
-    )
-    proba = cross_val_predict(
-        calibrated_model, X_scaled, y,
-        cv=cv, method="predict_proba", n_jobs=n_jobs,
-    )[:, 1]
+    if folds is not None:
+        proba = crossfit_proba(calibrated_model, folds, n_jobs=n_jobs)
+    else:
+        cv = StratifiedKFold(
+            n_splits=cv_folds, shuffle=True, random_state=random_state
+        )
+        proba = cross_val_predict(
+            calibrated_model, X_scaled, y,
+            cv=cv, method="predict_proba", n_jobs=n_jobs,
+        )[:, 1]
 
     if len(proba) != len(index):
         raise AssertionError(

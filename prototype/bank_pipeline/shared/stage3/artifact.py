@@ -198,7 +198,8 @@ class Stage3Artifact:
         The ``shared.stage_io.StageOutput`` Stages 1–2 already hand to Stage 4.
 
         Carries the CALIBRATED probabilities (the contract's definition):
-        train side = fold-nested calibrated OOF, test side = refit model
+        train side = strictly nested calibrated OOF (each fold's gate and map
+        fitted on inner OOF of its training rows, F22), test side = refit model
         through the all-OOF calibrator, with the calibrated-space OOF
         threshold. ``threshold_source='in_stage_f2_cv'``: that scalar was
         chosen on every training row's OOF labels, so ``StageOutput`` will
@@ -231,7 +232,8 @@ class Stage3Artifact:
             oof_provenance=(
                 f"refittable (per-fold refit: features {self.feature_fit_scope}, "
                 f"model, calibration map; {self.fold_plan.get('n_splits')}-fold "
-                f"stratified, seed {self.fold_plan.get('random_state')})"
+                f"stratified, seed {self.fold_plan.get('random_state')}; train-side "
+                f"calibration and thresholds nested on inner folds)"
             ),
             best_params=dict(self.best_params),
             best_cv_score=None if not np.isfinite(self.cv_score) else float(self.cv_score),

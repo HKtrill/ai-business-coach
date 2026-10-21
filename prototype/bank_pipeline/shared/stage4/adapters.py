@@ -27,9 +27,15 @@ Stage 2  ``train_outputs_oof`` must be ``True``: it certifies that the top-level
          ``test_proba`` + ``test_decisions`` · folds ``train_fold_id``.
          ``train_insample_proba_diagnostic`` (GLASS only) is read solely to prove
          it is not what is consumed.
-Stage 3  ``calibration["applied"]`` picks ONE matched pair:
-         applied → ``oof["proba_calibrated"]`` + ``refit["test_proba_calibrated"]``
-         skipped → ``oof["proba"]`` + ``refit["test_proba"]``.
+Stage 3  train ``oof["proba_calibrated"]`` · test ``refit["test_proba_calibrated"]``,
+         the pair Stage 1's ``StageOutput`` and ``Stage3Artifact.to_stage_output``
+         use: the train side applies each fold's own calibration policy (gate
+         and map fitted on inner OOF of its training rows, PR 36 F22), the test
+         side the policy fitted on all OOF rows (identity when its gate is not
+         breached). Choosing raw vs calibrated for EVERY train row from the
+         all-rows gate would put each fold's labels back into its own stream
+         (F28). Artifacts written before F22 (no ``calibration["fold_applied"]``)
+         are refused, calibrated or not (F26).
          ``refit["train_proba*"]`` (in-sample) is read only for the aliasing
          guard; ``threshold["test_oracle"]`` is never read.
 """
@@ -179,6 +185,7 @@ def stage_output_stream(obj_or_path, name: str, model: str, n_train: int):
         index_source="StageOutput Series index" if _index_of(tr) is not None else None,
         y_train=np.asarray(_get(so, "y_train")), y_test=np.asarray(_get(so, "y_test")),
         notes={"oof_provenance": _get(so, "oof_provenance"),
+               "arm": _get(so, "arm"),
                "calibration_method": cal,
                "calibration_requested": _get(so, "calibration_requested"),
                "stage_output_validated": type(so).__name__ == "StageOutput"},
@@ -195,6 +202,10 @@ def stage_output_stream(obj_or_path, name: str, model: str, n_train: int):
     prov = str(_get(so, "oof_provenance") or "")
     checks.append((SEC_OOF, stream.stage, f"{name}: OOF provenance is refittable",
                    lambda: not prov.upper().startswith("PREFIT"), prov[:80]))
+    # PR 36 F26: older StageOutputs carried OOF probabilities whose encoder,
+    # scaler (F3/F4) or calibration (F16/F19) saw the held-out fold.
+    checks.append((SEC_OOF, stream.stage, f"{name}: OOF calibration nested inside each fold "
+                   "(PR 36 F16/F19)", lambda: "nested cross-fit" in prov, prov[:80]))
     return stream, checks
 
 
@@ -362,14 +373,25 @@ def stage3_stream(obj_or_path, name: str, model: str):
                                "choose the matched probability representation")
 
     applied = bool(art.calibration["applied"])
-    if applied:
-        tr_key, te_key, thr_key = "proba_calibrated", "test_proba_calibrated", "oof_calibrated_space"
-        space = (f"calibrated ({art.calibration.get('method')}; train: fold-nested "
-                 "calibrator, test: calibrator fit on all OOF rows)")
-    else:
-        tr_key, te_key, thr_key = "proba", "test_proba", "oof"
-        space = "raw (calibration gate not breached; calibrator is identity)"
-    _require(art.oof, (tr_key, "fold_id"), f"{where}::oof")
+    fold_applied = art.calibration.get("fold_applied")
+    if fold_applied is None:                     # written before PR 36 F22
+        # Refused whether or not the all-rows gate fired: before F22 every
+        # training-side output (calibrated OOF, fold-nested thresholds and
+        # decision columns, the gate itself) was fitted on the other folds'
+        # OOF scores, whose models were trained on the held-out fold.
+        raise Stage4InputError(
+            f"{where}: Stage 3 artifact predates PR 36 F22 (no per-fold calibration "
+            "metadata): its training-side calibration and fold-nested thresholds were "
+            "fitted on OOF scores from models trained on the held-out fold. Re-run Stage 3.")
+    fold_applied = [bool(a) for a in fold_applied]
+    tr_key, te_key = "proba_calibrated", "test_proba_calibrated"
+    thr_key = "oof_calibrated_space" if applied else "oof"      # reported only
+    space = (f"calibrated per fold ({art.calibration.get('method')}; train: each fold's gate "
+             f"and map from inner OOF of its training rows, {sum(fold_applied)}/"
+             f"{len(fold_applied)} folds mapped; test: all-OOF gate "
+             + ("breached, map fitted on all OOF rows)" if applied
+                else "not breached, identity)"))
+    _require(art.oof, (tr_key, "proba", "fold_id"), f"{where}::oof")
     _require(art.refit, (te_key,), f"{where}::refit")
     _require(art.threshold, (thr_key,), f"{where}::threshold")
 
@@ -392,6 +414,9 @@ def stage3_stream(obj_or_path, name: str, model: str):
         y_train=np.asarray(art.y_train) if len(art.y_train) else None,
         y_test=np.asarray(art.y_test) if len(art.y_test) else None,
         notes={"calibration_applied": applied,
+               "calibration_fold_applied": list(fold_applied),
+               "model_family": art.model_family,
+               "arm": (art.config or {}).get("arm"),
                "calibration_method": art.calibration.get("method"),
                "calibration_reason": art.calibration.get("reason"),
                "feature_fit_scope": art.feature_fit_scope,
@@ -410,10 +435,16 @@ def stage3_stream(obj_or_path, name: str, model: str):
         (SEC_OOF, "stage3", f"{name}: standalone threshold is not the test oracle",
          lambda: thr_key != "test_oracle", thr_key),
     ]
+    fold_id = np.asarray(art.oof["fold_id"])
+    oof_raw = np.asarray(art.oof["proba"], float)
+    oof_cal = np.asarray(art.oof["proba_calibrated"], float)
+    checks.append((SEC_OOF, "stage3", f"{name}: folds whose own gate was not breached carry raw OOF",
+                   lambda: len(fold_applied) == len(np.unique(fold_id)) and all(
+                       np.array_equal(oof_cal[fold_id == k], oof_raw[fold_id == k])
+                       for k, a in enumerate(fold_applied) if not a),
+                   f"per-fold gates {fold_applied}"))
     if not applied:
-        checks.append((SEC_OOF, "stage3", f"{name}: calibration skipped ⇒ calibrated slots = raw",
-                       lambda: np.array_equal(np.asarray(art.oof["proba_calibrated"], float),
-                                              np.asarray(art.oof["proba"], float))
-                       and np.array_equal(np.asarray(art.refit["test_proba_calibrated"], float),
-                                          np.asarray(art.refit["test_proba"], float)), ""))
+        checks.append((SEC_OOF, "stage3", f"{name}: all-OOF gate not breached ⇒ test slot = raw",
+                       lambda: np.array_equal(np.asarray(art.refit["test_proba_calibrated"], float),
+                                              np.asarray(art.refit["test_proba"], float)), ""))
     return stream, checks

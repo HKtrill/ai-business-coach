@@ -166,13 +166,19 @@ def test_ebm_trainer_contract_fold_fitting_and_reproducibility(bank_split, make_
     _assert_per_plan_fold_fitting(log, bank_split["X_train"].index, [N_FOLDS])
 
 
-def test_ebm_params_missing_keys_raise_and_extra_keys_are_dropped_f14():
-    """F14 (documented behaviour): unlike the cascade's EBM estimator, research
-    params drop unknown keys silently instead of rejecting them."""
-    with pytest.raises(KeyError):
+def test_ebm_params_reject_missing_and_unknown_keys_f14(bank_split, make_fp, cv):
+    """F14 regression: unknown keys used to be dropped silently; like the
+    cascade's EBM estimator, research params now reject them."""
+    with pytest.raises(KeyError, match="missing"):
         normalize_params({k: v for k, v in EBM_PARAMS.items() if k != "max_bins"})
-    out = normalize_params({**EBM_PARAMS, "max_depht": 3})
-    assert list(out) == list(PARAM_KEYS) and "max_depht" not in out
+    with pytest.raises(KeyError, match="Unknown EBM hyperparameters \\['max_depht'\\]"):
+        normalize_params({**EBM_PARAMS, "max_depht": 3})
+    with pytest.raises(KeyError, match="Unknown EBM hyperparameters"):
+        train_ebm(bank_split["X_train"], bank_split["y_train"], EBM_FEATURES, cv=cv,
+                  feature_factory=make_fp, params={**EBM_PARAMS, "max_depht": 3},
+                  n_folds_eval=2, n_jobs=1)
+    shuffled = dict(reversed(list(EBM_PARAMS.items())))            # valid keys, any order
+    assert list(normalize_params(shuffled)) == list(PARAM_KEYS)
 
 
 def test_ebm_trainer_refuses_duplicate_feature_names(bank_split, make_fp, cv):

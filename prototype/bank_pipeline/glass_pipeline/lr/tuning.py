@@ -11,6 +11,11 @@ same pruner and the same trial count, ``study.best_value`` is comparable
 across arms. Change one arm and you must change the other.
 
 Pre-PR-33 behaviour was 5 folds, MedianPruner(10, 1).
+
+PR 36 (audit F3/F4): pass ``folds`` (``shared.stage1.crossfit`` designs) and
+each fold is scored with its target encodings and scaler refit on that fold's
+training rows; ``X_scaled`` is then ignored. The penalty is passed through
+``lr.penalty.penalty_kwargs`` (same model, no scikit-learn 1.8+ deprecation).
 """
 import time
 import numpy as np
@@ -20,6 +25,8 @@ from optuna.pruners import MedianPruner
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_auc_score
+
+from .penalty import penalty_kwargs
 
 optuna.logging.set_verbosity(optuna.logging.WARNING)
 
@@ -32,32 +39,38 @@ def run_optuna_tuning(
     cv_folds: int = 10,
     pruner_startup_trials: int = 5,
     pruner_warmup_steps: int = 2,
+    folds=None,
 ) -> tuple:
     """
     Bayesian search over C, penalty, l1_ratio.
     Returns (best_params, study, runtime_s).
+
+    ``folds``: optional list of ``shared.stage1.crossfit.FoldDesign`` with
+    per-fold preprocessing. Without it, ``X_scaled`` is split with
+    ``StratifiedKFold(cv_folds, shuffle=True, random_state)``.
     """
-    cv = StratifiedKFold(n_splits=cv_folds, shuffle=True, random_state=random_state)
+    if folds is None:
+        cv = StratifiedKFold(n_splits=cv_folds, shuffle=True, random_state=random_state)
+        y_arr = np.asarray(y_train)
+        folds = [(X_scaled[tr], y_arr[tr], X_scaled[va], y_arr[va])
+                 for tr, va in cv.split(X_scaled, y_arr)]
+    else:
+        folds = [(d.X_train, d.y_train, d.X_val, d.y_val) for d in folds]
 
     def objective(trial):
         C = trial.suggest_float("C", 1e-4, 1e3, log=True)
         penalty = trial.suggest_categorical("penalty", ["l1", "l2", "elasticnet"])
-        lr_kwargs = dict(
-            C=C, penalty=penalty, solver="saga", max_iter=5000,
-            random_state=random_state, class_weight="balanced",
+        l1_ratio = (trial.suggest_float("l1_ratio", 0.0, 1.0)
+                    if penalty == "elasticnet" else None)
+        clf = LogisticRegression(
+            C=C, solver="saga", max_iter=5000, random_state=random_state,
+            class_weight="balanced", **penalty_kwargs(penalty, l1_ratio),
         )
-        if penalty == "elasticnet":
-            lr_kwargs["l1_ratio"] = trial.suggest_float("l1_ratio", 0.0, 1.0)
-
-        clf = LogisticRegression(**lr_kwargs)
         fold_scores = []
-        for fold_idx, (tr_idx, val_idx) in enumerate(cv.split(X_scaled, y_train)):
+        for fold_idx, (X_tr, y_tr, X_va, y_va) in enumerate(folds):
             try:
-                clf.fit(X_scaled[tr_idx], y_train.iloc[tr_idx])
-                auc = roc_auc_score(
-                    y_train.iloc[val_idx],
-                    clf.predict_proba(X_scaled[val_idx])[:, 1],
-                )
+                clf.fit(X_tr, y_tr)
+                auc = roc_auc_score(y_va, clf.predict_proba(X_va)[:, 1])
             except Exception:
                 return float("-inf")
             fold_scores.append(auc)

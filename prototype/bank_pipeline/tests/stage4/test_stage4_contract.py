@@ -92,11 +92,15 @@ def test_legacy_stage3_dict_refused(w):
 
 
 def test_abstention_protocol_mirrors_meta_ebm():
+    """Both arms: the shared rule, exact search by default (PR 36 F30)."""
     from glass_pipeline.meta_ebm import meta_stage, tuning
     sig = inspect.signature(tuning.tune_arbiter_threshold)
     assert sig.parameters["min_coverage"].default == ABSTENTION_MIN_COVERAGE
+    assert sig.parameters["min_confs"].default is None                  # exact search
+    assert inspect.signature(tune_min_confidence).parameters["grid"].default is None
     assert meta_stage._MIN_COVERAGE == ABSTENTION_MIN_COVERAGE
-    assert np.allclose(np.arange(0.03, 0.55, 0.02), ABSTENTION_GRID)   # tuning.py default
+    assert tuning.tune_min_confidence is tune_min_confidence            # one implementation
+    assert np.allclose(np.arange(0.03, 0.55, 0.02), ABSTENTION_GRID)   # pre-F30 grid, explicit use
 
 
 def test_tune_min_confidence_rule():
@@ -106,4 +110,6 @@ def test_tune_min_confidence_rule():
     d = (p >= .4).astype(int)
     best = tune_min_confidence(y, d, np.abs(p - .4))
     assert best["train_coverage"] >= ABSTENTION_MIN_COVERAGE
-    assert tune_min_confidence(y, d, np.zeros(2000)) is None           # nothing ≥ 0.03
+    flat = tune_min_confidence(y, d, np.zeros(2000))                    # no ranking: abstain on nothing
+    assert flat["min_confidence"] == 0.0 and flat["train_coverage"] == 1.0
+    assert tune_min_confidence(y, d, np.abs(p - .4), min_coverage=1.01) is None

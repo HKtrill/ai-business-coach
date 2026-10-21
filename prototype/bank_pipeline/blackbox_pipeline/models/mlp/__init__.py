@@ -17,7 +17,7 @@ Example
 ...     cv_folds=10,
 ...     n_trials=100,
 ...     random_state=42,
-... ).fit(STAGE1["X_train"], STAGE1["y_train"])
+... ).fit(STAGE1["X_train"], STAGE1["y_train"], X_train_raw=GLOBAL_SPLIT["X_train"])
 
 Notes
 -----

@@ -34,7 +34,9 @@ from .adapters import (
     stage3_stream,
     stage_output_stream,
 )
-from .protocol import ABSTENTION_GRID, ABSTENTION_MIN_COVERAGE, tune_min_confidence
+from .protocol import (
+    ABSTENTION_GRID, ABSTENTION_MIN_COVERAGE, ABSTENTION_SEARCH, tune_min_confidence,
+)
 
 __all__ = [
     "FINGERPRINT_SCHEMES", "Stage4InputError", "Stage4Inputs", "StageStream",
@@ -42,5 +44,5 @@ __all__ = [
     "index_alignment", "not_identical", "split_reference",
     "ABSTAIN", "PASS1", "PASS2", "normalize_router_decisions",
     "router_stream", "stage3_stream", "stage_output_stream",
-    "ABSTENTION_GRID", "ABSTENTION_MIN_COVERAGE", "tune_min_confidence",
+    "ABSTENTION_GRID", "ABSTENTION_MIN_COVERAGE", "ABSTENTION_SEARCH", "tune_min_confidence",
 ]

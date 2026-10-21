@@ -156,16 +156,20 @@ def test_test_data_does_not_affect_configuration(world, monkeypatch):
         inp = inner(*a, **k)
         rng = np.random.default_rng(7)
         inp.y_test = rng.permutation(inp.y_test)
-        for s in inp.streams.values():
+        for name, s in inp.streams.items():
             s.test_proba = rng.random(len(s.test_proba))
             if s.test_decisions is not None:
                 s.test_decisions = rng.permutation(s.test_decisions)
+            if name == "glass":          # still GLASS rule blends at the training rate (F25)
+                b, d = inp.y_train.mean(), s.test_decisions
+                s.test_proba = np.where(d == "pass1", b * (1 - s.test_proba),
+                                        np.where(d == "pass2", b + (1 - b) * s.test_proba, 0.5))
         return inp
 
     monkeypatch.setattr(ms, "load_stage_outputs", scrambled)
     a2, _ = run(w, arts, tmp)
     for k in ("thresholds", "weights", "abstention", "calibration", "disagreement"):
-        assert a1[k] == a2[k], k
+        np.testing.assert_equal(a2[k], a1[k], err_msg=k)               # NaN-safe
     assert a1["no_abstain"] != a2["no_abstain"]
 
 

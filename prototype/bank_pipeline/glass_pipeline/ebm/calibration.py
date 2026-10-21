@@ -4,8 +4,9 @@ glass_pipeline.ebm.calibration
 Since PR 33 Stage 3 calibration is ``shared.stage_runner.Stage3Calibrator``,
 shared with the XGBoost arm: gated on OUT-OF-FOLD ECE (> 0.05), fitted as a
 fold-nested isotonic map on OOF probabilities, applied to test by a map fitted
-on all OOF rows. The model itself is never refitted, so its balanced sample
-weights are preserved.
+on all OOF rows. Since PR 36 (F22) each fold's gate and map are fitted on
+inner out-of-fold scores of that fold's training rows. The model itself is
+never refitted, so its balanced sample weights are preserved.
 
 ``calculate_ece`` is re-exported; it is ``shared.metrics.calculate_ece`` (exact
 zeros counted), the same ECE every stage reports.

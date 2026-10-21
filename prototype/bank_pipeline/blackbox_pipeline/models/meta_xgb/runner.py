@@ -21,9 +21,10 @@ Order of operations (each step reads only what is listed)
                 CV report     10-fold, train only
                 refit         all train rows
                 meta OOF      one model per fold, scores only its held-out fold
-                calibrate     OOF-ECE gate; fold-nested on train, all-OOF map → test
-                threshold     F2 grid on META OOF; fold-nested per-row for train
-                abstention    min |p − t| by F2 on META OOF, coverage ≥ 50%
+                calibrate     OOF-ECE gate; nested on train (inner folds), all-OOF map → test
+                threshold     F2 grid on META OOF; fold-nested per-row for train (inner OOF)
+                abstention    min |p − t| by F2 on META OOF, coverage ≥ 50%; exact
+                              search over distinct |p − t| (shared rule, PR 36 F30)
               ── configuration frozen ──
                 test          refit model scores the test block once
 4. evaluate   no-abstention + with-abstention on test
@@ -46,7 +47,9 @@ try:
 except ImportError:                     # pragma: no cover - legacy monolith
     from shared.stage_runner import PassthroughPipeline, Stage3Block, Stage3Runner
 
-from shared.stage4 import ABSTENTION_GRID, ABSTENTION_MIN_COVERAGE, tune_min_confidence
+from shared.stage4 import (
+    ABSTENTION_GRID, ABSTENTION_MIN_COVERAGE, ABSTENTION_SEARCH, tune_min_confidence,
+)
 
 from .artifact import MetaXGBArtifact, save_meta_xgb
 from .config import EXCLUDED_CHANNELS, FEATURE_CONTRACT, STAGE4_FEATURES, MetaXGBConfig
@@ -96,19 +99,20 @@ class MetaXGBRunner(Stage3Runner):
         else:
             p_oof = self.calibrator_.oof_calibrated_
             t_glob, t_key = choice_cal.threshold, "oof_calibrated_space"
-            t_rows = (self.selector.select_nested(y_tr, p_oof, block.tune_plan)["per_row"]
+            t_rows = (self.selector.select_nested(
+                          y_tr, p_oof, block.tune_plan,
+                          self.calibrator_.inner_calibrated_)["per_row"]
                       if cfg.nested_oof_threshold else np.full(len(y_tr), t_glob))
         pred_oof = (p_oof >= t_rows).astype(int)
         conf_oof = np.abs(p_oof - t_rows)
-        best = tune_min_confidence(y_tr, pred_oof, conf_oof, ABSTENTION_GRID,
-                                   ABSTENTION_MIN_COVERAGE)
-        if best is None:
+        best = tune_min_confidence(y_tr, pred_oof, conf_oof, None, ABSTENTION_MIN_COVERAGE)
+        if best is None:                     # unreachable for min_coverage <= 1 (exact search)
             best = {"min_confidence": float(ABSTENTION_GRID[0]), "train_f2": None,
                     "train_coverage": None, "sweep": [],
                     "selected_by": "fallback: smallest grid value (no value met coverage floor)"}
         else:
-            best["selected_by"] = (f"F2 on meta OOF retained rows, coverage ≥ "
-                                   f"{ABSTENTION_MIN_COVERAGE:.0%} (Meta-EBM rule)")
+            best["selected_by"] = (f"F2 on meta OOF retained rows, exact search, coverage ≥ "
+                                   f"{ABSTENTION_MIN_COVERAGE:.0%} (shared Stage 4 rule)")
         self.operating_ = {
             "space": cfg.operating_space, "threshold": float(t_glob),
             "threshold_key": t_key,
@@ -122,7 +126,7 @@ class MetaXGBRunner(Stage3Runner):
             "sweep": best.get("sweep", []),
             "confidence": "|p − t|, p = meta probability in the operating space, "
                           "t = operating threshold (fold-nested on train rows)",
-            "grid": [float(g) for g in ABSTENTION_GRID],
+            "search": ABSTENTION_SEARCH,
             "min_coverage": ABSTENTION_MIN_COVERAGE,
             "tuned_on": "meta OOF train predictions",
             "tuned_on_n": int(len(y_tr)),
@@ -197,7 +201,7 @@ def _meta_checks(learner, runner, inputs, n_train: int) -> list:
               f"{'applied' if cal.get('applied') else 'skipped'} — {cal.get('reason')}"))
     c.append((SEC_META, "stage4", "abstention tuned on meta OOF (train) only",
               lambda: runner.abstention_["tuned_on_n"] == n_train,
-              f"min |p−t| = {runner.abstention_['min_confidence']:.2f}"))
+              f"min |p−t| = {runner.abstention_['min_confidence']:.4f}"))
     c.append((SEC_META, "stage4", "configuration frozen before the test split is scored",
               lambda: ev.index("configuration frozen") < ev.index("test scored (refit model, once)"),
               " → ".join(ev)))

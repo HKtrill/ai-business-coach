@@ -12,6 +12,10 @@ PR 33: the guard (``is_prefit_calibrator``, ``assert_refittable``,
 so GLASS runs the same check before its own ``cross_val_predict``. It is
 re-exported here unchanged, so existing imports keep working. See that module
 for why the check matters.
+
+PR 36 (audit F16/F19): the stage no longer calls ``fit_stage1_calibration``;
+both arms calibrate through ``shared.stage1.oof_calibration``. It is kept for
+existing imports only (in-sample family selection, global preprocessing).
 """
 
 from __future__ import annotations

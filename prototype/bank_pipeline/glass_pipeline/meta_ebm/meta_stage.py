@@ -19,10 +19,16 @@ Pipeline
    router Pass 1 / Pass 2 semantics. Fails loudly on any violation.
    ── everything in 2–5 reads TRAIN-side OOF arrays and y_train only ──
 2. Stage 4 thresholds: LR / EBM recomputed by find_recall_threshold at
-   ``target_recall``; GLASS fixed at 0.5.
+   ``target_recall``. The GLASS Router's reference point is its training
+   base rate (per fold model on out-of-fold rows): its vote confidence is the
+   matched rule's positive rate vs that rate, directional (PR 36 F25;
+   ``router_evidence``).
 3. Calibration diagnostics + hybrid trust weights (Brier + accuracy).
 4. Disagreement analysis.
-5. F2 sweep of ``min_weighted_confidence`` (coverage ≥ 50%).
+5. Abstention cut ``min_weighted_confidence``: best F2 on retained training
+   rows, coverage ≥ 50%, searched exactly over every distinct weighted
+   confidence (the shared Stage 4 rule, ``shared.stage4.tune_min_confidence``;
+   PR 36 F30 — previously a fixed 0.03–0.53 grid).
    ── configuration frozen here ──
 6. Evaluate once on test: without and with abstention.
 7. Save the artifact with full input provenance.
@@ -33,7 +39,9 @@ Three kinds of threshold, never interchanged
                          ``stage_output.threshold``; Stage 3 OOF threshold in
                          the consumed probability space). Reported only.
 ``thresholds``           what the arbiter actually uses: Stage 4's
-                         recall-targeted LR / EBM cuts and the fixed GLASS 0.5.
+                         recall-targeted LR / EBM cuts and the router's
+                         training base rate (test-side reference; out-of-fold
+                         training rows use their fold model's base rate).
 ``abstention``           ``min_weighted_confidence`` — the abstain cut on the
                          arbiter's weighted confidence, not a probability cut.
 """
@@ -49,12 +57,14 @@ from .artifacts import save_meta_ebm
 from .calibration import compute_calibration
 from .evaluation import analyze_disagreements, compute_metrics, evaluate_with_abstention
 from .loader import PASS1, PASS2, load_stage_outputs
+from .router_evidence import fold_base_rates
 from .tuning import tune_arbiter_threshold
 from .weighting import compute_hybrid_weights
 
 ARTIFACT_SCHEMA = "meta_ebm/2"
 
-_GLASS_ARBITER_THRESH = 0.5
+ROUTER_CONFIDENCE_RULE = ("rule positive rate vs router training base rate, directional, "
+                          "clipped at 0 (PR 36 F25)")
 _MIN_CONF_FALLBACK = 0.07
 _MIN_COVERAGE = 0.50
 
@@ -144,6 +154,11 @@ def train_meta_stage(
     pass2_train = glass.train_decisions == PASS2
     glass_covered_train = pass1_train | pass2_train
     glass_pred_train = pass2_train.astype(int)
+    # Router reference points (F25): each out-of-fold row's fold-model base
+    # rate; the full training base rate for the test side (the loader checked
+    # both against the bundle's stored rule precisions).
+    glass_base_train = fold_base_rates(y_train, glass.train_fold_id)
+    glass_base_test = float(np.mean(y_train))
 
     # ==========================================================
     # 2. STAGE 4 THRESHOLDS (recall-targeted, train OOF)
@@ -152,10 +167,10 @@ def train_meta_stage(
         f"target={target_recall:.0%}):")
     lr_arb_thresh    = find_recall_threshold(y_train, lr_tr,  target_recall)
     ebm_arb_thresh   = find_recall_threshold(y_train, ebm_tr, target_recall)
-    glass_arb_thresh = _GLASS_ARBITER_THRESH
+    glass_arb_thresh = glass_base_test
     say(f"     LR    = {lr_arb_thresh:.4f}")
     say(f"     EBM   = {ebm_arb_thresh:.4f}")
-    say(f"     GLASS = {glass_arb_thresh:.4f}  (fixed)")
+    say(f"     GLASS = {glass_arb_thresh:.4f}  (training base rate; rule-rate evidence)")
     say(f"   Train rows: {len(y_train):,}   Test rows: {len(y_test):,}")
     say(f"   GLASS Router train coverage: {glass_covered_train.mean():.1%}")
 
@@ -211,20 +226,24 @@ def train_meta_stage(
         ebm_thresh=ebm_arb_thresh,
         weights=MODEL_WEIGHTS,
         min_coverage=_MIN_COVERAGE,
+        glass_base_rate=glass_base_train,
     )
     if best_cfg is None:
         say(f"   ⚠️  No value met the {_MIN_COVERAGE:.0%} coverage floor — "
             f"using fallback {_MIN_CONF_FALLBACK}")
         best_cfg = {'min_weighted_confidence': _MIN_CONF_FALLBACK,
-                    'train_f2': None, 'train_coverage': None,
-                    'selected_by': 'fallback default (no sweep value met coverage floor)'}
+                    'train_f2': None, 'train_coverage': None, 'search': None,
+                    'n_candidates': None, 'n_eligible': None,
+                    'selected_by': 'fallback default (no cut met coverage floor)'}
     else:
-        best_cfg['selected_by'] = (f"F2 sweep on train OOF, coverage ≥ {_MIN_COVERAGE:.0%}")
+        best_cfg['selected_by'] = (f"F2 on train OOF retained rows, exact search over "
+                                   f"distinct weighted confidences, coverage ≥ "
+                                   f"{_MIN_COVERAGE:.0%}")
     MIN_WEIGHTED_CONF = best_cfg['min_weighted_confidence']
 
     def _fmt(x, spec):
         return "n/a" if x is None else format(x, spec)
-    say(f"   Selected → min_weighted_confidence={MIN_WEIGHTED_CONF:.2f}  "
+    say(f"   Selected → min_weighted_confidence={MIN_WEIGHTED_CONF:.4f}  "
         f"train_f2={_fmt(best_cfg['train_f2'], '.4f')}  "
         f"train_coverage={_fmt(best_cfg['train_coverage'], '.1%')}")
 
@@ -244,13 +263,13 @@ def train_meta_stage(
                 frozen['lr'], frozen['ebm'], frozen['weights'])
 
     pred_na, prob_na, _ = meta_arbiter(*arb_args, allow_abstain=False,
-                                       glass_thresh=frozen['glass'])
+                                       glass_base_rate=frozen['glass'])
     metrics_na = compute_metrics(y_test, pred_na, prob_na)
 
     pred_a, prob_a, explain_a = meta_arbiter(
         *arb_args, allow_abstain=True,
         min_weighted_confidence=frozen['min_weighted_confidence'],
-        glass_thresh=frozen['glass'])
+        glass_base_rate=frozen['glass'])
     eval_a = evaluate_with_abstention(y_test, pred_a, prob_a)
 
     say("\n   No-abstention metrics:")
@@ -288,10 +307,15 @@ def train_meta_stage(
             'glass':                   glass_arb_thresh,
             'target_recall':           target_recall,
             'min_weighted_confidence': MIN_WEIGHTED_CONF,
+            'glass_train_base_rates': {
+                int(k): float(glass_base_train[np.asarray(glass.train_fold_id) == k][0])
+                for k in np.unique(glass.train_fold_id)},
+            'router_confidence': ROUTER_CONFIDENCE_RULE,
             'sources': {
                 'lr':    f'find_recall_threshold(y_train, LR OOF, {target_recall})',
                 'ebm':   f'find_recall_threshold(y_train, EBM OOF, {target_recall})',
-                'glass': 'fixed',
+                'glass': 'router training base rate (test side); fold-model base '
+                         'rates on out-of-fold training rows',
                 'min_weighted_confidence': best_cfg['selected_by'],
             },
         },
@@ -302,6 +326,9 @@ def train_meta_stage(
             'train_f2':       best_cfg['train_f2'],
             'train_coverage': best_cfg['train_coverage'],
             'min_coverage':   _MIN_COVERAGE,
+            'search':         best_cfg['search'],
+            'n_candidates':   best_cfg['n_candidates'],
+            'n_eligible':     best_cfg['n_eligible'],
         },
         # Upstream standalone operating points — informational only.
         'artifact_thresholds': {

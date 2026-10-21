@@ -103,6 +103,8 @@ def tune_stage1_mlp_auc(
     fixed: Dict,
     random_state: int,
     verbose: bool = True,
+    *,
+    folds=None,
 ) -> Tuple[Dict, float, pd.DataFrame]:
     """
     Maximise mean CV ROC-AUC over the Stage 1 search space.
@@ -125,6 +127,10 @@ def tune_stage1_mlp_auc(
         Seed for the TPE sampler.
     verbose : bool, default True
         Show Optuna's progress bar.
+    folds : list of shared.stage1.crossfit.FoldDesign, optional
+        Folds with encoders and scaler refit on each fold's training rows
+        (audit F3/F4). The stage always passes them; ``X_scaled`` and ``cv``
+        are then not used for splitting.
 
     Returns
     -------
@@ -147,6 +153,12 @@ def tune_stage1_mlp_auc(
     that column.
     """
     y_arr = np.asarray(y).astype(int)
+    if folds is None:
+        folds = [(X_scaled[tr], y_arr[tr], X_scaled[va], y_arr[va])
+                 for tr, va in cv.split(X_scaled, y_arr)]
+    else:
+        folds = [(d.X_train, d.y_train.astype(int), d.X_val, d.y_val.astype(int))
+                 for d in folds]
     optuna.logging.set_verbosity(optuna.logging.WARNING)
 
     study = optuna.create_study(
@@ -160,11 +172,9 @@ def tune_stage1_mlp_auc(
         """Mean ROC-AUC over the CV folds, reporting the running mean for pruning."""
         kwargs = params_to_kwargs(sample_params(trial), **fixed)
         scores: list[float] = []
-        for k, (tr, va) in enumerate(cv.split(X_scaled, y_arr)):
-            clf = Stage1MLPClassifier(**kwargs).fit(X_scaled[tr], y_arr[tr])
-            scores.append(
-                float(roc_auc_score(y_arr[va], clf.predict_proba(X_scaled[va])[:, 1]))
-            )
+        for k, (X_tr, y_tr, X_va, y_va) in enumerate(folds):
+            clf = Stage1MLPClassifier(**kwargs).fit(X_tr, y_tr)
+            scores.append(float(roc_auc_score(y_va, clf.predict_proba(X_va)[:, 1])))
             trial.report(float(np.mean(scores)), k)
             if trial.should_prune():
                 raise optuna.TrialPruned()

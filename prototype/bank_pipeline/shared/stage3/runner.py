@@ -8,14 +8,26 @@ each step delegates to the subsystem that owns it:
     tune / reuse       Stage3Tuner                             (tuning)
     k-fold report      CVEvaluator                             (evaluation)
     refit              estimator.fit on all of train           (estimator)
-    OOF                OOFGenerator                            (evaluation)
+    OOF                OOFGenerator (+ inner OOF, F22)         (evaluation)
     calibrate          Stage3Calibrator                        (calibration)
     threshold          F2ThresholdSelector                     (thresholding)
     evaluate           decision_block + stage3_metric_suite    (thresholding, evaluation)
     build artifact     Stage3Artifact / Stage3ArtifactStore    (artifact)
 
 Step ORDER is the pre-split order (refit happens before OOF): estimator fits
-may consume global RNG state, so reordering could change results.
+may consume global RNG state, so reordering could change results. The inner
+OOF fits (audit F22) run after the outer OOF, so they leave every earlier
+step unchanged.
+
+Training side vs test side (audit F22)
+--------------------------------------
+Every training-side output Stage 4 consumes (calibrated OOF, fold-nested
+thresholds and the decision / margin / confidence columns) is strictly nested:
+fold k's calibration gate, map and threshold are fitted on inner out-of-fold
+scores of fold k's training rows (``Stage3Block.inner_folds``), so neither
+fold k's labels nor a model trained on them reaches fold k's outputs. The
+test side uses decisions fitted on all OOF rows (gate, map, operating
+thresholds), as in Stage 1; test labels are never used.
 """
 
 from __future__ import annotations
@@ -103,6 +115,7 @@ class Stage3Runner:
     def _validate(self, block: Stage3Block) -> None:
         cfg, say = self.config, self._say
         block.check_config(cfg)
+        block.require_inner_folds()          # before any fit: old cached blocks fail fast
         if cfg.expected_features is None:
             say("  ⚠️  config.expected_features is None — the shared feature "
                 "contract is NOT being enforced. Pass EBM_FEATURES.")
@@ -160,8 +173,11 @@ class Stage3Runner:
 
     # ------------------------------------------------------------------
     def _out_of_fold(self, block: Stage3Block, best_params: dict) -> OOFPredictions:
-        return OOFGenerator(self.estimator, block.tune_plan, self.config.verbose).generate(
-            block.tune_folds, best_params, score_test=True)
+        inner_folds = block.require_inner_folds()
+        gen = OOFGenerator(self.estimator, block.tune_plan, self.config.verbose)
+        oof = gen.generate(block.tune_folds, best_params, score_test=True)
+        oof.inner_proba, oof.inner_fit_sizes = gen.generate_inner(inner_folds, best_params)
+        return oof
 
     # ------------------------------------------------------------------
     def _calibrate(self, block: Stage3Block, oof: OOFPredictions) -> None:
@@ -169,7 +185,7 @@ class Stage3Runner:
         self.calibrator_ = Stage3Calibrator(
             cfg.calibration_method, cfg.ece_threshold, cfg.ece_bins,
             cfg.force_calibration, cfg.random_state,
-        ).fit(oof.proba, block.y_train, block.tune_plan)
+        ).fit(oof.proba, block.y_train, block.tune_plan, oof.inner_proba)
         self._say("\n  " + self.calibrator_.report_.describe().replace("\n", "\n  "))
 
     # ------------------------------------------------------------------
@@ -181,7 +197,7 @@ class Stage3Runner:
             y_tr, self.calibrator_.oof_calibrated_,
             selected_on="out-of-fold training predictions (calibrated space)",
             keep_sweep=False)
-        nested = self.selector.select_nested(y_tr, oof.proba, block.tune_plan)
+        nested = self.selector.select_nested(y_tr, oof.proba, block.tune_plan, oof.inner_proba)
         self._say(f"\n  operating point: {choice.describe()}")
         self._say(f"  fold-nested thresholds: {nested['by_fold']} (sd {nested['std']:.4f})")
         return choice, choice_cal, nested
@@ -284,6 +300,8 @@ class Stage3Runner:
                 "proba": oof.proba,
                 "proba_calibrated": self.calibrator_.oof_calibrated_,
                 "fold_id": oof.fold_id,
+                "inner_proba_by_fold": oof.inner_proba,
+                "inner_fold_id_by_fold": block.inner_fold_ids(),
                 "threshold": t,
                 "threshold_per_row": np.broadcast_to(
                     np.asarray(t_train, dtype=float), oof.proba.shape).copy(),

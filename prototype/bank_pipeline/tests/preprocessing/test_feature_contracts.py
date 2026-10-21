@@ -5,7 +5,8 @@ Shared feature contracts (shared.stage3.data), as implemented today:
   realigns column ORDER by name; it does not check dtypes.
 * ``FeatureCleaner`` learns its imputation medians from the rows it is fit on.
 * ``Stage3Block`` fits the feature pipeline inside each fold (``per_fold``),
-  never on held-out or test rows, and keeps the row index intact.
+  including the inner folds of each tuning fold (audit F22), never on
+  held-out or test rows, and keeps the row index intact.
 """
 
 from __future__ import annotations
@@ -193,11 +194,19 @@ def test_block_fits_features_inside_each_fold_only(bank_split):
     assert_never_fit_on(log, bank_split["X_test"].index)
 
     fold_fits = sorted(fid for fid, rows in log.fits().items() if rows < set(train_idx))
-    assert len(fold_fits) == N_TUNE + N_EVAL
-    plans = {"tuning": fold_fits[:N_TUNE], "reporting": fold_fits[N_TUNE:]}
+    assert len(fold_fits) == N_TUNE + N_EVAL + N_TUNE * N_TUNE
+    plans = {"tuning": fold_fits[:N_TUNE], "reporting": fold_fits[N_TUNE:N_TUNE + N_EVAL]}
     for fits in plans.values():
         sub_log = CallLog(c for c in log if c.fit_id in fits)
         assert_oof_provenance(sub_log, train_idx, methods=("transform",))
+
+    # inner folds: within each tuning fold's training rows only (F22)
+    inner = fold_fits[N_TUNE + N_EVAL:]
+    block = build_block(bank_split)
+    for k, (tr, va) in enumerate(block.tune_plan):
+        sub_log = CallLog(c for c in log if c.fit_id in inner[k * N_TUNE:(k + 1) * N_TUNE])
+        assert_oof_provenance(sub_log, train_idx[tr], methods=("transform",))
+        assert not any(set(c.keys) & set(train_idx[va]) for c in sub_log)
 
 
 def test_global_scope_fits_the_pipeline_once_on_all_training_rows(bank_split):

@@ -19,7 +19,11 @@ Public API
 ----------
 Call                one recorded call
 CallLog             shared log; survives sklearn ``clone``
-RecordingEstimator  transparent recording wrapper
+RecordingEstimator  transparent recording wrapper (sklearn-style objects)
+RowTaggedEstimator  the same for arrays whose rows are not unique: rows carry
+                    a leading integer tag column, stripped before delegating
+tag_rows(X)         prepend that tag column (row positions by default)
+RecordingStage3Estimator  the same for the shared Stage 3 estimator interface
 row_keys(X)         row identifiers for a DataFrame / Series / 2-D array
 array_row_labels    {row hash: index label} for an array and its index
 """
@@ -183,3 +187,94 @@ class RecordingEstimator(BaseEstimator):
     def decision_function(self, X):
         self._record("decision_function", X)
         return self.estimator_.decision_function(X)
+
+
+# ----------------------------------------------------------------------
+def tag_rows(X, tags=None) -> np.ndarray:
+    """``X`` as an array with a leading tag column (row positions by default)."""
+    arr = np.asarray(X, dtype=float)
+    tags = np.arange(len(arr)) if tags is None else np.asarray(tags)
+    if len(tags) != len(arr):
+        raise ValueError(f"{len(tags)} tags for {len(arr)} rows")
+    return np.column_stack([tags, arr])
+
+
+class RowTaggedEstimator(RecordingEstimator):
+    """
+    ``RecordingEstimator`` for arrays built with :func:`tag_rows`.
+
+    Byte hashes cannot tell identical rows apart, and binned or encoded
+    features repeat often. Here each row carries its own identity in a leading
+    tag column: it is logged, then stripped, so the wrapped estimator sees
+    exactly the original features and produces exactly the original output.
+    """
+
+    @staticmethod
+    def _strip(X) -> np.ndarray:
+        return np.asarray(X)[:, 1:]
+
+    def _record(self, method: str, X) -> None:
+        tags = tuple(int(t) for t in np.asarray(X)[:, 0])
+        self.log.append(Call(method, self.fit_id_, tags))
+
+    def fit(self, X, y=None, **kwargs):
+        self._start_fit("fit", X)
+        self.estimator_.fit(self._strip(X), y, **kwargs)
+        return self
+
+    def fit_transform(self, X, y=None, **kwargs):
+        self._start_fit("fit_transform", X)
+        return self.estimator_.fit_transform(self._strip(X), y, **kwargs)
+
+    def transform(self, X):
+        self._record("transform", X)
+        return self.estimator_.transform(self._strip(X))
+
+    def predict(self, X):
+        self._record("predict", X)
+        return self.estimator_.predict(self._strip(X))
+
+    def predict_proba(self, X):
+        self._record("predict_proba", X)
+        return self.estimator_.predict_proba(self._strip(X))
+
+    def decision_function(self, X):
+        self._record("decision_function", X)
+        return self.estimator_.decision_function(self._strip(X))
+
+
+# ----------------------------------------------------------------------
+class RecordingStage3Estimator:
+    """
+    Transparent wrapper for a ``shared.stage3`` estimator.
+
+    The shared Stage 3 runner talks to each arm through
+    ``fit(params, X, y, sample_weight)`` (returns a model) and
+    ``positive_proba(model, X)``, not the sklearn interface, so it needs its
+    own recorder. Every fit and every scoring call is logged; the arm's real
+    models are returned unchanged, so artifacts are unaffected. All other
+    attributes (``family``, ``as_array``, ``normalize_params``, ``to_dict``,
+    ...) are delegated.
+    """
+
+    def __init__(self, estimator, log: CallLog):
+        self._estimator = estimator
+        self.log = log
+        self._models: Dict[int, tuple] = {}        # id(model) -> (model, fit_id)
+
+    def __getattr__(self, name: str) -> Any:
+        if name.startswith("__") or name in ("_estimator", "log", "_models"):
+            raise AttributeError(name)
+        return getattr(self._estimator, name)
+
+    def fit(self, params, X, y, sample_weight=None):
+        fit_id = self.log.new_fit_id()
+        self.log.append(Call("fit", fit_id, row_keys(X)))
+        model = self._estimator.fit(params, X, y, sample_weight=sample_weight)
+        self._models[id(model)] = (model, fit_id)  # keeps the model alive: ids stay unique
+        return model
+
+    def positive_proba(self, model, X):
+        _, fit_id = self._models.get(id(model), (None, -1))
+        self.log.append(Call("predict_proba", fit_id, row_keys(X)))
+        return self._estimator.positive_proba(model, X)

@@ -78,7 +78,8 @@ def make_stage1(w, arm="glass", model="calibrated_lr", noise=0.6, wrap=True):
         train_fold_id=fold_assignment(ytr, cv_folds=10, random_state=SEED),
         threshold=0.21, threshold_source="in_stage_f2_cv",
         calibration_method="isotonic", calibration_requested="auto",
-        oof_provenance="refittable (test fixture)", config={"random_state": SEED},
+        oof_provenance="refittable (nested cross-fit: 10 outer x 10 inner folds; test fixture)",
+        config={"random_state": SEED},
     )
     d = so.to_dict()
     if not wrap:
@@ -100,32 +101,63 @@ def _route_proba(dec, rng, noise, nan_on_abstain):
     return p
 
 
+PASS1_PRECISIONS = (0.93, 0.95, 0.97)       # P(y = 0 | rule), legacy-profile range
+PASS2_PRECISIONS = (0.25, 0.45, 0.60)       # P(y = 1 | rule)
+
+
+def _glass_blend(dec, rng, base, nan_on_abstain=True):
+    """``GlassRouterPipeline.predict`` / ``predict_proba`` for given routes:
+    each routed row's rule precision and the router's P(subscribe)."""
+    prec = np.where(dec == "pass1", rng.choice(PASS1_PRECISIONS, len(dec)),
+                    np.where(dec == "pass2", rng.choice(PASS2_PRECISIONS, len(dec)), 0.0))
+    b = np.broadcast_to(np.asarray(base, dtype=float), (len(dec),))
+    p = np.where(dec == "pass1", b * (1 - prec), np.where(dec == "pass2", b + (1 - b) * prec, b))
+    if nan_on_abstain:
+        p = np.where(dec == "uncertain", np.nan, p)
+    return p, prec
+
+
 def make_router(w, layout="top-level", abstain_band=True, two_col=False):
-    """GLASS bundle (top-level) or RF Router artifact (layout='extra')."""
+    """
+    GLASS bundle (top-level) or RF Router artifact (layout='extra').
+
+    The GLASS bundle is internally consistent as the real one is: out-of-fold
+    train probabilities blend each row's rule precision with its fold model's
+    base rate, test probabilities with the full training base rate, and the
+    rule precisions are stored as ``train_confidence`` / ``test_confidence``.
+    """
     GS, rng = w["GS"], w["rng"]
     ytr = GS["y_train"]
     dtr, dte = _routes(w["z_tr"], rng, abstain_band), _routes(w["z_te"], rng, abstain_band)
-    ptr = _route_proba(dtr, rng, .05, nan_on_abstain=(layout == "top-level"))
-    pte = _route_proba(dte, rng, .02, nan_on_abstain=(layout == "top-level"))
+    fold = fold_assignment(ytr, cv_folds=5, random_state=SEED).to_numpy()
+    if layout == "top-level":
+        y = ytr.to_numpy()
+        b_fold = np.array([y[fold != k].mean() for k in range(5)])[fold]
+        ptr, ctr = _glass_blend(dtr, rng, b_fold)
+        pte, cte = _glass_blend(dte, rng, y.mean())
+    else:
+        ptr = _route_proba(dtr, rng, .05, nan_on_abstain=False)
+        pte = _route_proba(dte, rng, .02, nan_on_abstain=False)
+        ctr = np.abs(ptr - .5) * 2
+        cte = np.zeros(len(dte))
     if two_col:
         ptr, pte = np.column_stack([1 - ptr, ptr]), np.column_stack([1 - pte, pte])
     pred = lambda d: np.where(d == "pass1", 0, np.where(d == "pass2", 1, -1))
-    fold = fold_assignment(ytr, cv_folds=5, random_state=SEED).to_numpy()
     f = {
         "train_outputs_oof": True,
         "train_proba": ptr, "train_decisions": dtr, "train_pred": pred(dtr),
-        "train_confidence": np.abs(np.nan_to_num(np.asarray(ptr).reshape(len(dtr), -1)[:, -1], nan=.5) - .5) * 2,
+        "train_confidence": ctr,
         "train_fold_id": fold,
         "oof_protocol": {"train_outputs_oof": True, "n_folds": 5, "random_state": SEED,
                          "fold_fingerprint": fold_fp(fold)},
         "index_train": list(GS["X_train"].index), "index_test": list(GS["X_test"].index),
         "test_proba": pte, "test_decisions": dte, "test_pred": pred(dte),
-        "test_confidence": np.zeros(len(dte)),
+        "test_confidence": cte,
     }
     if layout == "top-level":                         # GLASS Router bundle
         f["train_idx"] = f.pop("index_train")
         f["split_fingerprint"] = w["fp_router"]
-        f["train_insample_proba_diagnostic"] = _route_proba(dtr, rng, .01, True)
+        f["train_insample_proba_diagnostic"] = _glass_blend(dtr, rng, ytr.mean())[0]
         f["training_base_rate"] = float(ytr.mean())
         return f
     return {"split_fingerprint": w["fp_router"],       # RF Router artifact
@@ -138,7 +170,12 @@ def make_stage3(w, family="ebm", applied=True, shift=0.0):
     plan = FoldPlan.build(ytr, 5, SEED, True)
     raw_oof = _sig(2.1 * z_tr - 1.0 + shift + rng.normal(0, .5, len(z_tr)))
     raw_te = _sig(2.1 * z_te - 1.0 + shift + rng.normal(0, .4, len(z_te)))
-    cal = Stage3Calibrator("isotonic", ece_threshold=(0.0 if applied else 1.0)).fit(raw_oof, ytr, plan)
+    # Stand-in inner OOF (F22): fold k's training rows keep their raw OOF
+    # scores. A synthetic world needs no inner models; the calibrator's
+    # per-fold maps are then fitted on exactly the rows they were before F22.
+    inner = np.where(plan.fold_id[None, :] == np.arange(plan.n_splits)[:, None], np.nan, raw_oof)
+    cal = Stage3Calibrator("isotonic", ece_threshold=(0.0 if applied else 1.0)).fit(
+        raw_oof, ytr, plan, inner)
     ins = _sig(2.4 * z_tr - 1.0)
     return Stage3Artifact(
         stage="stage3", model_family=family, created_at="2026-09-23T00:00:00",

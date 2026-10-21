@@ -30,25 +30,59 @@ PR 33 changes
   ``pruner_startup_trials``, ``pruner_warmup_steps``) and recorded in the
   artifact config. Pass 5 / 10 / 1 to reproduce pre-PR-33 runs.
 * ``to_stage_output()`` emits the shared cascade contract.
+
+PR 36 changes (audit F3 / F4 / F18)
+-----------------------------------
+* Every cross-validation inside ``fit`` — the Optuna folds and the OOF
+  probabilities — now refits the learned preprocessing on each fold's
+  training rows (``shared.stage1.crossfit``): the ``LRFeatureEngineer`` target
+  encodings when ``X_train_raw`` is passed (F3), and the ``StandardScaler``
+  always (F4). Previously both were fitted once on the whole training split,
+  so a held-out row's own label reached its OOF score through
+  ``euribor3m_local_rate`` / ``dow_month_encoded``.
+* ``fit`` refuses target-encoded inputs without ``X_train_raw``.
+* The full-train fit (features, scaler, model, calibrator) is unchanged and
+  still scores the test split.
+* Labels are validated with the MLP's ``check_labels`` (binary 0/1, aligned).
+* The penalty goes through ``lr.penalty.penalty_kwargs`` (same model, no
+  scikit-learn 1.8+ deprecation warnings).
+
+PR 36 calibration (audit F16 / F19)
+-----------------------------------
+* Calibration now runs through ``shared.stage1.oof_calibration`` (both arms):
+  sigmoid vs isotonic is chosen by Brier on NESTED out-of-fold probabilities
+  (F16; previously in-sample) — per outer fold, from that fold's training rows
+  only, for the out-of-fold output; over all training rows for the final
+  model. Every calibration fold refits the encoders and scaler on its own
+  training rows (F19), and the final calibrator is fitted on out-of-fold base
+  scores and applied to the full-train model.
+* ``calibrated_model`` is a ``Stage1CalibratedModel`` (full-train LR + one
+  calibrator) instead of a 10-member ``CalibratedClassifierCV`` ensemble;
+  ``predict_proba`` takes the same scaled features.
+* ``calibration_metrics`` keep their keys, now measured out of fold, plus
+  ``brier_oof_sigmoid`` / ``brier_oof_isotonic``, ``selection`` (final
+  model), ``oof_selection`` and ``oof_family_by_fold`` (out-of-fold output).
+  ``calibration_method`` is the final model's family.
 """
 
 import numpy as np
 import pandas as pd
 import warnings
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import StratifiedKFold, cross_val_predict
 from sklearn.metrics import confusion_matrix
 from typing import Dict, Optional, Tuple
 
 from .base_stage  import BaseLRStage
+from .penalty     import penalty_kwargs
 from .tuning      import run_optuna_tuning
-from .calibration import fit_calibration
 from .evaluation  import compute_metrics, plot_evaluation
 from .artifacts   import save_artifact
 
 from shared.stage_io import StageOutput, fold_assignment
 from shared.thresholds import optimize_threshold_cv
-from shared.stage1.calibration_guard import assert_refittable
+from shared.stage1.crossfit import build_fold_designs, preprocessing_record
+from shared.stage1.oof_calibration import Stage1CalibratedModel, calibrate_oof
+from shared.stage1.labels import check_labels
 from shared.metrics import metrics_table as _metrics_table
 
 warnings.filterwarnings("ignore")
@@ -121,6 +155,9 @@ class CalibratedLRStage(BaseLRStage):
         self.best_cv_roc_auc: Optional[float]         = None
         self.cv_f2:           Optional[float]         = None
         self.oof_provenance_: Optional[str]           = None
+        self.oof_preprocessing_: Optional[Dict]       = None
+        self.calibration_oof_: Optional[Dict]         = None   # family -> OOF Series
+        self.calibration_fold_family_: Optional[Dict] = None   # outer fold -> family
 
         # Cached splits for save() — populated in fit() / evaluate()
         self._X_train_full = None
@@ -142,23 +179,44 @@ class CalibratedLRStage(BaseLRStage):
             "threshold_beta":        self.threshold_beta,
             "threshold_grid":        tuple(self.threshold_grid),
             "random_state":          self.random_state,
+            "oof_preprocessing":     self.oof_preprocessing_,
         }
 
     # ── Fit ───────────────────────────────────────────────────────────────────
 
-    def fit(self, X_train: pd.DataFrame, y_train: pd.Series) -> "CalibratedLRStage":
+    def fit(
+        self,
+        X_train: pd.DataFrame,
+        y_train: pd.Series,
+        *,
+        X_train_raw: Optional[pd.DataFrame] = None,
+    ) -> "CalibratedLRStage":
+        """
+        Fit on the training split.
+
+        Parameters
+        ----------
+        X_train : pandas.DataFrame
+            The LR features (``engineer_features`` output), unscaled.
+        y_train : pandas.Series
+            Binary 0/1 labels indexed like ``X_train``.
+        X_train_raw : pandas.DataFrame, optional
+            The raw training rows ``X_train`` was engineered from. Required
+            when ``X_train`` holds target encodings: every cross-validation
+            refits them per fold from these rows (audit F3).
+        """
         print("\n" + "=" * 80)
         print("🔧 CALIBRATED LR STAGE: Optuna Tuning (balanced) + Calibration")
         print("=" * 80)
 
-        if not isinstance(y_train, pd.Series):
-            y_train = pd.Series(np.asarray(y_train), index=X_train.index)
-        if not X_train.index.equals(y_train.index):
-            raise ValueError(
-                "X_train.index and y_train.index differ — reindex y to X before "
-                "fitting (y = y.loc[X.index]). Misaligned labels pass every "
-                "length check and silently train on the wrong targets."
-            )
+        y_train = check_labels(X_train, y_train)
+
+        # Folds with per-fold encoders and scaler, shared by tuning and OOF.
+        designs = build_fold_designs(
+            X_train, y_train, cv_folds=self.cv_folds,
+            random_state=self.random_state, X_raw=X_train_raw,
+        )
+        self.oof_preprocessing_ = preprocessing_record(X_train_raw)
 
         self._X_train_full = X_train.copy()
         self._y_train_full = y_train.copy()
@@ -171,11 +229,18 @@ class CalibratedLRStage(BaseLRStage):
             print("\n" + "=" * 60)
             print("🧠 HYPERPARAMETER TUNING — Optuna (ROC-AUC, balanced)")
             print("=" * 60)
+            tune_designs = designs if self.tune_cv_folds == self.cv_folds else (
+                build_fold_designs(
+                    X_train, y_train, cv_folds=self.tune_cv_folds,
+                    random_state=self.random_state, X_raw=X_train_raw,
+                )
+            )
             params, study, _ = run_optuna_tuning(
                 X_scaled, y_train, self.n_trials, self.random_state,
                 cv_folds=self.tune_cv_folds,
                 pruner_startup_trials=self.pruner_startup_trials,
                 pruner_warmup_steps=self.pruner_warmup_steps,
+                folds=tune_designs,
             )
             self.best_params     = params
             self.best_cv_roc_auc = float(study.best_value)
@@ -186,16 +251,16 @@ class CalibratedLRStage(BaseLRStage):
             self.tuning_trials = trials
 
             lr_kwargs = dict(
-                C=params["C"], penalty=params["penalty"], solver="saga",
+                C=params["C"], solver="saga",
                 max_iter=5000, random_state=self.random_state,
                 class_weight="balanced",
+                **penalty_kwargs(params["penalty"], params.get("l1_ratio")),
             )
-            if params.get("penalty") == "elasticnet":
-                lr_kwargs["l1_ratio"] = params["l1_ratio"]
         else:
             lr_kwargs = dict(
-                C=1.0, penalty="l2", solver="saga", max_iter=5000,
+                C=1.0, solver="saga", max_iter=5000,
                 random_state=self.random_state, class_weight="balanced",
+                **penalty_kwargs("l2"),
             )
             self.best_params = {"C": 1.0, "penalty": "l2", "class_weight": "balanced"}
             print("\n✅ Skipping tuning — using default parameters")
@@ -203,62 +268,69 @@ class CalibratedLRStage(BaseLRStage):
         self.model = LogisticRegression(**lr_kwargs)
         self.model.fit(X_scaled, y_train)
 
-        # 2. Probability calibration
+        # 2. Calibration: nested out-of-fold family selection (F16), per-fold
+        #    preprocessing in every calibration fold (F19).
         print("\n" + "=" * 60)
-        print("🔧 PROBABILITY CALIBRATION")
+        print("🔧 PROBABILITY CALIBRATION (nested out-of-fold)")
         print("=" * 60)
-        self.calibrated_model, self.calibration_method, self.calibration_metrics = (
-            fit_calibration(
-                self.model, X_scaled, y_train,
-                self.calibration_requested, self.cv_folds,
-            )
+        calibration = calibrate_oof(
+            self.model, designs, X_train, y_train,
+            cv_folds=self.cv_folds, random_state=self.random_state,
+            method=self.calibration_requested, X_raw=X_train_raw, n_jobs=-1,
         )
+        self.calibration_method = calibration.method
+        self.calibration_metrics = calibration.metrics
+        self.calibration_oof_ = dict(calibration.calibrated_oof)
+        self.calibration_fold_family_ = dict(calibration.fold_family)
+        self.calibrated_model = Stage1CalibratedModel(
+            self.model, calibration.calibrator, calibration.method)
+        self.oof_provenance_ = calibration.provenance
+        print("   OOF Brier: " + ", ".join(
+            f"{f} {b:.6f}" for f, b in calibration.brier_oof.items())
+            + f"  ->  final model: {calibration.method}; OOF folds: "
+            + calibration.metrics["oof_family_by_fold"])
 
         # 3. OOF probabilities + threshold optimisation (F2)
         #    The OOF probabilities are KEPT — they are the Stage 4 train feed.
-        print("\n🎯 Computing OOF probabilities and optimizing threshold...")
-        self._fit_threshold_cv(X_scaled, y_train, X_train.index)
+        print("\n🎯 Optimizing threshold on the OOF probabilities...")
+        self._fit_threshold_cv(designs, calibration.proba_oof, y_train, X_train.index)
 
         self.fitted = True
         return self
 
-    def _fit_threshold_cv(
-        self, X_scaled: np.ndarray, y: pd.Series, index: pd.Index
-    ) -> None:
+    def _fit_threshold_cv(self, designs, proba_oof: pd.Series, y: pd.Series,
+                          index: pd.Index) -> None:
         """
-        Cross-fit calibrated probabilities over the training split, then sweep F2.
+        Store the out-of-fold calibrated probabilities, then sweep F2.
 
         Notes
         -----
+        ``proba_oof`` comes from ``shared.stage1.oof_calibration``: each fold
+        scored by a base model, preprocessing and calibrator fitted on that
+        fold's training rows only.
+
         The probabilities produced here are out-of-fold. The THRESHOLD chosen
         from them is not: it is one scalar selected by argmax over the grid
         using every training label, then applied back to those same rows. That
         distinction is carried forward in ``THRESHOLD_SOURCE`` rather than
         left implicit — see ``shared.stage_io.StageOutput.train_decisions_oof``.
         """
-        self.oof_provenance_ = assert_refittable(self.calibrated_model, strict=True)
-
-        cv = StratifiedKFold(
-            n_splits=self.cv_folds, shuffle=True, random_state=self.random_state
-        )
-        proba_oof = cross_val_predict(
-            self.calibrated_model, X_scaled, y,
-            cv=cv, method="predict_proba", n_jobs=-1,
-        )[:, 1]
-
-        if len(proba_oof) != len(index):
+        if len(proba_oof) != len(index) or not proba_oof.index.equals(index):
             raise AssertionError(
-                f"cross_val_predict returned {len(proba_oof)} rows for "
+                f"the out-of-fold pass returned {len(proba_oof)} rows for "
                 f"{len(index)} training rows — fold assignment and index are "
                 "misaligned."
             )
 
-        self.proba_train_oof = pd.Series(
-            proba_oof, index=index, name="stage1_proba_oof"
-        )
+        self.proba_train_oof = proba_oof.rename("stage1_proba_oof")
         self.train_fold_id = fold_assignment(
             y, cv_folds=self.cv_folds, random_state=self.random_state, index=index
         )
+        used = np.empty(len(index), dtype=int)
+        for d in designs:
+            used[d.val] = d.fold
+        if not np.array_equal(used, self.train_fold_id.to_numpy()):
+            raise AssertionError("OOF folds differ from fold_assignment's reconstruction")
 
         if not self.optimize_threshold:
             print("   Threshold optimisation disabled — keeping 0.5")
@@ -428,11 +500,14 @@ def train_lr_stage(
     y_test: pd.Series,
     save: bool = True,
     output_dir: str = "./models/lr",
+    X_train_raw: Optional[pd.DataFrame] = None,
 ) -> Tuple["CalibratedLRStage", Dict]:
     """
     Train the production calibrated LR stage on GLOBAL_SPLIT data.
 
     No internal train/test splitting — receives the global splits directly.
+    ``X_train_raw``: the raw training rows ``X_train`` was engineered from;
+    required for the target-encoded LR features (refit per fold, audit F3).
 
     Returns
     -------
@@ -451,7 +526,7 @@ def train_lr_stage(
         optimize_threshold=True,
         cv_folds=10,
     )
-    stage.fit(X_train, y_train)
+    stage.fit(X_train, y_train, X_train_raw=X_train_raw)
     metrics = stage.evaluate(X_test, y_test, plot=True)
 
     print("\n📊 Feature Importance (Top 10):")
