@@ -48,7 +48,7 @@ import joblib
 import numpy as np
 import pandas as pd
 
-from .contract import SEC_OOF, SEC_SEM, Stage4InputError, StageStream, not_identical
+from .contract import SEC_OOF, SEC_SEM, SEC_SPLIT, Stage4InputError, StageStream, not_identical
 
 PASS1, PASS2, ABSTAIN = "pass1", "pass2", "abstain"
 _ABSTAIN_TOKENS = {"abstain", "uncertain", "defer", "deferred", "uncovered",
@@ -236,6 +236,70 @@ def _fold_fp_fn():
     return None
 
 
+PASS2_POPULATIONS = ("full", "oof_remainder")
+#: ``StageStream.notes["pass2_population_evidence"]`` for routers (PR 36 F17).
+PASS2_COMPLETE = ("complete: the cross-fit and the full-train router declare one Pass 2 "
+                  "population")
+PASS2_PARTIAL = (
+    "PARTIAL (PR 36 F17, open until Commit 4): the artifact does not declare the Pass 2 "
+    "population of both its cross-fit and its full-train router (written before the "
+    "current producers), so its train and test outputs are not shown to come from one "
+    "operating mode.")
+
+
+def _pass2_population(value) -> "str | None":
+    """'full' / 'oof_remainder' from however an artifact spells it."""
+    if value is None:
+        return None
+    v = str(value).strip().lower()
+    return "full" if v == "full" else "oof_remainder" if "remainder" in v else v
+
+
+def _pass2_population_checks(art, f, proto, layout, stream, name) -> list:
+    """
+    PR 36 F17: which population each router's Pass 2 was fitted on, as its
+    artifact records it for the cross-fit (train outputs) and the full-train
+    router (test outputs). Recorded in ``notes["pass2_population"]``; the two
+    must agree, or the train and test outputs come from different operating
+    modes. GLASS: ``oof_protocol.glass_pass2_population`` and the full-train
+    ``fit_report`` (else ``config_full``); RF Router: ``oof_protocol.
+    pass2_population`` and the full-train ``mode`` — only the two-pass router
+    has a remainder, always the OOF Pass 1 remainder (``RFRouter.fit``).
+
+    Both declared: compared, and each must be a known population. One or both
+    missing: refused for a current-format artifact — one that records a
+    ``train_label_fingerprint`` (PR 36 F12), which only the current producers
+    write, and they always declare both populations. An older artifact is
+    accepted with ``notes["pass2_population_evidence"]`` = PARTIAL naming what
+    is missing (required for every artifact from Commit 4); it used to be
+    accepted silently, with the same standing as a checked one.
+    """
+    if layout == "top-level":
+        cross = _pass2_population(proto.get("glass_pass2_population"))
+        full = _pass2_population((f.get("fit_report") or {}).get("pass2_population")
+                                 or (f.get("config_full") or {}).get("pass2_population"))
+    else:
+        cross = _pass2_population(proto.get("pass2_population"))
+        mode = art.get("mode")
+        full = None if mode is None else "oof_remainder" if mode == "two_pass" else f"none ({mode})"
+    stream.notes["pass2_population"] = {"cross_fit": cross, "full_train": full}
+    missing = [side for side, v in (("cross-fit", cross), ("full-train", full)) if v is None]
+    if not missing:
+        stream.notes["pass2_population_evidence"] = PASS2_COMPLETE
+        return [(SEC_SEM, "stage2", f"{name}: cross-fit and full-train router share one Pass 2 "
+                 "population", lambda: cross == full and cross in PASS2_POPULATIONS,
+                 f"cross-fit {cross}, full-train {full} (known: {', '.join(PASS2_POPULATIONS)})")]
+    where = {"top-level": ("oof_protocol.glass_pass2_population", "fit_report / config_full"),
+             "extra": ("extra.oof_protocol.pass2_population", "mode")}[layout]
+    detail = "missing: " + ", ".join(
+        f"{side} ({where[0] if side == 'cross-fit' else where[1]})" for side in missing)
+    stream.notes["pass2_population_evidence"] = f"{PASS2_PARTIAL} Missing: {', '.join(missing)}."
+    if stream.label_fingerprints:                    # written by the current producers
+        return [(SEC_SEM, "stage2", f"{name}: Pass 2 population declared for the cross-fit and "
+                 "the full-train router (current-format artifact)", lambda: False, detail)]
+    return []
+
+
 def router_stream(obj_or_path, name: str, model: str, y_train: np.ndarray,
                   fold_fingerprint_fn=None):
     """Stage 2 (GLASS Router / RF Router)."""
@@ -281,6 +345,11 @@ def router_stream(obj_or_path, name: str, model: str, y_train: np.ndarray,
         y_train=None if f.get("y_train") is None else np.asarray(f["y_train"]),
         y_test=None if f.get("y_test") is None else np.asarray(f["y_test"]),
         notes={"artifact_layout": layout,
+               # PR 36 F29: the layout is the router's identity — ModelSaver writes
+               # the GLASS bundle top-level, save_rf_router the RF block under "extra".
+               "model_family": "glass_router" if layout == "top-level" else "rf_router",
+               "arm": "glass" if layout == "top-level" else "blackbox",
+               "router_mode": art.get("mode") if layout == "extra" else None,
                "train_outputs_oof_flag": True,
                "oof_protocol": {k: v for k, v in (f.get("oof_protocol") or {}).items()
                                 if not isinstance(v, (list, np.ndarray))}},
@@ -314,6 +383,42 @@ def router_stream(obj_or_path, name: str, model: str, y_train: np.ndarray,
     # --- semantics, on TRAIN OOF labels only ---------------------------------
     y = np.asarray(y_train).astype(int)
     base = float(y.mean())
+
+    # --- which labels the outputs were produced against (PR 36 audit F12) ---
+    # Router artifacts carry a split fingerprint over row indices only and no
+    # labels, so a router cross-fitted on the same rows with other labels
+    # passed the split check. Their fold ids are PARTIAL label evidence:
+    # Stage 4 requires them to be the shared stratified plan on GLOBAL_SPLIT's
+    # labels (``build_stage4_inputs``). A flipped label, or most permutations,
+    # reassigns most fold ids; swapping two opposite labels within one fold
+    # changes no fold id and no base rate. What closes that is the
+    # ``train_label_fingerprint`` each router fit records: the cross-fit's in
+    # ``oof_protocol`` (train outputs), the full-train router's at the top
+    # level (test outputs). Checked whenever present; artifacts written before
+    # the routers recorded it stay PARTIAL (required from Commit 4).
+    stream.label_fingerprints = {side: v for side, v in (
+        ("train outputs", proto.get("train_label_fingerprint")),
+        ("test outputs", art.get("train_label_fingerprint"))) if v is not None}
+    if stream.y_train is None:
+        checks.append((SEC_OOF, "stage2", f"{name}: fold ids carried (the artifact holds no "
+                       "labels; its fold plan is partial label evidence)",
+                       lambda: fold is not None, f"{src}train_fold_id"))
+    # The artifact's own split fingerprints must agree with each other: Stage 4
+    # verifies one of them, and a disagreeing copy was silently ignored.
+    recorded = {"split_fingerprint": art.get("split_fingerprint"),
+                f"{src}oof_protocol.split_fingerprint": proto.get("split_fingerprint")}
+    if layout == "extra":
+        recorded[f"{src}split_fingerprint"] = f.get("split_fingerprint")
+    recorded = {k: v for k, v in recorded.items() if v is not None}
+    if len(recorded) > 1:
+        checks.append((SEC_SPLIT, "stage2", f"{name}: the split fingerprints the artifact "
+                       "records agree", lambda: len(set(recorded.values())) == 1, str(recorded)))
+    checks += _pass2_population_checks(art, f, proto, layout, stream, name)
+    rate = art.get("training_base_rate") if isinstance(art, dict) else None
+    if rate is not None:
+        checks.append((SEC_SEM, "stage2", f"{name}: training_base_rate = GLOBAL_SPLIT "
+                       "training positive rate", lambda: abs(float(rate) - base) <= 1e-12,
+                       f"{float(rate):.6f} vs {base:.6f}"))
 
     def _rate(route):
         m = train_dec == route

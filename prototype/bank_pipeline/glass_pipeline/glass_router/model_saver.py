@@ -164,6 +164,7 @@ class ModelSaver:
                 self.glass.config.to_dict() if hasattr(self.glass, "config") else None
             ),
             "training_base_rate": getattr(self.glass, "training_base_rate", None),
+            "train_label_fingerprint": getattr(self.glass, "train_label_fingerprint_", None),
             "fit_report": getattr(self.glass, "fit_report_", None),
             "timestamp": timestamp,
         }

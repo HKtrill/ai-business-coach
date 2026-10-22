@@ -65,6 +65,14 @@ ARTIFACT_SCHEMA = "meta_ebm/2"
 
 ROUTER_CONFIDENCE_RULE = ("rule positive rate vs router training base rate, directional, "
                           "clipped at 0 (PR 36 F25)")
+#: Router confidence per upstream arm (PR 36 F29): the same F25 rule, read
+#: from the unit whose positive rate each router's probability blends.
+ROUTER_CONFIDENCE_RULES = {
+    "glass": ROUTER_CONFIDENCE_RULE,
+    "blackbox": ("RF Router band positive rate (band NPV / precision on its training OOF) vs "
+                 "router training base rate, directional, clipped at 0 (PR 36 F25 read from "
+                 "the RF Router's band blend; F29 crossover)"),
+}
 _MIN_CONF_FALLBACK = 0.07
 _MIN_COVERAGE = 0.50
 
@@ -106,6 +114,7 @@ def train_meta_stage(
     target_recall: float = 0.70,
     artifact_dir:  str   = "./models/meta_ebm",
     verbose:       bool  = True,
+    upstream:      str   = None,
 ) -> tuple[dict, str]:
     """
     Train the Stage 4 Meta-EBM weighted-confidence arbiter.
@@ -118,6 +127,10 @@ def train_meta_stage(
     ebm_path      : GLASS EBM ``Stage3Artifact``
     target_recall : recall target for the Stage 4 LR / EBM cuts (0.70)
     artifact_dir  : where the Meta-EBM artifact is written
+    upstream      : arm of the Stage 1–3 artifacts — "glass" (default) or, for
+                    the 2x2 crossover, "blackbox" (MLP, RF Router, XGBoost in
+                    the LR / router / EBM slots; PR 36 F29). Recorded in
+                    ``stage4_inputs["upstream"]``.
 
     Returns
     -------
@@ -134,7 +147,11 @@ def train_meta_stage(
     # ==========================================================
     say("\n📂 1. Loading and verifying Stage 1–3 outputs...")
     inputs = load_stage_outputs(GLOBAL_SPLIT, lr_path, glass_path, ebm_path,
-                                verbose=verbose)
+                                verbose=verbose, upstream=upstream)
+    arm = inputs.upstream["arm"]
+    if inputs.upstream["crossover"]:
+        say(f"   2x2 crossover: {inputs.upstream['combination']} "
+            f"(router evidence: {ROUTER_CONFIDENCE_RULES[arm]})")
     lr, glass, ebm = inputs["lr"], inputs["glass"], inputs["ebm"]
     y_train, y_test = inputs.y_train, inputs.y_test
 
@@ -310,7 +327,7 @@ def train_meta_stage(
             'glass_train_base_rates': {
                 int(k): float(glass_base_train[np.asarray(glass.train_fold_id) == k][0])
                 for k in np.unique(glass.train_fold_id)},
-            'router_confidence': ROUTER_CONFIDENCE_RULE,
+            'router_confidence': ROUTER_CONFIDENCE_RULES[arm],
             'sources': {
                 'lr':    f'find_recall_threshold(y_train, LR OOF, {target_recall})',
                 'ebm':   f'find_recall_threshold(y_train, EBM OOF, {target_recall})',

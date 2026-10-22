@@ -52,6 +52,7 @@ __all__ = [
     "ThresholdContaminationError",
     "fold_assignment",
     "split_fingerprint",
+    "label_fingerprint",
     "assert_comparable",
 ]
 
@@ -150,6 +151,44 @@ def fold_assignment(
     if (fold < 0).any():
         raise StageOutputError("fold_assignment left rows unassigned")
     return pd.Series(fold, index=index, name="fold_id")
+
+
+# ----------------------------------------------------------------------
+def label_fingerprint(index, y) -> str:
+    """
+    Short, stable identifier for the rows a model was fitted on AND their labels.
+
+    Parameters
+    ----------
+    index : pandas.Index or array-like
+        Row identifiers of the fitting rows, in fitting order.
+    y : array-like
+        Their 0/1 labels, in the same order.
+
+    Returns
+    -------
+    str
+        12 lowercase hex characters (SHA-256 prefix).
+
+    Notes
+    -----
+    The label-aware complement of the routers' row-only split fingerprint
+    (PR 36 audit F12). A router's fold ids and base rates do not determine its
+    training labels — swapping two opposite labels within one fold changes
+    neither — so every router fit and cross-fit records this over the labels
+    it actually used, and Stage 4 recomputes it over GLOBAL_SPLIT's training
+    rows. Labels are hashed as integers, so int8, int64, bool and 0.0/1.0
+    labels agree; the index follows ``split_fingerprint`` (its string form).
+    """
+    labels = np.asarray(y).astype(int)
+    rows = np.asarray(index)
+    if len(labels) != len(rows):
+        raise ValueError(f"label_fingerprint: {len(labels)} labels for {len(rows)} rows")
+    h = hashlib.sha256()
+    for tag, obj in (("rows", rows), ("labels", labels)):
+        h.update(tag.encode())
+        h.update(",".join(map(str, obj.tolist())).encode())
+    return h.hexdigest()[:12]
 
 
 # ----------------------------------------------------------------------

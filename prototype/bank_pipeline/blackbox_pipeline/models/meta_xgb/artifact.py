@@ -132,6 +132,10 @@ def load_meta_xgb(path: str, expected_split_fingerprint: Optional[str] = None) -
     art = joblib.load(path)
     if getattr(art, "schema", None) != SCHEMA:
         raise ValueError(f"{path}: not a {SCHEMA} artifact")
+    # PR 36 (audit F12): the primary fingerprint was never compared with the dictionary.
+    if art.split_fingerprint not in art.split_fingerprints.values():
+        raise ValueError(f"{path}: split_fingerprint {art.split_fingerprint!r} contradicts "
+                         f"its own split_fingerprints {art.split_fingerprints}")
     if expected_split_fingerprint is not None and \
             expected_split_fingerprint not in art.split_fingerprints.values():
         raise ValueError(f"{path}: built on another split {art.split_fingerprints}")

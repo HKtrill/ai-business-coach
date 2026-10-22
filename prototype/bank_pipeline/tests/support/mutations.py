@@ -11,7 +11,7 @@ Rows / index   shuffle_rows, reset_index, duplicate_index_label,
                replace_index_label, INDEX_MUTATIONS
 Columns        drop_column, add_column, duplicate_column, swap_columns,
                rename_column, cast_column, COLUMN_MUTATIONS
-Labels         permute_labels
+Labels         permute_labels, swap_labels_within_folds
 Probabilities  corrupt_probabilities, INVALID_PROBABILITY_KINDS
 Provenance     with_field
 """
@@ -148,6 +148,32 @@ def permute_labels(y: pd.Series, seed: int = 0, rows: Optional[Iterable] = None)
         values = shuffled
     out.loc[target] = values
     return out
+
+
+def swap_labels_within_folds(y: pd.Series, fold_id, max_pairs: Optional[int] = None) -> pd.Series:
+    """
+    Exchange the labels of row-adjacent rows of opposite class held out in the
+    same fold (every disjoint such pair, or the first ``max_pairs``).
+
+    The index, the class counts and every fold's class counts are unchanged,
+    and so — because a stratified splitter deals each class's rows to folds in
+    row order, as ``shared.stage_io.fold_assignment`` does — is every fold id.
+    The PR 36 F12 counterexample: fold ids and base rates do not determine
+    the labels.
+    """
+    labels, fold = y.to_numpy().copy(), np.asarray(fold_id)
+    used, pairs = set(), 0
+    for a in range(len(labels) - 1):
+        if max_pairs is not None and pairs >= max_pairs:
+            break
+        b = a + 1
+        if a not in used and labels[a] != labels[b] and fold[a] == fold[b]:
+            labels[a], labels[b] = labels[b], labels[a]
+            used |= {a, b}
+            pairs += 1
+    if not pairs:
+        raise ValueError("no row-adjacent rows of opposite class share a fold")
+    return pd.Series(labels, index=y.index, name=y.name)
 
 
 # ----------------------------------------------------------------------

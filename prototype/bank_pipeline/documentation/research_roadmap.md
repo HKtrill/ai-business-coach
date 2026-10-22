@@ -5,28 +5,30 @@
 #### PR 36 — Automated Pipeline Test Suite
 
 **Automated pipeline test suite (`pytest`, independent of notebooks)**
+
 - [x] Consolidate existing stage-level validation into one `tests/` suite with shared synthetic-data fixtures
 - [x] Add focused tests for the feature-research pipeline
 - [ ] Add notebook-contract tests for each active research notebook
-- [ ] Split identity and row alignment:
+- [x] Split identity and row alignment:
   - fingerprints match across stages
   - every output index equals `X_train` / `X_test`
   - reordered or reset indices are rejected
-- [ ] Feature contracts:
+- [x] Feature contracts:
   - missing, extra, duplicate, or reordered columns fail
   - engineered transformations are fitted on train only
 - [ ] OOF integrity:
   - every training row scored exactly once by a model that never saw it
   - fold plans shared where declared
 - [ ] Probability / threshold consistency:
-  - probabilities remain in `[0, 1]`
-  - no NaN / inf
+  - probability outputs remain finite and in `[0, 1]`
+  - intentional NaNs in abstention feature slots follow the declared Stage 4 contract
   - stored decisions reproduce from probabilities and thresholds where applicable
   - nested thresholds never use their own fold labels
 - [ ] Routing and abstention:
   - Stage 2 state/masks reproduce stored decisions
-  - Pass 2 remainder is built from OOF Pass 1 routing
-- [ ] Calibration / threshold safeguards:
+  - Pass 1 precedence and abstention semantics are enforced
+  - Pass 2 follows its declared training population (`full` or `oof_remainder`)
+- [x] Calibration / threshold safeguards:
   - calibration gates use training-side OOF predictions
   - no calibrator or threshold uses held-out test labels
 - [ ] Artifact provenance:
@@ -34,20 +36,57 @@
   - wrong-feature-contract artifacts fail
   - stale artifacts are rejected
   - unknown hyperparameters fail loudly
-- [ ] Stage 4 hand-off schema:
+  - mandatory current-format provenance is enforced after artifact regeneration
+- [x] Stage 4 hand-off schema:
   - required columns
   - dtypes
   - indices
   - OOF/refit provenance
-- [ ] Meta-level OOF integrity for Meta-XGB
+- [x] Meta-level OOF integrity for Meta-XGB
 - [x] Fast-running synthetic suite suitable for CI
 
+**Additional Findings — Corrections, Safeguards & Deferred Work**
+
+*Correctness issues resolved*
+
+- [x] **F1:** Harden hyperparameter validation across the black-box models; reject missing, unsupported, or invalid parameter values
+- [x] **F2:** Reject duplicated output indices and strengthen index-alignment regression coverage
+- [x] **F11:** Validate split identity, shared fold plans, fold seeds, and cross-pipeline fold provenance
+- [x] **F12 (partial):** Introduce label-aware training fingerprints; reject mismatched fingerprints and within-fold label swaps when metadata is available
+- [x] **F17:** Record and validate Pass 2 training populations; enforce agreement between cross-fit and full-train router contracts
+- [x] **F25/F32:** Strengthen directional router evidence, model-family identity, and upstream provenance checks
+- [x] **F29:** Implement explicit 2×2 crossover support for GLASS/black-box upstreams and Meta-EBM/Meta-XGB arbiters
+  - record actual upstream combinations and consumed-output fingerprints
+  - reject mixed or undeclared upstream artifacts
+  - verify identical upstream inputs in held-fixed arbiter comparisons
+- [x] **F30:** Strengthen exact routing/abstention validation
+- [x] **F33/F34:** Strengthen MLP threshold-source and label validation
+- [x] **F36:** Reject invalid RF Router prediction inputs, including nonfinite and nonbinary values where prohibited
+- [x] **F37/F38:** Strengthen Meta-XGB identity enforcement and intentional abstention-NaN handling
+
+*Methodological findings documented*
+
+- [x] **F17 / D1:** Document GLASS `full` versus RF `oof_remainder` Pass 2 training populations
+- [x] **F29 / D2:** Validate RF Router band-rate evidence compatibility with the existing Meta-EBM evidence calculation
+- [x] **F24:** Document the limitation of globally selected tuning parameters versus fully nested evaluation
+- [x] **F39:** Document the possibility of upstream training dependence in Stage 4 stacking despite meta-level OOF separation
+
+*Deferred follow-ups*
+
+- [ ] **F12 — Commit 4:** Make router label fingerprints mandatory, regenerate artifacts, and reject legacy incomplete provenance
+- [ ] **F17 — PR 37:** Decide whether GLASS should retain `full` or switch to `oof_remainder` for a more directly controlled router comparison
+- [ ] **F21 — Commit 4:** Correct the GLASS Stage 3 notebook configuration and artifact identity; remove the expected-failure test
+- [ ] **F23 — Commit 4:** Resolve stale Stage 3 notebook blocks/caches during regeneration
+- [ ] **F15 — Audit follow-up:** Recover and verify the original finding definition and regression evidence
+- [ ] **F31 — Future review:** Reassess RF Router confidence blending if its probability construction changes
+- [ ] **F39 — PR 45:** Evaluate sensitivity to upstream stacking dependence through robustness experiments
+
 **Cleanup**
+
 - [ ] Remove dead or duplicated code
 - [ ] Remove duplicate stale Stage 3 cells from the black-box notebook
 - [ ] Remove legacy standalone modules in `blackbox_pipeline/models/xgb/` superseded by `shared_protocol.py`
 - [ ] Remove superseded GLASS notebooks preserved by Git history
-- [ ] Archive older churn notebooks that remain useful as research references
 - [ ] Standardize GLASS Router / GLASS Arbiter naming
 - [ ] Tighten package and notebook documentation
 
@@ -226,6 +265,14 @@
 - [ ] Abstention / coverage sensitivity
 - [ ] Tuning-budget sensitivity
 - [ ] Temporal-split sensitivity check (train on earlier months, test on later) — macro features are monthly and identify the contact period
+
+**Stacking methodology sensitivity (F39)**
+
+- [ ] Assess indirect label dependence in Meta-XGBoost's upstream OOF stacking features
+- [ ] Evaluate the feasibility of fully nested upstream fitting within each meta-fold
+- [ ] Compare standard OOF stacking against fully nested stacking where computationally feasible
+- [ ] Measure effects on calibration, thresholds, abstention, and predictive performance
+- [ ] Document the methodological trade-offs and implications for the GLASS vs. black-box comparison
 
 ### Phase 4 — Paper Readiness
 

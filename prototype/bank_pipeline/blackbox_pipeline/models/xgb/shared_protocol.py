@@ -28,7 +28,9 @@ features once on all of train and cannot feed the audited Stage 4.
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+import math
+import numbers
+from dataclasses import asdict, dataclass, field, fields
 from typing import Any, ClassVar, Optional
 
 import numpy as np
@@ -55,6 +57,24 @@ class XGBSearchSpace:
 
     def to_dict(self) -> dict:
         return asdict(self)
+
+
+#: The tuned hyperparameters, in search-space (and ``suggest``) order.
+XGB_TUNED_PARAM_NAMES: tuple[str, ...] = tuple(f.name for f in fields(XGBSearchSpace))
+
+#: XGBoost's own domain per tuned value, as (lower bound, lower inclusive,
+#: upper bound). Enforced because XGBoost accepts several out-of-domain values
+#: without a word: n_estimators <= 0 (no trees), learning_rate 0 or NaN,
+#: subsample / colsample_bytree 0. max_depth 0 means "no limit" and is valid.
+_XGB_DOMAIN: dict[str, tuple[float, bool, float]] = {
+    "n_estimators": (1, True, math.inf),
+    "learning_rate": (0.0, False, math.inf),
+    "max_depth": (0, True, math.inf),
+    "min_child_weight": (0.0, True, math.inf),
+    "subsample": (0.0, False, 1.0),
+    "colsample_bytree": (0.0, False, 1.0),
+    "reg_lambda": (0.0, True, math.inf),
+}
 
 
 @dataclass
@@ -99,10 +119,44 @@ class XGBEstimator:
         }
 
     def normalize_params(self, params: dict[str, Any]) -> dict[str, Any]:
-        out = dict(params)
-        for k in _INT_PARAMS:
-            if k in out:
-                out[k] = int(out[k])
+        """
+        Exactly the tuned keys, each a finite number in XGBoost's domain.
+
+        PR 36 (audit F1): params used to reach ``XGBClassifier`` as given. At
+        ``verbosity=0`` XGBoost ignores an unknown or misspelled name without a
+        word (``max_dept=4`` trained at the default depth while the artifact
+        recorded ``max_dept=4``), a missing key silently took XGBoost's
+        default, and ``int()`` truncated ``n_estimators=20.7``. Now, as in
+        ``EBMFactory.normalize_params``, a missing or unknown key (aliases such
+        as ``eta`` and fixed conditions such as ``random_state`` included)
+        raises ``KeyError``; a value that is not a finite real number, a
+        non-integral ``n_estimators`` / ``max_depth``, or a value outside
+        XGBoost's domain raises ``ValueError``.
+        """
+        missing = [k for k in XGB_TUNED_PARAM_NAMES if k not in params]
+        if missing:
+            raise KeyError(f"XGBoost params missing tuned keys: {missing}")
+        unknown = [k for k in params if k not in XGB_TUNED_PARAM_NAMES]
+        if unknown:
+            raise KeyError(f"Unknown XGBoost hyperparameters {unknown}; expected exactly "
+                           f"{list(XGB_TUNED_PARAM_NAMES)}.")
+        out: dict[str, Any] = {}
+        for name in XGB_TUNED_PARAM_NAMES:
+            value = params[name]
+            if (isinstance(value, (bool, np.bool_)) or not isinstance(value, numbers.Real)
+                    or not math.isfinite(value)):
+                raise ValueError(f"XGBoost {name} must be a finite number, got {value!r}")
+            if name in _INT_PARAMS:
+                if not float(value).is_integer():
+                    raise ValueError(f"XGBoost {name} must be an integer, got {value!r}")
+                value = int(value)
+            else:
+                value = float(value)
+            low, low_inclusive, high = _XGB_DOMAIN[name]
+            if not ((value >= low) if low_inclusive else (value > low)) or value > high:
+                raise ValueError(f"XGBoost {name}={value!r} is outside its domain "
+                                 f"{'[' if low_inclusive else '('}{low}, {high}]")
+            out[name] = value
         return out
 
     def fit(self, params: dict[str, Any], X: pd.DataFrame, y,
@@ -158,10 +212,27 @@ def train_xgb_stage(
     extras: Optional[dict] = None,
     save: bool = True,
 ):
-    """Shared Stage3Runner with the XGBoost estimator → (Stage3Artifact, path)."""
+    """
+    Shared Stage3Runner with the XGBoost estimator → (Stage3Artifact, path).
+
+    PR 36 (audit F37): the config alone labels the artifact (model family,
+    arm, column prefix, search space), and any ``Stage3Config`` used to be
+    accepted. An ``EBMStage3Config`` therefore produced an XGBoost model
+    labelled ``model_family='ebm'``, ``arm='glass'`` — the identity the GLASS
+    arbiter's F32 check accepts — and the generic config labelled it
+    ``'unset'``. Only an ``XGBStage3Config`` with the black-box XGBoost
+    identity is accepted.
+    """
     cfg = config or XGBStage3Config()
-    if not isinstance(cfg, Stage3Config):
-        raise TypeError("config must be a shared.stage_runner.Stage3Config (XGBStage3Config)")
+    if not isinstance(cfg, XGBStage3Config):
+        raise TypeError(
+            f"config must be an XGBStage3Config, got {type(cfg).__name__}: the config "
+            "labels the artifact, and Stage 4 checks that label (audit F37).")
+    if (cfg.model_family, cfg.arm) != (XGBEstimator.family, "blackbox"):
+        raise ValueError(
+            "XGBStage3Config must keep the black-box XGBoost identity "
+            f"(model_family='xgboost', arm='blackbox'), got model_family="
+            f"{cfg.model_family!r}, arm={cfg.arm!r} (audit F37).")
     runner = Stage3Runner(cfg, XGBEstimator(cfg.search_space, cfg.random_state, cfg.n_jobs))
     artifact = runner.fit(block, params=params, params_source=params_source,
                           params_provenance=params_provenance, extras=extras)

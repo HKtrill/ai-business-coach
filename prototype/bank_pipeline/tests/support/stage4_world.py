@@ -20,6 +20,7 @@ import hashlib
 import numpy as np
 import pandas as pd
 
+import shared.stage_io as stage_io
 from shared.stage_io import StageOutput, fold_assignment, split_fingerprint
 from shared.stage3.artifact import Stage3Artifact
 from shared.stage3.calibration import Stage3Calibrator
@@ -101,6 +102,7 @@ def _route_proba(dec, rng, noise, nan_on_abstain):
     return p
 
 
+RF_REMAINDER = "OOF Pass 1 remainder (RF router design)"     # crossfit_rf_router's protocol
 PASS1_PRECISIONS = (0.93, 0.95, 0.97)       # P(y = 0 | rule), legacy-profile range
 PASS2_PRECISIONS = (0.25, 0.45, 0.60)       # P(y = 1 | rule)
 
@@ -117,7 +119,31 @@ def _glass_blend(dec, rng, base, nan_on_abstain=True):
     return p, prec
 
 
-def make_router(w, layout="top-level", abstain_band=True, two_col=False):
+def _band_blend(dec, fit_dec, y_fit, fold=None):
+    """
+    The RF Router's outputs for routes ``dec`` (``_BaseRouter.predict_proba``):
+    each routed row carries its band's confidence — Pass 1 NPV, Pass 2
+    precision — measured on the producing router's training rows (``fit_dec``,
+    ``y_fit``; per fold router, the other folds, when ``fold`` is given for
+    out-of-fold rows), blended with that router's base rate; abstain rows
+    carry the base rate.
+    """
+    y, fit_dec = np.asarray(y_fit, dtype=int), np.asarray(fit_dec)
+    groups = ([(np.ones(len(y), bool), np.ones(len(dec), bool))] if fold is None
+              else [(fold != k, fold == k) for k in np.unique(fold)])
+    conf, p = np.zeros(len(dec)), np.zeros(len(dec))
+    for fit_rows, rows in groups:
+        yk, dk_fit, dk = y[fit_rows], fit_dec[fit_rows], dec[rows]
+        npv, prec = float((yk[dk_fit == "pass1"] == 0).mean()), float((yk[dk_fit == "pass2"] == 1).mean())
+        b = float(yk.mean())
+        conf[rows] = np.where(dk == "pass1", npv, np.where(dk == "pass2", prec, 0.0))
+        p[rows] = np.where(dk == "pass1", b * (1 - conf[rows]),
+                           np.where(dk == "pass2", b + (1 - b) * conf[rows], b))
+    return p, conf
+
+
+def make_router(w, layout="top-level", abstain_band=True, two_col=False, label_fingerprint=False,
+                band_blend=False, pass2_population=None):
     """
     GLASS bundle (top-level) or RF Router artifact (layout='extra').
 
@@ -125,7 +151,24 @@ def make_router(w, layout="top-level", abstain_band=True, two_col=False):
     train probabilities blend each row's rule precision with its fold model's
     base rate, test probabilities with the full training base rate, and the
     rule precisions are stored as ``train_confidence`` / ``test_confidence``.
+
+    ``label_fingerprint=True`` records ``train_label_fingerprint`` over
+    ``w``'s training rows and labels — the labels the router was fitted on —
+    in ``oof_protocol`` and at the top level, as the producers do since
+    PR 36 F12. The default is an artifact written before that.
+
+    ``band_blend=True`` (RF layout): the RF Router's real output form — band
+    blends (``_band_blend``), its full-train ``mode`` ("two_pass"), bands and
+    ``training_base_rate`` — instead of free-form probabilities.
+    ``pass2_population``: record the router's Pass 2 population as the
+    producers do (GLASS: cross-fit protocol and full-train ``fit_report``; RF:
+    the cross-fit protocol's description and the full-train ``mode``). An
+    artifact with ``label_fingerprint=True`` is a current-format one, so it
+    declares the population by default ("full" / the OOF remainder) — the
+    current producers always do (PR 36 F17).
     """
+    if label_fingerprint and pass2_population is None:
+        pass2_population = "full" if layout == "top-level" else RF_REMAINDER
     GS, rng = w["GS"], w["rng"]
     ytr = GS["y_train"]
     dtr, dte = _routes(w["z_tr"], rng, abstain_band), _routes(w["z_te"], rng, abstain_band)
@@ -135,6 +178,9 @@ def make_router(w, layout="top-level", abstain_band=True, two_col=False):
         b_fold = np.array([y[fold != k].mean() for k in range(5)])[fold]
         ptr, ctr = _glass_blend(dtr, rng, b_fold)
         pte, cte = _glass_blend(dte, rng, y.mean())
+    elif band_blend:
+        ptr, ctr = _band_blend(dtr, dtr, ytr, fold)
+        pte, cte = _band_blend(dte, dtr, ytr)
     else:
         ptr = _route_proba(dtr, rng, .05, nan_on_abstain=False)
         pte = _route_proba(dte, rng, .02, nan_on_abstain=False)
@@ -154,14 +200,33 @@ def make_router(w, layout="top-level", abstain_band=True, two_col=False):
         "test_proba": pte, "test_decisions": dte, "test_pred": pred(dte),
         "test_confidence": cte,
     }
+    labels = stage_io.label_fingerprint(GS["X_train"].index, ytr) if label_fingerprint else None
+    if labels:
+        f["oof_protocol"]["train_label_fingerprint"] = labels           # the cross-fit's labels
     if layout == "top-level":                         # GLASS Router bundle
         f["train_idx"] = f.pop("index_train")
         f["split_fingerprint"] = w["fp_router"]
         f["train_insample_proba_diagnostic"] = _glass_blend(dtr, rng, ytr.mean())[0]
         f["training_base_rate"] = float(ytr.mean())
+        if labels:
+            f["train_label_fingerprint"] = labels                         # the full-train fit's
+        if pass2_population:
+            f["oof_protocol"]["glass_pass2_population"] = pass2_population
+            f["fit_report"] = {"pass2_population": pass2_population}
         return f
-    return {"split_fingerprint": w["fp_router"],       # RF Router artifact
-            "thresholds": {"t1": 0.79, "t2": 0.27}, "extra": f}
+    art = {"split_fingerprint": w["fp_router"],       # RF Router artifact
+           "thresholds": {"t1": 0.79, "t2": 0.27}, "extra": f}
+    if labels:
+        art["train_label_fingerprint"], art["training_base_rate"] = labels, float(ytr.mean())
+    if band_blend:
+        y = ytr.to_numpy()
+        art.update(mode="two_pass", training_base_rate=float(y.mean()),
+                   bands={"kind": "flat", "pass1_confidence": float((y[dtr == "pass1"] == 0).mean()),
+                          "pass2_confidence": float((y[dtr == "pass2"] == 1).mean())})
+    if pass2_population:
+        f["oof_protocol"]["pass2_population"] = pass2_population
+        art.setdefault("mode", "two_pass")
+    return art
 
 
 def make_stage3(w, family="ebm", applied=True, shift=0.0):

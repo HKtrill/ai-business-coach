@@ -36,6 +36,8 @@ from typing import Callable, Sequence, Tuple
 import numpy as np
 import pandas as pd
 
+from shared.stage_io import label_fingerprint
+
 from .config import RFRouterConfig
 from .router import RFRouter
 from .router.decisions import ABSTAIN, DECISION_DTYPE, NOT_SUBSCRIBE, SUBSCRIBE, UNCERTAIN
@@ -155,6 +157,8 @@ def crossfit_rf_router(
         "train_outputs_oof": True,
         "n_folds": len(folds),
         "fold_fingerprint": fold_fp,
+        # PR 36 (audit F12): the labels the per-fold fits used (train-side outputs).
+        "train_label_fingerprint": label_fingerprint(y.index, y),
         "random_state": random_state,
         "feature_engineering": "engineer_features refit per fold; locked bins",
         "router": "full RFRouter refit per fold (inner OOF + per-fold t1/t2)",

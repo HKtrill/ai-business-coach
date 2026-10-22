@@ -62,6 +62,7 @@ from shared.stage1.feature_engineering import engineer_features as lr_features
 from shared.stage2 import RF_FEATURES_BINARY
 from shared.stage3.data import Stage3Block
 from shared.stage3.feature_engineering import EBM_FEATURES, EBMFeaturePipeline
+import shared.stage_io as stage_io
 from shared.stage_io import split_fingerprint
 from tests.stage2.conftest import TINY_RF, legacy_config, selected_rule
 from tests.stage3.conftest import EBM_TEST_BAGS, EBM_TEST_PARAMS
@@ -87,6 +88,7 @@ class FixedRuleRouter(GlassRouterPipeline):
         low = [(r, f) for r, f in sorted(rates) if r < base][:2]
         high = [(r, f) for r, f in sorted(rates, reverse=True) if r > base][:2]
         self.training_base_rate = base
+        self.train_label_fingerprint_ = stage_io.label_fingerprint(y_train.index, y_train)  # as the real fit
         self.pass1_rules = [selected_rule(f"P1_{f}", [(f, 1)], "pass1", 1.0 - r) for r, f in low]
         self.pass2_rules = [selected_rule(f"P2_{f}", [(f, 1)], "pass2", r) for r, f in high]
         self.is_fitted = True

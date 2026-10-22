@@ -49,6 +49,7 @@ be recomputed here fails.
 from __future__ import annotations
 
 import importlib
+import re
 from dataclasses import dataclass, field
 from itertools import combinations
 from typing import Optional
@@ -103,6 +104,9 @@ class StageStream:
     y_test: Optional[np.ndarray] = None
 
     fingerprint_scheme: Optional[str] = None       # filled by build_stage4_inputs
+    # Streams without labels (routers): {"train outputs" | "test outputs":
+    # train_label_fingerprint recorded by the fit behind those outputs}.
+    label_fingerprints: dict = field(default_factory=dict)
     notes: dict = field(default_factory=dict)
 
     # ------------------------------------------------------------------
@@ -144,6 +148,7 @@ class Stage4Inputs:
     streams: dict
     fold_provenance: dict
     validation: list                        # ValidationReport rows
+    upstream: Optional[dict] = None         # which arm filled the slots (PR 36 F29)
 
     def __getitem__(self, name: str) -> StageStream:
         return self.streams[name]
@@ -165,7 +170,7 @@ class Stage4Inputs:
         )
 
     def provenance(self) -> dict:
-        return {
+        out = {
             "split_fingerprint": self.split_fingerprint,
             "split_fingerprints": dict(self.split_fingerprints),
             "n_train": self.n_train,
@@ -174,6 +179,9 @@ class Stage4Inputs:
             "folds": self.fold_provenance,
             "validation": [dict(r) for r in self.validation],
         }
+        if self.upstream is not None:
+            out["upstream"] = self.upstream
+        return out
 
 
 # ======================================================================
@@ -254,15 +262,57 @@ def split_reference(GLOBAL_SPLIT: dict, extra_fingerprints: Optional[dict] = Non
     return SplitReference(X_tr.index, X_te.index, y_tr, y_te, fps)
 
 
+def check_split_identity(recorded: Optional[dict], ref: SplitReference, what: str,
+                         primary: Optional[str] = None) -> str:
+    """
+    ``recorded`` ({scheme: fingerprint}, as a Stage 4 artifact stores it)
+    describes the split ``ref`` was recomputed from. ``primary``: the
+    artifact's single ``split_fingerprint`` field, if it has one. Returns the
+    schemes compared; raises ``Stage4InputError`` otherwise.
+
+    PR 36 (audit F12): artifacts recording several schemes were accepted if
+    ANY recorded value equalled ANY recomputed one. The router scheme hashes
+    row indices only, so an artifact built on the same rows with other
+    training labels (its label-bearing ``stage_io`` fingerprint differing)
+    matched on the router value alone. Now every scheme both sides know must
+    agree, and at least one must be shared. A primary fingerprint must be one
+    of the recorded values (it used to be ignored whenever the dictionary was
+    present, so the two could contradict each other); alone, it is compared
+    under the scheme it matches.
+    """
+    recorded = {k: v for k, v in (recorded or {}).items() if v}
+    if primary and recorded and primary not in recorded.values():
+        raise Stage4InputError(
+            f"{what}: its split_fingerprint {primary!r} contradicts its own "
+            f"split_fingerprints {recorded}")
+    if primary and not recorded:
+        recorded = {ref.scheme_of(primary) or "unrecognised": primary}
+    common = [k for k in recorded if k in ref.fingerprints]
+    if not common:
+        raise Stage4InputError(
+            f"{what}: no fingerprint scheme in common with GLOBAL_SPLIT (recorded "
+            f"{sorted(recorded)}, recomputable {sorted(ref.fingerprints)})")
+    bad = [f"{k}: {recorded[k]} != {ref.fingerprints[k]}" for k in common
+           if recorded[k] != ref.fingerprints[k]]
+    if bad:
+        raise Stage4InputError(f"{what} was built on another split ({'; '.join(bad)})")
+    return ", ".join(common)
+
+
 # ======================================================================
 # Primitive checks (each raises with a precise message, or returns detail)
 # ======================================================================
 def index_alignment(candidate, reference: pd.Index, what: str) -> str:
     """
-    'label' if ``candidate`` equals ``reference`` element-wise, 'positional'
-    if it is exactly ``range(n)`` (row positions in GLOBAL_SPLIT order).
-    Anything else — including the same labels in another order — raises.
-    Stage 4 never realigns.
+    'label' if ``candidate`` equals ``reference`` element-wise. Anything else
+    — the same labels in another order, a reset index, foreign or missing
+    rows — raises. Stage 4 never realigns.
+
+    PR 36 (audit F12): a candidate equal to ``range(n)`` used to be accepted
+    as "positional" (row positions in GLOBAL_SPLIT order). A reset index
+    carries no row identity, so rows reordered before the reset (within a
+    fold, among rows with one label) were accepted unnoticed. Every current
+    producer records the split's row labels.
     """
     cand = pd.Index(candidate) if not isinstance(candidate, pd.Index) else candidate
     if len(cand) != len(reference):
@@ -272,7 +322,9 @@ def index_alignment(candidate, reference: pd.Index, what: str) -> str:
             np.asarray(cand, dtype=object), np.asarray(reference, dtype=object)):
         return "label"
     if np.array_equal(np.asarray(cand), np.arange(len(reference))):
-        return "positional"
+        raise Stage4InputError(
+            f"{what}: the index was reset to row positions 0..{len(reference) - 1}; "
+            "Stage 4 needs the split's row labels to verify the row order.")
     if set(cand) == set(reference):
         raise Stage4InputError(
             f"{what}: same rows as GLOBAL_SPLIT but in a different ORDER. "
@@ -332,6 +384,37 @@ SEC_SPLIT, SEC_ALIGN, SEC_FOLD, SEC_OOF, SEC_SEM = (
     "4a. Split identity", "4b. Row alignment", "4c. Fold provenance",
     "4d. OOF honesty", "4e. Router semantics")
 
+#: ``StageStream.notes["label_evidence"]``: how far Stage 4 could establish
+#: that a stream was produced on GLOBAL_SPLIT's training labels.
+LABELS_CARRIED = "complete: training labels carried and compared with GLOBAL_SPLIT"
+LABELS_FINGERPRINTED = (
+    "complete: the label fingerprints of the fits behind the train and the test outputs "
+    "match GLOBAL_SPLIT's training rows and labels")
+LABELS_PARTIAL = (
+    "PARTIAL (PR 36 F12, open until Commit 4): the artifact carries no training labels "
+    "and no label fingerprint for both its train and its test outputs (an artifact "
+    "written before the routers recorded one). Checked: row identity, the fold plan and "
+    "the training base rate. Not detectable: training labels swapped between rows of "
+    "opposite class within one fold, which changes no fold id and no base rate.")
+LABEL_FINGERPRINT_SIDES = ("train outputs", "test outputs")
+_LABEL_FP = re.compile(r"[0-9a-f]{12}")
+
+
+def label_identity(recorded, expected: str, what: str) -> str:
+    """
+    ``recorded``: a ``train_label_fingerprint`` from an artifact; ``expected``:
+    ``shared.stage_io.label_fingerprint`` of GLOBAL_SPLIT's training rows and
+    labels. Raises ``Stage4InputError`` on a malformed value or another set of
+    rows / labels (PR 36 audit F12).
+    """
+    if not isinstance(recorded, str) or not _LABEL_FP.fullmatch(recorded):
+        raise Stage4InputError(f"{what}: malformed label fingerprint {recorded!r} "
+                               "(expected 12 lowercase hex characters)")
+    if recorded != expected:
+        raise Stage4InputError(f"{what}: fitted on other training rows or labels "
+                               f"(label fingerprint {recorded} != {expected})")
+    return recorded
+
 
 def build_stage4_inputs(
     GLOBAL_SPLIT: dict,
@@ -339,13 +422,18 @@ def build_stage4_inputs(
     extra_checks: Optional[list] = None,
     verbose: bool = True,
     extra_fingerprints: Optional[dict] = None,
+    upstream: Optional[dict] = None,
 ) -> Stage4Inputs:
     """
     Run every alignment / provenance check, then return ``Stage4Inputs``.
 
     ``extra_checks``: (section, stage, name, fn, detail) tuples from adapters.
+    ``upstream``: {"arm", "arbiter", "arbiter_arm"} from an arbiter's loader —
+    every stream must then belong to that arm, and the verified combination is
+    recorded as ``Stage4Inputs.upstream`` (PR 36 F29; ``shared.stage4.upstream``).
     Raises ``shared.validation.ValidationError`` listing every failure.
     """
+    from shared.stage_io import label_fingerprint
     from shared.validation import ValidationReport
 
     ref = split_reference(GLOBAL_SPLIT, extra_fingerprints)
@@ -391,13 +479,17 @@ def build_stage4_inputs(
                                                      f"{s.name} train index"),
                          s.index_source or "")
         else:
+            # PR 36 (audit F12): used to pass as a "positional contract".
             report.check(SEC_ALIGN, st, f"{s.name}: train index carried",
-                         lambda: True, "no index carried — positional contract only")
+                         lambda: False, "no row index carried — the row order cannot be verified")
         if s.test_index is not None:
             report.check(SEC_ALIGN, st, f"{s.name}: test index = X_test.index",
                          lambda s=s: index_alignment(s.test_index, ref.index_test,
                                                      f"{s.name} test index"),
                          s.index_source or "")
+        else:
+            report.check(SEC_ALIGN, st, f"{s.name}: test index carried",
+                         lambda: False, "no row index carried — the row order cannot be verified")
         if s.y_train is not None:
             report.check(SEC_ALIGN, st, f"{s.name}: y_train = GLOBAL_SPLIT",
                          lambda s=s: np.array_equal(np.asarray(s.y_train).astype(int),
@@ -406,6 +498,20 @@ def build_stage4_inputs(
             report.check(SEC_ALIGN, st, f"{s.name}: y_test = GLOBAL_SPLIT",
                          lambda s=s: np.array_equal(np.asarray(s.y_test).astype(int),
                                                     ref.y_test))
+        if s.y_train is None:
+            # PR 36 (audit F12): checked when recorded; absent = PARTIAL (Commit 4: required).
+            want = label_fingerprint(ref.index_train, ref.y_train)
+            for side, fp in s.label_fingerprints.items():
+                report.check(SEC_SPLIT, st, f"{s.name}: {side} fitted on GLOBAL_SPLIT's training "
+                             "rows and labels",
+                             lambda fp=fp, want=want, what=f"{s.name} {side}": label_identity(
+                                 fp, want, what),
+                             "train_label_fingerprint")
+        s.notes["label_evidence"] = (
+            LABELS_CARRIED if s.y_train is not None
+            else LABELS_FINGERPRINTED if set(s.label_fingerprints) >= set(LABEL_FINGERPRINT_SIDES)
+            else LABELS_PARTIAL + (f" Label fingerprint recorded for: {', '.join(s.label_fingerprints)}."
+                                   if s.label_fingerprints else ""))
 
     # ---- folds ---------------------------------------------------------
     fold_prov: dict = {"streams": {}, "shared_partitions": [], "distinct_partitions": []}
@@ -419,7 +525,19 @@ def build_stage4_inputs(
             continue
         k = fold_partition(s.train_fold_id, n)
         ks[n] = k
-        seed = reproduce_folds(s.train_fold_id, ref.y_train, seeds)
+        # PR 36 (audit F11/F12): the fold plan must be the shared stratified
+        # splitter's plan on GLOBAL_SPLIT's training labels, in GLOBAL_SPLIT
+        # row order, with the stream's own declared seed. It used to be
+        # recorded only, so a fold plan built on other labels (a relabelled
+        # split under a label-blind fingerprint), in another row order or by
+        # another splitter was accepted whenever no stream with the same fold
+        # count disagreed. One relabelled row reassigns most fold ids.
+        own = [s.fold_seed] if s.fold_seed is not None else seeds
+        seed = reproduce_folds(s.train_fold_id, ref.y_train, own)
+        report.check(SEC_FOLD, s.stage,
+                     f"{n}: fold ids = shared stratified splitter on GLOBAL_SPLIT labels",
+                     lambda seed=seed: seed is not None,
+                     f"{k} folds, declared seed {s.fold_seed}")
         fold_prov["streams"][n] = {
             "source": s.fold_source, "n_folds": k,
             "reproduced_by_shared_fold_assignment": seed is not None,
@@ -437,12 +555,31 @@ def build_stage4_inputs(
                 {"streams": [a, b], "n_folds": [ks[a], ks[b]],
                  "why": "different n_splits — distinct OOF partitions by design; "
                         "each stream is still OOF w.r.t. its own folds"})
+    # PR 36 (audit F11): Stages 2 and 3 are declared to share ONE partition
+    # (5 stratified folds, the cascade seed). Only equal fold COUNTS were
+    # compared, so a Stage 2 cross-fit on another fold count passed as
+    # "distinct by design". Stage 1's own fold count stays independent.
+    mid = [n for n in ks if folds[n].stage in ("stage2", "stage3")]
+    if len(mid) > 1:
+        report.check(SEC_FOLD, "cascade", f"stages 2-3 share one partition ({', '.join(mid)})",
+                     lambda: all(np.array_equal(np.asarray(folds[mid[0]].train_fold_id, int),
+                                                np.asarray(folds[n].train_fold_id, int))
+                                 for n in mid[1:]),
+                     str({n: ks[n] for n in mid}))
 
     for sec, stage, name, fn, detail in (extra_checks or []):
         report.check(sec or SEC_OOF, stage, name, fn, detail)
+    if upstream is not None:
+        from .upstream import upstream_checks
+        for sec, stage, name, fn, detail in upstream_checks(streams, upstream["arm"]):
+            report.check(sec, stage, name, fn, detail)
 
     if verbose:
         report.show()
+        for s in streams:
+            for key in ("label_evidence", "pass2_population_evidence"):
+                if str(s.notes.get(key, "")).startswith("PARTIAL"):
+                    print(f"\n⚠️  {key.replace('_', ' ')} {s.name}: {s.notes[key]}")
     report.raise_if_failed()
 
     return Stage4Inputs(
@@ -455,4 +592,10 @@ def build_stage4_inputs(
         streams={s.name: s for s in streams},
         fold_provenance=fold_prov,
         validation=list(report.rows),
+        upstream=None if upstream is None else _upstream_record(streams, upstream),
     )
+
+
+def _upstream_record(streams, upstream: dict) -> dict:
+    from .upstream import upstream_record
+    return upstream_record(streams, upstream["arm"], upstream["arbiter"], upstream["arbiter_arm"])

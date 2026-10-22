@@ -165,6 +165,9 @@ class _BaseRouter:
         The audit record.
     split_fingerprint_ : str or None
         Recorded at fit, checked when reloading an artifact.
+    train_label_fingerprint_ : str or None
+        ``shared.stage_io.label_fingerprint`` of the rows and labels ``fit``
+        used; Stage 4 checks it against GLOBAL_SPLIT (PR 36 audit F12).
     last_scores_ : dict
         ``p1``/``p2`` from the most recent ``predict``, for diagnostics. Always
         reflects the last call and is not part of the contract.
@@ -181,6 +184,7 @@ class _BaseRouter:
         self.bands_: Optional[BandConfidence] = None
         self.fit_report_: Optional[_FitReport] = None
         self.split_fingerprint_: Optional[str] = None
+        self.train_label_fingerprint_: Optional[str] = None
         self.last_scores_: dict = {}
         self._y_train_ = None
 
@@ -239,13 +243,27 @@ class _BaseRouter:
         sklearn is positional once fitted, so a column-order difference between
         fit and predict would silently permute features. Extra columns are
         dropped; missing ones raise.
+
+        PR 36 (audit F36): the fitted columns must also hold what ``fit``
+        accepted — binary 0/1, no NaN. Only ``fit`` checked this, and the
+        forests route NaN (scikit-learn's missing-value support) and
+        fractional values without complaint, so a malformed scoring row was
+        silently given a decision.
         """
         if self.feature_names_ is None:
             raise ValueError("Call fit() first")
         missing = [c for c in self.feature_names_ if c not in X.columns]
         if missing:
             raise ValueError(f"X is missing fitted features: {missing}")
-        return X[self.feature_names_]
+        Xa = X[self.feature_names_]
+        if Xa.isna().any().any():
+            raise ValueError("X contains NaN in the fitted features (audit F36)")
+        if not Xa.isin([0, 1]).all().all():
+            raise ValueError(
+                "X is not binary in the fitted features. The router scores the 29 "
+                "RF_FEATURES_BINARY bins it was fitted on (audit F36)."
+            )
+        return Xa
 
     def _require_fitted(self) -> None:
         """Raise ``ValueError`` if ``fit`` has not completed."""

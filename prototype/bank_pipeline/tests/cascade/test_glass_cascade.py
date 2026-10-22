@@ -42,9 +42,13 @@ from __future__ import annotations
 
 import copy
 
+import joblib
 import numpy as np
 import pandas as pd
 import pytest
+
+import shared.stage4.contract as contract
+import shared.stage_io as stage_io
 
 from blackbox_pipeline.models.meta_xgb.comparison import load_meta_ebm_for_comparison
 from blackbox_pipeline.models.rf_router import split_fingerprint as router_split_fingerprint
@@ -84,6 +88,17 @@ def test_each_stage_is_bound_to_the_split_by_its_own_fingerprint_scheme(cascade)
         {"lr": "stage_io", "glass": "router", "ebm": "stage_io"}
     assert {k: cascade.meta["split_fingerprints"][k] for k in ("stage_io", "router")} == \
         {"stage_io": io_fp, "router": router_fp}
+
+
+def test_both_router_fits_record_the_splits_training_labels_and_stage4_checks_them_f12(cascade):
+    """ModelSaver writes the full-train fit's train_label_fingerprint and the
+    cross-fit's (in oof_protocol); Meta-EBM's Stage 4 verified both."""
+    want = stage_io.label_fingerprint(cascade.GS["X_train"].index, cascade.GS["y_train"])
+    bundle = joblib.load(cascade.paths["glass"])
+    assert bundle["train_label_fingerprint"] == bundle["oof_protocol"]["train_label_fingerprint"] == want
+    streams = cascade.meta["stage4_inputs"]["streams"]
+    assert streams["glass"]["label_evidence"] == contract.LABELS_FINGERPRINTED
+    assert streams["lr"]["label_evidence"] == streams["ebm"]["label_evidence"] == contract.LABELS_CARRIED
 
 
 def test_every_stage_holds_the_split_rows_in_split_order(cascade):

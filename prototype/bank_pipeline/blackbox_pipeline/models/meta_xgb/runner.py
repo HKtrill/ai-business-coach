@@ -225,6 +225,7 @@ def train_meta_xgb_stage(
     save: bool = True,
     verbose: bool = True,
     extra_fingerprints: Optional[dict] = None,
+    upstream: Optional[str] = None,
 ) -> tuple[MetaXGBArtifact, Optional[str]]:
     """
     Train, cross-fit, calibrate, threshold, evaluate and save Meta-XGB.
@@ -232,8 +233,19 @@ def train_meta_xgb_stage(
     ``params``: skip Optuna and use these hyperparameters (recorded as such).
     ``meta_ebm_path``: saved GLASS Meta-EBM artifact (schema meta_ebm/2) for the
     held-out comparison; optional.
+    ``upstream``: arm of the Stage 1–3 artifacts — ``"blackbox"`` (default) or,
+    for the 2x2 crossover, ``"glass"`` (GLASS LR, GLASS Router, GLASS EBM in the
+    mlp / rf_router / xgb slots; PR 36 F29). Recorded in
+    ``stage4_inputs["upstream"]``.
+
+    PR 36 (audit F37, Stage 4): only a ``MetaXGBConfig`` is accepted. Another
+    ``Stage3Config`` used to load and fit everything before failing (a generic
+    config has no ``operating_space``; an ``XGBStage3Config`` carries the
+    Stage 3 search space).
     """
     cfg = config or MetaXGBConfig(verbose=verbose, show_progress_bar=verbose)
+    if not isinstance(cfg, MetaXGBConfig):
+        raise TypeError(f"config must be a MetaXGBConfig, got {type(cfg).__name__} (audit F37).")
     if artifact_dir is not None:
         cfg.artifact_dir = artifact_dir
     say = print if cfg.verbose else (lambda *a, **k: None)
@@ -246,7 +258,10 @@ def train_meta_xgb_stage(
     say("\n📂 1. Loading and verifying black-box Stage 1–3 outputs...")
     inputs = load_blackbox_stage4_inputs(GLOBAL_SPLIT, mlp_path, rf_path, xgb_path,
                                          verbose=cfg.verbose,
-                                         extra_fingerprints=extra_fingerprints)
+                                         extra_fingerprints=extra_fingerprints,
+                                         upstream=upstream)
+    if inputs.upstream["crossover"]:
+        say(f"   2x2 crossover: {inputs.upstream['combination']}")
     for s in inputs.streams.values():
         say(f"   {s.model:<30} train ← {s.train_source}   test ← {s.test_source}")
         say(f"   {'':<30} [{s.probability_space}]")

@@ -27,10 +27,24 @@ that every routed probability is the GLASS blend of its stored rule
 precision (``train_confidence`` / ``test_confidence``) and base rate (per
 fold model for out-of-fold rows). Other routers are refused.
 
-Arm and family (PR 36 F32): Stage 1 must be a GLASS-arm StageOutput and
-Stage 3 a GLASS EBM artifact (``model_family`` 'ebm', ``config['arm']``
-'glass'). Before F32 a black-box MLP or XGBoost artifact, or one labelled
-'unset' (PR 36 F21), loaded as "GLASS LR" / "GLASS EBM".
+Arm and family (PR 36 F32, F29): every Stage 1-3 artifact must belong to the
+declared upstream arm (``shared.stage4.upstream``). By default that is the
+GLASS arm — a GLASS-arm StageOutput, the GLASS Router bundle and a GLASS EBM
+artifact (``model_family`` 'ebm', ``config['arm']`` 'glass'); before F32 a
+black-box MLP or XGBoost artifact, or one labelled 'unset' (PR 36 F21),
+loaded as "GLASS LR" / "GLASS EBM".
+
+The 2x2 crossover (``upstream="blackbox"``): the arbiter reads the MLP, the
+RF Router and XGBoost in its LR / router / EBM slots. Its LR and EBM rules
+(recall-targeted cut, |p - t|) take any calibrated scorer. Its router rule
+(F25) reads a matched unit's positive rate back out of the router's
+probability, and the RF Router's probabilities are the same blend by design
+(``_BaseRouter.predict_proba``: Pass 1 ``b(1 - conf)``, Pass 2
+``b + (1 - b) conf``) with ``conf`` its Pass 1 band NPV / Pass 2 band
+precision, measured on its training OOF. So the evidence is the routed BAND's
+positive rate against the RF Router's training base rate (per fold router on
+out-of-fold rows), verified per row exactly as for a GLASS bundle — never
+an RF probability read as GLASS rule precision.
 """
 
 from __future__ import annotations
@@ -50,10 +64,18 @@ from shared.stage4 import (
 )
 from shared.stage4.adapters import load
 from shared.stage4.contract import SEC_SEM
+from shared.stage4.upstream import UPSTREAM, resolve_upstream
 
 from .router_evidence import fold_base_rates, glass_blend_mismatch
 
-__all__ = ["load_stage_outputs", "PASS1", "PASS2", "ABSTAIN"]
+__all__ = ["load_stage_outputs", "ROUTER_EVIDENCE", "PASS1", "PASS2", "ABSTAIN"]
+
+#: Upstream arm -> (router artifact, its Stage 4 layout, the unit whose
+#: positive rate the arbiter reads as router evidence — PR 36 F25 / F29).
+ROUTER_EVIDENCE = {
+    "glass": ("GLASS Router bundle", "top-level", "rule"),
+    "blackbox": ("RF Router artifact", "extra", "band"),
+}
 
 
 def load_stage_outputs(
@@ -63,22 +85,27 @@ def load_stage_outputs(
     ebm_path,
     verbose: bool = True,
     extra_fingerprints: dict = None,
+    upstream: str = None,
 ) -> Stage4Inputs:
     """
-    Load GLASS Stage 1–3 artifacts (paths or already-loaded objects) and
-    return verified ``Stage4Inputs``. Raises ``Stage4InputError`` on a
-    structurally invalid artifact and ``shared.validation.ValidationError``
-    (listing every failure) on any split / alignment / fold / OOF-honesty /
-    router-semantics violation.
+    Load Stage 1–3 artifacts (paths or already-loaded objects) and return
+    verified ``Stage4Inputs``. Raises ``Stage4InputError`` on a structurally
+    invalid artifact and ``shared.validation.ValidationError`` (listing every
+    failure) on any split / alignment / fold / OOF-honesty / router-semantics
+    / upstream-identity violation.
+
+    ``upstream``: the arm the artifacts come from — ``"glass"`` (default) or,
+    for the 2x2 crossover, ``"blackbox"`` (PR 36 F29).
     """
+    arm = resolve_upstream(upstream, "glass")
+    labels = [UPSTREAM[arm][s]["label"] for s in ("stage1", "stage2", "stage3")]
     ref = split_reference(GLOBAL_SPLIT, extra_fingerprints)
-    lr, c1 = stage_output_stream(lr_path, "lr", "GLASS LR", len(ref.y_train))
+    lr, c1 = stage_output_stream(lr_path, "lr", labels[0], len(ref.y_train))
     router_art, router_file = load(router_path)
-    router, c2 = router_stream(router_art, "glass", "GLASS Router", ref.y_train)
+    router, c2 = router_stream(router_art, "glass", labels[1], ref.y_train)
     router.artifact_path = router_file
-    ebm, c3 = stage3_stream(ebm_path, "ebm", "GLASS EBM")
-    c2 = c2 + _glass_blend_checks(router_art, router, ref.y_train)
-    c1 = c1 + _glass_arm_checks(lr, ebm)
+    ebm, c3 = stage3_stream(ebm_path, "ebm", labels[2])
+    c2 = c2 + _router_evidence_checks(router_art, router, ref.y_train, arm)
 
     for side in ("train", "test"):
         p = getattr(router, f"{side}_proba")
@@ -90,13 +117,21 @@ def load_stage_outputs(
 
     return build_stage4_inputs(GLOBAL_SPLIT, [lr, router, ebm],
                                extra_checks=c1 + c2 + c3, verbose=verbose,
-                               extra_fingerprints=extra_fingerprints)
+                               extra_fingerprints=extra_fingerprints,
+                               upstream={"arm": arm, "arbiter": "meta_ebm", "arbiter_arm": "glass"})
 
 
-def _glass_blend_checks(art, router, y_train) -> list:
-    """PR 36 F25: the arbiter's router evidence needs a GLASS rule-blend router."""
-    fields = art if isinstance(art, dict) else {}
-    b = fields.get("training_base_rate")
+def _router_evidence_checks(art, router, y_train, arm: str = "glass") -> list:
+    """
+    PR 36 F25: the arbiter's router evidence needs a router whose probabilities
+    are blends of its stored per-row confidence at its training base rate —
+    the GLASS Router bundle (rule precision) or, in the declared crossover
+    (F29), the RF Router artifact (band precision). Each is checked per row.
+    """
+    what, layout, unit = ROUTER_EVIDENCE[arm]
+    art = art if isinstance(art, dict) else {}
+    fields = art.get("extra") if layout == "extra" and isinstance(art.get("extra"), dict) else art
+    b = art.get("training_base_rate")
     rate = float(np.mean(y_train))
     stage = "stage2"
 
@@ -110,28 +145,13 @@ def _glass_blend_checks(art, router, y_train) -> list:
         return True
 
     return [
-        (SEC_SEM, stage, "glass: GLASS Router bundle with training_base_rate (F25 router evidence)",
-         lambda: b is not None and router.notes.get("artifact_layout") == "top-level",
-         "the arbiter's router confidence is defined for the GLASS rule blend"),
+        (SEC_SEM, stage, f"glass: {what} with training_base_rate (F25 router evidence)",
+         lambda: b is not None and router.notes.get("artifact_layout") == layout,
+         f"the arbiter's router confidence reads the {unit} blend of a {what}"),
         (SEC_SEM, stage, "glass: training_base_rate = GLOBAL_SPLIT training positive rate",
          lambda: abs(float(b) - rate) < 1e-12, f"{b} vs {rate:.6f}"),
-        (SEC_SEM, stage, "glass: train probabilities = rule blends at fold base rates",
+        (SEC_SEM, stage, f"glass: train probabilities = {unit} blends at fold base rates",
          lambda: blend("train"), "train_confidence, train_fold_id"),
-        (SEC_SEM, stage, "glass: test probabilities = rule blends at the training base rate",
+        (SEC_SEM, stage, f"glass: test probabilities = {unit} blends at the training base rate",
          lambda: blend("test"), "test_confidence"),
-    ]
-
-
-def _glass_arm_checks(lr, ebm) -> list:
-    """PR 36 F32: the GLASS arbiter reads GLASS-arm Stage 1 and Stage 3 artifacts only."""
-    arm1 = lr.notes.get("arm")
-    fam3, arm3 = ebm.notes.get("model_family"), ebm.notes.get("arm")
-    return [
-        (SEC_SEM, "stage1", "lr: GLASS-arm Stage 1 output (StageOutput.arm = 'glass')",
-         lambda: arm1 == "glass", f"arm={arm1!r}"),
-        (SEC_SEM, "stage3", "ebm: GLASS EBM artifact (model_family 'ebm', arm 'glass')",
-         lambda: fam3 == "ebm" and arm3 == "glass",
-         f"model_family={fam3!r}, arm={arm3!r}"
-         + (" (an 'unset' label is PR 36 F21: regenerate Stage 3)" if "unset" in (fam3, arm3)
-            else "")),
     ]

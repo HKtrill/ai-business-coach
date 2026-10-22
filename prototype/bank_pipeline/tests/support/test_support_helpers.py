@@ -165,6 +165,23 @@ def test_permute_labels_moves_only_the_chosen_rows(bank_split):
     assert out.drop(rows).equals(y.drop(rows))                   # everything else fixed
 
 
+def test_swap_labels_within_folds_keeps_every_folds_class_counts(bank_split):
+    y = bank_split["y_train"]
+    fold = np.arange(len(y)) % 3
+    fold[:6] = 0                                                  # rows 0-5 share a fold
+    y = y.copy()
+    y.iloc[:2] = np.array([0, 1], dtype=y.dtype)
+    one, every = mut.swap_labels_within_folds(y, fold, max_pairs=1), mut.swap_labels_within_folds(y, fold)
+    assert one.index.equals(y.index) and y.iloc[:2].tolist() == [0, 1]       # input untouched
+    assert one.iloc[:2].tolist() == [1, 0] and int((one != y).sum()) == 2
+    for out in (one, every):
+        per_fold = [(out.to_numpy()[fold == k].sum(), y.to_numpy()[fold == k].sum()) for k in range(3)]
+        assert all(a == b for a, b in per_fold)
+    assert int((every != y).sum()) >= 2
+    with pytest.raises(ValueError, match="no row-adjacent"):
+        mut.swap_labels_within_folds(y, np.arange(len(y)))
+
+
 def test_with_field_copies_along_the_path():
     original = {"a": 1, "extra": {"protocol": {"fold_fp": "abc"}, "other": 2}}
     out = mut.with_field(original, "extra.protocol.fold_fp", "xyz")

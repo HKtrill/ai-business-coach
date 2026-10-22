@@ -23,12 +23,16 @@ Two experiments share this config:
 
 from __future__ import annotations
 
+import math
+import numbers
 from dataclasses import dataclass, field, fields
-from typing import Any, Optional
+from typing import Any, Mapping, Optional
+
+import numpy as np
 
 from .constraints import OperatingConstraints
 
-__all__ = ["RFRouterConfig", "DEFAULT_RF_PARAMS"]
+__all__ = ["RFRouterConfig", "DEFAULT_RF_PARAMS", "validate_rf_params", "check_rf_param"]
 
 
 # Mirrors glass_pipeline.glass_router.rf.rf_training._normalize_params output shape so that
@@ -50,6 +54,89 @@ _REQUIRED_PARAM_KEYS = (
     "minority_weight",
     "class_weight",
 )
+
+_MAX_FEATURES_NAMES = ("sqrt", "log2")
+_CLASS_WEIGHTS = ("balanced", "balanced_subsample", None)
+
+
+def _integer(value: Any, where: str, low: int) -> int:
+    if (isinstance(value, (bool, np.bool_)) or not isinstance(value, numbers.Real)
+            or not math.isfinite(value) or not float(value).is_integer()):
+        raise ValueError(f"{where} must be an integer, got {value!r}")
+    if value < low:
+        raise ValueError(f"{where} must be >= {low}, got {value!r}")
+    return int(value)
+
+
+def check_rf_param(key: str, value: Any, label: str = "rf_params") -> Any:
+    """
+    One RF hyperparameter in the domain ``forest.build_pipe`` applies it in.
+
+    ``n_estimators`` / ``min_samples_leaf``: integers >= 1 (``build_pipe``
+    casts with ``int()``, so a fraction would have been truncated);
+    ``max_depth``: ``None`` or an integer >= 1; ``max_features``: ``'sqrt'``,
+    ``'log2'``, ``None`` or a float fraction in (0, 1] (an int would mean a
+    feature COUNT to scikit-learn); ``minority_weight``: a finite number > 0;
+    ``class_weight``: ``'balanced'``, ``'balanced_subsample'`` or ``None``.
+    Integral values become ``int``; everything else is returned unchanged.
+    """
+    where = f"{label}.{key}"
+    if key in ("n_estimators", "min_samples_leaf"):
+        return _integer(value, where, 1)
+    if key == "max_depth":
+        return None if value is None else _integer(value, where, 1)
+    if key == "max_features":
+        if value is None or (isinstance(value, str) and value in _MAX_FEATURES_NAMES):
+            return value
+        if (isinstance(value, (float, np.floating)) and math.isfinite(value)
+                and 0.0 < value <= 1.0):
+            return value
+        raise ValueError(f"{where} must be 'sqrt', 'log2', None or a float fraction in "
+                         f"(0, 1], got {value!r}")
+    if key == "minority_weight":
+        if (isinstance(value, (bool, np.bool_)) or not isinstance(value, numbers.Real)
+                or not math.isfinite(value) or value <= 0):
+            raise ValueError(f"{where} must be a finite number > 0, got {value!r}")
+        return value
+    if key == "class_weight":
+        if not (value is None or (isinstance(value, str) and value in _CLASS_WEIGHTS)):
+            raise ValueError(f"{where} must be one of {list(_CLASS_WEIGHTS)}, got {value!r}")
+        return value
+    raise ValueError(f"{label} unknown key {key!r}")
+
+
+def validate_rf_params(params: Any, label: str = "rf_params") -> dict:
+    """
+    Exactly ``_REQUIRED_PARAM_KEYS``, each value valid (``check_rf_param``),
+    in that order.
+
+    PR 36 (audit F1): only missing keys were refused. An unknown or misspelled
+    key (``max_dept``) was kept in the config, recorded in the saved artifact
+    and never applied (``build_pipe`` reads the six names it knows); a
+    fractional ``n_estimators`` / ``min_samples_leaf`` was truncated; and
+    out-of-domain values surfaced only when a forest was fitted, mid-run.
+    Raises ``ValueError`` listing every problem.
+    """
+    if not isinstance(params, Mapping):
+        raise ValueError(f"{label} must be a dict, got {type(params).__name__}")
+    missing = [k for k in _REQUIRED_PARAM_KEYS if k not in params]
+    unknown = [k for k in params if k not in _REQUIRED_PARAM_KEYS]
+    problems = []
+    if missing:
+        problems.append(f"{label} missing keys: {missing}")
+    if unknown:
+        problems.append(f"{label} unknown keys: {unknown} (expected exactly "
+                        f"{list(_REQUIRED_PARAM_KEYS)}; an unknown key is never applied)")
+    out = {}
+    for key in _REQUIRED_PARAM_KEYS:
+        if key in params:
+            try:
+                out[key] = check_rf_param(key, params[key], label)
+            except ValueError as exc:
+                problems.append(str(exc))
+    if problems:
+        raise ValueError("; ".join(problems))
+    return out
 
 
 @dataclass
@@ -145,13 +232,23 @@ class RFRouterConfig:
             self.pass2_rf_params = self._check_params(
                 self.pass2_rf_params, "pass2_rf_params", errors
             )
+            if self.mode == "single_rf":
+                # PR 36 (audit F1): recorded, never applied — the ablation
+                # fits one forest with rf_params.
+                errors.append(
+                    "pass2_rf_params applies to the two_pass cascade only; the "
+                    "single_rf ablation fits one forest with rf_params."
+                )
 
-        if self.n_oof_folds < 2:
-            errors.append("n_oof_folds must be >= 2")
-        if self.n_inner_folds < 2:
-            errors.append("n_inner_folds must be >= 2")
-        if self.remainder_min_size < 1:
-            errors.append("remainder_min_size must be >= 1")
+        # PR 36 (audit F1): integers, not values that pass a comparison
+        # (remainder_min_size=True was a floor of 1, n_oof_folds=5.5 failed
+        # only inside the fold splitter).
+        for name, low in (("n_oof_folds", 2), ("n_inner_folds", 2),
+                          ("remainder_min_size", 1), ("random_state", 0)):
+            try:
+                _integer(getattr(self, name), name, low)
+            except ValueError as exc:
+                errors.append(str(exc))
 
         if self.mode == "single_rf" and self.validate_nested:
             errors.append(
@@ -170,13 +267,12 @@ class RFRouterConfig:
     # ------------------------------------------------------------------
     @staticmethod
     def _check_params(params: Any, label: str, errors: list) -> dict:
-        if not isinstance(params, dict):
-            errors.append(f"{label} must be a dict, got {type(params).__name__}")
-            return {}
-        missing = [k for k in _REQUIRED_PARAM_KEYS if k not in params]
-        if missing:
-            errors.append(f"{label} missing keys: {missing}")
-        return dict(params)
+        """``validate_rf_params``, its problems collected into ``errors``."""
+        try:
+            return validate_rf_params(params, label)
+        except ValueError as exc:
+            errors.append(str(exc))
+            return dict(params) if isinstance(params, Mapping) else {}
 
     # ------------------------------------------------------------------
     @property

@@ -474,7 +474,8 @@ class CalibratedStage1MLP:
         threshold_source : str, optional
             A key of ``THRESHOLD_SOURCES``. Required when ``threshold`` differs
             from ``optimal_threshold``. The contract will not let an
-            overridden threshold be passed off as the in-stage one.
+            overridden threshold be passed off as the in-stage one, nor any
+            threshold of this stage be declared cross-fitted (audit F33).
         metrics_test : dict, optional
             Held-out metrics to carry along.
 
@@ -482,10 +483,25 @@ class CalibratedStage1MLP:
         -------
         StageOutput
 
+        Raises
+        ------
+        ValueError
+            If ``threshold`` differs from ``optimal_threshold`` without a
+            ``threshold_source``, or with the in-stage source; or if
+            ``threshold_source`` is a cross-fitted source (audit F33).
+
         Notes
         -----
         This is the only method on the stage that accepts test data, and it
         uses it for scoring alone.
+
+        PR 36 (audit F33): ``threshold_source`` was recorded as given. The
+        in-stage threshold, chosen on all training labels, could be declared
+        ``'nested_per_fold'``, which lets ``StageOutput.train_decisions_oof``
+        release contaminated train-side decisions without the opt-in; and an
+        overridden threshold could be labelled ``'in_stage_f2_cv'``. This stage
+        selects one threshold on all training labels and has no per-fold
+        thresholds, so a cross-fitted source is refused outright.
         """
         self._check_fitted()
         t = self.optimal_threshold if threshold is None else float(threshold)
@@ -498,6 +514,21 @@ class CalibratedStage1MLP:
                     f"threshold_source (one of {sorted(THRESHOLD_SOURCES)})."
                 )
             threshold_source = self.THRESHOLD_SOURCE
+        elif threshold_source == self.THRESHOLD_SOURCE and overridden:
+            raise ValueError(
+                f"threshold_source={threshold_source!r} names the in-stage F2 "
+                f"sweep, which chose optimal_threshold={self.optimal_threshold}; "
+                f"threshold={t} was chosen another way. Name that source "
+                "instead (audit F33)."
+            )
+        elif THRESHOLD_SOURCES.get(threshold_source):
+            raise ValueError(
+                f"threshold_source={threshold_source!r} declares the threshold "
+                "cross-fitted with respect to the training rows, but this stage "
+                "selects one threshold on all training labels and has no per-fold "
+                "thresholds. Build Stage 4 features from train_proba_oof, or opt "
+                "in with train_decisions_oof(allow_contaminated=True) (audit F33)."
+            )
 
         y_test = check_labels(select_features(X_test), y_test)
 
