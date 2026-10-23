@@ -27,9 +27,15 @@ Stage 2  ``train_outputs_oof`` must be ``True``: it certifies that the top-level
          ``test_proba`` + ``test_decisions`` · folds ``train_fold_id``.
          ``train_insample_proba_diagnostic`` (GLASS only) is read solely to prove
          it is not what is consumed.
-Stage 3  ``calibration["applied"]`` picks ONE matched pair:
-         applied → ``oof["proba_calibrated"]`` + ``refit["test_proba_calibrated"]``
-         skipped → ``oof["proba"]`` + ``refit["test_proba"]``.
+Stage 3  train ``oof["proba_calibrated"]`` · test ``refit["test_proba_calibrated"]``,
+         the pair Stage 1's ``StageOutput`` and ``Stage3Artifact.to_stage_output``
+         use: the train side applies each fold's own calibration policy (gate
+         and map fitted on inner OOF of its training rows, PR 36 F22), the test
+         side the policy fitted on all OOF rows (identity when its gate is not
+         breached). Choosing raw vs calibrated for EVERY train row from the
+         all-rows gate would put each fold's labels back into its own stream
+         (F28). Artifacts written before F22 (no ``calibration["fold_applied"]``)
+         are refused, calibrated or not (F26).
          ``refit["train_proba*"]`` (in-sample) is read only for the aliasing
          guard; ``threshold["test_oracle"]`` is never read.
 """
@@ -42,7 +48,7 @@ import joblib
 import numpy as np
 import pandas as pd
 
-from .contract import SEC_OOF, SEC_SEM, Stage4InputError, StageStream, not_identical
+from .contract import SEC_OOF, SEC_SEM, SEC_SPLIT, Stage4InputError, StageStream, not_identical
 
 PASS1, PASS2, ABSTAIN = "pass1", "pass2", "abstain"
 _ABSTAIN_TOKENS = {"abstain", "uncertain", "defer", "deferred", "uncovered",
@@ -179,6 +185,7 @@ def stage_output_stream(obj_or_path, name: str, model: str, n_train: int):
         index_source="StageOutput Series index" if _index_of(tr) is not None else None,
         y_train=np.asarray(_get(so, "y_train")), y_test=np.asarray(_get(so, "y_test")),
         notes={"oof_provenance": _get(so, "oof_provenance"),
+               "arm": _get(so, "arm"),
                "calibration_method": cal,
                "calibration_requested": _get(so, "calibration_requested"),
                "stage_output_validated": type(so).__name__ == "StageOutput"},
@@ -195,6 +202,10 @@ def stage_output_stream(obj_or_path, name: str, model: str, n_train: int):
     prov = str(_get(so, "oof_provenance") or "")
     checks.append((SEC_OOF, stream.stage, f"{name}: OOF provenance is refittable",
                    lambda: not prov.upper().startswith("PREFIT"), prov[:80]))
+    # PR 36 F26: older StageOutputs carried OOF probabilities whose encoder,
+    # scaler (F3/F4) or calibration (F16/F19) saw the held-out fold.
+    checks.append((SEC_OOF, stream.stage, f"{name}: OOF calibration nested inside each fold "
+                   "(PR 36 F16/F19)", lambda: "nested cross-fit" in prov, prov[:80]))
     return stream, checks
 
 
@@ -223,6 +234,63 @@ def _fold_fp_fn():
         except (ImportError, AttributeError):
             continue
     return None
+
+
+PASS2_POPULATIONS = ("full", "oof_remainder")
+#: ``StageStream.notes["pass2_population_evidence"]`` for routers (PR 36 F17).
+#: Since Commit 4 the only accepted case: both declarations present and equal.
+PASS2_COMPLETE = ("complete: the cross-fit and the full-train router declare one Pass 2 "
+                  "population")
+
+
+def _pass2_population(value) -> "str | None":
+    """'full' / 'oof_remainder' from however an artifact spells it."""
+    if value is None:
+        return None
+    v = str(value).strip().lower()
+    return "full" if v == "full" else "oof_remainder" if "remainder" in v else v
+
+
+def _pass2_population_checks(art, f, proto, layout, stream, name) -> list:
+    """
+    PR 36 F17: which population each router's Pass 2 was fitted on, as its
+    artifact records it for the cross-fit (train outputs) and the full-train
+    router (test outputs). Recorded in ``notes["pass2_population"]``; the two
+    must agree, or the train and test outputs come from different operating
+    modes. GLASS: ``oof_protocol.glass_pass2_population`` and the full-train
+    ``fit_report`` (else ``config_full``); RF Router: ``oof_protocol.
+    pass2_population`` and the full-train ``mode`` — only the two-pass router
+    has a remainder, always the OOF Pass 1 remainder (``RFRouter.fit``).
+
+    Both declared: compared, and each must be a known population. One or both
+    missing: refused, naming what is missing. The current producers always
+    declare both; an artifact written before them used to be accepted
+    silently (before Commit 3) and then as PARTIAL evidence (Commit 3). Since
+    Commit 4 it is refused whether or not it records a label fingerprint, and
+    must be regenerated — a declaration added afterwards would certify nothing.
+    """
+    if layout == "top-level":
+        cross = _pass2_population(proto.get("glass_pass2_population"))
+        full = _pass2_population((f.get("fit_report") or {}).get("pass2_population")
+                                 or (f.get("config_full") or {}).get("pass2_population"))
+    else:
+        cross = _pass2_population(proto.get("pass2_population"))
+        mode = art.get("mode")
+        full = None if mode is None else "oof_remainder" if mode == "two_pass" else f"none ({mode})"
+    stream.notes["pass2_population"] = {"cross_fit": cross, "full_train": full}
+    missing = [side for side, v in (("cross-fit", cross), ("full-train", full)) if v is None]
+    if not missing:
+        stream.notes["pass2_population_evidence"] = PASS2_COMPLETE
+        return [(SEC_SEM, "stage2", f"{name}: cross-fit and full-train router share one Pass 2 "
+                 "population", lambda: cross == full and cross in PASS2_POPULATIONS,
+                 f"cross-fit {cross}, full-train {full} (known: {', '.join(PASS2_POPULATIONS)})")]
+    where = {"top-level": ("oof_protocol.glass_pass2_population", "fit_report / config_full"),
+             "extra": ("extra.oof_protocol.pass2_population", "mode")}[layout]
+    detail = "missing: " + ", ".join(
+        f"{side} ({where[0] if side == 'cross-fit' else where[1]})" for side in missing
+    ) + " — regenerate Stage 2"
+    return [(SEC_SEM, "stage2", f"{name}: Pass 2 population declared for the cross-fit and "
+             "the full-train router", lambda: False, detail)]
 
 
 def router_stream(obj_or_path, name: str, model: str, y_train: np.ndarray,
@@ -270,6 +338,11 @@ def router_stream(obj_or_path, name: str, model: str, y_train: np.ndarray,
         y_train=None if f.get("y_train") is None else np.asarray(f["y_train"]),
         y_test=None if f.get("y_test") is None else np.asarray(f["y_test"]),
         notes={"artifact_layout": layout,
+               # PR 36 F29: the layout is the router's identity — ModelSaver writes
+               # the GLASS bundle top-level, save_rf_router the RF block under "extra".
+               "model_family": "glass_router" if layout == "top-level" else "rf_router",
+               "arm": "glass" if layout == "top-level" else "blackbox",
+               "router_mode": art.get("mode") if layout == "extra" else None,
                "train_outputs_oof_flag": True,
                "oof_protocol": {k: v for k, v in (f.get("oof_protocol") or {}).items()
                                 if not isinstance(v, (list, np.ndarray))}},
@@ -303,6 +376,43 @@ def router_stream(obj_or_path, name: str, model: str, y_train: np.ndarray,
     # --- semantics, on TRAIN OOF labels only ---------------------------------
     y = np.asarray(y_train).astype(int)
     base = float(y.mean())
+
+    # --- which labels the outputs were produced against (PR 36 audit F12) ---
+    # Router artifacts carry a split fingerprint over row indices only and no
+    # labels, so a router cross-fitted on the same rows with other labels
+    # passed the split check. Their fold ids are only partial label evidence:
+    # Stage 4 requires them to be the shared stratified plan on GLOBAL_SPLIT's
+    # labels (``build_stage4_inputs``). A flipped label, or most permutations,
+    # reassigns most fold ids; swapping two opposite labels within one fold
+    # changes no fold id and no base rate. What closes that is the
+    # ``train_label_fingerprint`` each router fit records: the cross-fit's in
+    # ``oof_protocol`` (train outputs), the full-train router's at the top
+    # level (test outputs). Both are required since Commit 4:
+    # ``build_stage4_inputs`` refuses a side that records none (an artifact
+    # written before the routers recorded it) and compares each recorded one.
+    stream.label_fingerprints = {side: v for side, v in (
+        ("train outputs", proto.get("train_label_fingerprint")),
+        ("test outputs", art.get("train_label_fingerprint"))) if v is not None}
+    if stream.y_train is None:
+        checks.append((SEC_OOF, "stage2", f"{name}: fold ids carried (the artifact holds no "
+                       "labels; its fold plan is partial label evidence)",
+                       lambda: fold is not None, f"{src}train_fold_id"))
+    # The artifact's own split fingerprints must agree with each other: Stage 4
+    # verifies one of them, and a disagreeing copy was silently ignored.
+    recorded = {"split_fingerprint": art.get("split_fingerprint"),
+                f"{src}oof_protocol.split_fingerprint": proto.get("split_fingerprint")}
+    if layout == "extra":
+        recorded[f"{src}split_fingerprint"] = f.get("split_fingerprint")
+    recorded = {k: v for k, v in recorded.items() if v is not None}
+    if len(recorded) > 1:
+        checks.append((SEC_SPLIT, "stage2", f"{name}: the split fingerprints the artifact "
+                       "records agree", lambda: len(set(recorded.values())) == 1, str(recorded)))
+    checks += _pass2_population_checks(art, f, proto, layout, stream, name)
+    rate = art.get("training_base_rate") if isinstance(art, dict) else None
+    if rate is not None:
+        checks.append((SEC_SEM, "stage2", f"{name}: training_base_rate = GLOBAL_SPLIT "
+                       "training positive rate", lambda: abs(float(rate) - base) <= 1e-12,
+                       f"{float(rate):.6f} vs {base:.6f}"))
 
     def _rate(route):
         m = train_dec == route
@@ -362,14 +472,25 @@ def stage3_stream(obj_or_path, name: str, model: str):
                                "choose the matched probability representation")
 
     applied = bool(art.calibration["applied"])
-    if applied:
-        tr_key, te_key, thr_key = "proba_calibrated", "test_proba_calibrated", "oof_calibrated_space"
-        space = (f"calibrated ({art.calibration.get('method')}; train: fold-nested "
-                 "calibrator, test: calibrator fit on all OOF rows)")
-    else:
-        tr_key, te_key, thr_key = "proba", "test_proba", "oof"
-        space = "raw (calibration gate not breached; calibrator is identity)"
-    _require(art.oof, (tr_key, "fold_id"), f"{where}::oof")
+    fold_applied = art.calibration.get("fold_applied")
+    if fold_applied is None:                     # written before PR 36 F22
+        # Refused whether or not the all-rows gate fired: before F22 every
+        # training-side output (calibrated OOF, fold-nested thresholds and
+        # decision columns, the gate itself) was fitted on the other folds'
+        # OOF scores, whose models were trained on the held-out fold.
+        raise Stage4InputError(
+            f"{where}: Stage 3 artifact predates PR 36 F22 (no per-fold calibration "
+            "metadata): its training-side calibration and fold-nested thresholds were "
+            "fitted on OOF scores from models trained on the held-out fold. Re-run Stage 3.")
+    fold_applied = [bool(a) for a in fold_applied]
+    tr_key, te_key = "proba_calibrated", "test_proba_calibrated"
+    thr_key = "oof_calibrated_space" if applied else "oof"      # reported only
+    space = (f"calibrated per fold ({art.calibration.get('method')}; train: each fold's gate "
+             f"and map from inner OOF of its training rows, {sum(fold_applied)}/"
+             f"{len(fold_applied)} folds mapped; test: all-OOF gate "
+             + ("breached, map fitted on all OOF rows)" if applied
+                else "not breached, identity)"))
+    _require(art.oof, (tr_key, "proba", "fold_id"), f"{where}::oof")
     _require(art.refit, (te_key,), f"{where}::refit")
     _require(art.threshold, (thr_key,), f"{where}::threshold")
 
@@ -392,6 +513,9 @@ def stage3_stream(obj_or_path, name: str, model: str):
         y_train=np.asarray(art.y_train) if len(art.y_train) else None,
         y_test=np.asarray(art.y_test) if len(art.y_test) else None,
         notes={"calibration_applied": applied,
+               "calibration_fold_applied": list(fold_applied),
+               "model_family": art.model_family,
+               "arm": (art.config or {}).get("arm"),
                "calibration_method": art.calibration.get("method"),
                "calibration_reason": art.calibration.get("reason"),
                "feature_fit_scope": art.feature_fit_scope,
@@ -410,10 +534,16 @@ def stage3_stream(obj_or_path, name: str, model: str):
         (SEC_OOF, "stage3", f"{name}: standalone threshold is not the test oracle",
          lambda: thr_key != "test_oracle", thr_key),
     ]
+    fold_id = np.asarray(art.oof["fold_id"])
+    oof_raw = np.asarray(art.oof["proba"], float)
+    oof_cal = np.asarray(art.oof["proba_calibrated"], float)
+    checks.append((SEC_OOF, "stage3", f"{name}: folds whose own gate was not breached carry raw OOF",
+                   lambda: len(fold_applied) == len(np.unique(fold_id)) and all(
+                       np.array_equal(oof_cal[fold_id == k], oof_raw[fold_id == k])
+                       for k, a in enumerate(fold_applied) if not a),
+                   f"per-fold gates {fold_applied}"))
     if not applied:
-        checks.append((SEC_OOF, "stage3", f"{name}: calibration skipped ⇒ calibrated slots = raw",
-                       lambda: np.array_equal(np.asarray(art.oof["proba_calibrated"], float),
-                                              np.asarray(art.oof["proba"], float))
-                       and np.array_equal(np.asarray(art.refit["test_proba_calibrated"], float),
-                                          np.asarray(art.refit["test_proba"], float)), ""))
+        checks.append((SEC_OOF, "stage3", f"{name}: all-OOF gate not breached ⇒ test slot = raw",
+                       lambda: np.array_equal(np.asarray(art.refit["test_proba_calibrated"], float),
+                                              np.asarray(art.refit["test_proba"], float)), ""))
     return stream, checks

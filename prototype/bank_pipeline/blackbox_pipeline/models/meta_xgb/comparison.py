@@ -18,6 +18,17 @@ Reported
 Meta-EBM's ranking score is its arbiter's weighted probability
 (``test_probs["meta"]``): a legitimate score for ROC/PR-AUC, but a weighted
 average of base probabilities, not a calibrated probability — noted in output.
+
+Two questions, one function (PR 36 F29)
+---------------------------------------
+* cascade vs cascade (notebook Cell 36): each arbiter on its own arm's
+  upstream; the upstreams differ by design.
+* arbiter effect, upstream held fixed (the 2x2 crossover, Cell 38):
+  ``require_same_upstream=True`` refuses unless both artifacts record the
+  same upstream arm and identical Stage 1-3 outputs (content fingerprints,
+  ``shared.stage4.upstream``).
+Either way ``protocol["upstream"]`` records both combinations and whether the
+upstream was the same.
 """
 
 from __future__ import annotations
@@ -30,7 +41,9 @@ import pandas as pd
 from scipy.stats import binomtest, rankdata
 from sklearn.metrics import average_precision_score
 
-from shared.stage4 import Stage4InputError, index_alignment, split_reference
+from shared.stage4 import (
+    Stage4InputError, check_split_identity, index_alignment, same_upstream, split_reference,
+)
 
 from .evaluation import abstention_metrics, classification_metrics
 
@@ -39,6 +52,13 @@ N_BOOT, SEED = 2000, 42
 
 # ======================================================================
 def load_meta_ebm_for_comparison(GLOBAL_SPLIT, meta_ebm, extra_fingerprints=None) -> dict:
+    """
+    PR 36 (audit F12): every fingerprint scheme the artifact records must
+    match GLOBAL_SPLIT, and its primary ``split_fingerprint`` must agree with
+    them (``check_split_identity``). Matching ANY one value accepted a
+    Meta-EBM built on the same rows with other training labels, because the
+    router scheme hashes row indices only.
+    """
     art = joblib.load(meta_ebm) if isinstance(meta_ebm, (str, bytes)) or \
         hasattr(meta_ebm, "__fspath__") else meta_ebm
     if not isinstance(art, dict) or art.get("schema") != "meta_ebm/2":
@@ -46,15 +66,21 @@ def load_meta_ebm_for_comparison(GLOBAL_SPLIT, meta_ebm, extra_fingerprints=None
             "Meta-EBM artifact is not schema 'meta_ebm/2' (the audited Stage 4). "
             "Re-run GLASS Cell 19 so its test rows and provenance are recorded.")
     ref = split_reference(GLOBAL_SPLIT, extra_fingerprints)
-    fps = set((art.get("split_fingerprints") or {}).values()) | {art.get("split_fingerprint")}
-    if not fps & set(ref.fingerprints.values()):
-        raise Stage4InputError(f"Meta-EBM artifact was built on another split: {fps}")
+    check_split_identity(art.get("split_fingerprints"), ref, "Meta-EBM artifact",
+                         primary=art.get("split_fingerprint"))
     index_alignment(art["index_test"], ref.index_test, "Meta-EBM index_test")
     return art
 
 
-def find_meta_ebm_artifact(dirs, GLOBAL_SPLIT, extra_fingerprints=None, verbose=True):
-    """Newest meta_ebm_*.joblib that passes ``load_meta_ebm_for_comparison``."""
+def find_meta_ebm_artifact(dirs, GLOBAL_SPLIT, extra_fingerprints=None, verbose=True,
+                           upstream: str = "glass"):
+    """
+    Newest meta_ebm_*.joblib that passes ``load_meta_ebm_for_comparison`` and
+    was run on the ``upstream`` arm (default: the native GLASS Meta-EBM). PR 36
+    F29: a crossover Meta-EBM (black-box upstream) saved in the same folder
+    used to be returned as "the GLASS Meta-EBM" when it was newest. An
+    artifact written before the upstream record counts as native.
+    """
     from pathlib import Path
     files = sorted((p for d in dirs if Path(d).is_dir() for p in Path(d).glob("meta_ebm_*.joblib")),
                    key=lambda p: p.stat().st_mtime, reverse=True)
@@ -65,9 +91,14 @@ def find_meta_ebm_artifact(dirs, GLOBAL_SPLIT, extra_fingerprints=None, verbose=
             if verbose:
                 print(f"  (skip {f.name}: {exc})")
             continue
+        arm = ((art.get("stage4_inputs") or {}).get("upstream") or {}).get("arm", "glass")
+        if arm != upstream:
+            if verbose:
+                print(f"  (skip {f.name}: {arm} upstream, not {upstream})")
+            continue
         return art, str(f)
-    raise FileNotFoundError("No audited Meta-EBM artifact (meta_ebm/2) for this split in "
-                            f"{[str(d) for d in dirs]}")
+    raise FileNotFoundError(f"No audited Meta-EBM artifact (meta_ebm/2) on the {upstream} upstream "
+                            f"for this split in {[str(d) for d in dirs]}")
 
 
 # ======================================================================
@@ -115,10 +146,23 @@ def _paired_table(y, da, db, mask=None):
 
 def compare_with_meta_ebm(GLOBAL_SPLIT, meta_ebm, meta_xgb, n_boot: int = N_BOOT,
                           seed: int = SEED, verbose: bool = True,
-                          extra_fingerprints: Optional[dict] = None) -> dict:
-    """``meta_ebm``: path or dict (schema meta_ebm/2); ``meta_xgb``: MetaXGBArtifact."""
+                          extra_fingerprints: Optional[dict] = None,
+                          require_same_upstream: bool = False) -> dict:
+    """
+    ``meta_ebm``: path or dict (schema meta_ebm/2); ``meta_xgb``: MetaXGBArtifact.
+    ``require_same_upstream``: the arbiter-effect comparison — refuse unless
+    both arbiters consumed identical Stage 1-3 outputs (PR 36 F29).
+    """
     ebm = load_meta_ebm_for_comparison(GLOBAL_SPLIT, meta_ebm, extra_fingerprints)
+    up_ebm = (ebm.get("stage4_inputs") or {}).get("upstream")
+    up_xgb = (getattr(meta_xgb, "stage4_inputs", None) or {}).get("upstream")
+    differs = same_upstream(up_ebm, up_xgb)
+    if require_same_upstream and differs:
+        raise Stage4InputError(f"arbiter comparison with the upstream held fixed: {differs}")
     ref = split_reference(GLOBAL_SPLIT, extra_fingerprints)
+    # PR 36 (audit F12): the Meta-XGB side was matched by its test index only.
+    check_split_identity(meta_xgb.split_fingerprints, ref, "Meta-XGB artifact",
+                         primary=meta_xgb.split_fingerprint)
     index_alignment(meta_xgb.index_test, ref.index_test, "Meta-XGB index_test")
     y = ref.y_test
 
@@ -198,12 +242,21 @@ def compare_with_meta_ebm(GLOBAL_SPLIT, meta_ebm, meta_xgb, n_boot: int = N_BOOT
                      "selection": "each model at its own train-selected configuration; "
                                   "no test-based tuning of either",
                      "meta_ebm_score": "arbiter weighted probability (ranking score, "
-                                       "not calibrated)"},
+                                       "not calibrated)",
+                     "upstream": {
+                         "meta_ebm": None if not up_ebm else up_ebm.get("combination"),
+                         "meta_xgb": None if not up_xgb else up_xgb.get("combination"),
+                         "held_fixed": differs is None,
+                         "why_not": differs,
+                         "required": require_same_upstream}},
     }
     out["summary"] = {"table": table.round(6).reset_index().to_dict("records"),
                       "paired": paired,
                       "bootstrap": boot.round(6).to_dict("records")}
     if verbose:
+        print(f"upstream: Meta-EBM {out['protocol']['upstream']['meta_ebm']} | Meta-XGB "
+              f"{out['protocol']['upstream']['meta_xgb']} | "
+              + ("held fixed" if differs is None else f"NOT held fixed ({differs})"))
         with pd.option_context("display.float_format", "{:.4f}".format, "display.width", 140):
             print("held-out metrics (each at its own train-selected configuration)")
             print(table.to_string())

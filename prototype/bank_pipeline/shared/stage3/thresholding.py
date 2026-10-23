@@ -2,7 +2,8 @@
 shared.stage3.thresholding
 ==========================
 Operating-point selection: the F-beta grid search (``F2ThresholdSelector``,
-built on ``shared.thresholds.sweep_f_beta``), fold-nested OOF thresholds, the
+built on ``shared.thresholds.sweep_f_beta``), fold-nested OOF thresholds
+(selected on inner out-of-fold scores, audit F22), the
 test-oracle diagnostic, and the decision / margin / confidence columns derived
 from a threshold (``decision_block``).
 """
@@ -16,6 +17,8 @@ import numpy as np
 import pandas as pd
 
 from shared.thresholds import sweep_f_beta
+
+from .data import check_inner_scores
 
 
 @dataclass
@@ -115,26 +118,32 @@ class F2ThresholdSelector:
         )
 
     # ------------------------------------------------------------------
-    def select_nested(self, y_true, proba: np.ndarray, folds) -> dict:
+    def select_nested(self, y_true, proba: np.ndarray, folds, inner_proba) -> dict:
         """
         Fold-nested thresholds for the training-side decision columns.
 
-        For each fold *k*, the grid is scored on the OTHER folds' OOF rows
-        only, and that threshold is applied to fold *k*. No row's label
-        influences the threshold used to make its own decision — the same
-        pattern as the nested calibration.
+        For each fold *k*, the grid is scored on the INNER out-of-fold scores
+        of fold *k*'s training rows (``inner_proba[k]``, from models fitted
+        inside those rows; see ``shared.stage3.data.check_inner_scores``), and
+        that threshold is applied to fold *k*'s rows of ``proba``. Neither
+        fold *k*'s labels nor scores from models trained on them reach its
+        threshold (audit F22) — the other folds' outer OOF scores would carry
+        them. ``inner_proba`` must be in the same space as ``proba``.
 
         Returns ``{"per_row": ndarray, "by_fold": [...], "mean", "std",
-        "min", "max"}``. The spread across folds is a stability diagnostic
-        for the operating point.
+        "min", "max", "selected_on"}``. The spread across folds is a stability
+        diagnostic for the operating point.
         """
         y_arr = np.asarray(y_true).astype(int)
         p = np.asarray(proba, dtype=float)
         folds.assert_matches(len(p), "nested threshold selection")
+        if len(y_arr) != len(p):
+            raise ValueError(f"length mismatch: y {len(y_arr)}, proba {len(p)}")
+        inner = check_inner_scores(inner_proba, folds, len(p))
         per_row = np.full(len(p), np.nan, dtype=float)
         by_fold: list[float] = []
-        for train_idx, val_idx in folds:
-            t = self.select(y_arr[train_idx], p[train_idx],
+        for k, (train_idx, val_idx) in enumerate(folds):
+            t = self.select(y_arr[train_idx], inner[k, train_idx],
                             keep_sweep=False).threshold
             per_row[val_idx] = t
             by_fold.append(float(t))
@@ -150,6 +159,7 @@ class F2ThresholdSelector:
             "std": float(arr.std(ddof=0)),
             "min": float(arr.min()),
             "max": float(arr.max()),
+            "selected_on": "inner out-of-fold scores of each fold's training rows",
         }
 
     # ------------------------------------------------------------------

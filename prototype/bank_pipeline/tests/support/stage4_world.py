@@ -1,0 +1,264 @@
+"""
+Synthetic Stage 1–3 artifacts in the cascade's REAL formats, for Stage 4 tests.
+
+* Stage 1: ``StageOutput.to_dict()`` (as ``StageOutput.save`` writes it) or a
+  dict holding it under ``"stage_output"`` (as the LR / MLP savers do); 10 folds.
+* Stage 2: GLASS Router bundle (top-level fields) or RF Router artifact (fields
+  under ``"extra"``), with ``train_outputs_oof=True``, "pass1"/"pass2"/"uncertain"
+  decisions, ``train_pred``, ``oof_protocol`` and 5 shared folds.
+* Stage 3: ``Stage3Artifact`` with the real ``Stage3Calibrator``; 5 shared folds.
+
+Stage 1 carries the ``stage_io`` fingerprint; Stages 2–3 carry the 16-hex
+``router`` fingerprint, exactly as in the notebooks. The router scheme is
+supplied to the loaders through ``extra_fingerprints=ROUTER_FP``.
+"""
+
+from __future__ import annotations
+
+import hashlib
+
+import numpy as np
+import pandas as pd
+
+import shared.stage_io as stage_io
+from shared.stage_io import StageOutput, fold_assignment, split_fingerprint
+from shared.stage3.artifact import Stage3Artifact
+from shared.stage3.calibration import Stage3Calibrator
+from shared.stage3.data import FoldPlan
+
+SEED = 42
+
+
+def router_split_fp(GS) -> str:
+    """Stand-in for the router packages' 16-hex split_fingerprint(X_train, X_test)."""
+    h = hashlib.sha256()
+    for part in (GS["X_train"].index, GS["X_test"].index):
+        h.update(",".join(map(str, part)).encode())
+    return h.hexdigest()[:16]
+
+
+ROUTER_FP = {"router": router_split_fp}
+
+
+def fold_fp(fold_id) -> str:
+    """The repo's glass_router fold_fingerprint when importable, else a stand-in."""
+    try:
+        from glass_pipeline.glass_router.pipeline import fold_fingerprint
+        return fold_fingerprint(np.asarray(fold_id))
+    except ImportError:
+        return "fixture"
+
+
+def _sig(x):
+    return 1.0 / (1.0 + np.exp(-x))
+
+
+def build_world(n=3000, n_test=700, seed=0):
+    rng = np.random.default_rng(seed)
+    z = rng.normal(size=n)
+    y = (rng.random(n) < _sig(2.2 * z - 2.6)).astype(int)
+    labels = rng.permutation(np.arange(10_000, 10_000 + n))
+    X = pd.DataFrame({"f1": z + rng.normal(0, .5, n), "f2": rng.normal(size=n)}, index=labels)
+    tr, te = np.arange(n - n_test), np.arange(n - n_test, n)
+    GS = {"X_train": X.iloc[tr], "X_test": X.iloc[te],
+          "y_train": pd.Series(y[tr], index=X.index[tr]),
+          "y_test": pd.Series(y[te], index=X.index[te])}
+    return {"GS": GS, "z_tr": z[tr], "z_te": z[te], "rng": rng,
+            "fp_io": split_fingerprint(GS["X_train"].index, GS["X_test"].index, y[tr], y[te]),
+            "fp_router": router_split_fp(GS)}
+
+
+def make_stage1(w, arm="glass", model="calibrated_lr", noise=0.6, wrap=True):
+    GS, rng, z_tr, z_te = w["GS"], w["rng"], w["z_tr"], w["z_te"]
+    ytr, itr, ite = GS["y_train"], GS["X_train"].index, GS["X_test"].index
+    so = StageOutput(
+        stage="stage1", arm=arm, model=model, feature_names=["f1", "f2"],
+        train_proba_oof=pd.Series(_sig(2 * z_tr - 2.4 + rng.normal(0, noise, len(z_tr))), index=itr),
+        test_proba=pd.Series(_sig(2 * z_te - 2.4 + rng.normal(0, noise * .8, len(z_te))), index=ite),
+        y_train=ytr.astype(int), y_test=GS["y_test"].astype(int),
+        train_fold_id=fold_assignment(ytr, cv_folds=10, random_state=SEED),
+        threshold=0.21, threshold_source="in_stage_f2_cv",
+        calibration_method="isotonic", calibration_requested="auto",
+        oof_provenance="refittable (nested cross-fit: 10 outer x 10 inner folds; test fixture)",
+        config={"random_state": SEED},
+    )
+    d = so.to_dict()
+    if not wrap:
+        return d                                     # StageOutput.save() file
+    return {"stage_output": d, "train_predictions": _sig(2.5 * z_tr - 2.4)}
+
+
+def _routes(z, rng, abstain_band=True):
+    zz = z + rng.normal(0, .2, len(z))
+    hi = 1.3 if abstain_band else -0.3
+    return np.where(zz < -0.3, "pass1", np.where(zz > hi, "pass2", "uncertain")).astype(object)
+
+
+def _route_proba(dec, rng, noise, nan_on_abstain):
+    p = np.where(dec == "pass1", 0.05, np.where(dec == "pass2", 0.6, 0.12))
+    p = np.clip(p + rng.normal(0, noise, len(dec)), 0, 1)
+    if nan_on_abstain:
+        p = np.where(dec == "uncertain", np.nan, p)
+    return p
+
+
+RF_REMAINDER = "OOF Pass 1 remainder (RF router design)"     # crossfit_rf_router's protocol
+PASS1_PRECISIONS = (0.93, 0.95, 0.97)       # P(y = 0 | rule), legacy-profile range
+PASS2_PRECISIONS = (0.25, 0.45, 0.60)       # P(y = 1 | rule)
+
+
+def _glass_blend(dec, rng, base, nan_on_abstain=True):
+    """``GlassRouterPipeline.predict`` / ``predict_proba`` for given routes:
+    each routed row's rule precision and the router's P(subscribe)."""
+    prec = np.where(dec == "pass1", rng.choice(PASS1_PRECISIONS, len(dec)),
+                    np.where(dec == "pass2", rng.choice(PASS2_PRECISIONS, len(dec)), 0.0))
+    b = np.broadcast_to(np.asarray(base, dtype=float), (len(dec),))
+    p = np.where(dec == "pass1", b * (1 - prec), np.where(dec == "pass2", b + (1 - b) * prec, b))
+    if nan_on_abstain:
+        p = np.where(dec == "uncertain", np.nan, p)
+    return p, prec
+
+
+def _band_blend(dec, fit_dec, y_fit, fold=None):
+    """
+    The RF Router's outputs for routes ``dec`` (``_BaseRouter.predict_proba``):
+    each routed row carries its band's confidence — Pass 1 NPV, Pass 2
+    precision — measured on the producing router's training rows (``fit_dec``,
+    ``y_fit``; per fold router, the other folds, when ``fold`` is given for
+    out-of-fold rows), blended with that router's base rate; abstain rows
+    carry the base rate.
+    """
+    y, fit_dec = np.asarray(y_fit, dtype=int), np.asarray(fit_dec)
+    groups = ([(np.ones(len(y), bool), np.ones(len(dec), bool))] if fold is None
+              else [(fold != k, fold == k) for k in np.unique(fold)])
+    conf, p = np.zeros(len(dec)), np.zeros(len(dec))
+    for fit_rows, rows in groups:
+        yk, dk_fit, dk = y[fit_rows], fit_dec[fit_rows], dec[rows]
+        npv, prec = float((yk[dk_fit == "pass1"] == 0).mean()), float((yk[dk_fit == "pass2"] == 1).mean())
+        b = float(yk.mean())
+        conf[rows] = np.where(dk == "pass1", npv, np.where(dk == "pass2", prec, 0.0))
+        p[rows] = np.where(dk == "pass1", b * (1 - conf[rows]),
+                           np.where(dk == "pass2", b + (1 - b) * conf[rows], b))
+    return p, conf
+
+
+def make_router(w, layout="top-level", abstain_band=True, two_col=False, label_fingerprint=True,
+                band_blend=False, pass2_population=None):
+    """
+    GLASS bundle (top-level) or RF Router artifact (layout='extra').
+
+    The GLASS bundle is internally consistent as the real one is: out-of-fold
+    train probabilities blend each row's rule precision with its fold model's
+    base rate, test probabilities with the full training base rate, and the
+    rule precisions are stored as ``train_confidence`` / ``test_confidence``.
+
+    ``label_fingerprint=True`` (the default: a current-format artifact)
+    records ``train_label_fingerprint`` over ``w``'s training rows and labels —
+    the labels the router was fitted on — in ``oof_protocol`` and at the top
+    level, as the producers do since PR 36 F12. ``label_fingerprint=False`` is
+    an artifact written before that, which Stage 4 refuses since Commit 4.
+
+    ``band_blend=True`` (RF layout): the RF Router's real output form — band
+    blends (``_band_blend``), its full-train ``mode`` ("two_pass"), bands and
+    ``training_base_rate`` — instead of free-form probabilities.
+    ``pass2_population``: record the router's Pass 2 population as the
+    producers do (GLASS: cross-fit protocol and full-train ``fit_report``; RF:
+    the cross-fit protocol's description and the full-train ``mode``). An
+    artifact with ``label_fingerprint=True`` is a current-format one, so it
+    declares the population by default ("full" / the OOF remainder) — the
+    current producers always do (PR 36 F17).
+    """
+    if label_fingerprint and pass2_population is None:
+        pass2_population = "full" if layout == "top-level" else RF_REMAINDER
+    GS, rng = w["GS"], w["rng"]
+    ytr = GS["y_train"]
+    dtr, dte = _routes(w["z_tr"], rng, abstain_band), _routes(w["z_te"], rng, abstain_band)
+    fold = fold_assignment(ytr, cv_folds=5, random_state=SEED).to_numpy()
+    if layout == "top-level":
+        y = ytr.to_numpy()
+        b_fold = np.array([y[fold != k].mean() for k in range(5)])[fold]
+        ptr, ctr = _glass_blend(dtr, rng, b_fold)
+        pte, cte = _glass_blend(dte, rng, y.mean())
+    elif band_blend:
+        ptr, ctr = _band_blend(dtr, dtr, ytr, fold)
+        pte, cte = _band_blend(dte, dtr, ytr)
+    else:
+        ptr = _route_proba(dtr, rng, .05, nan_on_abstain=False)
+        pte = _route_proba(dte, rng, .02, nan_on_abstain=False)
+        ctr = np.abs(ptr - .5) * 2
+        cte = np.zeros(len(dte))
+    if two_col:
+        ptr, pte = np.column_stack([1 - ptr, ptr]), np.column_stack([1 - pte, pte])
+    pred = lambda d: np.where(d == "pass1", 0, np.where(d == "pass2", 1, -1))
+    f = {
+        "train_outputs_oof": True,
+        "train_proba": ptr, "train_decisions": dtr, "train_pred": pred(dtr),
+        "train_confidence": ctr,
+        "train_fold_id": fold,
+        "oof_protocol": {"train_outputs_oof": True, "n_folds": 5, "random_state": SEED,
+                         "fold_fingerprint": fold_fp(fold)},
+        "index_train": list(GS["X_train"].index), "index_test": list(GS["X_test"].index),
+        "test_proba": pte, "test_decisions": dte, "test_pred": pred(dte),
+        "test_confidence": cte,
+    }
+    labels = stage_io.label_fingerprint(GS["X_train"].index, ytr) if label_fingerprint else None
+    if labels:
+        f["oof_protocol"]["train_label_fingerprint"] = labels           # the cross-fit's labels
+    if layout == "top-level":                         # GLASS Router bundle
+        f["train_idx"] = f.pop("index_train")
+        f["split_fingerprint"] = w["fp_router"]
+        f["train_insample_proba_diagnostic"] = _glass_blend(dtr, rng, ytr.mean())[0]
+        f["training_base_rate"] = float(ytr.mean())
+        if labels:
+            f["train_label_fingerprint"] = labels                         # the full-train fit's
+        if pass2_population:
+            f["oof_protocol"]["glass_pass2_population"] = pass2_population
+            f["fit_report"] = {"pass2_population": pass2_population}
+        return f
+    art = {"split_fingerprint": w["fp_router"],       # RF Router artifact
+           "thresholds": {"t1": 0.79, "t2": 0.27}, "extra": f}
+    if labels:
+        art["train_label_fingerprint"], art["training_base_rate"] = labels, float(ytr.mean())
+    if band_blend:
+        y = ytr.to_numpy()
+        art.update(mode="two_pass", training_base_rate=float(y.mean()),
+                   bands={"kind": "flat", "pass1_confidence": float((y[dtr == "pass1"] == 0).mean()),
+                          "pass2_confidence": float((y[dtr == "pass2"] == 1).mean())})
+    if pass2_population:
+        f["oof_protocol"]["pass2_population"] = pass2_population
+        art.setdefault("mode", "two_pass")
+    return art
+
+
+def make_stage3(w, family="ebm", applied=True, shift=0.0):
+    GS, rng, z_tr, z_te = w["GS"], w["rng"], w["z_tr"], w["z_te"]
+    ytr, yte = GS["y_train"].to_numpy(), GS["y_test"].to_numpy()
+    plan = FoldPlan.build(ytr, 5, SEED, True)
+    raw_oof = _sig(2.1 * z_tr - 1.0 + shift + rng.normal(0, .5, len(z_tr)))
+    raw_te = _sig(2.1 * z_te - 1.0 + shift + rng.normal(0, .4, len(z_te)))
+    # Stand-in inner OOF (F22): fold k's training rows keep their raw OOF
+    # scores. A synthetic world needs no inner models; the calibrator's
+    # per-fold maps are then fitted on exactly the rows they were before F22.
+    inner = np.where(plan.fold_id[None, :] == np.arange(plan.n_splits)[:, None], np.nan, raw_oof)
+    cal = Stage3Calibrator("isotonic", ece_threshold=(0.0 if applied else 1.0)).fit(
+        raw_oof, ytr, plan, inner)
+    ins = _sig(2.4 * z_tr - 1.0)
+    return Stage3Artifact(
+        stage="stage3", model_family=family, created_at="2026-09-23T00:00:00",
+        config={"arm": "glass" if family == "ebm" else "blackbox",
+                "calibration_method": "isotonic"}, mirror_report={},
+        features=["f1", "f2"],
+        index_train=list(GS["X_train"].index), index_test=list(GS["X_test"].index),
+        y_train=[int(v) for v in ytr], y_test=[int(v) for v in yte],
+        split_fingerprint=w["fp_router"], block_fingerprint="b" * 64,
+        feature_fit_scope="per_fold", fold_plan=plan.to_dict(),
+        oof={"proba": raw_oof, "proba_calibrated": cal.oof_calibrated_,
+             "fold_id": plan.fold_id.copy(), "threshold": 0.55,
+             "threshold_per_row": np.full(len(ytr), 0.55)},
+        refit={"train_proba": ins, "train_proba_calibrated": cal.transform(ins),
+               "test_proba": raw_te, "test_proba_calibrated": cal.transform(raw_te)},
+        threshold={"oof": {"threshold": 0.55, "selected_on": "out-of-fold training predictions"},
+                   "oof_calibrated_space": {"threshold": 0.19, "selected_on": "OOF (calibrated space)"},
+                   "test_oracle": {"threshold": 0.777, "warning": "reference only"}},
+        calibration={**cal.report_.to_dict()},
+    )

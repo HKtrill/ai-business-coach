@@ -8,7 +8,7 @@ Mirrors the GLASS ``CalibratedLRStage`` protocol step for step:
 0. ``StandardScaler`` fitted on the full training split.
 1. Optuna tuning, objective = mean CV ROC-AUC. Training only.
 2. Final MLP fitted on the full training split with the best parameters.
-3. Probability calibration via GLASS ``glass_pipeline.lr.calibration.fit_calibration``.
+3. Probability calibration via ``shared.stage1.oof_calibration`` (shared with GLASS).
 4. Decision threshold from OUT-OF-FOLD calibrated probabilities, F2 sweep over
    the same grid GLASS uses.
 5. Reporting via ``shared.metrics`` (``compute_metrics`` / ``metrics_table``),
@@ -28,6 +28,18 @@ scores it and fits nothing.
 PR 33: ``fit`` now also records ``train_fold_id`` and ``y_train_``, and
 ``to_stage_output`` emits the shared ``StageOutput`` contract — the same object
 GLASS emits, so Stage 4 joins the arms on the index rather than on position.
+
+PR 36 (audit F3/F4): the tuning folds and the out-of-fold probabilities refit
+the target encodings (given ``X_train_raw``) and the scaler on each fold's
+training rows, through ``shared.stage1.crossfit`` — the same folds and the
+same code as GLASS. Step 0's full-train scaler is unchanged and still serves
+the final model, the calibrator and test scoring.
+
+PR 36 (audit F16/F19): steps 3-4 run through ``shared.stage1.oof_calibration``,
+the routine GLASS uses — nested out-of-fold family selection by Brier (per
+outer fold for the out-of-fold output, over all rows for the final model),
+per-fold preprocessing inside every calibration fold, and a final calibrator
+fitted on out-of-fold scores and applied to the full-train MLP.
 """
 
 from __future__ import annotations
@@ -38,18 +50,19 @@ import pandas as pd
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
+from shared.stage1.crossfit import build_fold_designs, preprocessing_record
+from shared.stage1.oof_calibration import Stage1CalibratedModel, calibrate_oof
 from shared.stage_io import (
     THRESHOLD_SOURCES,
     StageOutput,
     fold_assignment,
 )
 
-from .calibration import fit_stage1_calibration
 from .config import Stage1MLPConfig
 from .estimator import Stage1MLPClassifier
 from .features import STAGE1_FEATURES, check_labels, select_features
 from .evaluation.metrics import metrics_table as _metrics_table
-from .thresholds import oof_probabilities, optimize_threshold_cv
+from .thresholds import optimize_threshold_cv
 from .tuning import params_to_kwargs, tune_stage1_mlp_auc
 
 __all__ = ["CalibratedStage1MLP"]
@@ -128,7 +141,8 @@ class CalibratedStage1MLP:
 
     Examples
     --------
-    >>> stage = CalibratedStage1MLP(cv_folds=10, n_trials=100).fit(X_train, y_train)
+    >>> stage = CalibratedStage1MLP(cv_folds=10, n_trials=100).fit(
+    ...     X_train, y_train, X_train_raw=X_train_raw)   # raw rows X_train was engineered from
     >>> proba = stage.predict_proba(X_test)
     >>> pred = stage.predict(X_test)          # at stage.optimal_threshold
     """
@@ -184,6 +198,9 @@ class CalibratedStage1MLP:
         self.train_fold_id: Optional[pd.Series] = None
         self.y_train_: Optional[pd.Series] = None
         self.oof_provenance_: Optional[str] = None
+        self.oof_preprocessing_: Optional[Dict] = None
+        self.calibration_oof_: Optional[Dict] = None      # family -> OOF Series
+        self.calibration_fold_family_: Optional[Dict] = None  # outer fold -> family
         self.feature_names_ = list(STAGE1_FEATURES)
         self.fitted = False
 
@@ -193,7 +210,13 @@ class CalibratedStage1MLP:
     # ------------------------------------------------------------------
     # Fit
     # ------------------------------------------------------------------
-    def fit(self, X_train: pd.DataFrame, y_train: pd.Series) -> "CalibratedStage1MLP":
+    def fit(
+        self,
+        X_train: pd.DataFrame,
+        y_train: pd.Series,
+        *,
+        X_train_raw: Optional[pd.DataFrame] = None,
+    ) -> "CalibratedStage1MLP":
         """
         Run the five-step protocol on the training split.
 
@@ -204,6 +227,10 @@ class CalibratedStage1MLP:
             fitted here.
         y_train : pandas.Series
             Binary labels, indexed identically to ``X_train``.
+        X_train_raw : pandas.DataFrame, optional
+            The raw training rows ``X_train`` was engineered from. Required
+            for the target-encoded features, which every cross-validation
+            refits per fold from these rows (audit F3).
 
         Returns
         -------
@@ -214,7 +241,8 @@ class CalibratedStage1MLP:
         ------
         ValueError
             If the features are not exactly ``STAGE1_FEATURES``, if ``X`` and
-            ``y`` differ in length or index, or if ``y`` is not binary 0/1.
+            ``y`` differ in length or index, if ``y`` is not binary 0/1, or if
+            target-encoded features arrive without ``X_train_raw``.
         CalibrationLeakageError
             If the calibrator is prefit and ``strict_oof`` is True.
         """
@@ -223,7 +251,14 @@ class CalibratedStage1MLP:
 
         y_train = check_labels(X, y_train)
 
-        # 0. Scaler — training split only.
+        # Folds with per-fold encoders and scaler, shared by tuning and OOF.
+        designs = build_fold_designs(
+            X, y_train, cv_folds=cfg.cv_folds, random_state=cfg.random_state,
+            X_raw=X_train_raw,
+        )
+        self.oof_preprocessing_ = preprocessing_record(X_train_raw)
+
+        # 0. Scaler — training split only (final model, calibrator, test).
         self.scaler = StandardScaler().fit(X)
         X_scaled = self.scaler.transform(X)
 
@@ -238,7 +273,7 @@ class CalibratedStage1MLP:
             tune_stage1_mlp_auc(
                 X_scaled, y_train, cv, cfg.n_trials,
                 cfg.estimator_fixed_kwargs, cfg.random_state,
-                verbose=cfg.verbose,
+                verbose=cfg.verbose, folds=designs,
             )
         )
         if cfg.verbose:
@@ -250,24 +285,29 @@ class CalibratedStage1MLP:
         )
         self.model.fit(X_scaled, y_train)
 
-        # 3. Calibration (GLASS).
+        # 3-4. Calibration (shared with GLASS): nested out-of-fold family
+        #      selection, per-fold preprocessing in every calibration fold, and
+        #      the out-of-fold calibrated probabilities.
         if cfg.verbose:
-            print("🔧 Calibrating")
-        self.calibrated_model, self.calibration_method, self.calibration_metrics = (
-            fit_stage1_calibration(
-                self.model, X_scaled, y_train,
-                cfg.calibration_method, cfg.cv_folds,
-            )
+            print("🔧 Calibrating (nested out-of-fold)")
+        calibration = calibrate_oof(
+            self.model, designs, X, y_train,
+            cv_folds=cfg.cv_folds, random_state=cfg.random_state,
+            method=cfg.calibration_method, X_raw=X_train_raw,
+            n_jobs=cfg.n_jobs, strict=cfg.strict_oof,
         )
+        self.calibration_method = calibration.method
+        self.calibration_metrics = calibration.metrics
+        self.calibration_oof_ = dict(calibration.calibrated_oof)
+        self.calibration_fold_family_ = dict(calibration.fold_family)
+        self.calibrated_model = Stage1CalibratedModel(
+            self.model, calibration.calibrator, calibration.method)
+        self.oof_provenance_ = calibration.provenance
 
         # 4. Threshold from out-of-fold calibrated probabilities.
         if cfg.verbose:
-            print("🎯 Optimizing threshold via cross-validation")
-        self.proba_train_oof, self.oof_provenance_ = oof_probabilities(
-            self.calibrated_model, X_scaled, y_train, X_train.index,
-            cv_folds=cfg.cv_folds, random_state=cfg.random_state,
-            n_jobs=cfg.n_jobs, strict=cfg.strict_oof,
-        )
+            print("🎯 Optimizing threshold on the OOF probabilities")
+        self.proba_train_oof = calibration.proba_oof.rename("stage1_proba_oof")
         self.train_fold_id = fold_assignment(
             y_train, cv_folds=cfg.cv_folds, random_state=cfg.random_state,
             index=X_train.index,
@@ -434,7 +474,8 @@ class CalibratedStage1MLP:
         threshold_source : str, optional
             A key of ``THRESHOLD_SOURCES``. Required when ``threshold`` differs
             from ``optimal_threshold``. The contract will not let an
-            overridden threshold be passed off as the in-stage one.
+            overridden threshold be passed off as the in-stage one, nor any
+            threshold of this stage be declared cross-fitted (audit F33).
         metrics_test : dict, optional
             Held-out metrics to carry along.
 
@@ -442,10 +483,25 @@ class CalibratedStage1MLP:
         -------
         StageOutput
 
+        Raises
+        ------
+        ValueError
+            If ``threshold`` differs from ``optimal_threshold`` without a
+            ``threshold_source``, or with the in-stage source; or if
+            ``threshold_source`` is a cross-fitted source (audit F33).
+
         Notes
         -----
         This is the only method on the stage that accepts test data, and it
         uses it for scoring alone.
+
+        PR 36 (audit F33): ``threshold_source`` was recorded as given. The
+        in-stage threshold, chosen on all training labels, could be declared
+        ``'nested_per_fold'``, which lets ``StageOutput.train_decisions_oof``
+        release contaminated train-side decisions without the opt-in; and an
+        overridden threshold could be labelled ``'in_stage_f2_cv'``. This stage
+        selects one threshold on all training labels and has no per-fold
+        thresholds, so a cross-fitted source is refused outright.
         """
         self._check_fitted()
         t = self.optimal_threshold if threshold is None else float(threshold)
@@ -458,6 +514,21 @@ class CalibratedStage1MLP:
                     f"threshold_source (one of {sorted(THRESHOLD_SOURCES)})."
                 )
             threshold_source = self.THRESHOLD_SOURCE
+        elif threshold_source == self.THRESHOLD_SOURCE and overridden:
+            raise ValueError(
+                f"threshold_source={threshold_source!r} names the in-stage F2 "
+                f"sweep, which chose optimal_threshold={self.optimal_threshold}; "
+                f"threshold={t} was chosen another way. Name that source "
+                "instead (audit F33)."
+            )
+        elif THRESHOLD_SOURCES.get(threshold_source):
+            raise ValueError(
+                f"threshold_source={threshold_source!r} declares the threshold "
+                "cross-fitted with respect to the training rows, but this stage "
+                "selects one threshold on all training labels and has no per-fold "
+                "thresholds. Build Stage 4 features from train_proba_oof, or opt "
+                "in with train_decisions_oof(allow_contaminated=True) (audit F33)."
+            )
 
         y_test = check_labels(select_features(X_test), y_test)
 
@@ -482,7 +553,7 @@ class CalibratedStage1MLP:
             threshold_sweep=self.threshold_sweep,
             calibration_metrics=dict(self.calibration_metrics),
             metrics_test=dict(metrics_test or {}),
-            config=self.config.to_dict(),
+            config={**self.config.to_dict(), "oof_preprocessing": self.oof_preprocessing_},
         )
 
     # ------------------------------------------------------------------

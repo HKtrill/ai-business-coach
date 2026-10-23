@@ -28,6 +28,7 @@ from typing import Any, Optional
 
 import joblib
 import numpy as np
+import pandas as pd
 
 SCHEMA = "meta_xgb/1"
 
@@ -87,7 +88,7 @@ class MetaXGBArtifact:
         """JSON-safe sidecar: no arrays, no models."""
         def clean(d):
             return {k: v for k, v in d.items()
-                    if not isinstance(v, (np.ndarray, list)) or k in ("grid",)}
+                    if not isinstance(v, (np.ndarray, list, pd.DataFrame)) or k in ("grid",)}
         L = self.learner
         return {
             "schema": self.schema, "stage": self.stage, "model_family": self.model_family,
@@ -131,6 +132,10 @@ def load_meta_xgb(path: str, expected_split_fingerprint: Optional[str] = None) -
     art = joblib.load(path)
     if getattr(art, "schema", None) != SCHEMA:
         raise ValueError(f"{path}: not a {SCHEMA} artifact")
+    # PR 36 (audit F12): the primary fingerprint was never compared with the dictionary.
+    if art.split_fingerprint not in art.split_fingerprints.values():
+        raise ValueError(f"{path}: split_fingerprint {art.split_fingerprint!r} contradicts "
+                         f"its own split_fingerprints {art.split_fingerprints}")
     if expected_split_fingerprint is not None and \
             expected_split_fingerprint not in art.split_fingerprints.values():
         raise ValueError(f"{path}: built on another split {art.split_fingerprints}")

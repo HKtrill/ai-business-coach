@@ -16,6 +16,7 @@ from glass_pipeline.glass_router.ilp_rule_selector.ilp_rule_selector import ILPR
 from glass_pipeline.glass_router.rule_generator.rule_generator import RuleGenerator
 from glass_pipeline.glass_router.rule_evaluator.rule_evaluator import RuleEvaluator
 from glass_pipeline.glass_router.core.rule import SUBSCRIBE, NOT_SUBSCRIBE, ABSTAIN
+from shared.stage_io import label_fingerprint
 
 
 class GlassRouterPipeline:
@@ -87,6 +88,7 @@ class GlassRouterPipeline:
         self.pass1_rules = []
         self.pass2_rules = []
         self.training_base_rate = None
+        self.train_label_fingerprint_ = None
         self.fit_report_ = {}
 
         print("✅ GlassRouterPipeline initialized")
@@ -178,6 +180,9 @@ class GlassRouterPipeline:
         self.training_base_rate = (
             y_train.mean() if hasattr(y_train, 'mean') else np.mean(y_train)
         )
+        # PR 36 (audit F12): the rows and labels this fit used (test-side outputs).
+        rows = getattr(y_train, "index", getattr(X_train, "index", range(len(y_train))))
+        self.train_label_fingerprint_ = label_fingerprint(rows, y_train)
 
         if self.pass2_population == "full":
             self._fit_full(X_train, y_train, X_val, y_val)

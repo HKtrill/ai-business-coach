@@ -18,6 +18,13 @@ Reading and checking is shared with the GLASS arm (``shared.stage4``):
 ``build_feature_frames`` turns the verified streams into the Meta-XGB matrix
 (``config.STAGE4_FEATURES``) and proves, cell by cell, that every value is the
 stream value it claims to be.
+
+The 2x2 crossover (PR 36 F29): ``upstream="glass"`` reads the GLASS LR, the
+GLASS Router bundle and the GLASS EBM into the same slots. Every feature is
+model-agnostic — a calibrated Stage 1 / Stage 3 probability, the router's
+P(subscribe) where it routes and the route one-hot — so Meta-XGB learns its
+own use of them; nothing GLASS-specific is assumed. Without the declaration
+another arm's artifact is refused (``shared.stage4.upstream``).
 """
 
 from __future__ import annotations
@@ -28,8 +35,8 @@ import numpy as np
 import pandas as pd
 
 from shared.stage4 import (
-    ABSTAIN, PASS1, PASS2, Stage4InputError, Stage4Inputs,
-    build_stage4_inputs, router_stream, split_reference, stage3_stream,
+    ABSTAIN, PASS1, PASS2, UPSTREAM, Stage4InputError, Stage4Inputs,
+    build_stage4_inputs, resolve_upstream, router_stream, split_reference, stage3_stream,
     stage_output_stream,
 )
 
@@ -45,14 +52,23 @@ def load_blackbox_stage4_inputs(
     xgb_path,
     verbose: bool = True,
     extra_fingerprints: Optional[dict] = None,
+    upstream: Optional[str] = None,
 ) -> Stage4Inputs:
-    """Load + verify the black-box Stage 1–3 outputs (paths or loaded objects)."""
+    """
+    Load + verify Stage 1–3 outputs (paths or loaded objects). ``upstream``:
+    the arm they come from — ``"blackbox"`` (default) or, for the 2x2
+    crossover, ``"glass"`` (PR 36 F29).
+    """
+    arm = resolve_upstream(upstream, "blackbox")
+    labels = [UPSTREAM[arm][s]["label"] for s in ("stage1", "stage2", "stage3")]
     ref = split_reference(GLOBAL_SPLIT, extra_fingerprints)
-    s1, c1 = stage_output_stream(mlp_path, "mlp", "MLP", len(ref.y_train))
-    s2, c2 = router_stream(rf_path, "rf_router", "RF Router (two-pass)", ref.y_train)
-    s3, c3 = stage3_stream(xgb_path, "xgb", "XGBoost")
+    s1, c1 = stage_output_stream(mlp_path, "mlp", labels[0], len(ref.y_train))
+    s2, c2 = router_stream(rf_path, "rf_router", labels[1], ref.y_train)
+    s3, c3 = stage3_stream(xgb_path, "xgb", labels[2])
     return build_stage4_inputs(GLOBAL_SPLIT, [s1, s2, s3], extra_checks=c1 + c2 + c3,
-                               verbose=verbose, extra_fingerprints=extra_fingerprints)
+                               verbose=verbose, extra_fingerprints=extra_fingerprints,
+                               upstream={"arm": arm, "arbiter": "meta_xgb",
+                                         "arbiter_arm": "blackbox"})
 
 
 def _side(inputs: Stage4Inputs, side: str) -> pd.DataFrame:

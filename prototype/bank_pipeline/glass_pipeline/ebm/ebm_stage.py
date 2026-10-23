@@ -3,15 +3,16 @@ glass_pipeline.ebm.ebm_stage
 ============================
 Stage 3 orchestrator — EBM (Explainable Boosting Machine).
 
-Invoked from glass_cascade Cell 20:
+Invoked from glass_cascade Cells 17-18:
 
+    EBM_STAGE3_CONFIG = EBMStage3Config(expected_features=list(EBM_FEATURES), ...)
     block = Stage3Block.from_global_split(GLOBAL_SPLIT, EBMFeaturePipeline,
                                           EBM_STAGE3_CONFIG, split_fingerprint=fp)
     ebm_artifact, ebm_path = train_ebm_stage(block=block, config=EBM_STAGE3_CONFIG)
 
 PR 33 changes (Stage 3 audit)
 -----------------------------
-Runs on ``shared.stage_runner`` — the same block, runner and artifact as the
+Runs on ``shared.stage3`` — the same block, runner and artifact as the
 black-box XGBoost arm. Relative to the pre-PR-33 stage:
 
 * feature engineers are refitted inside every CV fold (no label leak into
@@ -21,7 +22,9 @@ black-box XGBoost arm. Relative to the pre-PR-33 stage:
 * the operating threshold is selected on OOF predictions, not ``y_test``
   (the test-fitted value survives only as ``threshold["test_oracle"]``);
 * calibration is gated on OOF ECE and fitted as a fold-nested isotonic map —
-  no refit of unweighted EBMs via ``CalibratedClassifierCV``;
+  no refit of unweighted EBMs via ``CalibratedClassifierCV``; since PR 36
+  (F22) each fold's gate, map and threshold come from inner folds of its
+  training rows;
 * NaN/inf cleaning is learned on train and applied to every scored frame;
 * the artifact carries indexes, split + block fingerprints, fold ids, tuning
   metadata, the fitted feature pipeline, cleaner and calibrator.
@@ -76,15 +79,31 @@ def train_ebm_stage(
     config
         ``EBMStage3Config``; defaults enforce ``EBM_FEATURES``.
     params / params_source / params_provenance
-        Skip Optuna (see ``shared.stage_runner.check_param_reuse``).
+        Skip Optuna (see ``shared.stage3.check_param_reuse``).
     split_fingerprint
         Recorded on a block built here; checked against a supplied block.
 
     Returns
     -------
     (Stage3Artifact, path or None)
+
+    PR 36 (audit F21): the config alone labels the artifact (model family,
+    arm, column prefix, search space), and any ``Stage3Config`` used to be
+    accepted. glass_cascade passed the generic one, so its EBM was labelled
+    ``model_family='unset'``, ``arm='unset'`` with no search space recorded,
+    which Stage 4 refuses. Only an ``EBMStage3Config`` with the GLASS EBM
+    identity is accepted (the counterpart of the XGBoost arm's F37 guard).
     """
     config = config or EBMStage3Config(expected_features=list(EBM_FEATURES))
+    if not isinstance(config, EBMStage3Config):
+        raise TypeError(
+            f"config must be an EBMStage3Config, got {type(config).__name__}: the config "
+            "labels the artifact, and Stage 4 checks that label (audit F21).")
+    if (config.model_family, config.arm) != (EBMFactory.family, "glass"):
+        raise ValueError(
+            "EBMStage3Config must keep the GLASS EBM identity "
+            f"(model_family='ebm', arm='glass'), got model_family="
+            f"{config.model_family!r}, arm={config.arm!r} (audit F21).")
 
     if block is None:
         if GLOBAL_SPLIT is None:

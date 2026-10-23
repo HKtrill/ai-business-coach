@@ -9,6 +9,7 @@ parallelism, and OOF-safety settings.
 
 from __future__ import annotations
 
+import numbers
 from dataclasses import asdict, dataclass, fields
 
 __all__ = ["Stage1MLPConfig"]
@@ -61,6 +62,19 @@ class Stage1MLPConfig:
     # ------------------------------------------------------------------
     def __post_init__(self) -> None:
         errors: list[str] = []
+
+        # PR 36 (audit F1): integer settings were coerced, not checked
+        # (max_epochs=True trained one epoch, n_trials=True ran one trial,
+        # max_epochs=10.5 failed only inside fit). Types first; ranges below.
+        for name in ("cv_folds", "n_trials", "random_state", "max_epochs", "patience"):
+            value = getattr(self, name)
+            if isinstance(value, bool) or not isinstance(value, numbers.Integral):
+                errors.append(f"{name} must be an integer, got {value!r}")
+        if isinstance(self.val_fraction, bool) or not isinstance(self.val_fraction, numbers.Real):
+            errors.append(f"val_fraction must be a number, got {self.val_fraction!r}")
+        if errors:
+            raise ValueError("Stage1MLPConfig validation errors:\n"
+                             + "\n".join(f"  - {e}" for e in errors))
 
         if self.calibration_method not in ("auto", "sigmoid", "isotonic"):
             errors.append(

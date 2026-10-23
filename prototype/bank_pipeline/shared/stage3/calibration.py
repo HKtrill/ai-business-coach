@@ -1,9 +1,9 @@
 """
 shared.stage3.calibration
 =========================
-OOF-ECE-gated, fold-nested probability calibration (isotonic or Platt), and
-the calibration diagnostics recorded in the artifact. ECE itself is
-``shared.metrics.calculate_ece``.
+OOF-ECE-gated probability calibration (isotonic or Platt), strictly nested on
+the training side (audit F22), and the calibration diagnostics recorded in the
+artifact. ECE itself is ``shared.metrics.calculate_ece``.
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from sklearn.metrics import brier_score_loss
 
 from shared.metrics import calculate_ece as _shared_ece
 
-from .data import FoldPlan
+from .data import FoldPlan, check_inner_scores
 
 
 def calculate_ece(y_true, y_prob, n_bins: int = 10) -> float:
@@ -46,6 +46,11 @@ class CalibrationReport:
     gate_measured_on: str = "out-of-fold training predictions"
     n_rows: int = 0
     n_zero_after: int = 0  # calibrated rows at exactly 0.0
+    # training side (F22): one gate and map per outer fold, from inner OOF
+    fold_applied: Optional[list] = None
+    fold_ece_inner: Optional[list] = None
+    fold_gate_measured_on: str = ("each outer fold: inner out-of-fold scores of its "
+                                  "training rows")
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -53,29 +58,45 @@ class CalibrationReport:
     def describe(self) -> str:
         head = (f"{self.method} applied" if self.applied
                 else f"not applied ({self.reason})")
+        folds = ("" if self.fold_applied is None else
+                 f"\n   per-fold gates (inner OOF): "
+                 f"{sum(self.fold_applied)}/{len(self.fold_applied)} applied, ECE "
+                 + ", ".join(f"{e:.4f}" for e in self.fold_ece_inner))
         return (
             f"calibration: {head}\n"
             f"   ECE   {self.ece_before:.4f} → {self.ece_after:.4f} "
             f"(gate {self.ece_threshold}, {self.ece_bins} bins, OOF)\n"
             f"   [{self.n_zero_after} calibrated rows at p=0]\n"
             f"   Brier {self.brier_before:.4f} → {self.brier_after:.4f}"
+            + folds
         )
 
 
 class Stage3Calibrator:
     """
-    Gate on OOF ECE, then fit isotonic (or Platt) leakage-safely.
+    Gate on ECE, then fit isotonic (or Platt) leakage-safely.
+
+    Test side (the final model): the gate reads the ECE of all OOF rows and
+    the map is fitted on all OOF rows, as in Stage 1. ``applied_`` and
+    ``transform(p)`` report and apply that decision.
+
+    Training side (audit F22), what Stage 4 consumes: for each outer fold k
+    the whole procedure is replayed on the inner out-of-fold scores of fold
+    k's TRAINING rows (``OOFGenerator.generate_inner``): fold k's own gate on
+    their ECE, then its own map fitted on them, applied to fold k's held-out
+    OOF scores. Neither fold k's labels nor any score from a model trained on
+    them (the other folds' outer OOF) reaches its calibrated output, so the
+    output may mix calibrated and identity folds, as Stage 1's may mix
+    families.
 
     After ``fit``:
-      ``oof_calibrated_``  out-of-fold calibrated training probabilities —
-                           what Stage 4 consumes.
-      ``transform(p)``     maps the refit model's probabilities (i.e. test)
-                           through the calibrator fitted on all OOF rows.
-
-    When the gate is not breached (and ``force=False``) the calibrator is an
-    identity map and both of the above pass probabilities through unchanged,
-    mirroring the EBM's behaviour of storing raw probabilities in the
-    calibrated slots.
+      ``oof_calibrated_``     strictly nested calibrated OOF training probabilities
+      ``inner_calibrated_``   (n_folds, n_rows): fold k's map applied to its
+                              inner scores; fold k's calibrated-space threshold
+                              is selected on these
+      ``fold_applied_``       the per-fold gate decisions
+      ``transform(p)``        refit-model probabilities (i.e. test) through the
+                              all-OOF map (identity when the gate is not breached)
 
     ``method="sigmoid"`` is Platt scaling: an (effectively unregularised)
     logistic regression on the probability itself, not its log-odds.
@@ -100,6 +121,8 @@ class Stage3Calibrator:
         self.applied_: bool = False
         self.final_calibrator_: Optional[Any] = None
         self.oof_calibrated_: Optional[np.ndarray] = None
+        self.inner_calibrated_: Optional[np.ndarray] = None
+        self.fold_applied_: Optional[list] = None
         self.report_: Optional[CalibrationReport] = None
 
     # ------------------------------------------------------------------
@@ -108,7 +131,13 @@ class Stage3Calibrator:
         oof_proba: np.ndarray,
         y,
         folds: FoldPlan,
+        inner_proba: np.ndarray,
     ) -> "Stage3Calibrator":
+        """
+        ``oof_proba``: outer out-of-fold scores of every training row.
+        ``inner_proba``: ``(n_folds, n_rows)`` inner out-of-fold scores, row k
+        covering fold k's training rows only (``check_inner_scores``).
+        """
         p = np.asarray(oof_proba, dtype=float)
         y_arr = np.asarray(y).astype(int)
         if len(p) != len(y_arr):
@@ -118,53 +147,47 @@ class Stage3Calibrator:
                 "OOF probabilities contain NaN — calibrate on the scored array."
             )
         folds.assert_matches(len(p), "calibration")
+        inner = check_inner_scores(inner_proba, folds, len(p))
 
+        # --- test side: gate and map from all OOF rows ----------------------
         ece_before = calculate_ece(y_arr, p, self.ece_bins)
         brier_before = float(brier_score_loss(y_arr, p))
+        self.applied_ = bool(self.force or ece_before > self.ece_threshold)
+        self.final_calibrator_ = self._fit_mapper(p, y_arr) if self.applied_ else None
 
-        needs = self.force or ece_before > self.ece_threshold
-        if not needs:
-            self.applied_ = False
-            self.final_calibrator_ = None
-            self.oof_calibrated_ = p.copy()
-            self.report_ = CalibrationReport(
-                method=self.method,
-                applied=False,
-                reason=f"OOF ECE {ece_before:.4f} <= gate {self.ece_threshold}",
-                ece_threshold=self.ece_threshold,
-                ece_bins=self.ece_bins,
-                ece_before=ece_before,
-                ece_after=ece_before,
-                brier_before=brier_before,
-                brier_after=brier_before,
-                n_rows=len(p),
-                n_zero_after=int((p == 0.0).sum()),
-            )
-            return self
-
-        # --- leakage-safe calibrated OOF column ---------------------------
-        # Fold k's mapping is learned from the other folds' OOF rows only.
+        # --- training side: gate and map per outer fold, from inner OOF ------
         calibrated = np.full(len(p), np.nan, dtype=float)
-        for _, val_idx in folds:
-            train_idx = np.setdiff1d(np.arange(len(p)), val_idx,
-                                     assume_unique=False)
-            mapper = self._fit_mapper(p[train_idx], y_arr[train_idx])
-            calibrated[val_idx] = self._apply(mapper, p[val_idx])
-
+        inner_cal = np.full(inner.shape, np.nan, dtype=float)
+        fold_applied, fold_ece = [], []
+        for k, (train_idx, val_idx) in enumerate(folds):
+            s, y_k = inner[k, train_idx], y_arr[train_idx]
+            ece_k = calculate_ece(y_k, s, self.ece_bins)
+            gate_k = bool(self.force or ece_k > self.ece_threshold)
+            if gate_k:
+                mapper = self._fit_mapper(s, y_k)
+                calibrated[val_idx] = self._apply(mapper, p[val_idx])
+                inner_cal[k, train_idx] = self._apply(mapper, s)
+            else:
+                calibrated[val_idx] = p[val_idx]
+                inner_cal[k, train_idx] = s
+            fold_applied.append(gate_k)
+            fold_ece.append(float(ece_k))
         if np.isnan(calibrated).any():
             raise AssertionError(
                 "Nested calibration left rows unmapped — check the fold plan."
             )
-
-        # --- calibrator for the refit model's outputs (test time) ---------
-        self.final_calibrator_ = self._fit_mapper(p, y_arr)
-        self.applied_ = True
         self.oof_calibrated_ = calibrated
+        self.inner_calibrated_ = inner_cal
+        self.fold_applied_ = fold_applied
 
+        rel = ">" if self.applied_ else "<="
+        reason = f"OOF ECE {ece_before:.4f} {rel} gate {self.ece_threshold}"
+        if self.force:
+            reason = f"forced ({reason})"
         self.report_ = CalibrationReport(
             method=self.method,
-            applied=True,
-            reason=f"OOF ECE {ece_before:.4f} > gate {self.ece_threshold}",
+            applied=self.applied_,
+            reason=reason,
             ece_threshold=self.ece_threshold,
             ece_bins=self.ece_bins,
             ece_before=ece_before,
@@ -173,6 +196,8 @@ class Stage3Calibrator:
             brier_after=float(brier_score_loss(y_arr, calibrated)),
             n_rows=len(p),
             n_zero_after=int((calibrated == 0.0).sum()),
+            fold_applied=list(fold_applied),
+            fold_ece_inner=list(fold_ece),
         )
         return self
 
@@ -223,6 +248,7 @@ def calibration_diagnostics(
         "test_ece_calibrated": calculate_ece(yte, test_proba_calibrated, ece_bins),
         "test_brier_raw": float(brier_score_loss(yte, test_proba)),
         "test_brier_calibrated": float(brier_score_loss(yte, test_proba_calibrated)),
-        "calibrator_fitted_on": "all OOF rows (test); other folds' OOF rows (train)",
+        "calibrator_fitted_on": ("all OOF rows (test); per outer fold, the inner OOF scores "
+                                 "of its training rows (train, F22)"),
     })
     return calib

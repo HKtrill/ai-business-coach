@@ -33,6 +33,25 @@ from sklearn.utils.validation import check_is_fitted
 __all__ = ["Stage1MLPClassifier", "oversample_positives"]
 
 
+def _binary_labels(y) -> np.ndarray:
+    """
+    ``y`` as an int 0/1 array, refusing every other value.
+
+    PR 36 (audit F34): labels used to go straight through ``astype(int)``,
+    which truncates rather than refuses (``0.6`` became ``0``), so a
+    non-binary target trained silently on the wrong labels. The stage checks
+    its labels first (``shared.stage1.labels.check_labels``, F18); this
+    covers the estimator and :func:`~.tuning.tune_stage1_mlp_auc` when called
+    directly. ``bool`` and ``0.0`` / ``1.0`` labels are accepted unchanged.
+    """
+    y = np.asarray(y)
+    if not np.isin(y, (0, 1)).all():
+        raise ValueError(
+            f"Stage 1 MLP labels must be binary 0/1; got values {np.unique(y)[:6].tolist()}"
+        )
+    return y.astype(int)
+
+
 def oversample_positives(
     X: np.ndarray,
     y: np.ndarray,
@@ -179,12 +198,13 @@ class Stage1MLPClassifier(ClassifierMixin, BaseEstimator):
         Raises
         ------
         ValueError
-            If ``X`` and ``y`` differ in length, or ``y`` holds one class.
+            If ``X`` and ``y`` differ in length, ``y`` is not binary 0/1
+            (audit F34), or ``y`` holds one class.
         RuntimeError
             If no epoch was ever recorded as best.
         """
         X = np.asarray(X, dtype=float)
-        y = np.asarray(y).astype(int)
+        y = _binary_labels(y)
 
         if X.shape[0] != y.shape[0]:
             raise ValueError(f"X/y length mismatch: {X.shape[0]} vs {y.shape[0]}")

@@ -25,7 +25,7 @@ Leakage contract:
     result leaks every validation row's label into its own features.
 
     Since PR 33 Stage 3 uses ``EBMFeaturePipeline`` through
-    ``shared.stage_runner.Stage3Block``, which refits the pipeline inside every
+    ``shared.stage3.Stage3Block``, which refits the pipeline inside every
     fold (fit on the fold's training rows, transform its validation rows and
     the test split). The full-train fit is used only for the refit model and
     the test split, and is saved in the artifact for serving.

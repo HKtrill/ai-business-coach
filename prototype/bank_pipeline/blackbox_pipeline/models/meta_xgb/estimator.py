@@ -10,6 +10,8 @@ by XGBoost's default-direction splits; nothing is imputed.
 
 from __future__ import annotations
 
+import math
+import numbers
 from typing import Any, Optional
 
 import numpy as np
@@ -18,6 +20,26 @@ import pandas as pd
 from .config import MetaXGBSearchSpace
 
 _INT_PARAMS = ("n_estimators", "max_depth")
+
+#: The tuned hyperparameters, in ``suggest`` order. ``colsample_bytree`` is a
+#: fixed field of the search space, applied by ``_model``; it is not tuned.
+META_XGB_TUNED_PARAM_NAMES: tuple[str, ...] = (
+    "n_estimators", "learning_rate", "max_depth", "min_child_weight", "subsample",
+    "reg_lambda", "reg_alpha",
+)
+
+#: XGBoost's own domain per tuned value, as (lower bound, lower inclusive,
+#: upper bound). XGBoost accepts several out-of-domain values without a word:
+#: n_estimators <= 0 (no trees), learning_rate 0 or NaN, subsample 0.
+_META_XGB_DOMAIN: dict[str, tuple[float, bool, float]] = {
+    "n_estimators": (1, True, math.inf),
+    "learning_rate": (0.0, False, math.inf),
+    "max_depth": (0, True, math.inf),
+    "min_child_weight": (0.0, True, math.inf),
+    "subsample": (0.0, False, 1.0),
+    "reg_lambda": (0.0, True, math.inf),
+    "reg_alpha": (0.0, True, math.inf),
+}
 
 
 class MetaXGBEstimator:
@@ -45,10 +67,45 @@ class MetaXGBEstimator:
         }
 
     def normalize_params(self, params: dict[str, Any]) -> dict[str, Any]:
-        out = dict(params)
-        for k in _INT_PARAMS:
-            if k in out:
-                out[k] = int(out[k])
+        """
+        Exactly the tuned keys, each a finite number in XGBoost's domain.
+
+        PR 36 (audit F1): params used to reach ``XGBClassifier`` as given. At
+        ``verbosity=0`` XGBoost ignores an unknown or misspelled name without a
+        word (``max_dept=4`` was recorded in ``best_params`` and never
+        applied), a missing key silently took XGBoost's default (``max_depth``
+        6, outside the space's 1-4), and ``int()`` truncated
+        ``n_estimators=20.7``. Now, as in the Stage 3 ``XGBEstimator``, a
+        missing or unknown key (aliases such as ``eta`` and the fixed
+        ``colsample_bytree`` / ``missing`` included) raises ``KeyError``; a
+        value that is not a finite real number, a non-integral
+        ``n_estimators`` / ``max_depth``, or a value outside XGBoost's domain
+        raises ``ValueError``.
+        """
+        missing = [k for k in META_XGB_TUNED_PARAM_NAMES if k not in params]
+        if missing:
+            raise KeyError(f"Meta-XGB params missing tuned keys: {missing}")
+        unknown = [k for k in params if k not in META_XGB_TUNED_PARAM_NAMES]
+        if unknown:
+            raise KeyError(f"Unknown Meta-XGB hyperparameters {unknown}; expected exactly "
+                           f"{list(META_XGB_TUNED_PARAM_NAMES)}.")
+        out: dict[str, Any] = {}
+        for name in META_XGB_TUNED_PARAM_NAMES:
+            value = params[name]
+            if (isinstance(value, (bool, np.bool_)) or not isinstance(value, numbers.Real)
+                    or not math.isfinite(value)):
+                raise ValueError(f"Meta-XGB {name} must be a finite number, got {value!r}")
+            if name in _INT_PARAMS:
+                if not float(value).is_integer():
+                    raise ValueError(f"Meta-XGB {name} must be an integer, got {value!r}")
+                value = int(value)
+            else:
+                value = float(value)
+            low, low_inclusive, high = _META_XGB_DOMAIN[name]
+            if not ((value >= low) if low_inclusive else (value > low)) or value > high:
+                raise ValueError(f"Meta-XGB {name}={value!r} is outside its domain "
+                                 f"{'[' if low_inclusive else '('}{low}, {high}]")
+            out[name] = value
         return out
 
     def _model(self, params: dict[str, Any]):

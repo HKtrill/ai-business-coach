@@ -6,7 +6,7 @@ The EBM arm's implementation of ``shared.stage3.estimator``.
 ``EBMFactory`` is the single place an ``ExplainableBoostingClassifier`` is
 built — Optuna objective, 10-fold report, OOF pass and full refit all go
 through it (the old ``_build_model`` discipline). Its counterpart in the
-black-box arm is ``blackbox_pipeline.models.xgb.estimator.XGBFactory``.
+black-box arm is ``blackbox_pipeline.models.xgb.shared_protocol.XGBEstimator``.
 
 Search space (unchanged from the research trainer)
 --------------------------------------------------

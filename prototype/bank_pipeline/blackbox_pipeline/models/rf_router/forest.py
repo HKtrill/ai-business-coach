@@ -21,6 +21,8 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 
+from .config import validate_rf_params
+
 __all__ = ["ForestTrainer", "make_sample_weights", "build_pipe"]
 
 
@@ -87,7 +89,10 @@ class ForestTrainer:
     """
 
     def __init__(self, params: dict, random_state: int = 42, n_jobs: int = -1):
-        self.params = dict(params)
+        # PR 36 (audit F1): every forest the router family fits (routers,
+        # cross-fit, tuning harness) is built here, so an unknown, missing or
+        # invalid hyperparameter is refused before any fit, not dropped.
+        self.params = validate_rf_params(params, "ForestTrainer params")
         self.random_state = int(random_state)
         self.n_jobs = n_jobs
 

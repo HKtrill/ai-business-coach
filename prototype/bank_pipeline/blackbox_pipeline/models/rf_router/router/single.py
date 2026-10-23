@@ -15,6 +15,8 @@ from typing import Any, Optional
 import numpy as np
 import pandas as pd
 
+from shared.stage_io import label_fingerprint
+
 from ..config import RFRouterConfig
 from ..forest import ForestTrainer
 from ..oof import OOFScorer
@@ -53,6 +55,7 @@ class SingleRFRouter(_BaseRouter):
         self.training_base_rate = float(y_arr.mean())
         self._y_train_ = y_arr
         self.split_fingerprint_ = split_fingerprint_value
+        self.train_label_fingerprint_ = label_fingerprint(X.index, y_arr)       # PR 36 F12
 
         trainer = ForestTrainer(cfg.rf_params, cfg.random_state)
 

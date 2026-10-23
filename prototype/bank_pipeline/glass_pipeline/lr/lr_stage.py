@@ -20,6 +20,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from typing import Dict, Tuple
 
+from .penalty import penalty_kwargs
 from .base_stage import BaseLRStage
 
 warnings.filterwarnings("ignore")
@@ -65,7 +66,7 @@ class LRStage(BaseLRStage):
         print("\n🤖 Training Logistic Regression...")
         self.model = LogisticRegression(
             C=self.C,
-            penalty=self.penalty,
+            **penalty_kwargs(self.penalty),
             solver=self.solver,
             class_weight=self.class_weight,
             max_iter=self.max_iter,

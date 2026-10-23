@@ -97,6 +97,7 @@ def save_rf_router(
         "bands": router.bands_.to_dict(),
         "fit_report": _jsonable(router.fit_report_),
         "split_fingerprint": router.split_fingerprint_,
+        "train_label_fingerprint": getattr(router, "train_label_fingerprint_", None),
         "test_metrics": test_metrics,
         "environment": {
             "python": platform.python_version(),

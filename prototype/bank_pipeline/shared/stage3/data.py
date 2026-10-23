@@ -10,6 +10,7 @@ The exact data / fold / feature contract Stage 3 sees.
 * ``PassthroughPipeline``    identity pipeline for pre-engineered frames
 * ``FoldFrames``             one fold's model-ready frames
 * ``Stage3Block``            everything both arms consume, fingerprinted
+* ``check_inner_scores``     layout guard for inner out-of-fold scores (F22)
 """
 
 from __future__ import annotations
@@ -156,6 +157,32 @@ class FoldPlan:
             stratified=bool(d["stratified"]),
             purpose=d.get("purpose", "tuning+oof"),
         )
+
+
+def check_inner_scores(inner_proba, folds: FoldPlan, n_rows: int) -> np.ndarray:
+    """
+    Validate inner out-of-fold scores (audit F22) and return them as floats.
+
+    ``inner_proba`` has shape ``(folds.n_splits, n_rows)``. Row ``k`` scores
+    every TRAINING row of outer fold ``k`` with models fitted on inner folds
+    of those rows only, and leaves fold ``k``'s held-out rows NaN. Only such
+    scores may fit fold ``k``'s calibration map, gate and threshold: the outer
+    OOF scores of the other folds come from models trained on fold ``k``'s
+    labels.
+    """
+    a = np.asarray(inner_proba, dtype=float)
+    if a.shape != (folds.n_splits, n_rows):
+        raise ValueError(
+            f"inner scores must have shape (n_folds, n_rows) = "
+            f"{(folds.n_splits, n_rows)}, got {a.shape}")
+    for k, (train, val) in enumerate(folds):
+        if not np.isnan(a[k, val]).all():
+            raise ValueError(
+                f"inner scores for fold {k} must leave its held-out rows unscored "
+                "(NaN): only models fitted inside its training rows may score them")
+        if not np.isfinite(a[k, train]).all():
+            raise ValueError(f"inner scores for fold {k} must cover all its training rows")
+    return a
 
 
 @dataclass
@@ -419,6 +446,10 @@ class Stage3Block:
     split_fingerprint: Optional[str] = None
     block_fingerprint: str = ""
     settings: dict = field(default_factory=dict)
+    # inner_folds[k]: folds over tuning fold k's TRAINING rows (positions in
+    # the training split), each with its own feature pipeline and cleaner.
+    # Their out-of-fold scores fit fold k's calibration and threshold (F22).
+    inner_folds: list[list[FoldFrames]] = field(default_factory=list)
 
     # ------------------------------------------------------------------
     @property
@@ -428,6 +459,14 @@ class Stage3Block:
     @property
     def index_test(self) -> pd.Index:
         return self.X_test.index
+
+    def inner_fold_ids(self) -> np.ndarray:
+        """``(n_tune_folds, n_train)``: inner fold of each row; -1 on the outer held-out rows."""
+        out = np.full((len(self.inner_folds), len(self.X_train)), -1, dtype=int)
+        for k, inner in enumerate(self.inner_folds):
+            for f in inner:
+                out[k, f.val_idx] = f.k
+        return out
 
     # ------------------------------------------------------------------
     @classmethod
@@ -483,9 +522,14 @@ class Stage3Block:
         )
 
         # ---- per-fold frames --------------------------------------------
-        def fold_frames(plan: FoldPlan, with_test: bool) -> list[FoldFrames]:
+        def fold_frames(plan: FoldPlan, with_test: bool,
+                        rows: Optional[np.ndarray] = None) -> list[FoldFrames]:
+            """``plan`` partitions ``rows`` (training-split positions; all rows
+            by default). Frame positions are always training-split positions."""
             out = []
             for k, (tr, va) in enumerate(plan):
+                if rows is not None:
+                    tr, va = rows[tr], rows[va]
                 if feature_fit_scope == "per_fold":
                     p = pipeline_factory()
                     Xa_raw = X_train_raw.iloc[tr]
@@ -524,15 +568,30 @@ class Stage3Block:
 
         say(f"  Stage 3 block: feature_fit_scope={feature_fit_scope!r} — "
             + ("refitting the feature pipeline inside each of "
-               f"{n_tune_folds} tuning + {n_eval_folds} reporting folds"
+               f"{n_tune_folds} tuning + {n_eval_folds} reporting folds + "
+               f"{n_tune_folds}x{n_tune_folds} inner folds"
                if feature_fit_scope == "per_fold"
                else "slicing the full-train features (LEAKY — comparison only)"))
         tune_folds = fold_frames(tune_plan, with_test=True)
         report_folds = fold_frames(report_plan, with_test=False)
 
+        # ---- inner folds (F22) ------------------------------------------
+        # The tuning-fold partition rule applied to each tuning fold's
+        # TRAINING rows, as Stage 1 does (shared.stage1.crossfit.
+        # inner_fold_designs): fold k's held-out rows and labels never reach
+        # these frames, their pipelines or their models.
+        inner_folds = []
+        for k, (tr, _) in enumerate(tune_plan):
+            inner_plan = FoldPlan.build(
+                y_tr.iloc[tr], n_tune_folds, random_state, stratify,
+                purpose=f"inner folds of tuning fold {k}: calibration+threshold",
+            )
+            inner_folds.append(fold_frames(inner_plan, with_test=False, rows=tr))
+
         settings = {
             "feature_fit_scope": feature_fit_scope,
             "n_tune_folds": int(n_tune_folds),
+            "n_inner_folds": int(n_tune_folds),
             "n_eval_folds": int(n_eval_folds),
             "random_state": int(random_state),
             "stratify": bool(stratify),
@@ -548,6 +607,7 @@ class Stage3Block:
             tune_plan=tune_plan, report_plan=report_plan,
             tune_folds=tune_folds, report_folds=report_folds,
             split_fingerprint=split_fingerprint, settings=settings,
+            inner_folds=inner_folds,
         )
         block.block_fingerprint = block.compute_fingerprint()
         say(f"  Stage 3 block: {len(order)} features, train {Xtr.shape}, "
@@ -602,7 +662,22 @@ class Stage3Block:
             _hash_frame(h, f.X_val)
             if f.X_test is not None:
                 _hash_frame(h, f.X_test)
+        for inner in self.inner_folds:
+            for f in inner:
+                h.update(np.asarray(f.val_idx, dtype=np.int64).tobytes())
+                _hash_frame(h, f.X_tr)
+                _hash_frame(h, f.X_val)
         return h.hexdigest()
+
+    def require_inner_folds(self) -> list[list[FoldFrames]]:
+        """The inner folds, or a clear error for a block built before F22."""
+        inner = getattr(self, "inner_folds", None)       # absent on old pickles
+        if not inner or len(inner) != self.tune_plan.n_splits:
+            raise ValueError(
+                "Stage3Block has no inner folds: it was built (or cached) before "
+                "PR 36 F22. Rebuild it with Stage3Block.build / from_global_split "
+                "and delete any cached copy.")
+        return inner
 
     def check_config(self, config) -> None:
         """Raise if a Stage3Config disagrees with how this block was built."""
@@ -640,6 +715,14 @@ class Stage3Block:
 
 
 def _as_label_series(y, X: pd.DataFrame, name: str) -> pd.Series:
+    """
+    Labels as an int Series indexed like ``X``.
+
+    A Series must already carry ``X``'s index (same labels, same order). A
+    bare array is accepted and aligned BY POSITION: element i is taken to be
+    the label of row i of ``X``, so the caller is responsible for that order
+    (PR 36 finding F6).
+    """
     if isinstance(y, pd.Series):
         if len(y) != len(X) or not y.index.equals(X.index):
             raise ValueError(

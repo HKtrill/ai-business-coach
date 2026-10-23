@@ -14,8 +14,6 @@ train_rf_stage(X_train_eng, X_test_eng, y_train, y_test) → RFResult
 
 from __future__ import annotations
 
-from asyncio.windows_utils import pipe
-from os import pipe
 import time
 from dataclasses import dataclass
 

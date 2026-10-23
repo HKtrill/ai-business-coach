@@ -54,6 +54,7 @@ from sklearn.model_selection import StratifiedKFold
 
 from glass_pipeline.glass_router.core.rule import ABSTAIN, NOT_SUBSCRIBE, SUBSCRIBE
 from shared.stage2.feature_engineering import engineer_features
+from shared.stage_io import label_fingerprint
 from glass_pipeline.glass_router.rf.rf_training import _build_pipe, _make_sample_weights
 from glass_pipeline.glass_router.rule_generator.rule_logger import RuleLogger
 from .glass_router_pipeline import GlassRouterPipeline
@@ -303,6 +304,8 @@ def crossfit_stage2(
         "train_outputs_oof": True,
         "n_folds": len(folds),
         "fold_fingerprint": fold_fingerprint(fold_id),
+        # PR 36 (audit F12): the labels the per-fold fits used (train-side outputs).
+        "train_label_fingerprint": label_fingerprint(y_train.index, y_train),
         "fold_source": fold_source,
         "random_state": random_state,
         "feature_engineering": "RFFeatureEngineer refit per fold; locked BINNING_STRATEGY bins",

@@ -19,7 +19,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Optional
 
-from ..config import _REQUIRED_PARAM_KEYS
+from ..config import _REQUIRED_PARAM_KEYS, check_rf_param, validate_rf_params
 
 __all__ = ["REQUIRED_PARAM_KEYS", "normalise_rf_params", "suggest_rf_params"]
 
@@ -27,19 +27,41 @@ __all__ = ["REQUIRED_PARAM_KEYS", "normalise_rf_params", "suggest_rf_params"]
 #: validates against — re-exported, not redefined.
 REQUIRED_PARAM_KEYS = _REQUIRED_PARAM_KEYS
 
+#: The names ``suggest_rf_params`` gives Optuna (raw ``best_params``).
+RAW_OPTUNA_KEYS = ("max_features_type", "use_max_depth", "n_estimators", "max_depth",
+                   "min_samples_leaf", "max_features_fraction", "minority_weight")
+
 
 def normalise_rf_params(raw: Mapping[str, Any]) -> dict:
     """
     Accept either normalised params or raw Optuna ``best_params``.
 
     Mirrors ``glass_pipeline.glass_router.rf.rf_training._normalize_params``
-    (formerly ``_normalise_rf_params`` in notebook Cell 20, unchanged).
+    (formerly ``_normalise_rf_params`` in notebook Cell 20), keeping its
+    documented defaults (no ``use_max_depth`` -> no depth limit, no
+    ``max_features_type`` -> ``'sqrt'``, no ``minority_weight`` -> 1.0).
+
+    PR 36 (audit F1): a normalised dict with an extra key used to come back
+    with the key silently dropped (``RF_PARAMS_EXPLICIT`` with ``max_dept``
+    ran at the old depth), a raw dict with an unknown key was mapped as if it
+    were not there, and ``max_features_type='fraction'`` without its fraction
+    (or ``use_max_depth=True`` without ``max_depth``) became ``None``. All of
+    these now raise ``ValueError``, and the result passes
+    ``validate_rf_params``.
     """
     if all(k in raw for k in REQUIRED_PARAM_KEYS):
-        return {k: raw[k] for k in REQUIRED_PARAM_KEYS}
+        return validate_rf_params(raw, "RF params")
 
+    unknown = [k for k in raw if k not in RAW_OPTUNA_KEYS]
+    if unknown:
+        raise ValueError(f"RF params: unknown keys {unknown}; expected the normalised keys "
+                         f"{list(REQUIRED_PARAM_KEYS)} or the raw Optuna keys {list(RAW_OPTUNA_KEYS)}")
     mf_type = raw.get("max_features_type", "sqrt")
-    return {
+    if mf_type == "fraction" and "max_features_fraction" not in raw:
+        raise ValueError("RF params: max_features_type='fraction' needs max_features_fraction")
+    if raw.get("use_max_depth") and "max_depth" not in raw:
+        raise ValueError("RF params: use_max_depth=True needs max_depth")
+    return validate_rf_params({
         "n_estimators": raw["n_estimators"],
         "max_depth": raw.get("max_depth") if raw.get("use_max_depth") else None,
         "min_samples_leaf": raw["min_samples_leaf"],
@@ -48,7 +70,7 @@ def normalise_rf_params(raw: Mapping[str, Any]) -> dict:
         ),
         "minority_weight": raw.get("minority_weight", 1.0),
         "class_weight": "balanced",
-    }
+    }, "RF params")
 
 
 def suggest_rf_params(trial, fixed: Optional[Mapping[str, Any]] = None) -> dict:
@@ -76,6 +98,9 @@ def suggest_rf_params(trial, fixed: Optional[Mapping[str, Any]] = None) -> dict:
         raise ValueError(f"fixed contains unknown keys: {sorted(unknown)}")
     if fixed.get("class_weight", "balanced") != "balanced":
         raise ValueError("class_weight is fixed to 'balanced' in this search space")
+    # PR 36 (audit F1): fixed values are checked, not coerced
+    # (n_estimators=500.5 used to run 500 trees).
+    fixed = {k: check_rf_param(k, v, "fixed") for k, v in fixed.items()}
 
     # Order matters — see module docstring.
     mf_type = None

@@ -30,10 +30,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any, ClassVar, Optional
 
-try:                                    # current package layout
-    from shared.stage3 import Stage3Config
-except ImportError:                     # pragma: no cover - legacy monolith
-    from shared.stage_runner import Stage3Config
+from shared.stage3 import Stage3Config
 
 STAGE4_FEATURES: tuple = (
     "stage1_proba",
@@ -117,6 +114,18 @@ class MetaXGBConfig(Stage3Config):
     _space_cls: ClassVar[Optional[type]] = MetaXGBSearchSpace
 
     def __post_init__(self) -> None:
+        """
+        PR 36: two more fields are held to the Stage 4 contract.
+
+        * ``impute_missing`` (audit F38): ``True`` was accepted and replaced
+          the router probability on abstain rows with the training median,
+          so ``stage2_proba`` was no longer missing exactly where the router
+          abstains, contradicting ``router_proba_on_abstain='missing'`` and
+          ``FEATURE_CONTRACT``.
+        * identity (audit F37, Stage 4): ``stage`` / ``model_family`` / ``arm``
+          label the learner artifact; ``model_family='ebm', arm='glass'`` or
+          ``stage='stage3'`` were accepted and mislabelled it.
+        """
         super().__post_init__()
         errors = []
         if list(self.expected_features or []) != list(STAGE4_FEATURES):
@@ -125,5 +134,12 @@ class MetaXGBConfig(Stage3Config):
             errors.append("operating_space must be 'raw' or 'calibrated'")
         if self.router_proba_on_abstain != "missing":
             errors.append("router_proba_on_abstain: only 'missing' is implemented")
+        if self.impute_missing:
+            errors.append("impute_missing must be False: the router probability stays missing "
+                          "on abstain rows (router_proba_on_abstain='missing', audit F38)")
+        if (self.stage, self.model_family, self.arm) != ("stage4", "meta_xgb", "blackbox"):
+            errors.append("identity must stay stage='stage4', model_family='meta_xgb', "
+                          f"arm='blackbox', got stage={self.stage!r}, "
+                          f"model_family={self.model_family!r}, arm={self.arm!r} (audit F37)")
         if errors:
             raise ValueError("MetaXGBConfig: " + "; ".join(errors))

@@ -4,13 +4,13 @@ glass_pipeline.ebm.evaluation
 Legacy Stage 3 EBM evaluation helpers.
 
 Since PR 33 ``train_ebm_stage`` scores the test split through
-``shared.stage_runner.Stage3Metrics`` at the threshold selected on
+``shared.stage3.Stage3Metrics`` at the threshold selected on
 OUT-OF-FOLD training predictions. These helpers remain for research code.
 
 PR 33 change: ``evaluate_ebm(threshold=None)`` used to pick the threshold on
 the very ``y_test`` it then reported on. It now requires an explicit
 threshold. ``find_optimal_threshold`` is unchanged and is the same grid rule
-as ``shared.stage_runner.F2ThresholdSelector`` — call it on OOF
+as ``shared.stage3.F2ThresholdSelector`` — call it on OOF
 predictions, never on test labels.
 
 Changes from prototype

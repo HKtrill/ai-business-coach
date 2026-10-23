@@ -21,9 +21,10 @@ Order of operations (each step reads only what is listed)
                 CV report     10-fold, train only
                 refit         all train rows
                 meta OOF      one model per fold, scores only its held-out fold
-                calibrate     OOF-ECE gate; fold-nested on train, all-OOF map → test
-                threshold     F2 grid on META OOF; fold-nested per-row for train
-                abstention    min |p − t| by F2 on META OOF, coverage ≥ 50%
+                calibrate     OOF-ECE gate; nested on train (inner folds), all-OOF map → test
+                threshold     F2 grid on META OOF; fold-nested per-row for train (inner OOF)
+                abstention    min |p − t| by F2 on META OOF, coverage ≥ 50%; exact
+                              search over distinct |p − t| (shared rule, PR 36 F30)
               ── configuration frozen ──
                 test          refit model scores the test block once
 4. evaluate   no-abstention + with-abstention on test
@@ -41,12 +42,10 @@ from typing import Any, Optional
 import numpy as np
 import pandas as pd
 
-try:
-    from shared.stage3 import PassthroughPipeline, Stage3Block, Stage3Runner
-except ImportError:                     # pragma: no cover - legacy monolith
-    from shared.stage_runner import PassthroughPipeline, Stage3Block, Stage3Runner
-
-from shared.stage4 import ABSTENTION_GRID, ABSTENTION_MIN_COVERAGE, tune_min_confidence
+from shared.stage3 import PassthroughPipeline, Stage3Block, Stage3Runner
+from shared.stage4 import (
+    ABSTENTION_GRID, ABSTENTION_MIN_COVERAGE, ABSTENTION_SEARCH, tune_min_confidence,
+)
 
 from .artifact import MetaXGBArtifact, save_meta_xgb
 from .config import EXCLUDED_CHANNELS, FEATURE_CONTRACT, STAGE4_FEATURES, MetaXGBConfig
@@ -96,19 +95,20 @@ class MetaXGBRunner(Stage3Runner):
         else:
             p_oof = self.calibrator_.oof_calibrated_
             t_glob, t_key = choice_cal.threshold, "oof_calibrated_space"
-            t_rows = (self.selector.select_nested(y_tr, p_oof, block.tune_plan)["per_row"]
+            t_rows = (self.selector.select_nested(
+                          y_tr, p_oof, block.tune_plan,
+                          self.calibrator_.inner_calibrated_)["per_row"]
                       if cfg.nested_oof_threshold else np.full(len(y_tr), t_glob))
         pred_oof = (p_oof >= t_rows).astype(int)
         conf_oof = np.abs(p_oof - t_rows)
-        best = tune_min_confidence(y_tr, pred_oof, conf_oof, ABSTENTION_GRID,
-                                   ABSTENTION_MIN_COVERAGE)
-        if best is None:
+        best = tune_min_confidence(y_tr, pred_oof, conf_oof, None, ABSTENTION_MIN_COVERAGE)
+        if best is None:                     # unreachable for min_coverage <= 1 (exact search)
             best = {"min_confidence": float(ABSTENTION_GRID[0]), "train_f2": None,
                     "train_coverage": None, "sweep": [],
                     "selected_by": "fallback: smallest grid value (no value met coverage floor)"}
         else:
-            best["selected_by"] = (f"F2 on meta OOF retained rows, coverage ≥ "
-                                   f"{ABSTENTION_MIN_COVERAGE:.0%} (Meta-EBM rule)")
+            best["selected_by"] = (f"F2 on meta OOF retained rows, exact search, coverage ≥ "
+                                   f"{ABSTENTION_MIN_COVERAGE:.0%} (shared Stage 4 rule)")
         self.operating_ = {
             "space": cfg.operating_space, "threshold": float(t_glob),
             "threshold_key": t_key,
@@ -122,7 +122,7 @@ class MetaXGBRunner(Stage3Runner):
             "sweep": best.get("sweep", []),
             "confidence": "|p − t|, p = meta probability in the operating space, "
                           "t = operating threshold (fold-nested on train rows)",
-            "grid": [float(g) for g in ABSTENTION_GRID],
+            "search": ABSTENTION_SEARCH,
             "min_coverage": ABSTENTION_MIN_COVERAGE,
             "tuned_on": "meta OOF train predictions",
             "tuned_on_n": int(len(y_tr)),
@@ -197,7 +197,7 @@ def _meta_checks(learner, runner, inputs, n_train: int) -> list:
               f"{'applied' if cal.get('applied') else 'skipped'} — {cal.get('reason')}"))
     c.append((SEC_META, "stage4", "abstention tuned on meta OOF (train) only",
               lambda: runner.abstention_["tuned_on_n"] == n_train,
-              f"min |p−t| = {runner.abstention_['min_confidence']:.2f}"))
+              f"min |p−t| = {runner.abstention_['min_confidence']:.4f}"))
     c.append((SEC_META, "stage4", "configuration frozen before the test split is scored",
               lambda: ev.index("configuration frozen") < ev.index("test scored (refit model, once)"),
               " → ".join(ev)))
@@ -221,6 +221,7 @@ def train_meta_xgb_stage(
     save: bool = True,
     verbose: bool = True,
     extra_fingerprints: Optional[dict] = None,
+    upstream: Optional[str] = None,
 ) -> tuple[MetaXGBArtifact, Optional[str]]:
     """
     Train, cross-fit, calibrate, threshold, evaluate and save Meta-XGB.
@@ -228,8 +229,19 @@ def train_meta_xgb_stage(
     ``params``: skip Optuna and use these hyperparameters (recorded as such).
     ``meta_ebm_path``: saved GLASS Meta-EBM artifact (schema meta_ebm/2) for the
     held-out comparison; optional.
+    ``upstream``: arm of the Stage 1–3 artifacts — ``"blackbox"`` (default) or,
+    for the 2x2 crossover, ``"glass"`` (GLASS LR, GLASS Router, GLASS EBM in the
+    mlp / rf_router / xgb slots; PR 36 F29). Recorded in
+    ``stage4_inputs["upstream"]``.
+
+    PR 36 (audit F37, Stage 4): only a ``MetaXGBConfig`` is accepted. Another
+    ``Stage3Config`` used to load and fit everything before failing (a generic
+    config has no ``operating_space``; an ``XGBStage3Config`` carries the
+    Stage 3 search space).
     """
     cfg = config or MetaXGBConfig(verbose=verbose, show_progress_bar=verbose)
+    if not isinstance(cfg, MetaXGBConfig):
+        raise TypeError(f"config must be a MetaXGBConfig, got {type(cfg).__name__} (audit F37).")
     if artifact_dir is not None:
         cfg.artifact_dir = artifact_dir
     say = print if cfg.verbose else (lambda *a, **k: None)
@@ -242,7 +254,10 @@ def train_meta_xgb_stage(
     say("\n📂 1. Loading and verifying black-box Stage 1–3 outputs...")
     inputs = load_blackbox_stage4_inputs(GLOBAL_SPLIT, mlp_path, rf_path, xgb_path,
                                          verbose=cfg.verbose,
-                                         extra_fingerprints=extra_fingerprints)
+                                         extra_fingerprints=extra_fingerprints,
+                                         upstream=upstream)
+    if inputs.upstream["crossover"]:
+        say(f"   2x2 crossover: {inputs.upstream['combination']}")
     for s in inputs.streams.values():
         say(f"   {s.model:<30} train ← {s.train_source}   test ← {s.test_source}")
         say(f"   {'':<30} [{s.probability_space}]")

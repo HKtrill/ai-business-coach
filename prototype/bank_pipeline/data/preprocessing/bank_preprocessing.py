@@ -118,7 +118,7 @@ class BankPreprocessor:
         self.drop_leaky = drop_leaky
         self.verbose    = verbose
         self.db_path    = Path(db_path)
-        self._job_map:  Dict[str, int] | None = None  # built from training data
+        self._job_map:  Dict[str, int] | None = None  # learned in fit()
         self._is_fitted: bool = False
 
     # ------------------------------------------------------------------
@@ -127,13 +127,19 @@ class BankPreprocessor:
 
     def fit(self, df: pd.DataFrame | None = None) -> "BankPreprocessor":
         """
-        Fit on training data.
+        Learn the job vocabulary: job category → integer (sorted, stable).
 
-        Currently learns: job category → integer mapping (sorted, stable).
+        The vocabulary comes from whatever ``fit`` reads: ``df`` when given,
+        otherwise the whole ``raw_bank`` table. The research notebooks call
+        ``fit_transform()`` before the train/test split, so the vocabulary
+        spans train and test rows. It uses no labels and codes are assigned
+        alphabetically, so no frequency or target information is learned; the
+        only effect is that a job seen solely in held-out rows still gets a
+        code instead of -1 (PR 36 finding F5).
 
         Parameters
         ----------
-        df : raw training DataFrame, or None to read raw_bank from db_path
+        df : raw DataFrame, or None to read raw_bank from db_path
         """
         with self._open_raw_bank(df) as conn:
             rows = conn.execute(_read_sql("fit_job_map.sql")).fetchall()
@@ -209,7 +215,7 @@ class BankPreprocessor:
         if self.drop_leaky:
             to_drop = [c for c in _LEAKY_FEATURES if c in out.columns]
             if to_drop:
-                out.drop(columns=to_drop, inplace=True)
+                out = out.drop(columns=to_drop)
                 log(f"⚠️   dropped leaky features: {to_drop}")
 
         # ── Final validation ──────────────────────────────────────────
