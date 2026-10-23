@@ -142,7 +142,7 @@ def _band_blend(dec, fit_dec, y_fit, fold=None):
     return p, conf
 
 
-def make_router(w, layout="top-level", abstain_band=True, two_col=False, label_fingerprint=False,
+def make_router(w, layout="top-level", abstain_band=True, two_col=False, label_fingerprint=True,
                 band_blend=False, pass2_population=None):
     """
     GLASS bundle (top-level) or RF Router artifact (layout='extra').
@@ -152,10 +152,11 @@ def make_router(w, layout="top-level", abstain_band=True, two_col=False, label_f
     base rate, test probabilities with the full training base rate, and the
     rule precisions are stored as ``train_confidence`` / ``test_confidence``.
 
-    ``label_fingerprint=True`` records ``train_label_fingerprint`` over
-    ``w``'s training rows and labels — the labels the router was fitted on —
-    in ``oof_protocol`` and at the top level, as the producers do since
-    PR 36 F12. The default is an artifact written before that.
+    ``label_fingerprint=True`` (the default: a current-format artifact)
+    records ``train_label_fingerprint`` over ``w``'s training rows and labels —
+    the labels the router was fitted on — in ``oof_protocol`` and at the top
+    level, as the producers do since PR 36 F12. ``label_fingerprint=False`` is
+    an artifact written before that, which Stage 4 refuses since Commit 4.
 
     ``band_blend=True`` (RF layout): the RF Router's real output form — band
     blends (``_band_blend``), its full-train ``mode`` ("two_pass"), bands and

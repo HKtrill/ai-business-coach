@@ -30,7 +30,6 @@ blackbox_pipeline.
 Not loaded by ``import shared`` (it needs optuna); import it explicitly::
 
     from shared.stage3 import Stage3Block, Stage3Runner
-    from shared.stage_runner import Stage3Block, Stage3Runner   # legacy path
 """
 
 from .artifact import (

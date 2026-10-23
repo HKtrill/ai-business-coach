@@ -238,13 +238,9 @@ def _fold_fp_fn():
 
 PASS2_POPULATIONS = ("full", "oof_remainder")
 #: ``StageStream.notes["pass2_population_evidence"]`` for routers (PR 36 F17).
+#: Since Commit 4 the only accepted case: both declarations present and equal.
 PASS2_COMPLETE = ("complete: the cross-fit and the full-train router declare one Pass 2 "
                   "population")
-PASS2_PARTIAL = (
-    "PARTIAL (PR 36 F17, open until Commit 4): the artifact does not declare the Pass 2 "
-    "population of both its cross-fit and its full-train router (written before the "
-    "current producers), so its train and test outputs are not shown to come from one "
-    "operating mode.")
 
 
 def _pass2_population(value) -> "str | None":
@@ -267,12 +263,11 @@ def _pass2_population_checks(art, f, proto, layout, stream, name) -> list:
     has a remainder, always the OOF Pass 1 remainder (``RFRouter.fit``).
 
     Both declared: compared, and each must be a known population. One or both
-    missing: refused for a current-format artifact — one that records a
-    ``train_label_fingerprint`` (PR 36 F12), which only the current producers
-    write, and they always declare both populations. An older artifact is
-    accepted with ``notes["pass2_population_evidence"]`` = PARTIAL naming what
-    is missing (required for every artifact from Commit 4); it used to be
-    accepted silently, with the same standing as a checked one.
+    missing: refused, naming what is missing. The current producers always
+    declare both; an artifact written before them used to be accepted
+    silently (before Commit 3) and then as PARTIAL evidence (Commit 3). Since
+    Commit 4 it is refused whether or not it records a label fingerprint, and
+    must be regenerated — a declaration added afterwards would certify nothing.
     """
     if layout == "top-level":
         cross = _pass2_population(proto.get("glass_pass2_population"))
@@ -292,12 +287,10 @@ def _pass2_population_checks(art, f, proto, layout, stream, name) -> list:
     where = {"top-level": ("oof_protocol.glass_pass2_population", "fit_report / config_full"),
              "extra": ("extra.oof_protocol.pass2_population", "mode")}[layout]
     detail = "missing: " + ", ".join(
-        f"{side} ({where[0] if side == 'cross-fit' else where[1]})" for side in missing)
-    stream.notes["pass2_population_evidence"] = f"{PASS2_PARTIAL} Missing: {', '.join(missing)}."
-    if stream.label_fingerprints:                    # written by the current producers
-        return [(SEC_SEM, "stage2", f"{name}: Pass 2 population declared for the cross-fit and "
-                 "the full-train router (current-format artifact)", lambda: False, detail)]
-    return []
+        f"{side} ({where[0] if side == 'cross-fit' else where[1]})" for side in missing
+    ) + " — regenerate Stage 2"
+    return [(SEC_SEM, "stage2", f"{name}: Pass 2 population declared for the cross-fit and "
+             "the full-train router", lambda: False, detail)]
 
 
 def router_stream(obj_or_path, name: str, model: str, y_train: np.ndarray,
@@ -387,15 +380,16 @@ def router_stream(obj_or_path, name: str, model: str, y_train: np.ndarray,
     # --- which labels the outputs were produced against (PR 36 audit F12) ---
     # Router artifacts carry a split fingerprint over row indices only and no
     # labels, so a router cross-fitted on the same rows with other labels
-    # passed the split check. Their fold ids are PARTIAL label evidence:
+    # passed the split check. Their fold ids are only partial label evidence:
     # Stage 4 requires them to be the shared stratified plan on GLOBAL_SPLIT's
     # labels (``build_stage4_inputs``). A flipped label, or most permutations,
     # reassigns most fold ids; swapping two opposite labels within one fold
     # changes no fold id and no base rate. What closes that is the
     # ``train_label_fingerprint`` each router fit records: the cross-fit's in
     # ``oof_protocol`` (train outputs), the full-train router's at the top
-    # level (test outputs). Checked whenever present; artifacts written before
-    # the routers recorded it stay PARTIAL (required from Commit 4).
+    # level (test outputs). Both are required since Commit 4:
+    # ``build_stage4_inputs`` refuses a side that records none (an artifact
+    # written before the routers recorded it) and compares each recorded one.
     stream.label_fingerprints = {side: v for side, v in (
         ("train outputs", proto.get("train_label_fingerprint")),
         ("test outputs", art.get("train_label_fingerprint"))) if v is not None}

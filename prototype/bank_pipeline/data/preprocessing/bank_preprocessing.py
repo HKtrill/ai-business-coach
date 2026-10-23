@@ -215,7 +215,7 @@ class BankPreprocessor:
         if self.drop_leaky:
             to_drop = [c for c in _LEAKY_FEATURES if c in out.columns]
             if to_drop:
-                out.drop(columns=to_drop, inplace=True)
+                out = out.drop(columns=to_drop)
                 log(f"⚠️   dropped leaky features: {to_drop}")
 
         # ── Final validation ──────────────────────────────────────────

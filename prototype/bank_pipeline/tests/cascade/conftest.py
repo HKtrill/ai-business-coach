@@ -27,8 +27,8 @@ Lightweight on purpose, and the same everywhere it is used:
   fit rows, precision measured on those rows (as the evaluator does). Its
   routing, ``predict_proba`` blend, cross-fit and saver are production code.
   Rule search itself is tested in tests/stage2.
-* Stage 3 runs ``EBMStage3Config`` (the GLASS EBM config). The notebook still
-  passes the generic ``Stage3Config`` (F21, Commit 4).
+* Stage 3 runs ``EBMStage3Config`` (the GLASS EBM config), as the notebook does
+  since F21; ``train_ebm_stage`` refuses any other config.
 """
 
 from __future__ import annotations

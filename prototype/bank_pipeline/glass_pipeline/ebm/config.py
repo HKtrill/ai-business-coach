@@ -3,7 +3,7 @@ glass_pipeline.ebm.config
 =========================
 Stage 3 EBM configuration.
 
-Every protocol field is inherited from ``shared.stage_runner.Stage3Config`` —
+Every protocol field is inherited from ``shared.stage3.Stage3Config`` —
 the same class ``XGBStage3Config`` inherits — so the two arms cannot drift.
 Only the family name, artifact location and ``EBMSearchSpace`` are set here.
 """

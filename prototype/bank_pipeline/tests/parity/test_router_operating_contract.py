@@ -30,9 +30,8 @@ Different by design — the F17 question
                         (test outputs) and refuses an artifact whose two
                         disagree; the arbiters' artifacts carry it, so a
                         comparison cannot hide the difference. A missing
-                        declaration is refused in a current-format artifact
-                        (one recording a ``train_label_fingerprint``, F12) and
-                        recorded as PARTIAL evidence in an older one.
+                        declaration is refused, with or without F12 label
+                        fingerprints (Commit 4; PARTIAL evidence in Commit 3).
 
 Covered elsewhere and not repeated: the GLASS oof_remainder fit
 (tests/stage2/test_glass_router_pass2_remainder.py), the RF remainder and
@@ -184,10 +183,11 @@ def test_stage4_records_each_arms_pass2_population(world, tmp_path):
     assert real["rf_router"].notes["pass2_population"] == {"cross_fit": "oof_remainder",
                                                            "full_train": "oof_remainder"}
     # the GLASS full-train population falls back to the saved config
-    legacy = make_router(world)
-    legacy["oof_protocol"]["glass_pass2_population"] = "full"
-    legacy["config_full"] = {"pass2_population": "full"}
-    assert _router_notes(legacy, world)["pass2_population"] == {"cross_fit": "full", "full_train": "full"}
+    from_config = make_router(world, pass2_population="full")
+    del from_config["fit_report"]                       # only the saved config declares it
+    from_config["config_full"] = {"pass2_population": "full"}
+    assert _router_notes(from_config, world)["pass2_population"] == {"cross_fit": "full",
+                                                                     "full_train": "full"}
 
 
 @pytest.mark.parametrize("case", ["glass cross-fit oof_remainder, full-train full",
@@ -215,15 +215,16 @@ def test_the_arbiters_record_both_routers_pass2_populations(world):
 
 
 # ----------------------------------------------------------------------
-# Incomplete declarations: refused when current, PARTIAL when older
+# Incomplete declarations: refused, with or without label fingerprints
 # ----------------------------------------------------------------------
 LAYOUTS = {"glass": "top-level", "rf": "extra"}
 
 
-def _router(world, kind, current):
-    """A router artifact declaring both populations; ``current``: also F12 fingerprints."""
-    kw = {"label_fingerprint": True} if current else {
-        "pass2_population": "full" if kind == "glass" else RF_REMAINDER}
+def _router(world, kind, current=True):
+    """A router artifact declaring both populations; ``current=False``: written
+    before the F12 fingerprints (refused for those too, tests/parity/
+    test_router_label_fingerprint.py)."""
+    kw = {"pass2_population": "full" if kind == "glass" else RF_REMAINDER, "label_fingerprint": current}
     if kind == "rf":
         kw["band_blend"] = True
     return make_router(world, layout=LAYOUTS[kind], **kw)
@@ -240,46 +241,35 @@ def _drop(art, kind, side):
         del art["mode"]
 
 
-@pytest.mark.parametrize("current", [True, False], ids=["current format", "older format"])
 @pytest.mark.parametrize("kind", ["glass", "rf"])
-def test_matching_declarations_are_checked_and_reported_complete(world, kind, current):
-    notes = _router_notes(_router(world, kind, current), world)
+def test_matching_declarations_are_checked_and_reported_complete(world, kind):
+    notes = _router_notes(_router(world, kind), world)
     assert notes["pass2_population_evidence"] == adapters.PASS2_COMPLETE
     want = "full" if kind == "glass" else "oof_remainder"
     assert notes["pass2_population"] == {"cross_fit": want, "full_train": want}
 
 
+@pytest.mark.parametrize("current", [True, False], ids=["with label fingerprints", "without"])
 @pytest.mark.parametrize("missing", [("cross-fit",), ("full-train",), ("cross-fit", "full-train")],
                          ids=["no cross-fit declaration", "no full-train declaration", "neither"])
 @pytest.mark.parametrize("kind", ["glass", "rf"])
-def test_a_current_format_artifact_missing_a_declaration_is_refused(world, kind, missing):
-    art = _router(world, kind, current=True)
+def test_an_artifact_missing_a_declaration_is_refused(world, kind, missing, current):
+    """Commit 3 refused this only when the artifact also recorded label
+    fingerprints and accepted it as PARTIAL otherwise; since Commit 4 it is
+    refused either way, naming what is missing."""
+    art = _router(world, kind, current)
     for side in missing:
         _drop(art, kind, side)
     with pytest.raises(ValidationError) as exc:
         _router_notes(art, world)
     lines = [ln for ln in str(exc.value).splitlines() if "Pass 2 population declared" in ln]
-    assert len(lines) == 1 and "(current-format artifact)" in lines[0]
+    assert len(lines) == 1 and "regenerate Stage 2" in lines[0]
     assert all(side in lines[0].split("missing:")[1] for side in missing)
-
-
-@pytest.mark.parametrize("missing", [("cross-fit",), ("full-train",), ("cross-fit", "full-train")],
-                         ids=["no cross-fit declaration", "no full-train declaration", "neither"])
-@pytest.mark.parametrize("kind", ["glass", "rf"])
-def test_an_older_artifact_missing_a_declaration_is_accepted_as_partial(world, kind, missing):
-    """Transitional (Commit 3): accepted, but never with a checked artifact's standing."""
-    art = _router(world, kind, current=False)
-    for side in missing:
-        _drop(art, kind, side)
-    evidence = _router_notes(art, world)["pass2_population_evidence"]
-    assert evidence.startswith(adapters.PASS2_PARTIAL)
-    assert evidence.endswith(f"Missing: {', '.join(missing)}.")
-    assert evidence != adapters.PASS2_COMPLETE
 
 
 @pytest.mark.parametrize("kind", ["glass", "rf"])
 def test_an_unrecognised_declaration_is_refused_even_when_both_sides_agree(world, kind):
-    art = _router(world, kind, current=True)
+    art = _router(world, kind)
     if kind == "glass":
         art["oof_protocol"]["glass_pass2_population"] = art["fit_report"]["pass2_population"] = "custom"
     else:
@@ -289,12 +279,12 @@ def test_an_unrecognised_declaration_is_refused_even_when_both_sides_agree(world
         _router_notes(art, world)
 
 
-def test_the_arbiter_records_and_reports_partial_pass2_evidence(world, capsys):
-    legacy = make_router(world)                                   # declares neither population
-    inputs = load_stage_outputs(world["GS"], make_stage1(world), legacy, make_stage3(world),
-                                verbose=True, extra_fingerprints=ROUTER_FP)
-    stage2 = inputs.upstream["stages"]["stage2"]
-    assert stage2["pass2_population_evidence"].startswith("PARTIAL (PR 36 F17")
-    assert inputs.provenance()["streams"]["glass"]["pass2_population_evidence"] == \
-        stage2["pass2_population_evidence"]
-    assert "pass2 population evidence glass: PARTIAL (PR 36 F17" in capsys.readouterr().out
+def test_the_arbiter_refuses_a_router_that_declares_no_pass2_population(world):
+    """Through the GLASS arbiter's loader: a fingerprinted router artifact that
+    declares neither population used to be recorded as PARTIAL evidence."""
+    undeclared = _router(world, "glass")
+    for side in ("cross-fit", "full-train"):
+        _drop(undeclared, "glass", side)
+    with pytest.raises(ValidationError, match="glass: Pass 2 population declared for the cross-fit"):
+        load_stage_outputs(world["GS"], make_stage1(world), undeclared, make_stage3(world),
+                           verbose=False, extra_fingerprints=ROUTER_FP)

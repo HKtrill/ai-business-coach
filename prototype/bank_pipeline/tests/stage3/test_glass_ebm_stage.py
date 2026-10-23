@@ -2,7 +2,9 @@
 GLASS Stage 3 end to end: ``train_ebm_stage`` (glass_pipeline.ebm.ebm_stage)
 with the real feature DAG, interaction pairs and EBM on the shared runner.
 
-Contract: the factory is built from the block and the config, and the pairs
+Contract: ``train_ebm_stage`` accepts only an ``EBMStage3Config`` with the
+GLASS EBM identity, refusing anything else before a block is built or a model
+fitted (F21); the factory is built from the block and the config, and the pairs
 are recorded with the artifact; every fold frame (outer and inner) carries
 the EBM block schema and its target-dependent features see only that fold's
 training labels; a fold's own labels never reach any of its training-side
@@ -10,12 +12,8 @@ outputs (raw and calibrated OOF, calibration gate, nested threshold,
 decisions; F22); test labels reach nothing built from the block; the saved
 artifact is found by its fingerprints, identifies the GLASS arm, and after
 reloading rebuilds the same features and probabilities from raw rows; a
-cached block can be checked against its fingerprint.
-
-Known gap, pinned as a strict xfail:
-  F21  glass_cascade builds the generic ``Stage3Config`` for this stage, so
-       its artifact is labelled ``model_family="unset"``, ``arm="unset"`` and
-       records no search space.
+cached block can be checked against its fingerprint. glass_cascade Cells 17-18
+build and train Stage 3 the way it is tested here.
 
 Protocol steps the arms share (OOF provenance, calibration, thresholds,
 artifact store and lookup) are covered for every arm, on pre-engineered
@@ -25,6 +23,7 @@ GLASS feature DAG, pairs and orchestration could change.
 
 from __future__ import annotations
 
+import ast
 import contextlib
 import json
 from dataclasses import dataclass
@@ -37,6 +36,7 @@ import pandas as pd
 import pytest
 
 import glass_pipeline.ebm.ebm_stage as ebm_stage_mod
+from blackbox_pipeline.models.xgb.shared_protocol import XGBStage3Config
 from glass_pipeline.ebm.artifacts import save_ebm_artifacts
 from glass_pipeline.ebm.calibration import calibrate_if_needed
 from glass_pipeline.ebm.config import EBMStage3Config
@@ -56,7 +56,9 @@ from tests.stage3.conftest import (
     EBM_TEST_BAGS, EBM_TEST_PARAMS, N_EVAL, N_TUNE, folds_from, glass_ebm_config, stage3_split,
 )
 from tests.support import mutations as mut
+from tests.support.notebooks import BANK_ROOT, project_imports
 
+NOTEBOOK = BANK_ROOT / "glass_pipeline" / "glass_cascade.ipynb"
 TARGET_DEPENDENT = ["decay_x_density", "economic_curvature_intensity", "dow_month_encoded"]
 
 
@@ -407,20 +409,123 @@ def test_cached_block_can_be_checked_against_its_fingerprint(base, tmp_path):
     assert cached.compute_fingerprint() != base.block.block_fingerprint   # the check can fail
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "F21: glass_cascade (Stage 3 block cell) passes the generic Stage3Config to "
-    "train_ebm_stage, which accepts it: the artifact is labelled model_family='unset', "
-    "arm='unset', prefix 'stage3_', and records no search space. Fix with the notebook "
-    "and artifact regeneration (Commit 4)."))
-def test_the_notebook_config_yields_a_glass_ebm_artifact_f21(base, tmp_path):
-    """A fix may refuse a non-EBM config (TypeError) or give its artifact the
-    GLASS identity; either passes."""
-    notebook_cfg = Stage3Config(
-        expected_features=list(EBM_FEATURES), artifact_dir=str(tmp_path), verbose=False,
-        n_tune_folds=N_TUNE, n_eval_folds=N_EVAL, show_progress_bar=False)
-    try:
-        art = run_stage(base.block, notebook_cfg).artifact
-    except TypeError:
-        return
-    assert (art.model_family, art.config["arm"], art.column_prefix) == ("ebm", "glass", "ebm_stage3_")
-    assert art.config["search_space"] == EBMSearchSpace().to_dict()
+def _misconfigured(case, tmp_path):
+    small = {"n_tune_folds": N_TUNE, "n_eval_folds": N_EVAL, "verbose": False,
+             "show_progress_bar": False, "artifact_dir": str(tmp_path),
+             "expected_features": list(EBM_FEATURES)}
+    return {
+        "generic_config": lambda: Stage3Config(**small),        # glass_cascade before F21: 'unset'
+        "xgboost_config": lambda: XGBStage3Config(**small),     # would be labelled 'xgboost' / 'blackbox'
+        "family_overridden": lambda: glass_ebm_config(tmp_path, model_family="xgboost"),
+        "arm_overridden": lambda: glass_ebm_config(tmp_path, arm="blackbox"),
+    }[case]()
+
+
+@pytest.mark.parametrize("entry", ["block", "GLOBAL_SPLIT"])
+@pytest.mark.parametrize("case, error, message", [
+    ("generic_config", TypeError, "must be an EBMStage3Config, got Stage3Config"),
+    ("xgboost_config", TypeError, "must be an EBMStage3Config, got XGBStage3Config"),
+    ("family_overridden", ValueError, "model_family='xgboost'"),
+    ("arm_overridden", ValueError, "arm='blackbox'"),
+])
+def test_a_config_without_the_glass_ebm_identity_is_refused_f21(base, tmp_path, monkeypatch, entry,
+                                                                case, error, message):
+    """Before PR 36 each of these trained an EBM and labelled the artifact with
+    the config's identity; the generic config, which glass_cascade passed,
+    labelled it 'unset' with no search space (F21). Now nothing is built,
+    fitted or saved, from either entry point."""
+    cfg = _misconfigured(case, tmp_path)
+    seen = []
+
+    class Block:
+        @staticmethod
+        def from_global_split(*args, **kwargs):
+            seen.append("block built")
+
+    monkeypatch.setattr(ebm_stage_mod, "Stage3Block", Block)
+    monkeypatch.setattr(ebm_stage_mod, "Stage3Runner", lambda *a, **k: seen.append("runner built"))
+    source = {"block": {"block": base.block}, "GLOBAL_SPLIT": {"GLOBAL_SPLIT": base.split}}[entry]
+    with pytest.raises(error, match=message):
+        train_ebm_stage(**source, config=cfg, params=dict(EBM_TEST_PARAMS), params_source="test")
+    assert not seen and not list(tmp_path.iterdir())
+
+
+# ----------------------------------------------------------------------
+# the GLASS notebook's Stage 3 calls (read, never executed)
+# ----------------------------------------------------------------------
+def _notebook_cells() -> list:
+    """(cell index, source, parsed code) for every code cell; indexes count all
+    cells, as ``project_imports`` does. IPython magics and shell lines are dropped."""
+    cells = json.loads(NOTEBOOK.read_text(encoding="utf-8"))["cells"]
+    out = []
+    for i, c in enumerate(cells):
+        if c["cell_type"] == "code":
+            src = "".join(c["source"])
+            out.append((i, src, ast.parse("\n".join(
+                line for line in src.splitlines() if not line.lstrip().startswith(("%", "!"))))))
+    return out
+
+
+def _calls(trees, name: str) -> list:
+    return [n for t in trees for n in ast.walk(t) if isinstance(n, ast.Call)
+            and (getattr(n.func, "id", None) or getattr(n.func, "attr", None)) == name]
+
+
+def _same(node, source: str) -> bool:
+    """``node`` is the expression ``source`` (compared after normalising both)."""
+    return ast.unparse(node) == ast.unparse(ast.parse(source, mode="eval").body)
+
+
+def test_the_notebook_builds_and_trains_stage3_with_the_glass_ebm_config_f21():
+    """Cell 17 builds ``EBMStage3Config`` (protocol defaults; only the feature
+    contract and verbosity are set) and gets the block with it from the
+    validated cache (``load_or_build_block``, F23; tests/stage3/
+    test_block_cache.py), and Cell 18 trains with it, so the artifact carries
+    the GLASS EBM identity and search space and is saved where
+    blackbox_cascade Cell 33 looks for it (the config's artifact_dir and
+    stem). The generic ``Stage3Config`` appears nowhere."""
+    cells = _notebook_cells()
+    stage3 = [(i, t) for i, src, t in cells if "# CELL 17:" in src or "# CELL 18:" in src]
+    assert len(stage3) == 2, "glass_cascade Stage 3 cells (17, 18) not found"
+    trees = [t for _, t in stage3]
+    assigned = {n.targets[0].id: n.value for t in trees for n in ast.walk(t)
+                if isinstance(n, ast.Assign) and isinstance(n.targets[0], ast.Name)}
+
+    (cfg_call,) = _calls(trees, "EBMStage3Config")
+    assert assigned["EBM_STAGE3_CONFIG"] is cfg_call
+    kw = {k.arg: k.value for k in cfg_call.keywords}
+    assert set(kw) == {"expected_features", "n_trials", "artifact_dir", "verbose"}
+    assert _same(kw["expected_features"], "list(EBM_FEATURES)")
+    notebook_cfg = EBMStage3Config(expected_features=list(EBM_FEATURES), verbose=False,
+                                   n_trials=ast.literal_eval(kw["n_trials"]),
+                                   artifact_dir=ast.literal_eval(kw["artifact_dir"]))
+    default = EBMStage3Config(expected_features=list(EBM_FEATURES), verbose=False)
+    assert notebook_cfg == default                                    # protocol defaults
+    assert (default.model_family, default.arm, default.artifact_stem) == ("ebm", "glass", "ebm_stage3")
+
+    # the block comes from the validated cache (F23), built with the same config
+    (block_call,) = _calls(trees, "load_or_build_block")
+    assert [ast.unparse(a) for a in block_call.args] == ["GLOBAL_SPLIT", "EBMFeaturePipeline",
+                                                         "EBM_STAGE3_CONFIG"]
+    block_kw = {k.arg: k.value for k in block_call.keywords}
+    assert _same(block_kw["split_fingerprint"], "_FP_NOW") and _same(block_kw["cache_path"], "_BLOCK_CACHE")
+    (assign,) = [n for t in trees for n in ast.walk(t) if isinstance(n, ast.Assign) and n.value is block_call]
+    assert ast.unparse(assign.targets[0]) == "(STAGE3_BLOCK, _block_status)"
+    assert not _calls([t for _, _, t in cells], "from_global_split")       # no uncached path
+    assert not [c for _, _, t in cells for c in _calls([t], "load") + _calls([t], "dump")
+                if "BLOCK" in ast.unparse(c)]                               # no raw joblib cache
+    (train_call,) = _calls(trees, "train_ebm_stage")
+    assert not train_call.args and {k.arg: ast.unparse(k.value) for k in train_call.keywords} == {
+        "block": "STAGE3_BLOCK", "config": "EBM_STAGE3_CONFIG"}           # saved (save=True)
+
+    imports = project_imports(NOTEBOOK)
+    assert ("glass_pipeline.ebm", "EBMStage3Config") in {(i.module, i.name) for i in imports}
+    assert not [i for i in imports if i.name == "Stage3Config"]
+    assert not _calls([t for _, _, t in cells], "Stage3Config")
+
+    # the block is stamped with the label-aware stage_io fingerprint (Cell 33 tries it)
+    assert _same(assigned["_FP_NOW"], 'split_fingerprint(GLOBAL_SPLIT["X_train"].index, '
+                 'GLOBAL_SPLIT["X_test"].index, GLOBAL_SPLIT["y_train"], GLOBAL_SPLIT["y_test"])')
+    last_stage3_cell = max(i for i, _ in stage3)
+    bound = [i for i in imports if i.name == "split_fingerprint" and i.cell <= last_stage3_cell]
+    assert bound[-1].module == "shared"

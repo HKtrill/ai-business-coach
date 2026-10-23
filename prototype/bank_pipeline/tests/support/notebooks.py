@@ -18,6 +18,7 @@ ACTIVE_NOTEBOOKS      the research notebooks, relative to bank_pipeline
 NotebookImport        one import statement found in a notebook
 project_imports(path) imports of PROJECT_PACKAGES, in cell order
 unresolved_imports(imports)  human-readable problems, empty when all resolve
+read_before_bound(path)      names a code cell reads that only a later cell binds
 """
 
 from __future__ import annotations
@@ -25,8 +26,10 @@ from __future__ import annotations
 import ast
 import importlib
 import importlib.util
+import builtins
 import json
 import re
+import symtable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
@@ -135,3 +138,61 @@ def unresolved_imports(imports: List[NotebookImport]) -> List[str]:
         except Exception as exc:  # noqa: BLE001 — a broken import is a finding
             problems.append(f"{imp} -> {type(exc).__name__}: {exc}")
     return problems
+
+
+_IPYTHON_NAMES = {"display", "get_ipython", "In", "Out", "exit", "quit"}
+_COMPREHENSIONS = {"listcomp", "setcomp", "dictcomp", "genexpr"}
+
+
+def _nested_scopes(table) -> list:
+    """Child scopes whose reads count as the cell's: comprehensions (separate
+    scopes until Python 3.12 inlined them) and module annotations (deferred to
+    an ``__annotate__`` scope since 3.14; Python 3.13 and earlier evaluate them
+    when the cell runs, so they are reads on every version)."""
+    return [c for c in table.get_children()
+            if c.get_name() in _COMPREHENSIONS or c.get_type() == "annotation"]
+
+
+def _reads_and_binds(source: str) -> tuple:
+    """
+    Module-level names a cell reads and binds, the same on every Python version:
+    comprehension and annotation reads included, function bodies not (they run
+    when called). Only names the cell spells are reads, never a symbol the
+    compiler adds (3.14's ``__conditional_annotations__`` for any module
+    annotation); a name free in a comprehension is bound by an enclosing
+    comprehension, not the module (3.11).
+    """
+    code = _python_source(source)
+    table = symtable.symtable(code, "<cell>", "exec")
+    binds = {s.get_name() for s in table.get_symbols() if s.is_assigned() or s.is_imported()}
+    binds |= {c.get_name() for c in table.get_children()
+              if c.get_type() in ("function", "class") and c.get_name() not in _COMPREHENSIONS}
+    reads = {s.get_name() for s in table.get_symbols() if s.is_referenced()}
+    todo = _nested_scopes(table)
+    while todo:
+        scope = todo.pop()
+        reads |= {s.get_name() for s in scope.get_symbols()
+                  if s.is_referenced() and s.is_global() and not s.is_assigned()}
+        todo += _nested_scopes(scope)
+    spelled = {n.id for n in ast.walk(ast.parse(code)) if isinstance(n, ast.Name)}
+    return reads & spelled, binds
+
+
+def read_before_bound(path) -> List[tuple]:
+    """
+    ``(cell, name, first binding cell or None)`` for every module-level name a
+    code cell reads before any earlier (or the same) cell binds it — a
+    top-to-bottom run in a clean kernel would raise ``NameError`` there.
+    Conditional bindings count as bindings; guarding them is checked separately.
+    """
+    nb = json.loads(Path(path).read_text(encoding="utf-8"))
+    cells = [(i, "".join(c.get("source", []))) for i, c in enumerate(nb.get("cells", []))
+             if c.get("cell_type") == "code"]
+    parsed = [(i, *_reads_and_binds(src)) for i, src in cells]
+    first: dict = {}
+    for i, _, binds in parsed:
+        for name in binds:
+            first.setdefault(name, i)
+    known = set(dir(builtins)) | _IPYTHON_NAMES
+    return [(i, name, first.get(name)) for i, reads, binds in parsed
+            for name in sorted(reads - binds - known) if first.get(name) is None or first[name] > i]

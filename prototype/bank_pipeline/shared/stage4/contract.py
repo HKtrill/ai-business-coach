@@ -384,18 +384,14 @@ SEC_SPLIT, SEC_ALIGN, SEC_FOLD, SEC_OOF, SEC_SEM = (
     "4a. Split identity", "4b. Row alignment", "4c. Fold provenance",
     "4d. OOF honesty", "4e. Router semantics")
 
-#: ``StageStream.notes["label_evidence"]``: how far Stage 4 could establish
-#: that a stream was produced on GLOBAL_SPLIT's training labels.
+#: ``StageStream.notes["label_evidence"]``: how Stage 4 established that a
+#: stream was produced on GLOBAL_SPLIT's training labels. Since PR 36 Commit 4
+#: (F12) there is no partial case: a stream that carries no labels must record
+#: a label fingerprint for both its train and its test outputs, or it is refused.
 LABELS_CARRIED = "complete: training labels carried and compared with GLOBAL_SPLIT"
 LABELS_FINGERPRINTED = (
     "complete: the label fingerprints of the fits behind the train and the test outputs "
     "match GLOBAL_SPLIT's training rows and labels")
-LABELS_PARTIAL = (
-    "PARTIAL (PR 36 F12, open until Commit 4): the artifact carries no training labels "
-    "and no label fingerprint for both its train and its test outputs (an artifact "
-    "written before the routers recorded one). Checked: row identity, the fold plan and "
-    "the training base rate. Not detectable: training labels swapped between rows of "
-    "opposite class within one fold, which changes no fold id and no base rate.")
 LABEL_FINGERPRINT_SIDES = ("train outputs", "test outputs")
 _LABEL_FP = re.compile(r"[0-9a-f]{12}")
 
@@ -404,9 +400,15 @@ def label_identity(recorded, expected: str, what: str) -> str:
     """
     ``recorded``: a ``train_label_fingerprint`` from an artifact; ``expected``:
     ``shared.stage_io.label_fingerprint`` of GLOBAL_SPLIT's training rows and
-    labels. Raises ``Stage4InputError`` on a malformed value or another set of
-    rows / labels (PR 36 audit F12).
+    labels. Raises ``Stage4InputError`` on a missing or malformed value or
+    another set of rows / labels (PR 36 audit F12). A missing value is an
+    artifact written before the producers recorded one: it is refused, never
+    filled in, because a fingerprint added after the fit certifies nothing.
     """
+    if recorded is None:
+        raise Stage4InputError(
+            f"{what}: no label fingerprint recorded — the artifact was written before "
+            "PR 36 F12 made it mandatory; regenerate it (fingerprints are never backfilled)")
     if not isinstance(recorded, str) or not _LABEL_FP.fullmatch(recorded):
         raise Stage4InputError(f"{what}: malformed label fingerprint {recorded!r} "
                                "(expected 12 lowercase hex characters)")
@@ -499,19 +501,19 @@ def build_stage4_inputs(
                          lambda s=s: np.array_equal(np.asarray(s.y_test).astype(int),
                                                     ref.y_test))
         if s.y_train is None:
-            # PR 36 (audit F12): checked when recorded; absent = PARTIAL (Commit 4: required).
+            # PR 36 (audit F12): a stream without labels (a router) must record the
+            # label fingerprint of the fit behind EACH side, compared with GLOBAL_SPLIT's
+            # training rows and labels (never its test labels). Required since Commit 4:
+            # its fold ids and base rate cannot see opposite labels swapped within a fold.
             want = label_fingerprint(ref.index_train, ref.y_train)
-            for side, fp in s.label_fingerprints.items():
+            for side in LABEL_FINGERPRINT_SIDES:
+                fp = s.label_fingerprints.get(side)
                 report.check(SEC_SPLIT, st, f"{s.name}: {side} fitted on GLOBAL_SPLIT's training "
                              "rows and labels",
                              lambda fp=fp, want=want, what=f"{s.name} {side}": label_identity(
                                  fp, want, what),
-                             "train_label_fingerprint")
-        s.notes["label_evidence"] = (
-            LABELS_CARRIED if s.y_train is not None
-            else LABELS_FINGERPRINTED if set(s.label_fingerprints) >= set(LABEL_FINGERPRINT_SIDES)
-            else LABELS_PARTIAL + (f" Label fingerprint recorded for: {', '.join(s.label_fingerprints)}."
-                                   if s.label_fingerprints else ""))
+                             "train_label_fingerprint" + ("" if fp is not None else " (missing)"))
+        s.notes["label_evidence"] = LABELS_CARRIED if s.y_train is not None else LABELS_FINGERPRINTED
 
     # ---- folds ---------------------------------------------------------
     fold_prov: dict = {"streams": {}, "shared_partitions": [], "distinct_partitions": []}
@@ -576,10 +578,6 @@ def build_stage4_inputs(
 
     if verbose:
         report.show()
-        for s in streams:
-            for key in ("label_evidence", "pass2_population_evidence"):
-                if str(s.notes.get(key, "")).startswith("PARTIAL"):
-                    print(f"\n⚠️  {key.replace('_', ' ')} {s.name}: {s.notes[key]}")
     report.raise_if_failed()
 
     return Stage4Inputs(

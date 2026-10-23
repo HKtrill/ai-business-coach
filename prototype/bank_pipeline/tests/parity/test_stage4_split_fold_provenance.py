@@ -16,19 +16,19 @@ Fold plan (F11)
     fold COUNT, so a Stage 2 cross-fit on Stage 1's 10-fold partition passed
     as "distinct by design", and any fold plan passed when no stream with
     its fold count disagreed.
-Label evidence (F12 — PARTIAL)
+Label evidence (F12)
     A router artifact carries no labels and a row-only split fingerprint, so
     a router cross-fitted on the same rows with other labels passed the split
     check. Its fold ids and a recorded ``training_base_rate`` are now checked:
     a flipped label or a permutation reassigns most fold ids. They are not
     sufficient: opposite labels swapped within one fold change no fold id and
     no base rate. Since Commit 3 both routers record ``train_label_fingerprint``
-    for their cross-fit and full-train fits, and Stage 4 checks it when present
-    (tests/parity/test_router_label_fingerprint.py). Router artifacts written
-    before that carry none and are still accepted, PARTIAL; every stream's
-    ``notes["label_evidence"]`` says which case it is. Commit 4 makes the
-    fingerprint mandatory and regenerates the router artifacts; the test
-    pinning the transitional acceptance is marked ``f12_partial``.
+    for their cross-fit and full-train fits (checked in
+    tests/parity/test_router_label_fingerprint.py); since Commit 4 both are
+    mandatory, so an artifact written before that — the one case the fold ids
+    cannot see — is refused rather than accepted as PARTIAL evidence. Every
+    accepted stream's ``notes["label_evidence"]`` says how its labels were
+    established (carried, or fingerprinted).
 Split-fingerprint consistency (F12)
     A router artifact may record its split fingerprint in several places
     (top level, the cross-fit's ``oof_protocol``, the RF Stage 4 block);
@@ -262,36 +262,42 @@ def test_a_router_whose_training_base_rate_is_not_the_splits_is_refused(world, a
 
 
 # ----------------------------------------------------------------------
-# What a label-less router artifact can and cannot prove (F12, partial)
+# What a label-less router artifact must prove (F12)
 # ----------------------------------------------------------------------
-def test_every_stream_reports_how_its_training_labels_were_established(world, arm, capsys):
+def test_every_stream_reports_how_its_training_labels_were_established(world, arm):
     inp = load(arm, world, artifacts(world, arm))
     s1, s2, s3 = NAMES[arm]
     assert {n: inp[n].notes["label_evidence"] for n in NAMES[arm]} == {
-        s1: contract.LABELS_CARRIED, s2: contract.LABELS_PARTIAL, s3: contract.LABELS_CARRIED}
-    assert inp[s2].provenance()["label_evidence"].startswith("PARTIAL (PR 36 F12")
-    loader = load_stage_outputs if arm == "glass" else load_blackbox_stage4_inputs
-    arts = artifacts(world, arm)
-    loader(world["GS"], arts["s1"], arts["s2"], arts["s3"], verbose=True, extra_fingerprints=ROUTER_FP)
-    assert f"label evidence {s2}: PARTIAL (PR 36 F12" in capsys.readouterr().out
+        s1: contract.LABELS_CARRIED, s2: contract.LABELS_FINGERPRINTED, s3: contract.LABELS_CARRIED}
+    assert inp[s2].provenance()["label_evidence"] == contract.LABELS_FINGERPRINTED
+    assert inp.upstream["stages"]["stage2"]["label_evidence"] == contract.LABELS_FINGERPRINTED
 
 
-def test_f12_partial_a_router_fitted_on_within_fold_swapped_labels_still_passes(world, arm):
-    """Pins the open part of F12: a router artifact written before the routers
-    recorded ``train_label_fingerprint`` carries nothing that can tell. Flip to
-    a refusal when the fingerprint becomes mandatory (Commit 4)."""
+def test_a_router_without_label_fingerprints_fitted_on_within_fold_swapped_labels_is_refused(
+        world, arm):
+    """The F12 case the fold ids cannot see: a router artifact written before
+    the routers recorded ``train_label_fingerprint``, fitted on opposite labels
+    swapped within folds. Its fold plan still reproduces and its base rate is
+    the split's, so until Commit 3 it was accepted, then accepted as PARTIAL.
+    Now both missing fingerprints refuse it — and nothing else does."""
     GS = world["GS"]
     y = GS["y_train"]
     swapped = mut.swap_labels_within_folds(y, fold_assignment(y, cv_folds=5, random_state=42))
     assert int((swapped != y).sum()) > 0.25 * int(y.sum())        # a quarter of positives moved
     arts = artifacts(world, arm)
-    arts["s2"] = make_router({**world, "GS": {**GS, "y_train": swapped}},
-                             layout="top-level" if arm == "glass" else "extra")
+    layout = "top-level" if arm == "glass" else "extra"
+    arts["s2"] = make_router({**world, "GS": {**GS, "y_train": swapped}}, layout=layout,
+                             label_fingerprint=False,               # written before PR 36 F12
+                             pass2_population="full" if arm == "glass" else stage4_world.RF_REMAINDER)
     arts["s2"]["training_base_rate"] = float(swapped.mean())         # = the split's
-    inp = load(arm, world, arts)                                      # accepted
+    with pytest.raises(ValidationError) as exc:
+        load(arm, world, arts)
     router = NAMES[arm][1]
-    assert inp.fold_provenance["streams"][router]["reproduced_by_shared_fold_assignment"]
-    assert inp[router].notes["label_evidence"] == contract.LABELS_PARTIAL
+    failing = [ln.strip() for ln in failed(exc).splitlines() if ln.strip().startswith("[")]
+    assert [ln.split(" — ")[0] for ln in failing] == [
+        f"[stage2] {router}: {side} fitted on GLOBAL_SPLIT's training rows and labels"
+        for side in contract.LABEL_FINGERPRINT_SIDES]
+    assert all("no label fingerprint recorded" in ln for ln in failing)
 
 
 @pytest.mark.parametrize("arm, field", [

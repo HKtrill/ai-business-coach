@@ -1,7 +1,7 @@
 """
 glass_pipeline.ebm.calibration
 ==============================
-Since PR 33 Stage 3 calibration is ``shared.stage_runner.Stage3Calibrator``,
+Since PR 33 Stage 3 calibration is ``shared.stage3.Stage3Calibrator``,
 shared with the XGBoost arm: gated on OUT-OF-FOLD ECE (> 0.05), fitted as a
 fold-nested isotonic map on OOF probabilities, applied to test by a map fitted
 on all OOF rows. Since PR 36 (F22) each fold's gate and map are fitted on
@@ -28,7 +28,7 @@ def calibrate_if_needed(*args, **kwargs):
     raise NotImplementedError(
         "calibrate_if_needed was removed in PR 33 (in-sample gate, unweighted "
         "CalibratedClassifierCV refit). Calibration now runs inside "
-        "train_ebm_stage via shared.stage_runner.Stage3Calibrator."
+        "train_ebm_stage via shared.stage3.Stage3Calibrator."
     )
 
 

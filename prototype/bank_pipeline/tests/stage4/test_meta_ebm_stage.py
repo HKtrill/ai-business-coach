@@ -25,7 +25,9 @@ guards, test-label isolation) are in test_meta_ebm_stage4_inputs.py.
 
 from __future__ import annotations
 
+import ast
 import contextlib
+import json
 
 import joblib
 import numpy as np
@@ -53,6 +55,7 @@ from shared.stage4 import ABSTENTION_SEARCH, Stage4InputError
 from shared.validation import ValidationError
 from tests.stage3.conftest import EBM_TEST_BAGS, EBM_TEST_PARAMS
 from tests.support import mutations as mut
+from tests.support.notebooks import BANK_ROOT, project_imports
 from tests.support.stage4_world import ROUTER_FP, build_world, make_router, make_stage1, make_stage3
 
 CONFIG_KEYS = ("thresholds", "weights", "abstention", "calibration", "disagreement")
@@ -462,3 +465,69 @@ def test_labels_must_be_binary(world, arts, tmp_path):
     with pytest.raises(Stage4InputError, match="not binary"):
         load_stage_outputs(GS, p["lr"], p["router"], p["ebm"], verbose=False,
                            extra_fingerprints=ROUTER_FP)
+
+
+# ----------------------------------------------------------------------
+# glass_cascade's Stage 1-4 hand-offs (read, never executed)
+# ----------------------------------------------------------------------
+GLASS_NOTEBOOK = BANK_ROOT / "glass_pipeline" / "glass_cascade.ipynb"
+
+
+def test_the_glass_notebook_runs_meta_ebm_on_its_own_producers_outputs():
+    """Cell 19 trains the native Meta-EBM on exactly what Cells 8, 16 and 18
+    saved: the calibrated LR, the GLASS Router bundle (its outer cross-fit as
+    the train side, the full-train router's test outputs, the router split
+    fingerprint) and the GLASS EBM — the GLASS upstream (no crossover declared),
+    the real fingerprint schemes. Each producer runs before it; Cell 20 traces
+    the arbiter it produced."""
+    cells = [(i, ast.parse("\n".join(ln for ln in "".join(c["source"]).splitlines()
+                                     if not ln.lstrip().startswith(("%", "!")))))
+             for i, c in enumerate(json.loads(GLASS_NOTEBOOK.read_text(encoding="utf-8"))["cells"])
+             if c["cell_type"] == "code"]
+
+    def call(name):
+        (found,) = [(i, n) for i, t in cells for n in ast.walk(t) if isinstance(n, ast.Call)
+                    and (getattr(n.func, "id", None) or getattr(n.func, "attr", None)) == name]
+        return found
+
+    def bound(node):
+        (target,) = [ast.unparse(n.targets[0]) for _, t in cells for n in ast.walk(t)
+                     if isinstance(n, ast.Assign) and n.value is node]
+        return target
+
+    def kw(node):
+        return {k.arg: ast.unparse(k.value) for k in node.keywords}
+
+    c19, meta = call("train_meta_stage")
+    assert [ast.unparse(a) for a in meta.args] == ["GLOBAL_SPLIT"]
+    assert kw(meta) == {"lr_path": "lr_calibrated_path", "glass_path": "glass_path",
+                        "ebm_path": "ebm_path", "target_recall": "0.7"}         # no upstream=
+    assert bound(meta) == "(meta_artifact, meta_path)"
+
+    c8, lr = call("train_calibrated_lr_stage")                        # Stage 1: its saved path
+    assert bound(lr) == "(lr_calibrated_artifact, lr_calibrated_path)"
+    assert [ast.unparse(a) for a in lr.args] == ["X_train_eng", "X_test_eng", "y_train", "y_test"]
+    assert kw(lr) == {"save": "True", "output_dir": "'./models/lr'", "X_train_raw": "X_train"}
+
+    c14, crossfit = call("crossfit_stage2")                           # Stage 2: the bundle
+    c16, save = call("save_model")
+    assert bound(crossfit) == "stage2_oof" and bound(save) == "glass_path"
+    assert kw(save) == {
+        "train_out": "None", "train_proba": "None", "oof": "stage2_oof",
+        "train_insample_proba": "glass.predict_proba(GLASS_ROUTER_DATA['X_eng_train'])",
+        "test_out": "test_out", "test_proba": "test_proba", "global_split": "GLOBAL_SPLIT",
+        "split_fingerprint": "SPLIT_FINGERPRINT", "y_test": "GLASS_ROUTER_DATA['y_eng_test']"}
+    _, saver = call("ModelSaver")
+    assert kw(saver) == {"glass_model": "glass"}
+    _, router_fp = call("router_split_fingerprint")
+    assert bound(router_fp) == "SPLIT_FINGERPRINT"
+    assert [ast.unparse(a) for a in router_fp.args] == ["GLOBAL_SPLIT['X_train']", "GLOBAL_SPLIT['X_test']"]
+    assert ("blackbox_pipeline.models.rf_router", "split_fingerprint") in {
+        (i.module, i.name) for i in project_imports(GLASS_NOTEBOOK) if i.cell <= c16}
+
+    c18, ebm = call("train_ebm_stage")                                # Stage 3
+    assert bound(ebm) == "(ebm_artifact, ebm_path)"
+
+    c20, trace = call("run_cascade_trace")
+    assert kw(trace)["meta_artifact"] == "meta_artifact"
+    assert c8 < c14 < c16 < c18 < c19 < c20

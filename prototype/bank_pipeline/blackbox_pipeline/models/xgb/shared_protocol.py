@@ -1,8 +1,8 @@
 """
 blackbox_pipeline.models.xgb.shared_protocol
 ============================================
-Stage 3 XGBoost on the SHARED Stage 3 protocol (``shared.stage_runner``, the
-module ``glass_pipeline.ebm.config`` inherits from) — the same
+Stage 3 XGBoost on the SHARED Stage 3 protocol (``shared.stage3``, the
+package ``glass_pipeline.ebm.config`` inherits from) — the same
 runner, block, folds, weights, tuning, OOF, calibration, thresholds and
 artifact the GLASS EBM uses. Only two things are XGBoost-specific:
 
@@ -16,14 +16,15 @@ Everything else comes from ``Stage3Config`` defaults, so
 with like. If the GLASS EBM config overrides a shared default, that check
 names the field — align it here rather than weakening the check.
 
-    from shared.stage_runner import Stage3Block
+    from shared.stage3 import Stage3Block
     STAGE3_BLOCK = Stage3Block.from_global_split(GLOBAL_SPLIT, EBMFeaturePipeline,
                                                  XGB_STAGE3_CONFIG, split_fingerprint=_FP_NOW)
     XGB_STAGE3, XGB_STAGE3_PATH = train_xgb_stage(block=STAGE3_BLOCK, config=XGB_STAGE3_CONFIG)
 
-Supersedes the standalone pre-``shared.stage3`` implementation in this
-package (``config`` / ``stage`` / ``folds`` / ``oof`` / ...), which fitted
-features once on all of train and cannot feed the audited Stage 4.
+Superseded the standalone pre-``shared.stage3`` implementation that used to
+live in this package (``config`` / ``stage`` / ``folds`` / ``oof`` / ...),
+which fitted features once on all of train and could not feed the audited
+Stage 4; it was removed in PR 36 Commit 4.
 """
 
 from __future__ import annotations

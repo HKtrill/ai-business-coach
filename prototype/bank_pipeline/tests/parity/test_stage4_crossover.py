@@ -462,7 +462,7 @@ def test_the_notebook_declares_both_crossovers_and_compares_with_the_upstream_he
         "lr_path": "MLP_S1_PATH", "glass_path": "RF_ROUTER_PATH", "ebm_path": "XGB_STAGE3_PATH"}
     assert _kw(meta_xgb)["upstream"] == "'glass'"
     assert {k: _kw(meta_xgb)[k] for k in ("mlp_path", "rf_path", "xgb_path")} == {
-        "mlp_path": "_GLASS_S1", "rf_path": "GLASS_BUNDLE_PATH", "xgb_path": "_ebm_path"}
+        "mlp_path": "GLASS_S1_PATH", "rf_path": "GLASS_BUNDLE_PATH", "xgb_path": "_ebm_path"}
     comparisons = [c for c in _calls("CELL 38: STAGE 4 — CROSSOVER RESULTS")
                    if ast.unparse(c.func) == "compare_with_meta_ebm"]
     assert [ast.unparse(c.args[1]) + " vs " + ast.unparse(c.args[2]) for c in comparisons] == [

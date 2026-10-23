@@ -30,10 +30,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any, ClassVar, Optional
 
-try:                                    # current package layout
-    from shared.stage3 import Stage3Config
-except ImportError:                     # pragma: no cover - legacy monolith
-    from shared.stage_runner import Stage3Config
+from shared.stage3 import Stage3Config
 
 STAGE4_FEATURES: tuple = (
     "stage1_proba",

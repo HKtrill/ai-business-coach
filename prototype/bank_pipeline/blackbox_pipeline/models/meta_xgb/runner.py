@@ -42,11 +42,7 @@ from typing import Any, Optional
 import numpy as np
 import pandas as pd
 
-try:
-    from shared.stage3 import PassthroughPipeline, Stage3Block, Stage3Runner
-except ImportError:                     # pragma: no cover - legacy monolith
-    from shared.stage_runner import PassthroughPipeline, Stage3Block, Stage3Runner
-
+from shared.stage3 import PassthroughPipeline, Stage3Block, Stage3Runner
 from shared.stage4 import (
     ABSTENTION_GRID, ABSTENTION_MIN_COVERAGE, ABSTENTION_SEARCH, tune_min_confidence,
 )

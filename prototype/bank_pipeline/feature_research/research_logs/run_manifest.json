@@ -1,5 +1,5 @@
 {
-  "git_sha": "f845448+dirty",
+  "git_sha": "aa51194+dirty",
   "random_seed": 42,
   "fe_params": {
     "random_state": 42,
@@ -117,7 +117,7 @@
   "versions": {
     "python": "3.14.3",
     "pandas": "3.0.6",
-    "numpy": "2.5.3",
+    "numpy": "2.5.4",
     "sklearn": "1.9.1",
     "optuna": "4.9.0",
     "interpret": "0.7.8"

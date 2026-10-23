@@ -36,12 +36,15 @@ from blackbox_pipeline.models.mlp import CalibratedStage1MLP
 from blackbox_pipeline.models.rf_router import (
     RFRouterConfig, SingleRFRouter, find_artifact_for_split, load_rf_router, save_rf_router,
 )
+from blackbox_pipeline.models.rf_router import split_fingerprint as router_split_fingerprint
 from blackbox_pipeline.models.rf_router.bands import BandConfidence
 from blackbox_pipeline.models.rf_router.forest import ForestTrainer
 from blackbox_pipeline.models.rf_router.router.base import apply_cuts
 from shared.stage1.feature_engineering import engineer_features as stage1_features
 from shared.stage2 import RF_FEATURES_BINARY
 from shared.stage4 import Stage4InputError, build_stage4_inputs, router_stream, stage_output_stream
+from shared.stage4.adapters import PASS2_COMPLETE
+from shared.stage4.contract import LABELS_FINGERPRINTED
 from shared.validation import ValidationError
 from tests.stage1.conftest import MLP_TEST_CONFIG
 from tests.support import mutations as mut
@@ -50,6 +53,8 @@ from tests.support.rf_router_world import (
     BANK_CONSTRAINTS, N_STAGE_FOLDS, RANDOM_STATE, bank_world, engineer, quiet, router_config,
     save_world, serial_forests, stage4_block,
 )
+from tests.support.stage4_world import build_world as build_glass_world
+from tests.support.stage4_world import make_router as make_glass_router
 from tests.support.synthetic import make_bank_frame, split_frame
 
 pytestmark = pytest.mark.filterwarnings(        # the MLP's tiny synthetic folds (see Stage 1 suite)
@@ -330,3 +335,55 @@ def test_the_notebook_runs_stage2_under_the_tested_protocol():
     meta_xgb = [c for c in named("train_meta_xgb_stage") if any(
         k.arg == "rf_path" and ast.unparse(k.value) == "RF_ROUTER_PATH" for k in c.keywords)]
     assert len(meta_xgb) == 1
+
+
+def test_the_notebook_validates_the_glass_bundle_before_taking_constraints_from_it():
+    """Cell 18 runs the Stage 4 router contract — label fingerprints for both
+    sides (F12), declared Pass 2 populations (F17), split and fold provenance —
+    on the GLASS bundle it found, in the same cell, before Cell 19 reads that
+    bundle's out-of-fold metrics into the RF Router's operating constraints."""
+    cells = [(i, ast.parse("".join(c["source"])))
+             for i, c in enumerate(json.loads(NOTEBOOK.read_text(encoding="utf-8"))["cells"])
+             if c["cell_type"] == "code"]
+
+    def calls(name):
+        return [(i, n) for i, t in cells for n in ast.walk(t) if isinstance(n, ast.Call)
+                and (getattr(n.func, "id", None) or getattr(n.func, "attr", None)) == name]
+
+    (found_in, find), = calls("find_artifact_for_split")
+    assert [ast.unparse(a) for a in find.args] == ["GLASS_ARTIFACT_DIRS", "'glass_router_*.joblib'",
+                                                   "SPLIT_FP"]
+    (stream_in, stream), = calls("router_stream")
+    assert [ast.unparse(a) for a in stream.args] == ["GLASS_BUNDLE", "'glass'", "'GLASS Router'",
+                                                     "STAGE2['y_train'].to_numpy()"]
+    checked = [(i, c) for i, c in calls("build_stage4_inputs")
+               if [ast.unparse(a) for a in c.args] == ["GLOBAL_SPLIT", "[_glass_stream]", "_glass_checks"]]
+    assert len(checked) == 1 and checked[0][0] == stream_in == found_in
+    assert stream.lineno < checked[0][1].lineno
+    readers = [i for i, c in calls("evaluate_router") if "GLASS_BUNDLE" in ast.unparse(c)]
+    assert readers and min(readers) > stream_in                       # constraints come after
+
+
+def test_the_glass_evidence_cell_18_prints_is_what_the_contract_records():
+    """Cell 18 prints two notes of the GLASS stream: ``pass2_population_evidence``
+    (recorded by ``router_stream``) and ``label_evidence`` (recorded by
+    ``build_stage4_inputs`` itself, on the stream the cell holds — so read only
+    after that call). Run as the cell runs them, on a current GLASS bundle
+    stamped with the real router split fingerprint, both are recorded."""
+    (cell,) = [ast.parse(src) for src in ("".join(c["source"]) for c in
+               json.loads(NOTEBOOK.read_text(encoding="utf-8"))["cells"] if c["cell_type"] == "code")
+               if "# CELL 18:" in src]
+    reads = [n for n in ast.walk(cell) if isinstance(n, ast.Subscript)
+             and ast.unparse(n.value) == "_glass_stream.notes"]
+    (contract,) = [n for n in ast.walk(cell) if isinstance(n, ast.Call)
+                   and getattr(n.func, "id", None) == "build_stage4_inputs"]
+    assert {n.slice.value for n in reads} == {"label_evidence", "pass2_population_evidence"}
+    assert all(n.lineno > contract.lineno for n in reads)
+    w = build_glass_world()
+    GS = w["GS"]
+    bundle = make_glass_router(w, pass2_population="full")
+    bundle["split_fingerprint"] = router_split_fingerprint(GS["X_train"], GS["X_test"])  # GLASS Cell 16
+    stream, checks = router_stream(bundle, "glass", "GLASS Router", GS["y_train"].to_numpy())
+    build_stage4_inputs(GS, [stream], checks, verbose=False)        # the real fingerprint schemes
+    assert {n.slice.value: stream.notes[n.slice.value] for n in reads} == {
+        "label_evidence": LABELS_FINGERPRINTED, "pass2_population_evidence": PASS2_COMPLETE}

@@ -19,11 +19,12 @@ Why: a router's fold ids and base rates do not determine its labels
 (tests/parity/test_split_fingerprint_parity.py, within-fold swap). With
 both fingerprints recorded, a router fitted on swapped labels is refused.
 
-Transitional (Commit 3): artifacts without the fingerprint — every router
-artifact written before this change — are still accepted with label
-evidence PARTIAL, and a single recorded side is checked but stays PARTIAL.
-Commit 4 makes both sides mandatory and turns ``test_f12_partial_*`` in
-tests/parity/test_stage4_split_fold_provenance.py into a rejection.
+Mandatory since Commit 4: an artifact missing either fingerprint — every
+router artifact written before Commit 3 — is refused, naming the missing side;
+it was accepted with label evidence PARTIAL in Commit 3. Fingerprints are
+never backfilled: the artifact is regenerated. The same refusal through both
+loaders, on a router fitted on swapped labels: tests/parity/
+test_stage4_split_fold_provenance.py.
 
 End to end through the production savers: the RF Router here
 (tests.support.rf_router_world), the GLASS Router in tests/cascade.
@@ -47,7 +48,6 @@ from shared.stage_io import fold_assignment
 from shared.validation import ValidationError
 from tests.stage2.conftest import new_router, run_crossfit
 from tests.support import mutations as mut
-from tests.support.meta_xgb_world import blackbox_world, run_meta
 from tests.support.rf_router_world import bank_world, quiet, router_config, save_world, serial_forests
 from tests.support.stage4_world import ROUTER_FP, build_world, make_router, make_stage1, make_stage3
 from tests.support.synthetic import make_bank_frame, split_frame
@@ -236,21 +236,41 @@ def test_a_malformed_label_fingerprint_is_refused_not_ignored(world, arm, side, 
     assert "malformed label fingerprint" in failures(exc)[0]
 
 
-@pytest.mark.parametrize("side", SIDES)
-def test_one_recorded_side_is_checked_but_the_evidence_stays_partial(world, arm, side):
-    """Transitional (Commit 3): a missing or None side is an artifact from before."""
+def test_the_fingerprint_check_reads_the_training_labels_only(world, arm):
+    """Stage 4 recomputes the expected fingerprint from GLOBAL_SPLIT's training
+    rows and labels: moving the held-out labels changes nothing (no test label
+    builds or validates it); moving the training labels is refused."""
+    GS = world["GS"]
+    art = router_art(arm, world)
+
+    def build(split):
+        stream, checks = router_stream(art, ROUTER[arm], "Router", split["y_train"].to_numpy())
+        return build_stage4_inputs(split, [stream], checks, verbose=False, extra_fingerprints=ROUTER_FP)
+
+    moved_test = {**GS, "y_test": mut.permute_labels(GS["y_test"], seed=5)}
+    assert not moved_test["y_test"].equals(GS["y_test"])
+    assert build(moved_test)[ROUTER[arm]].notes["label_evidence"] == contract.LABELS_FINGERPRINTED
+    with pytest.raises(ValidationError, match="fitted on other training rows or labels"):
+        build({**GS, "y_train": swapped(GS["y_train"])})
+
+
+@pytest.mark.parametrize("form", ["absent", "None"])
+@pytest.mark.parametrize("missing", [SIDES[:1], SIDES[1:], SIDES], ids=["train side", "test side", "both"])
+def test_a_router_missing_a_label_fingerprint_is_refused(world, arm, missing, form):
+    """Commit 3 accepted these as PARTIAL label evidence (an artifact from before
+    the fingerprint), checking any side that was recorded. Each missing side
+    is now refused on its own; a recorded side is still checked, and nothing
+    else in the cascade fails."""
     art = router_art(arm, world, label_fingerprint=True)
-    missing = SIDES[1 - SIDES.index(side)]
-    set_label_fp(arm, art, missing, None)
-    evidence = load(arm, world, art)[ROUTER[arm]].notes["label_evidence"]
-    assert evidence.startswith(contract.LABELS_PARTIAL) and evidence.endswith(f"recorded for: {side}.")
-    block = art if arm == "glass" else art["extra"]
-    (block["oof_protocol"] if missing == "train outputs" else art)["train_label_fingerprint"] = None
-    assert load(arm, world, art)[ROUTER[arm]].notes["label_evidence"] == evidence   # None = absent
-
-
-def test_the_meta_xgb_artifact_records_complete_router_label_evidence(tmp_path):
-    w, arts = blackbox_world()
-    arts["rf"] = make_router(w, layout="extra", label_fingerprint=True)
-    art, _ = run_meta(w, arts, tmp_path)
-    assert art.stage4_inputs["streams"]["rf_router"]["label_evidence"] == contract.LABELS_FINGERPRINTED
+    for side in missing:
+        set_label_fp(arm, art, side, None)
+        if form == "None":                                  # recorded as None = not recorded
+            block = art if arm == "glass" else art["extra"]
+            (block["oof_protocol"] if side == "train outputs" else art)["train_label_fingerprint"] = None
+    with pytest.raises(ValidationError) as exc:
+        load(arm, world, art)
+    lines = failures(exc)
+    assert [line.split(" — ")[0] for line in lines] == [
+        f"[stage2] {ROUTER[arm]}: {side} fitted on GLOBAL_SPLIT's training rows and labels"
+        for side in missing]
+    assert all("no label fingerprint recorded" in line and "never backfilled" in line for line in lines)

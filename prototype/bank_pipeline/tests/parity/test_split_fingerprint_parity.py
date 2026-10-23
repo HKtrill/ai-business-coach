@@ -23,9 +23,9 @@ Contracts pinned here
   but one: two opposite labels swapped within one fold change no fold id and
   no base rate (a stratified splitter deals each class's rows to folds in
   row order). Stage 4 reads a label-less router artifact's fold ids as
-  PARTIAL label evidence only, and says so. The training-label fingerprint
-  each router fit records since Commit 3 (``train labels`` below) closes it
-  when present; it becomes mandatory in Commit 4 (PR 36 F12, PARTIAL until then).
+  partial label evidence only. The training-label fingerprint each router
+  fit records since Commit 3 (``train labels`` below) closes it, and is
+  mandatory since Commit 4 (PR 36 F12): an artifact without it is refused.
 * ``check_split_identity``: an artifact recording several schemes must agree
   on EVERY scheme both sides can compute, and at least one. Schemes are
   compared by name — never "some recorded hash equals some recomputed hash",
@@ -284,9 +284,10 @@ def test_a_meta_artifact_whose_primary_fingerprint_contradicts_its_dictionary_is
     assert good.split_fingerprints == art.split_fingerprints
 
 
-def test_the_meta_artifact_records_that_router_label_evidence_is_partial(meta):
-    """The open part of F12 is written into the artifact, not only printed."""
+def test_the_meta_artifact_records_complete_label_evidence_for_every_stream(meta):
+    """How each stream's training labels were established is written into the
+    artifact; since Commit 4 (F12) the router's is always its fingerprints."""
     _, art = meta
     evidence = {n: s["label_evidence"] for n, s in art.stage4_inputs["streams"].items()}
-    assert evidence["rf_router"] == contract.LABELS_PARTIAL
+    assert evidence["rf_router"] == contract.LABELS_FINGERPRINTED
     assert evidence["mlp"] == evidence["xgb"] == contract.LABELS_CARRIED

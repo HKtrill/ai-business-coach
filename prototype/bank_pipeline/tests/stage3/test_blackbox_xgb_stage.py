@@ -18,7 +18,8 @@ and after reloading scores raw rows as the refit did; Stage 4 reads it as
 calibrated OOF train / calibrated refit test on the shared fold plan, for its
 own split only, and refuses pre-PR-33 dicts, pre-F22 artifacts, global feature
 fitting, in-sample substitution and foreign fold ids. The notebook calls all of
-this the way it is tested here.
+this the way it is tested here, and finds the GLASS EBM it compares against
+where the GLASS EBM config saves it, checking its identity (F21).
 
 Protocol steps the arms share (OOF provenance, calibration, thresholds,
 store, lookup and parameter reuse) are covered for this arm, on pre-engineered
@@ -45,6 +46,7 @@ from blackbox_pipeline.models.rf_router import split_fingerprint as router_split
 from blackbox_pipeline.models.xgb.shared_protocol import (
     XGBSearchSpace, XGBStage3Config, train_xgb_stage,
 )
+from glass_pipeline.ebm.config import EBMStage3Config
 from shared.stage3.artifact import STAGE4_FEATURE_SUFFIXES, Stage3ArtifactStore, find_stage3_artifact
 from shared.stage3.config import Stage3Config
 from shared.stage3.data import Stage3Block
@@ -501,3 +503,36 @@ def test_the_notebook_imports_stage3_from_the_shared_protocol_only():
     block_cell = next(i.cell for i in xgb if i.name == "XGBStage3Config")
     bound = [i for i in imports if i.name == "split_fingerprint" and i.cell <= block_cell]
     assert bound[-1].module == "blackbox_pipeline.models.rf_router"
+
+
+def test_the_notebook_finds_the_glass_ebm_where_its_config_saves_it_f21():
+    """Cell 33 looks only where GLASS Cell 18 saves the EBM: the artifact_dir
+    and artifact_stem of ``EBMStage3Config`` (models/ebm, ``ebm_stage3_*``; the
+    GLASS notebook builds that config with those defaults, see
+    test_glass_ebm_stage.py). It no longer searches the project for the pre-F21
+    ``stage3_*`` name, and it checks that what it found is the GLASS EBM before
+    comparing it or handing ``_ebm_path`` to the crossover (Cell 37)."""
+    (cell,) = ["".join(c["source"]) for c in json.loads(NOTEBOOK.read_text(encoding="utf-8"))["cells"]
+               if c["cell_type"] == "code" and "# CELL 33:" in "".join(c["source"])]
+    tree = ast.parse(cell)
+    assigned = {n.targets[0].id: n.value for n in ast.walk(tree)
+                if isinstance(n, ast.Assign) and isinstance(n.targets[0], ast.Name)}
+    calls = [n for n in ast.walk(tree) if isinstance(n, ast.Call)]
+
+    assert _same(assigned["_EBM_CFG"], "EBMStage3Config()")
+    assert _same(assigned["_EBM_DIRS"], "[BANK_ROOT / _EBM_CFG.artifact_dir]")
+    (find,) = [c for c in calls if ast.unparse(c.func) == "find_stage3_artifact"]
+    assert [ast.unparse(a) for a in find.args] == ["_EBM_DIRS", "_EBM_CFG.artifact_stem"]
+    assert _same(_keywords(find)["block_fingerprint"], "STAGE3_BLOCK.block_fingerprint")
+    assert _same(_keywords(find)["features"], "list(EBM_FEATURES)")
+    assert not [c for c in calls if getattr(c.func, "attr", None) in ("rglob", "glob")]
+    assert not [n for n in ast.walk(tree) if isinstance(n, ast.Constant)
+                and isinstance(n.value, str) and n.value.startswith("stage3")]
+    imports = {(i.module, i.name) for i in project_imports(NOTEBOOK)}
+    assert ("glass_pipeline.ebm", "EBMStage3Config") in imports
+
+    assert _same(assigned["_ebm_identity"],
+                 '(EBM_STAGE3.model_family, (EBM_STAGE3.config or {}).get("arm"))')
+    checks = [ast.unparse(n.test) for n in tree.body if isinstance(n, ast.Assert)]
+    assert ast.unparse(ast.parse('_ebm_identity == ("ebm", "glass")', mode="eval").body) in checks
+    assert (EBMStage3Config.model_family, EBMStage3Config.arm) == ("ebm", "glass")

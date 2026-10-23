@@ -3,7 +3,7 @@ glass_pipeline.ebm
 ==================
 Stage 3 of the GLASS cascade — Explainable Boosting Machine.
 
-Runs on ``shared.stage_runner`` (shared with the black-box XGBoost arm).
+Runs on ``shared.stage3`` (shared with the black-box XGBoost arm).
 EBM-specific pieces:
 
 ``feature_engineering``  the validated research DAG + ``EBMFeaturePipeline``

@@ -9,7 +9,6 @@
 # ============================================================
 
 from typing import Tuple, Dict, Optional, Any
-from wsgiref.validate import validator
 
 from glass_pipeline.glass_router.core.rule import SegmentType
 

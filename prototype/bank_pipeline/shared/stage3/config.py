@@ -232,7 +232,7 @@ class Stage3Config:
                    "selected on inner OOF"
                    if self.nested_oof_threshold else "")
             ),
-            "shared_implementation": "shared.stage_runner (both arms)",
+            "shared_implementation": "shared.stage3 (both arms)",
             "family_specific": [
                 "estimator",
                 "hyperparameter search space",

@@ -8,7 +8,7 @@
 
 - [x] Consolidate existing stage-level validation into one `tests/` suite with shared synthetic-data fixtures
 - [x] Add focused tests for the feature-research pipeline
-- [ ] Add notebook-contract tests for each active research notebook
+- [x] Add notebook-contract tests for each active research notebook
 - [x] Split identity and row alignment:
   - fingerprints match across stages
   - every output index equals `X_train` / `X_test`
@@ -16,22 +16,22 @@
 - [x] Feature contracts:
   - missing, extra, duplicate, or reordered columns fail
   - engineered transformations are fitted on train only
-- [ ] OOF integrity:
+- [x] OOF integrity:
   - every training row scored exactly once by a model that never saw it
   - fold plans shared where declared
-- [ ] Probability / threshold consistency:
+- [x] Probability / threshold consistency:
   - probability outputs remain finite and in `[0, 1]`
   - intentional NaNs in abstention feature slots follow the declared Stage 4 contract
   - stored decisions reproduce from probabilities and thresholds where applicable
   - nested thresholds never use their own fold labels
-- [ ] Routing and abstention:
+- [x] Routing and abstention:
   - Stage 2 state/masks reproduce stored decisions
   - Pass 1 precedence and abstention semantics are enforced
   - Pass 2 follows its declared training population (`full` or `oof_remainder`)
 - [x] Calibration / threshold safeguards:
   - calibration gates use training-side OOF predictions
   - no calibrator or threshold uses held-out test labels
-- [ ] Artifact provenance:
+- [x] Artifact provenance:
   - wrong-split artifacts fail
   - wrong-feature-contract artifacts fail
   - stale artifacts are rejected
@@ -71,24 +71,31 @@
 - [x] **F24:** Document the limitation of globally selected tuning parameters versus fully nested evaluation
 - [x] **F39:** Document the possibility of upstream training dependence in Stage 4 stacking despite meta-level OOF separation
 
-*Deferred follow-ups*
+**Audit dispositions & conditional reviews**
 
-- [ ] **F12 — Commit 4:** Make router label fingerprints mandatory, regenerate artifacts, and reject legacy incomplete provenance
+- [x] **F15 — Regression coverage:** Addressed in the preceding PR; existing regression tests reused and consolidated in PR 36.
+- [x] **F31 — Conditional review documented:** Retain the current RF Router confidence-blending implementation. Reassess its assumptions if the probability construction changes.
+
+**Completed follow-ups — Commit 4**
+
+- [x] **F12:** Make router label fingerprints mandatory, regenerate artifacts, and reject legacy incomplete provenance
+- [x] **F21:** Correct the GLASS Stage 3 notebook configuration and artifact identity; remove the expected-failure test
+- [x] **F23:** Resolve stale Stage 3 notebook blocks/caches during regeneration
+
+**Deferred follow-ups — Future PRs**
+
 - [ ] **F17 — PR 37:** Decide whether GLASS should retain `full` or switch to `oof_remainder` for a more directly controlled router comparison
-- [ ] **F21 — Commit 4:** Correct the GLASS Stage 3 notebook configuration and artifact identity; remove the expected-failure test
-- [ ] **F23 — Commit 4:** Resolve stale Stage 3 notebook blocks/caches during regeneration
-- [ ] **F15 — Audit follow-up:** Recover and verify the original finding definition and regression evidence
-- [ ] **F31 — Future review:** Reassess RF Router confidence blending if its probability construction changes
+- [ ] **F31 — PR 37 (conditional):** Reassess RF Router confidence-blending assumptions only if Stage 2 probability construction changes. Otherwise, retain the validated implementation.
+- [ ] **Naming — PR 39:** Standardize GLASS Router / GLASS Arbiter naming across modules, imports, artifact paths, metadata, and documentation where appropriate. Preserve model-family identities and validate compatibility before final artifact regeneration.
 - [ ] **F39 — PR 45:** Evaluate sensitivity to upstream stacking dependence through robustness experiments
 
 **Cleanup**
 
-- [ ] Remove dead or duplicated code
-- [ ] Remove duplicate stale Stage 3 cells from the black-box notebook
-- [ ] Remove legacy standalone modules in `blackbox_pipeline/models/xgb/` superseded by `shared_protocol.py`
-- [ ] Remove superseded GLASS notebooks preserved by Git history
-- [ ] Standardize GLASS Router / GLASS Arbiter naming
-- [ ] Tighten package and notebook documentation
+- [x] Remove dead or duplicated code
+- [x] Remove duplicate stale Stage 3 cells from the black-box notebook
+- [x] Remove legacy standalone modules in `blackbox_pipeline/models/xgb/` superseded by `shared_protocol.py`
+- [x] Verify no superseded GLASS notebooks remain in the active research pipeline; preserve historical versions in Git history
+- [x] Tighten package and notebook documentation
 
 #### PR 37 — Router Baseline and Stage 2 Operating Contract
 

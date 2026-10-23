@@ -1,8 +1,8 @@
 """
 Black-box Stage 3: the XGBoost estimator and configuration on the shared
 Stage 3 protocol (``blackbox_pipeline.models.xgb.shared_protocol`` — the
-implementation ``blackbox_cascade`` imports; the package's standalone modules
-are legacy, removed in Commit 4, and not tested here).
+implementation ``blackbox_cascade`` imports, and all the package exports since
+its standalone pre-protocol modules were removed in Commit 4).
 
 Contract: ``XGBEstimator`` implements the shared ``Stage3Estimator`` interface
 on DataFrames; ``XGBStage3Config`` carries the black-box XGBoost identity and
@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import ast
 import dataclasses
+import inspect
 import json
 import math
 
@@ -88,9 +89,17 @@ def _small_config(tmp_path, **overrides) -> XGBStage3Config:
 # ----------------------------------------------------------------------
 # interface, identity, protocol
 # ----------------------------------------------------------------------
-def test_the_notebook_imports_the_shared_protocol_implementation():
-    for name in ("train_xgb_stage", "XGBStage3Config", "XGBSearchSpace", "XGBEstimator"):
+def test_the_package_exports_exactly_the_shared_protocol_interface():
+    """What the notebook imports from the package is the shared-protocol
+    implementation, and the package offers no class or function from anywhere
+    else — no second config, artifact or ``train_xgb_stage``."""
+    api = ("train_xgb_stage", "XGBStage3Config", "XGBSearchSpace", "XGBEstimator")
+    assert sorted(xgb_pkg.__all__) == sorted(api)
+    for name in api:
         assert getattr(xgb_pkg, name) is getattr(protocol_mod, name), name
+    offered = {n: v.__module__ for n, v in vars(xgb_pkg).items()
+               if not n.startswith("_") and (inspect.isclass(v) or inspect.isfunction(v))}
+    assert offered == dict.fromkeys(api, protocol_mod.__name__)
 
 
 def test_the_tuned_keys_are_published_in_search_space_order():

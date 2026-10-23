@@ -13,6 +13,21 @@ from tests.support.recorders import CallLog
 from tests.support.synthetic import make_bank_frame, split_frame
 
 
+def pytest_collection_modifyitems(config, items):
+    """
+    ``realdata`` tests run only when the ``-m`` expression names ``realdata``
+    (``pytest -m realdata``). Any other expression — ``-m "not slow"``, which
+    replaces the default selection in pytest.ini — leaves them out, so the
+    synthetic suites never need saved artifacts.
+    """
+    if "realdata" in (config.getoption("markexpr") or ""):
+        return
+    dropped = [item for item in items if item.get_closest_marker("realdata") is not None]
+    if dropped:
+        config.hook.pytest_deselected(items=dropped)
+        items[:] = [item for item in items if item.get_closest_marker("realdata") is None]
+
+
 @pytest.fixture
 def bank_frame():
     """400 bank-like rows, 20% positives, planted signal, irregular index."""

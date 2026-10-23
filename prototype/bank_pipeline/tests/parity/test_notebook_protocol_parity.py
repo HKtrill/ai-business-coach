@@ -38,11 +38,11 @@ from blackbox_pipeline.models.rf_router import make_folds as rf_make_folds
 from blackbox_pipeline.models.rf_router import split_fingerprint as router_split_fingerprint
 from blackbox_pipeline.models.xgb import XGBStage3Config
 from data.global_splits.split_manager import GlobalSplitManager
+from glass_pipeline.ebm import EBMStage3Config
 from glass_pipeline.glass_router.pipeline import fold_fingerprint
 from glass_pipeline.glass_router.pipeline import make_folds as glass_make_folds
 from glass_pipeline.lr import lr_stage_calibrated
 from glass_pipeline.lr.lr_stage_calibrated import CalibratedLRStage
-from shared.stage3.config import Stage3Config
 from shared.stage3.data import FoldPlan
 from shared.stage_io import fold_assignment, split_fingerprint
 from tests.support.notebooks import BANK_ROOT
@@ -59,7 +59,7 @@ SPLIT_PROTOCOL = {
 }
 FOLD_PROTOCOL = {"stage1": (10, 42), "stage2": (5, 42), "stage3": (5, 42)}
 FOLD_KEYS = {"n_tune_folds", "random_state", "stratify"}
-STAGE3_CONFIGS = {"Stage3Config": Stage3Config, "XGBStage3Config": XGBStage3Config}
+STAGE3_CONFIGS = {"EBMStage3Config": EBMStage3Config, "XGBStage3Config": XGBStage3Config}  # F21
 
 
 class Notebook:
@@ -241,7 +241,7 @@ def test_every_stage2_3_fold_maker_gives_the_same_fold_rows():
         "GLASS crossfit_stage2 default (make_folds)": _fold_id(glass_make_folds(y, k, seed), len(y)),
         "black-box STAGE_FOLDS / rf_router.make_folds": _fold_id(rf_make_folds(y, k, seed), len(y)),
     }
-    for cls in (Stage3Config, XGBStage3Config, MetaXGBConfig):
+    for cls in (EBMStage3Config, XGBStage3Config, MetaXGBConfig):
         cfg = cls()
         plans[f"{cls.__name__} FoldPlan"] = FoldPlan.build(
             y, cfg.n_tune_folds, cfg.random_state, cfg.stratify).fold_id
