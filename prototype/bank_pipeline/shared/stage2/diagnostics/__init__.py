@@ -13,10 +13,28 @@ Train-side Stage 2 router diagnostics (PR 37, Commit 1, Step 1C).
                       denominators); score-stream support gate
     equivalence       is the GLASS-arm RF oof_proba the RF Router's outer Pass 1
                       score? zero disagreements required
+    trace             (Commit 2, Step 2A) both routers' three-state outer OOF
+                      trace: checks T1-T7, routing-policy audit, state
+                      distributions, routing rates, GLASS vs RF comparison
+    suppression       (Commit 2, Step 2B) Pass 1 against the primary LR / EBM
+                      flags and their union: intercepted false positives,
+                      suppressed true positives, NPV and leakage
+    contribution      (Commit 2, Step 2C) Pass 2 unique positives against the
+                      frozen LR / EBM flags and against label-free rate-matched
+                      LR / EBM flags on the common eligible population
+    overlap           (Commit 2, Step 2D) router x upstream and GLASS x RF overlap,
+                      signal availability, label-free score strata, score-
+                      conditional states, observed vs expected positives,
+                      threshold positions and arithmetic baselines
+    baseline          (Commit 2, Step 2E) the frozen Pre-Correction Stage 2
+                      Baseline package: export, verification and comparison of
+                      the Steps 2A-2D results (imported explicitly, not
+                      re-exported here)
 
-Additive and diagnostic only: nothing here fits, tunes, refits, writes files or
-changes any router, threshold or Stage 4 behaviour. Metric definitions live in
-``metrics.METRIC_DEFINITIONS``.
+Additive and diagnostic only: nothing here fits, tunes, refits or changes any
+router, threshold or Stage 4 behaviour, and only ``baseline.write_baseline``
+writes files (called by research_logs/baselines/stage2_baseline.py --generate).
+Metric definitions live in ``metrics.METRIC_DEFINITIONS``.
 """
 
 from .boundary import (
@@ -87,6 +105,53 @@ from .schema import (
     UnsupportedDiagnostic,
     UpstreamOOFView,
 )
+from .trace import (
+    AUDIT_STATUSES,
+    RouterTrace,
+    TraceCheckError,
+    build_router_trace,
+    compare_state_distributions,
+    routing_policy_audit,
+    routing_rates,
+    state_distribution,
+)
+from .suppression import (
+    pass1_population,
+    pass1_suppression,
+    pass1_suppression_report,
+    primary_reference_flags,
+    reference_flag_summary,
+)
+from .contribution import (
+    MatchedSelection,
+    common_eligible_mask,
+    common_eligible_population,
+    matched_reference_selection,
+    pass2_contribution,
+    pass2_frozen_contribution,
+    pass2_matched_contribution,
+    pass2_population,
+    pass2_positive_breakdown,
+)
+from .overlap import (
+    ScoreStrata,
+    boundary_diagnostics,
+    crosstab_summary,
+    group_observed_expected,
+    key_groups,
+    model_disagreement_baseline,
+    overlap_notes,
+    pass2_cross_router_overlap,
+    router_crosstab,
+    router_reference_agreement,
+    router_reference_contingency,
+    score_conditional_states,
+    score_strata,
+    signal_availability,
+    state_standardization,
+    unique_positive_chance_baselines,
+    within_stratum_contrasts,
+)
 
 __all__ = [
     # schema
@@ -111,4 +176,20 @@ __all__ = [
     # equivalence
     "BOUNDARY_ATOL", "EquivalenceReport", "check_rf_pass1_score_equivalence",
     "verified_rf_pass1_score",
+    # trace (Commit 2, Step 2A)
+    "AUDIT_STATUSES", "RouterTrace", "TraceCheckError", "build_router_trace",
+    "routing_policy_audit", "state_distribution", "routing_rates", "compare_state_distributions",
+    # suppression (Commit 2, Step 2B)
+    "pass1_population", "pass1_suppression", "primary_reference_flags", "reference_flag_summary",
+    "pass1_suppression_report",
+    # contribution (Commit 2, Step 2C)
+    "MatchedSelection", "pass2_population", "common_eligible_mask", "common_eligible_population",
+    "pass2_positive_breakdown", "pass2_contribution", "pass2_frozen_contribution",
+    "matched_reference_selection", "pass2_matched_contribution",
+    # overlap (Commit 2, Step 2D)
+    "ScoreStrata", "router_reference_contingency", "router_reference_agreement",
+    "router_crosstab", "crosstab_summary", "pass2_cross_router_overlap", "signal_availability",
+    "score_strata", "score_conditional_states", "within_stratum_contrasts",
+    "state_standardization", "key_groups", "group_observed_expected", "boundary_diagnostics",
+    "unique_positive_chance_baselines", "model_disagreement_baseline", "overlap_notes",
 ]

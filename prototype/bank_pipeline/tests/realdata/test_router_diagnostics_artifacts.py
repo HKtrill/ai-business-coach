@@ -19,109 +19,17 @@ each file's SHA-256 an attested match against the preserved baseline.
 
 from __future__ import annotations
 
-import os
-from pathlib import Path
-
-import joblib
 import pytest
 
 from shared.stage2 import diagnostics as d
-from tests.support import artifact_audit as audit
-from tests.support.notebooks import BANK_ROOT
+from tests.support.router_artifacts import (
+    ROUTER_SPLIT_FP,
+    STAGE_IO_SPLIT_FP,
+    TRAIN_LABEL_FP,
+    Real,
+)
 
 pytestmark = pytest.mark.realdata
-
-#: Recorded identities of the October 23 split (baseline PROVENANCE.json).
-ROUTER_SPLIT_FP = "fc3e73a5ef91aea4"
-TRAIN_LABEL_FP = "b984d2a50527"
-STAGE_IO_SPLIT_FP = os.environ.get("PR37_STAGE_IO_SPLIT_FINGERPRINT", "d6cddadc3439")
-ATTESTATION = ("PR 37 baseline snapshot PROVENANCE.json, identities.stage_io_split_fingerprint "
-               "(recorded 2026-11-01; not recomputed)")
-SUMS_ENV = "PR37_BASELINE_SHA256SUMS"
-
-
-def _sums() -> dict:
-    value = os.environ.get(SUMS_ENV)
-    if not value:
-        return {}
-    out = {}
-    for line in Path(value).read_text(encoding="ascii").splitlines():
-        if line.strip():
-            sha, rel = line.split("  ", 1)
-            out[rel.strip()] = sha.strip()
-    return out
-
-
-class Real:
-    """Each artifact once per module; a failure is re-raised by every test that needs it."""
-
-    def __init__(self):
-        self._done: dict = {}
-        self.sums = _sums()
-
-    def _once(self, name, step):
-        if name not in self._done:
-            try:
-                self._done[name] = (True, step())
-            except Exception as exc:          # noqa: BLE001 - re-raised below
-                self._done[name] = (False, exc)
-        ok, value = self._done[name]
-        if not ok:
-            raise value
-        return value
-
-    def sha(self, path: Path):
-        if not self.sums:
-            return None
-        rel = "bank_pipeline/" + Path(path).resolve().relative_to(Path(BANK_ROOT).resolve()).as_posix()
-        if rel not in self.sums:
-            raise AssertionError(f"{rel} is not in {os.environ[SUMS_ENV]}")
-        return self.sums[rel]
-
-    def ref(self):
-        return self._once("ref", lambda: d.train_reference_from_global_split(
-            audit.real_global_split(), attested_stage_io_split_fingerprint=STAGE_IO_SPLIT_FP,
-            attestation_source=ATTESTATION))
-
-    def roots(self):
-        return self._once("roots", lambda: audit.select_roots(BANK_ROOT, audit.manifest_from_env()))
-
-    def paths(self, key):
-        return self._once(("paths", key), lambda: audit.upstream_paths(
-            key, joblib.load(self.roots()[key])))
-
-    def view(self, which):
-        def build():
-            if which == "glass":
-                p = self.paths("meta_ebm")["stage2"]
-                return d.extract_router_view(p, self.ref(), expected_arm="glass",
-                                             expected_sha256=self.sha(p))
-            if which == "rf":
-                p = self.paths("meta_ebm_on_blackbox")["stage2"]
-                return d.extract_router_view(p, self.ref(), expected_arm="blackbox",
-                                             expected_sha256=self.sha(p))
-            if which == "lr":
-                p = self.paths("meta_ebm")["stage1"]
-                return d.extract_lr_view(p, self.ref(), expected_sha256=self.sha(p))
-            p = self.paths("meta_ebm")["stage3"]
-            return d.extract_ebm_view(p, self.ref(), expected_sha256=self.sha(p))
-        return self._once(("view", which), build)
-
-    def stage4(self):
-        p = self.roots()["meta_ebm"]
-        return self._once("stage4", lambda: d.extract_stage4_recall_thresholds(
-            p, self.ref(), lr_view=self.view("lr"), ebm_view=self.view("ebm"),
-            expected_sha256=self.sha(p)))
-
-    def rf_result_path(self) -> Path:
-        origin = self.view("rf").metadata.get("rf_params_origin")
-        candidates = [Path(str(origin))] if origin else []
-        candidates += [Path(BANK_ROOT) / c for c in candidates if not c.is_absolute()]
-        found = [c for c in candidates if c.is_file()]
-        if not found:
-            raise AssertionError(f"RF Router rf_params_origin {origin!r} does not name an "
-                                 "existing GLASS-arm RF result")
-        return found[-1]
 
 
 @pytest.fixture(scope="module")

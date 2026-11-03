@@ -1,0 +1,1279 @@
+{
+  "baseline_id": "pr37_stage2_pre_correction_v1",
+  "conventions": {
+    "fold": "'all' = pooled over the five router outer folds; 0-4 = router outer fold id",
+    "empty_cell": "not applicable or undefined; a ratio's status says which. Never a substitute for 0.",
+    "booleans": "true / false",
+    "floats": ".12g: 12 significant digits",
+    "rows": "in the producing function's order (deterministic)",
+    "denominators": "every ratio's denominator is explicit. 'routed only' in a label means the denominator excludes abstained rows; otherwise it is the stated population (all rows of the fold / pool unless labelled).",
+    "producers": "module paths are relative to shared.stage2.diagnostics"
+  },
+  "metrics": {
+    "above_threshold_share": {
+      "kind": "ratio",
+      "numerator": "group rows at or above the reference threshold",
+      "denominator": "group rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "group rows at or above the reference threshold / group rows"
+      ]
+    },
+    "abstain_rate": {
+      "kind": "ratio",
+      "numerator": "abstained rows",
+      "denominator": "all rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "Abstention rate (abstained rows / all rows)"
+      ]
+    },
+    "abstain_upstream_flag_rate": {
+      "kind": "ratio",
+      "numerator": "abstained rows the upstream flags",
+      "denominator": "abstained rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "abstained rows the reference flags / abstained rows"
+      ]
+    },
+    "abstain_upstream_precision": {
+      "kind": "ratio",
+      "numerator": "positives among abstained rows the upstream flags",
+      "denominator": "abstained rows the upstream flags",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "positives among abstained flagged rows / abstained flagged rows"
+      ]
+    },
+    "clear_above_share": {
+      "kind": "ratio",
+      "numerator": "group rows above the threshold and outside the band",
+      "denominator": "group rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "group rows above the threshold and outside the band / group rows"
+      ]
+    },
+    "clear_below_share": {
+      "kind": "ratio",
+      "numerator": "group rows below the threshold and outside the band",
+      "denominator": "group rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "group rows below the threshold and outside the band / group rows"
+      ]
+    },
+    "coverage": {
+      "kind": "ratio",
+      "numerator": "rows routed Pass 1 or Pass 2",
+      "denominator": "all rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "Total coverage ((Pass 1 + Pass 2 rows) / all rows)",
+        "routed rows (Pass 1 or Pass 2) / rows"
+      ]
+    },
+    "covered_agreement": {
+      "kind": "ratio",
+      "numerator": "covered rows where (Pass 2) == (upstream flag)",
+      "denominator": "covered rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "routed rows where Pass 2 == reference flag / routed rows (routed only)"
+      ]
+    },
+    "cross_both_abstain_rate": {
+      "kind": "ratio",
+      "numerator": "rows both routers abstain on",
+      "denominator": "rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "rows both routers abstain on / rows"
+      ]
+    },
+    "cross_both_routed_rate": {
+      "kind": "ratio",
+      "numerator": "rows both routers route",
+      "denominator": "rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "rows both routers route / rows"
+      ]
+    },
+    "cross_one_abstains_rate": {
+      "kind": "ratio",
+      "numerator": "rows exactly one router abstains on",
+      "denominator": "rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "rows exactly one router abstains on / rows"
+      ]
+    },
+    "cross_opposite_rate": {
+      "kind": "ratio",
+      "numerator": "rows one router routes Pass 1 and the other Pass 2",
+      "denominator": "rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "rows one router sends to Pass 1 and the other to Pass 2 / rows"
+      ]
+    },
+    "cross_routed_agreement": {
+      "kind": "ratio",
+      "numerator": "rows both routers route to the same pass",
+      "denominator": "rows both routers route (routed only)",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "same routed decision / rows both routers route (routed only)"
+      ]
+    },
+    "cross_state_agreement": {
+      "kind": "ratio",
+      "numerator": "rows with the same GLASS and RF state",
+      "denominator": "rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "rows with the same GLASS and RF state / rows"
+      ]
+    },
+    "ebm_percentile_margin_q10": {
+      "kind": "quantile",
+      "labels": [
+        "ebm_percentile_margin, 10th percentile"
+      ]
+    },
+    "ebm_percentile_margin_q25": {
+      "kind": "quantile",
+      "labels": [
+        "ebm_percentile_margin, 25th percentile"
+      ]
+    },
+    "ebm_percentile_margin_q50": {
+      "kind": "quantile",
+      "labels": [
+        "ebm_percentile_margin, 50th percentile"
+      ]
+    },
+    "ebm_percentile_margin_q75": {
+      "kind": "quantile",
+      "labels": [
+        "ebm_percentile_margin, 75th percentile"
+      ]
+    },
+    "ebm_percentile_margin_q90": {
+      "kind": "quantile",
+      "labels": [
+        "ebm_percentile_margin, 90th percentile"
+      ]
+    },
+    "full_population_positives": {
+      "kind": "count",
+      "labels": [
+        "actual positives of all training rows in the fold / pool"
+      ]
+    },
+    "incremental_positive_recall": {
+      "kind": "ratio",
+      "numerator": "Pass 2 positives the upstream does not flag",
+      "denominator": "all positives of the evaluation population",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "unique TP / positives (marginal positive recall)"
+      ]
+    },
+    "incremental_positive_recall_all": {
+      "kind": "ratio",
+      "numerator": "Pass 2 positives the upstream does not flag",
+      "denominator": "all training positives of the fold / pool",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "unique TP / all training positives of the group"
+      ]
+    },
+    "incremental_yield": {
+      "kind": "ratio",
+      "numerator": "Pass 2 positives the upstream does not flag",
+      "denominator": "Pass 2 rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "unique TP / Pass 2 rows"
+      ]
+    },
+    "intercepted_flags": {
+      "kind": "count",
+      "labels": [
+        "reference flags routed by Pass 1"
+      ]
+    },
+    "intercepted_fp": {
+      "kind": "count",
+      "labels": [
+        "reference false positives routed by Pass 1 (potential benefit)"
+      ]
+    },
+    "jaccard_with_router": {
+      "kind": "ratio",
+      "numerator": "rows in both",
+      "denominator": "rows in either",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "rows in both / rows in either"
+      ]
+    },
+    "lr_percentile_margin_q10": {
+      "kind": "quantile",
+      "labels": [
+        "lr_percentile_margin, 10th percentile"
+      ]
+    },
+    "lr_percentile_margin_q25": {
+      "kind": "quantile",
+      "labels": [
+        "lr_percentile_margin, 25th percentile"
+      ]
+    },
+    "lr_percentile_margin_q50": {
+      "kind": "quantile",
+      "labels": [
+        "lr_percentile_margin, 50th percentile"
+      ]
+    },
+    "lr_percentile_margin_q75": {
+      "kind": "quantile",
+      "labels": [
+        "lr_percentile_margin, 75th percentile"
+      ]
+    },
+    "lr_percentile_margin_q90": {
+      "kind": "quantile",
+      "labels": [
+        "lr_percentile_margin, 90th percentile"
+      ]
+    },
+    "lr_probability_q10": {
+      "kind": "quantile",
+      "labels": [
+        "lr_probability, 10th percentile"
+      ]
+    },
+    "lr_probability_q25": {
+      "kind": "quantile",
+      "labels": [
+        "lr_probability, 25th percentile"
+      ]
+    },
+    "lr_probability_q50": {
+      "kind": "quantile",
+      "labels": [
+        "lr_probability, 50th percentile"
+      ]
+    },
+    "lr_probability_q75": {
+      "kind": "quantile",
+      "labels": [
+        "lr_probability, 75th percentile"
+      ]
+    },
+    "lr_probability_q90": {
+      "kind": "quantile",
+      "labels": [
+        "lr_probability, 90th percentile"
+      ]
+    },
+    "marginal_precision": {
+      "kind": "ratio",
+      "numerator": "Pass 2 positives the upstream does not flag",
+      "denominator": "Pass 2 rows the upstream does not flag",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "unique TP / (unique TP + unique FP)"
+      ]
+    },
+    "matched_inclusive_n": {
+      "kind": "count",
+      "labels": [
+        "tie bound: inclusive cut rows (more than K)"
+      ]
+    },
+    "matched_strict_n": {
+      "kind": "count",
+      "labels": [
+        "tie bound: strict cut rows (fewer than K)"
+      ]
+    },
+    "negatives": {
+      "kind": "count",
+      "labels": [
+        "actual negatives"
+      ]
+    },
+    "overlap_flags": {
+      "kind": "count",
+      "labels": [
+        "rows flagged by both Pass 2 and the reference"
+      ]
+    },
+    "overlap_fp": {
+      "kind": "count",
+      "labels": [
+        "negatives flagged by both"
+      ]
+    },
+    "overlap_tp": {
+      "kind": "count",
+      "labels": [
+        "positives flagged by both (pass2_overlap_tp)"
+      ]
+    },
+    "pass1_fp_suppression": {
+      "kind": "ratio",
+      "numerator": "upstream false positives routed by Pass 1",
+      "denominator": "upstream false positives (flagged negatives)",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "reference FP interception rate (intercepted FP / reference FP)"
+      ]
+    },
+    "pass1_intercepted_flag_npv": {
+      "kind": "ratio",
+      "numerator": "negatives among the upstream flags routed by Pass 1",
+      "denominator": "upstream flags routed by Pass 1",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "negatives among intercepted flags (intercepted FP / flags in P1)"
+      ]
+    },
+    "pass1_leak_upstream_flagged": {
+      "kind": "ratio",
+      "numerator": "Pass 1 positives the upstream flags",
+      "denominator": "Pass 1 positives",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "share of Pass 1 positives the reference flags"
+      ]
+    },
+    "pass1_leak_upstream_missed": {
+      "kind": "ratio",
+      "numerator": "Pass 1 positives the upstream does not flag",
+      "denominator": "Pass 1 positives",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "share of Pass 1 positives the reference misses"
+      ]
+    },
+    "pass1_leakage_share": {
+      "kind": "ratio",
+      "numerator": "positives routed by Pass 1",
+      "denominator": "all positives",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "positive leakage (Pass 1 positives / all positives)"
+      ]
+    },
+    "pass1_negative_recall": {
+      "kind": "ratio",
+      "numerator": "negatives routed by Pass 1",
+      "denominator": "all negatives",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "negatives routed by Pass 1 / all negatives"
+      ]
+    },
+    "pass1_negatives": {
+      "kind": "count",
+      "labels": [
+        "Pass 1 actual negatives (correct)"
+      ]
+    },
+    "pass1_npv": {
+      "kind": "ratio",
+      "numerator": "negatives among Pass 1 rows",
+      "denominator": "Pass 1 rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "Pass 1 NPV (negatives / Pass 1 rows)"
+      ]
+    },
+    "pass1_positive_rate": {
+      "kind": "ratio",
+      "numerator": "positives among Pass 1 rows (within-band leakage)",
+      "denominator": "Pass 1 rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "within-band leakage (positives / Pass 1 rows)"
+      ]
+    },
+    "pass1_positives": {
+      "kind": "count",
+      "labels": [
+        "Pass 1 actual positives (leaked)"
+      ]
+    },
+    "pass1_positives_unflagged": {
+      "kind": "count",
+      "labels": [
+        "Pass 1 positives the reference does not flag"
+      ]
+    },
+    "pass1_rate": {
+      "kind": "ratio",
+      "numerator": "Pass 1 rows",
+      "denominator": "all rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "Pass 1 coverage (Pass 1 rows / all rows)",
+        "Pass 1 coverage (Pass 1 rows / rows)"
+      ]
+    },
+    "pass1_rows": {
+      "kind": "count",
+      "labels": [
+        "Pass 1 rows"
+      ]
+    },
+    "pass1_tp_cost": {
+      "kind": "ratio",
+      "numerator": "upstream true positives routed by Pass 1",
+      "denominator": "upstream true positives (flagged positives)",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "reference TP suppression rate (suppressed TP / reference TP)"
+      ]
+    },
+    "pass1_upstream_flag_rate": {
+      "kind": "ratio",
+      "numerator": "Pass 1 rows the upstream flags",
+      "denominator": "Pass 1 rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "Pass 1 rows the reference flags / Pass 1 rows (conflict)",
+        "share of Pass 1 rows the reference flags"
+      ]
+    },
+    "pass1_upstream_negative_agreement": {
+      "kind": "ratio",
+      "numerator": "Pass 1 rows the upstream does not flag",
+      "denominator": "Pass 1 rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "Pass 1 rows the reference does not flag / Pass 1 rows"
+      ]
+    },
+    "pass2_fp": {
+      "kind": "count",
+      "labels": [
+        "Pass 2 actual negatives"
+      ]
+    },
+    "pass2_n": {
+      "kind": "count",
+      "labels": [
+        "Pass 2 rows"
+      ]
+    },
+    "pass2_new_false_positive_rate": {
+      "kind": "ratio",
+      "numerator": "Pass 2 negatives the upstream does not flag",
+      "denominator": "Pass 2 rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "unique FP / Pass 2 rows"
+      ]
+    },
+    "pass2_precision": {
+      "kind": "ratio",
+      "numerator": "positives among Pass 2 rows",
+      "denominator": "Pass 2 rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "Pass 2 precision (P2 TP / P2 rows)"
+      ]
+    },
+    "pass2_rate": {
+      "kind": "ratio",
+      "numerator": "Pass 2 rows",
+      "denominator": "all rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "Pass 2 coverage (Pass 2 rows / all rows)",
+        "Pass 2 flag rate (P2 rows / rows)"
+      ]
+    },
+    "pass2_recall": {
+      "kind": "ratio",
+      "numerator": "positives flagged by Pass 2",
+      "denominator": "all positives",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "Pass 2 recall (P2 TP / positives)"
+      ]
+    },
+    "pass2_recall_eligible": {
+      "kind": "ratio",
+      "numerator": "positives flagged by Pass 2",
+      "denominator": "positives not routed by Pass 1 (eligible after Pass 1 precedence)",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "Pass 2 TP / positives in the own Pass 1 remainder"
+      ]
+    },
+    "pass2_remainder_rate": {
+      "kind": "ratio",
+      "numerator": "Pass 2 rows",
+      "denominator": "rows not routed by the router's own Pass 1",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "Pass 2 rows / own Pass 1 remainder rows"
+      ]
+    },
+    "pass2_shared_positive_share": {
+      "kind": "ratio",
+      "numerator": "Pass 2 positives the upstream also flags",
+      "denominator": "Pass 2 positives",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "share of Pass 2 positives the reference also flags"
+      ]
+    },
+    "pass2_tp": {
+      "kind": "count",
+      "labels": [
+        "Pass 2 actual positives"
+      ]
+    },
+    "pass2_unique_positive_share": {
+      "kind": "ratio",
+      "numerator": "Pass 2 positives the upstream does not flag",
+      "denominator": "Pass 2 positives",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "share of Pass 2 positives the reference misses"
+      ]
+    },
+    "pass2_upstream_disagreement": {
+      "kind": "ratio",
+      "numerator": "Pass 2 rows the upstream does not flag",
+      "denominator": "Pass 2 rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "Pass 2 rows the reference does not flag / Pass 2 rows"
+      ]
+    },
+    "pass2_upstream_redundancy": {
+      "kind": "ratio",
+      "numerator": "Pass 2 rows the upstream also flags",
+      "denominator": "Pass 2 rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "Pass 2 rows the reference flags / Pass 2 rows (agreement)",
+        "share of Pass 2 rows the reference also flags"
+      ]
+    },
+    "positives": {
+      "kind": "count",
+      "labels": [
+        "actual positives",
+        "actual positives in the population group"
+      ]
+    },
+    "reference_flags": {
+      "kind": "count",
+      "labels": [
+        "reference flags",
+        "rows the reference flags SUBSCRIBE"
+      ]
+    },
+    "reference_fp": {
+      "kind": "count",
+      "labels": [
+        "reference false positives",
+        "reference false positives (flagged negatives)"
+      ]
+    },
+    "reference_only_fp": {
+      "kind": "count",
+      "labels": [
+        "reference negatives Pass 2 does not flag"
+      ]
+    },
+    "reference_only_tp": {
+      "kind": "count",
+      "labels": [
+        "reference positives Pass 2 misses"
+      ]
+    },
+    "reference_tp": {
+      "kind": "count",
+      "labels": [
+        "reference true positives",
+        "reference true positives (flagged positives)"
+      ]
+    },
+    "remainder_positives": {
+      "kind": "count",
+      "labels": [
+        "positives in the own Pass 1 remainder"
+      ]
+    },
+    "remainder_rows": {
+      "kind": "count",
+      "labels": [
+        "own Pass 1 remainder rows (eligible for Pass 2)"
+      ]
+    },
+    "retained_flags": {
+      "kind": "count",
+      "labels": [
+        "reference flags outside Pass 1"
+      ]
+    },
+    "retained_fp": {
+      "kind": "count",
+      "labels": [
+        "reference false positives outside Pass 1"
+      ]
+    },
+    "retained_tp": {
+      "kind": "count",
+      "labels": [
+        "reference true positives outside Pass 1"
+      ]
+    },
+    "retained_upstream_precision": {
+      "kind": "ratio",
+      "numerator": "positives among the upstream flags outside Pass 1",
+      "denominator": "upstream flags outside Pass 1 (a hypothetical Pass 1 veto, not the cascade's output)",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "precision of flags outside Pass 1 (hypothetical veto)"
+      ]
+    },
+    "rows": {
+      "kind": "count",
+      "labels": [
+        "rows in the group",
+        "rows in the population group"
+      ]
+    },
+    "suppressed_tp": {
+      "kind": "count",
+      "labels": [
+        "reference true positives routed by Pass 1 (error)"
+      ]
+    },
+    "threshold_band_share": {
+      "kind": "ratio",
+      "numerator": "group rows within the threshold band (within-fold percentile)",
+      "denominator": "group rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "group rows within the threshold band (within-fold percentile) / group rows"
+      ]
+    },
+    "tie_block": {
+      "kind": "count",
+      "labels": [
+        "rows sharing the K-th score (1 = no tie)"
+      ]
+    },
+    "tie_broken_rows": {
+      "kind": "count",
+      "labels": [
+        "rows chosen from the tied block by the tie-break rule"
+      ]
+    },
+    "union_flags": {
+      "kind": "count",
+      "labels": [
+        "hypothetical OR: rows flagged by either"
+      ]
+    },
+    "union_fp": {
+      "kind": "count",
+      "labels": [
+        "hypothetical OR: FP"
+      ]
+    },
+    "union_precision": {
+      "kind": "ratio",
+      "numerator": "positives among rows flagged by Pass 2 or the upstream",
+      "denominator": "rows flagged by Pass 2 or the upstream (a hypothetical OR, not Stage 4)",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "hypothetical OR precision"
+      ]
+    },
+    "union_tp": {
+      "kind": "count",
+      "labels": [
+        "hypothetical OR: TP"
+      ]
+    },
+    "unique_fp": {
+      "kind": "count",
+      "labels": [
+        "Pass 2 negatives the reference does not flag (unique FP = OR's incremental FP)"
+      ]
+    },
+    "unique_tp": {
+      "kind": "count",
+      "labels": [
+        "Pass 2 positives the reference misses (unique TP = OR's incremental TP)"
+      ]
+    },
+    "unique_tp_inclusive": {
+      "kind": "count",
+      "labels": [
+        "tie bound: unique TP vs the inclusive cut"
+      ]
+    },
+    "unique_tp_strict": {
+      "kind": "count",
+      "labels": [
+        "tie bound: unique TP vs the strict cut"
+      ]
+    },
+    "upstream_flag_rate": {
+      "kind": "ratio",
+      "numerator": "rows the upstream flags",
+      "denominator": "all rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "reference flag rate (flags / rows)"
+      ]
+    },
+    "upstream_flags_in_abstain_share": {
+      "kind": "ratio",
+      "numerator": "upstream flags on abstained rows",
+      "denominator": "upstream flags",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "reference flags in abstain / reference flags"
+      ]
+    },
+    "upstream_flags_in_pass1_share": {
+      "kind": "ratio",
+      "numerator": "upstream flags routed by Pass 1",
+      "denominator": "upstream flags",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "reference flags in Pass 1 / reference flags"
+      ]
+    },
+    "upstream_flags_in_pass2_share": {
+      "kind": "ratio",
+      "numerator": "upstream flags routed by Pass 2",
+      "denominator": "upstream flags",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "reference flags in Pass 2 / reference flags"
+      ]
+    },
+    "upstream_precision": {
+      "kind": "ratio",
+      "numerator": "upstream true positives (flagged positives)",
+      "denominator": "rows the upstream flags",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "reference precision (TP / flags)"
+      ]
+    },
+    "upstream_recall": {
+      "kind": "ratio",
+      "numerator": "upstream true positives",
+      "denominator": "all positives of the evaluation population",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": [
+        "reference recall (TP / positives)"
+      ]
+    },
+    "abstain_positive_rate": {
+      "kind": "ratio",
+      "numerator": "positives among abstained rows",
+      "denominator": "abstained rows",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": []
+    },
+    "state_positive_rate": {
+      "kind": "ratio",
+      "numerator": "positives among the state's rows",
+      "denominator": "rows in the state",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": []
+    },
+    "state_negative_rate": {
+      "kind": "ratio",
+      "numerator": "negatives among the state's rows",
+      "denominator": "rows in the state",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": []
+    },
+    "cross_cell_share": {
+      "kind": "ratio",
+      "numerator": "rows in the GLASS state x RF state cell",
+      "denominator": "rows in the group",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": []
+    },
+    "set_positive_rate": {
+      "kind": "ratio",
+      "numerator": "positives in the set",
+      "denominator": "rows in the set",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": []
+    },
+    "overlap_with_router": {
+      "kind": "ratio",
+      "numerator": "rows in both the set and the router's state",
+      "denominator": "rows in the set",
+      "registry": "shared.stage2.diagnostics.metrics.METRIC_DEFINITIONS",
+      "labels": []
+    }
+  },
+  "tables": {
+    "states": {
+      "file": "tables/states.csv",
+      "step": "2A",
+      "producer": "trace.state_distribution",
+      "description": "Three-state counts and class composition per router and fold.",
+      "keys": [
+        "arm",
+        "fold",
+        "state"
+      ],
+      "columns": {
+        "arm": "router arm: 'glass' = GLASS Router, 'blackbox' = RF Router ('' = not arm-specific)",
+        "fold": "'all' = pooled over the five router outer folds; 0-4 = router outer fold id",
+        "state": "router state: PASS_1_NOT_SUBSCRIBE, PASS_2_SUBSCRIBE or ABSTAIN",
+        "rows": "rows in the fold (or all rows for 'all')",
+        "n": "rows in the cell / group",
+        "positives": "actual positives (y = 1) among the rows",
+        "negatives": "actual negatives (y = 0) among the rows",
+        "share": "n / rows (registered pass1_rate / pass2_rate / abstain_rate)",
+        "share_status": "status of share",
+        "positive_rate": "positives / n (empty when n = 0; see the status column)",
+        "positive_rate_status": "defined or undefined_empty_denominator",
+        "negative_rate": "negatives / n",
+        "negative_rate_status": "status of negative_rate"
+      }
+    },
+    "ratios": {
+      "file": "tables/ratios.csv",
+      "step": "2A-2D",
+      "producer": "trace.routing_rates; suppression.pass1_population / pass1_suppression_report; contribution.pass2_population / pass2_frozen_contribution / pass2_matched_contribution; overlap.router_reference_agreement / crosstab_summary / boundary_diagnostics",
+      "description": "Every count and ratio of the long-format diagnostics, with explicit numerator, denominator, value and status.",
+      "keys": [
+        "section",
+        "arm",
+        "reference",
+        "population",
+        "group",
+        "score",
+        "fold",
+        "metric"
+      ],
+      "columns": {
+        "section": "the step and producing function (see definitions.json tables.ratios.sections)",
+        "arm": "router arm: 'glass' = GLASS Router, 'blackbox' = RF Router ('' = not arm-specific)",
+        "reference": "reference flag set: lr = lr.in_stage_f2_cv, ebm = ebm.nested_f2, union = either flags, intersection = both flag; lr_matched / ebm_matched / lr_or_ebm_matched = label-free rate-matched selections; all_pass2 = no reference (all Pass 2 rows)",
+        "population": "all_rows or common_eligible (Step 2C); '' elsewhere",
+        "group": "named disagreement population (Step 2D boundary positions); '' elsewhere",
+        "score": "lr = LR calibrated probability vs its stored threshold; ebm = EBM raw score vs its fold's nested threshold (Step 2D boundary positions); '' elsewhere",
+        "fold": "'all' = pooled over the five router outer folds; 0-4 = router outer fold id",
+        "metric": "metric name; ratios are registered in definitions.json 'metrics'",
+        "label": "the producing function's label for the metric in this section",
+        "numerator": "numerator count (empty for quantile rows)",
+        "denominator": "denominator count (empty for count and quantile rows)",
+        "value": "numerator / denominator for ratios (empty when undefined); the count for count rows; the quantile for quantile rows",
+        "status": "defined = ratio with a non-zero denominator; undefined_empty_denominator = denominator 0, value left empty (never 0); count = a count; quantile = a distribution quantile"
+      },
+      "sections": {
+        "2A.routing_rates": "trace.routing_rates",
+        "2B.pass1_population": "suppression.pass1_population",
+        "2B.pass1_suppression": "suppression.pass1_suppression_report",
+        "2C.pass2_population": "contribution.pass2_population",
+        "2C.pass2_frozen": "contribution.pass2_frozen_contribution",
+        "2C.pass2_matched": "contribution.pass2_matched_contribution",
+        "2D.router_reference_agreement": "overlap.router_reference_agreement",
+        "2D.crosstab_summary": "overlap.crosstab_summary",
+        "2D.boundary_positions": "overlap.boundary_diagnostics"
+      }
+    },
+    "policy_audit": {
+      "file": "tables/policy_audit.csv",
+      "step": "2A",
+      "producer": "trace.routing_policy_audit",
+      "description": "Routing-policy claims per router: what the artifacts verify, what is code-level only, declared or not verifiable.",
+      "keys": [
+        "arm",
+        "claim"
+      ],
+      "columns": {
+        "arm": "router arm: 'glass' = GLASS Router, 'blackbox' = RF Router ('' = not arm-specific)",
+        "router": "GLASS Router / RF Router",
+        "claim": "the routing-policy claim",
+        "description": "what the claim asserts",
+        "status": "verified_from_artifacts, evidence_failed, declared, code_level_only or not_verifiable (trace.AUDIT_STATUSES)",
+        "basis": "artifact, code or none",
+        "violations": "0 when verified; empty otherwise",
+        "evidence": "the evidence or the reason it is unavailable"
+      }
+    },
+    "reference_flags": {
+      "file": "tables/reference_flags.csv",
+      "step": "2B",
+      "producer": "suppression.reference_flag_summary",
+      "description": "The frozen LR / EBM reference flags (and their union / intersection) used by every router-to-reference comparison.",
+      "keys": [
+        "reference"
+      ],
+      "columns": {
+        "reference": "reference flag set: lr = lr.in_stage_f2_cv, ebm = ebm.nested_f2, union = either flags, intersection = both flag; lr_matched / ebm_matched / lr_or_ebm_matched = label-free rate-matched selections; all_pass2 = no reference (all Pass 2 rows)",
+        "operating_point": "registered operating point (operating_points.OPERATING_POINTS)",
+        "score_space": "score space the flag is defined in",
+        "threshold": "stored scalar threshold (empty for fold-nested decisions: see MANIFEST.json upstream_operating_points)",
+        "selection": "how the threshold / decisions were selected (disclosed)",
+        "fold_plan": "the reference's fold plan relative to the routers' outer folds",
+        "flags": "rows flagged",
+        "tp": "flagged positives",
+        "fp": "flagged negatives",
+        "flag_rate": "flags / all training rows",
+        "precision": "tp / flags",
+        "precision_status": "status of precision"
+      }
+    },
+    "pass2_breakdown": {
+      "file": "tables/pass2_breakdown.csv",
+      "step": "2C",
+      "producer": "contribution.pass2_positive_breakdown",
+      "description": "Pass 2 TP / FP split by which frozen references flag them.",
+      "keys": [
+        "arm",
+        "fold"
+      ],
+      "columns": {
+        "arm": "router arm: 'glass' = GLASS Router, 'blackbox' = RF Router ('' = not arm-specific)",
+        "fold": "'all' = pooled over the five router outer folds; 0-4 = router outer fold id",
+        "pass2_tp": "Pass 2 actual positives",
+        "pass2_fp": "Pass 2 actual negatives",
+        "tp_both": "Pass 2 TP flagged by LR and EBM",
+        "fp_both": "Pass 2 FP flagged by LR and EBM",
+        "tp_lr_only": "Pass 2 TP flagged by LR only",
+        "fp_lr_only": "Pass 2 FP flagged by LR only",
+        "tp_ebm_only": "Pass 2 TP flagged by EBM only",
+        "fp_ebm_only": "Pass 2 FP flagged by EBM only",
+        "tp_neither": "Pass 2 TP flagged by neither",
+        "fp_neither": "Pass 2 FP flagged by neither"
+      }
+    },
+    "common_population": {
+      "file": "tables/common_population.csv",
+      "step": "2C",
+      "producer": "contribution.common_eligible_population",
+      "description": "The common eligible population (rows neither router routed to Pass 1) and what it excludes.",
+      "keys": [
+        "fold"
+      ],
+      "columns": {
+        "fold": "'all' = pooled over the five router outer folds; 0-4 = router outer fold id",
+        "rows": "rows in the fold / pool",
+        "positives": "actual positives in the fold / pool",
+        "glass_remainder_rows": "rows GLASS did not route to Pass 1",
+        "rf_remainder_rows": "rows RF did not route to Pass 1",
+        "common_rows": "rows neither router routed to Pass 1 (common eligible population)",
+        "common_positives": "actual positives in the common eligible population",
+        "glass_pass2_in_common": "GLASS Pass 2 rows inside the common population",
+        "rf_pass2_in_common": "RF Pass 2 rows inside the common population",
+        "glass_pass2_outside_common": "GLASS Pass 2 rows RF routed to Pass 1 (excluded)",
+        "rf_pass2_outside_common": "RF Pass 2 rows GLASS routed to Pass 1 (excluded)"
+      }
+    },
+    "matched_selection": {
+      "file": "tables/matched_selection.csv",
+      "step": "2C",
+      "producer": "contribution.pass2_matched_contribution (meta['selections'])",
+      "description": "The label-free rate-matched reference selections: K, cut, tie block and tie-broken rows per arm, model and fold.",
+      "keys": [
+        "arm",
+        "reference",
+        "fold"
+      ],
+      "columns": {
+        "arm": "router arm: 'glass' = GLASS Router, 'blackbox' = RF Router ('' = not arm-specific)",
+        "reference": "reference flag set: lr = lr.in_stage_f2_cv, ebm = ebm.nested_f2, union = either flags, intersection = both flag; lr_matched / ebm_matched / lr_or_ebm_matched = label-free rate-matched selections; all_pass2 = no reference (all Pass 2 rows)",
+        "model": "the reference model ranked (lr or ebm)",
+        "score_space": "score space ranked (contribution.MATCH_SCORES)",
+        "fold": "'all' = pooled over the five router outer folds; 0-4 = router outer fold id",
+        "target_count": "K = the arm's Pass 2 rows in the fold's common eligible population",
+        "selected_rows": "rows selected (always K): the K highest scores, ties broken by the label-free tie-break rule (MANIFEST.json analysis_settings)",
+        "cut_value": "the K-th highest score",
+        "exact": "true when no tie straddles the cut",
+        "tie_block": "rows sharing the K-th score (1 = no tie)",
+        "strict_count": "rows strictly above the tied block (strict bound, <= K)",
+        "inclusive_count": "rows including the whole tied block (inclusive bound, >= K)",
+        "tie_broken_rows": "rows chosen from the tied block by the tie-break rule"
+      }
+    },
+    "contingency": {
+      "file": "tables/contingency.csv",
+      "step": "2D",
+      "producer": "overlap.router_reference_contingency",
+      "description": "Router state x reference flag: rows, positives and negatives.",
+      "keys": [
+        "arm",
+        "reference",
+        "fold",
+        "state",
+        "reference_flag"
+      ],
+      "columns": {
+        "arm": "router arm: 'glass' = GLASS Router, 'blackbox' = RF Router ('' = not arm-specific)",
+        "reference": "reference flag set: lr = lr.in_stage_f2_cv, ebm = ebm.nested_f2, union = either flags, intersection = both flag; lr_matched / ebm_matched / lr_or_ebm_matched = label-free rate-matched selections; all_pass2 = no reference (all Pass 2 rows)",
+        "fold": "'all' = pooled over the five router outer folds; 0-4 = router outer fold id",
+        "state": "router state: PASS_1_NOT_SUBSCRIBE, PASS_2_SUBSCRIBE or ABSTAIN",
+        "reference_flag": "true = the reference flags the row",
+        "n": "rows in the cell / group",
+        "positives": "actual positives (y = 1) among the rows",
+        "negatives": "actual negatives (y = 0) among the rows"
+      }
+    },
+    "crosstab": {
+      "file": "tables/crosstab.csv",
+      "step": "2D",
+      "producer": "overlap.router_crosstab",
+      "description": "GLASS state x RF state cells with label composition and reference flags.",
+      "keys": [
+        "fold",
+        "glass_state",
+        "rf_state"
+      ],
+      "columns": {
+        "fold": "'all' = pooled over the five router outer folds; 0-4 = router outer fold id",
+        "glass_state": "GLASS Router state",
+        "rf_state": "RF Router state",
+        "n": "rows in the cell / group",
+        "positives": "actual positives (y = 1) among the rows",
+        "negatives": "actual negatives (y = 0) among the rows",
+        "positive_rate": "positives / n (empty when n = 0; see the status column)",
+        "positive_rate_status": "defined or undefined_empty_denominator",
+        "share": "n / rows in the fold group (registered cross_cell_share)",
+        "lr_flags": "rows in the cell the lr reference flags",
+        "lr_flagged_positives": "positives in the cell the lr reference flags",
+        "ebm_flags": "rows in the cell the ebm reference flags",
+        "ebm_flagged_positives": "positives in the cell the ebm reference flags",
+        "union_flags": "rows in the cell the union reference flags",
+        "union_flagged_positives": "positives in the cell the union reference flags",
+        "intersection_flags": "rows in the cell the intersection reference flags",
+        "intersection_flagged_positives": "positives in the cell the intersection reference flags"
+      }
+    },
+    "pass2_cross_router": {
+      "file": "tables/pass2_cross_router.csv",
+      "step": "2D",
+      "producer": "overlap.pass2_cross_router_overlap",
+      "description": "Pass 2 positives and negatives both routers / one router flag, overall and unique relative to each reference.",
+      "keys": [
+        "reference",
+        "fold"
+      ],
+      "columns": {
+        "reference": "reference flag set: lr = lr.in_stage_f2_cv, ebm = ebm.nested_f2, union = either flags, intersection = both flag; lr_matched / ebm_matched / lr_or_ebm_matched = label-free rate-matched selections; all_pass2 = no reference (all Pass 2 rows)",
+        "fold": "'all' = pooled over the five router outer folds; 0-4 = router outer fold id",
+        "glass_unique_tp": "GLASS Pass 2 positives the reference does not flag",
+        "rf_unique_tp": "RF Pass 2 positives the reference does not flag",
+        "shared_tp": "of those, positives both routers flag",
+        "glass_only_tp": "unique positives GLASS flags and RF does not",
+        "rf_only_tp": "unique positives RF flags and GLASS does not",
+        "glass_unique_fp": "GLASS Pass 2 negatives the reference does not flag",
+        "rf_unique_fp": "RF Pass 2 negatives the reference does not flag",
+        "shared_fp": "of those, negatives both routers flag",
+        "glass_only_fp": "unique negatives GLASS flags and RF does not",
+        "rf_only_fp": "unique negatives RF flags and GLASS does not",
+        "glass_only_tp_in_rf_pass1": "GLASS-only unique positives RF routed to Pass 1",
+        "glass_only_tp_in_rf_abstain": "GLASS-only unique positives RF abstained on",
+        "rf_only_tp_in_glass_pass1": "RF-only unique positives GLASS routed to Pass 1",
+        "rf_only_tp_in_glass_abstain": "RF-only unique positives GLASS abstained on",
+        "tp_jaccard": "shared_tp / (glass_unique_tp + rf_unique_tp - shared_tp)",
+        "tp_jaccard_status": "status of tp_jaccard",
+        "pool_positives": "positives neither reference-flagged nor in either router's Pass 1",
+        "expected_shared_tp_if_unrelated": "glass_unique_tp x rf_unique_tp / pool_positives (arithmetic, not a test; empty when the pool is empty)"
+      }
+    },
+    "signal_availability": {
+      "file": "tables/signal_availability.csv",
+      "step": "2D",
+      "producer": "overlap.signal_availability",
+      "description": "Which pre-routing signals the artifacts persist, and which overlap analyses are therefore unavailable.",
+      "keys": [
+        "arm",
+        "signal"
+      ],
+      "columns": {
+        "arm": "router arm: 'glass' = GLASS Router, 'blackbox' = RF Router ('' = not arm-specific)",
+        "signal": "the signal or analysis",
+        "status": "audit status (trace.AUDIT_STATUSES)",
+        "basis": "artifact, code, none or invalid population",
+        "rows": "rows the signal covers (empty when unavailable)",
+        "detail": "evidence / reason"
+      }
+    },
+    "score_conditional": {
+      "file": "tables/score_conditional.csv",
+      "step": "2D",
+      "producer": "overlap.score_conditional_states",
+      "description": "Router state x label-free score stratum: label composition, calibrated expectations and reference flags.",
+      "keys": [
+        "arm",
+        "stratifier",
+        "fold",
+        "stratum",
+        "state"
+      ],
+      "columns": {
+        "arm": "router arm: 'glass' = GLASS Router, 'blackbox' = RF Router ('' = not arm-specific)",
+        "stratifier": "lr (LR calibrated probability deciles), ebm_raw (EBM raw score deciles) or lr_x_ebm (3 x 3 joint grid); always within the router outer fold",
+        "fold": "'all' = pooled over the five router outer folds; 0-4 = router outer fold id",
+        "stratum": "bin index within the fold (merged edges: see the known limitations); pooled rows sum bin k of every fold",
+        "state": "router state: PASS_1_NOT_SUBSCRIBE, PASS_2_SUBSCRIBE or ABSTAIN",
+        "stratum_rows": "rows in the (fold, stratum) cell",
+        "stratum_positives": "positives in the (fold, stratum) cell",
+        "n": "rows in the cell / group",
+        "positives": "actual positives (y = 1) among the rows",
+        "negatives": "actual negatives (y = 0) among the rows",
+        "positive_rate": "positives / n (empty when n = 0; see the status column)",
+        "positive_rate_status": "defined or undefined_empty_denominator",
+        "expected_lr_calibrated": "sum of LR calibrated OOF probabilities over the rows",
+        "expected_ebm_calibrated": "sum of EBM calibrated OOF probabilities over the rows",
+        "low_support": "true when n < the minimum support",
+        "lr_flags": "rows the lr reference flags",
+        "ebm_flags": "rows the ebm reference flags",
+        "union_flags": "rows the union reference flags",
+        "intersection_flags": "rows the intersection reference flags"
+      }
+    },
+    "stratum_contrasts": {
+      "file": "tables/stratum_contrasts.csv",
+      "step": "2D",
+      "producer": "overlap.within_stratum_contrasts",
+      "description": "Positive-rate differences between router states within a stratum (defined only where both states have minimum support).",
+      "keys": [
+        "arm",
+        "stratifier",
+        "fold",
+        "stratum",
+        "contrast"
+      ],
+      "columns": {
+        "arm": "router arm: 'glass' = GLASS Router, 'blackbox' = RF Router ('' = not arm-specific)",
+        "stratifier": "as in score_conditional",
+        "fold": "'all' = pooled over the five router outer folds; 0-4 = router outer fold id",
+        "stratum": "as in score_conditional",
+        "contrast": "pass1 - abstain, pass2 - abstain or pass2 - pass1",
+        "n_a": "rows in the first state",
+        "n_b": "rows in the second state",
+        "difference_pp": "100 x (positive rate of the first state - of the second)",
+        "status": "defined, or low_support (difference left empty)"
+      }
+    },
+    "observed_expected": {
+      "file": "tables/observed_expected.csv",
+      "step": "2D",
+      "producer": "overlap.group_observed_expected",
+      "description": "Observed vs expected positives for the router states and the named disagreement populations (descriptive; not tests).",
+      "keys": [
+        "group",
+        "fold"
+      ],
+      "columns": {
+        "group": "named population (overlap.key_groups)",
+        "description": "what the group is",
+        "fold": "'all' = pooled over the five router outer folds; 0-4 = router outer fold id",
+        "n": "rows in the cell / group",
+        "observed": "actual positives in the group",
+        "positive_rate": "positives / n (empty when n = 0; see the status column)",
+        "expected_lr_calibrated": "sum of LR calibrated OOF probabilities over the group",
+        "expected_ebm_calibrated": "sum of EBM calibrated OOF probabilities over the group",
+        "expected_stratified_lr": "sum over the group's rows of their (fold, lr stratum) cell's observed positive rate (internal standardisation on the same labels)",
+        "expected_stratified_ebm_raw": "sum over the group's rows of their (fold, ebm_raw stratum) cell's observed positive rate (internal standardisation on the same labels)",
+        "expected_stratified_lr_x_ebm": "sum over the group's rows of their (fold, lr_x_ebm stratum) cell's observed positive rate (internal standardisation on the same labels)",
+        "o_minus_e_lr_calibrated": "observed - expected_lr_calibrated",
+        "o_minus_e_ebm_calibrated": "observed - expected_ebm_calibrated",
+        "o_minus_e_stratified_lr": "observed - expected_stratified_lr",
+        "o_minus_e_stratified_ebm_raw": "observed - expected_stratified_ebm_raw",
+        "o_minus_e_stratified_lr_x_ebm": "observed - expected_stratified_lr_x_ebm"
+      }
+    },
+    "chance_baselines": {
+      "file": "tables/chance_baselines.csv",
+      "step": "2D",
+      "producer": "overlap.unique_positive_chance_baselines",
+      "description": "Arithmetic chance expectations for unique positives and Pass 1 interceptions (not statistical tests).",
+      "keys": [
+        "setting",
+        "arm",
+        "reference",
+        "fold"
+      ],
+      "columns": {
+        "setting": "frozen_pass2_unique (unique flags vs rows not reference-flagged and not the arm's own Pass 1), pass1_random_veto (Pass 1 interceptions vs the reference flags), matched_pass2_unique (common eligible rows outside the K-matched reference)",
+        "arm": "router arm: 'glass' = GLASS Router, 'blackbox' = RF Router ('' = not arm-specific)",
+        "reference": "reference flag set: lr = lr.in_stage_f2_cv, ebm = ebm.nested_f2, union = either flags, intersection = both flag; lr_matched / ebm_matched / lr_or_ebm_matched = label-free rate-matched selections; all_pass2 = no reference (all Pass 2 rows)",
+        "fold": "'all' = pooled over the five router outer folds; 0-4 = router outer fold id",
+        "flags": "the router's rows in the setting",
+        "pool_rows": "rows of the pool",
+        "pool_positives": "positives of the pool",
+        "pool_rate": "pool_positives / pool_rows (empty when the pool is empty)",
+        "expected_positives": "flags x pool_rate (arithmetic, not a test)",
+        "observed_positives": "the router's actual positives in the setting",
+        "excess_positives": "observed_positives - expected_positives"
+      }
+    },
+    "model_disagreement": {
+      "file": "tables/model_disagreement.csv",
+      "step": "2D",
+      "producer": "overlap.model_disagreement_baseline",
+      "description": "How much LR and EBM already disagree (frozen, and at each arm's matched K), next to the routers' unique positives.",
+      "keys": [
+        "setting",
+        "arm",
+        "fold"
+      ],
+      "columns": {
+        "setting": "frozen (the stored operating points) or matched_same_k (LR / EBM re-cut at the arm's K on the common eligible population)",
+        "arm": "router arm: 'glass' = GLASS Router, 'blackbox' = RF Router ('' = not arm-specific)",
+        "fold": "'all' = pooled over the five router outer folds; 0-4 = router outer fold id",
+        "k": "K (matched_same_k only)",
+        "lr_flags": "LR flags",
+        "ebm_flags": "EBM flags",
+        "lr_only_tp": "positives LR flags and EBM does not",
+        "ebm_only_tp": "positives EBM flags and LR does not",
+        "lr_only_fp": "negatives LR flags and EBM does not",
+        "ebm_only_fp": "negatives EBM flags and LR does not",
+        "ebm_minus_lr_tp": "EBM TP - LR TP at the same K",
+        "ebm_only_tp_expected_from_pool": "EBM-only flags x the positive rate of the rows LR does not select (arithmetic)",
+        "router_unique_tp_vs_lr": "the arm's Pass 2 TP the matched LR selection misses (Step 2C)",
+        "router_unique_tp_vs_ebm": "the arm's Pass 2 TP the matched EBM selection misses (2C)"
+      }
+    },
+    "validation": {
+      "file": "tables/validation.csv",
+      "step": "2A / Commit 1",
+      "producer": "RouterTrace.checks; each view's boundary extractor checks",
+      "description": "Every trace check (T1-T7) and boundary extractor check, with its result.",
+      "keys": [
+        "source",
+        "stage",
+        "check"
+      ],
+      "columns": {
+        "source": "trace, or the source role whose boundary extractor ran the check",
+        "section": "check section",
+        "stage": "what was checked",
+        "check": "the check",
+        "passed": "true when the check passed",
+        "detail": "the check's evidence"
+      }
+    }
+  }
+}

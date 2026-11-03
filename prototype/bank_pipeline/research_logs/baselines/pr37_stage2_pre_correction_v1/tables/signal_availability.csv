@@ -1,0 +1,19 @@
+arm,signal,status,basis,rows,detail
+glass,final routing state,verified_from_artifacts,artifact,32950,Step 2A trace checks T1-T7
+glass,final Pass 1 & Pass 2 rows,verified_from_artifacts,artifact,0,routing invariant (Pass 1 precedence): zero is NOT evidence of independent signals
+glass,router confidence / router_transform score,verified_from_artifacts,artifact,32950,"a deterministic function of the final state (and the matched rule's / band's precision), checked by the extractor; not an independent pre-routing signal"
+glass,outer-fold fold rule sets,not_verifiable,none,,per-fold GLASS rule sets and candidate rules are not persisted
+glass,outer-fold fold summaries,not_verifiable,none,,GLASS cross-fit fold summaries are not persisted
+glass,Pass 1 candidate-rule matches per row,not_verifiable,none,,never persisted; cannot be inferred from final states
+glass,Pass 2 candidate-rule matches per row,not_verifiable,none,,never persisted; cannot be inferred from final states
+glass,full-train selected rule set,not_verifiable,invalid population,,"persisted for the full-train fit only (rule counts {'Pass 1': 4, 'Pass 2': 3}); applying it to training rows would be in-sample, not outer OOF - not used"
+glass,fold RF passed to the GLASS fit,code_level_only,code,,"Shared component (code-level): crossfit_stage2 defaults to glass_rf_model='fold_rf' and passes each outer fold's RF to the GLASS fit, whose RuleGenerator uses that forest's feature_importances_ to prioritise segments; that same fold forest's oof_proba is the RF Router's Pass 1 score (Commit 1 equivalence). glass_rf_model is not read by the diagnostics boundary, so the artifacts' own record of it is not checked here."
+blackbox,final routing state,verified_from_artifacts,artifact,32950,Step 2A trace checks T1-T7
+blackbox,final Pass 1 & Pass 2 rows,verified_from_artifacts,artifact,0,routing invariant (Pass 1 precedence): zero is NOT evidence of independent signals
+blackbox,router confidence / router_transform score,verified_from_artifacts,artifact,32950,"a deterministic function of the final state (and the matched rule's / band's precision), checked by the extractor; not an independent pre-routing signal"
+blackbox,Pass 1 outer score (all rows),verified_from_artifacts,artifact,32950,"EQUIVALENT: the candidate reproduces every stored RF Pass 1 route (32,950 rows, 0 disagreements, 0 Pass 2 rows below t1)."
+blackbox,Pass 2 outer score,not_verifiable,none,,RF Pass 2 outer out-of-fold scores are not persisted
+blackbox,per-fold t1 / t2,verified_from_artifacts,artifact,,oof_fold_summary (extractor-checked)
+both,analysis: final-state Pass 1 / Pass 2 overlap,verified_from_artifacts,artifact,0,available; zero by construction (routing invariant)
+both,analysis: GLASS Pass 1 vs Pass 2 candidate / signal overlap,not_verifiable,none,,unavailable: no per-row candidate matches or fold rule sets persisted
+both,analysis: RF Pass 1 vs Pass 2 signal overlap,not_verifiable,none,,unavailable: RF Pass 2 outer scores were not persisted (the Pass 1 score alone cannot show what Pass 2 would have scored)
