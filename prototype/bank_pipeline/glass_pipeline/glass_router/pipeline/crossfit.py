@@ -27,6 +27,14 @@ Protocol notes (recorded in Stage2OOF.protocol)
 - Pass 2 population: follows glass_config.pass2_population ("full" or
   "oof_remainder"), exactly as in the full-train fit. With "oof_remainder"
   each outer-fold GLASS fit builds its own inner OOF Pass 1 remainder.
+- Inner-fold feature ranker (oof_remainder only; PR 37 Commit 3, F17):
+  glass_config.inner_feature_ranker. "outer_rf" (default, historical) orders
+  every inner-fold Pass 1 search by the fold RF. "fold_nested_rf" (opt-in) fits
+  a fresh ranker with the fold RF's recipe on each inner fold's training rows
+  (rf.feature_ranker); it requires glass_rf_model="fold_rf".
+- Arm ownership: the fold RF is fitted here, inside the GLASS arm, from
+  rf_params only. No fitted estimator is accepted from, or handed to, the
+  black-box arm.
 - Folds: pass the Stage 3 fold plan via `folds=` so Stage 2 and Stage 3 OOF
   blocks share folds. Default is StratifiedKFold(5, shuffle, random_state).
 
@@ -55,6 +63,8 @@ from sklearn.model_selection import StratifiedKFold
 from glass_pipeline.glass_router.core.rule import ABSTAIN, NOT_SUBSCRIBE, SUBSCRIBE
 from shared.stage2.feature_engineering import engineer_features
 from shared.stage_io import label_fingerprint
+from glass_pipeline.glass_router.core.config import INNER_RANKER_FOLD_NESTED_RF, INNER_RANKER_OUTER_RF
+from glass_pipeline.glass_router.rf.feature_ranker import make_rf_feature_ranker_factory
 from glass_pipeline.glass_router.rf.rf_training import _build_pipe, _make_sample_weights
 from glass_pipeline.glass_router.rule_generator.rule_logger import RuleLogger
 from .glass_router_pipeline import GlassRouterPipeline
@@ -80,6 +90,11 @@ class Stage2OOF:
         rf_proba         RF P(SUBSCRIBE)
         protocol         how the block was produced (stored in artifacts)
         fold_summaries   per-fold diagnostics
+        fold_fit_reports per-fold GLASS fit reports when Pass 2 was fitted on a
+                         selected population (oof_remainder): the fold's report
+                         without the positional mask, plus ``remainder_index``
+                         (training-row labels). In memory only; not yet saved
+                         by ModelSaver (PR 38).
     """
     index: pd.Index
     fold_id: np.ndarray
@@ -90,6 +105,7 @@ class Stage2OOF:
     rf_proba: np.ndarray
     protocol: Dict[str, Any]
     fold_summaries: List[Dict[str, Any]] = field(default_factory=list)
+    fold_fit_reports: List[Dict[str, Any]] = field(default_factory=list)
 
     def glass_train_out(self) -> Dict[str, Any]:
         """GLASS OOF block in the ModelSaver output contract."""
@@ -204,6 +220,14 @@ def crossfit_stage2(
         raise ValueError("X_train_raw and y_train must share the same index (order included).")
     if glass_rf_model not in ("fold_rf", "none"):
         raise ValueError("glass_rf_model must be 'fold_rf' or 'none'.")
+    inner_ranker = getattr(glass_config, "inner_feature_ranker", INNER_RANKER_OUTER_RF)
+    nested_ranker = (inner_ranker == INNER_RANKER_FOLD_NESTED_RF
+                     and getattr(glass_config, "pass2_population", "full") == "oof_remainder")
+    if inner_ranker == INNER_RANKER_FOLD_NESTED_RF and glass_rf_model != "fold_rf":
+        raise ValueError(
+            "inner_feature_ranker='fold_nested_rf' fits each inner ranker with the fold "
+            "RF's recipe, so it requires glass_rf_model='fold_rf'."
+        )
     if rule_logger_factory is None:
         rule_logger_factory = lambda: RuleLogger(enabled=False)  # noqa: E731
 
@@ -221,6 +245,7 @@ def crossfit_stage2(
     glass_proba = np.zeros((n, 2))
     rf_proba = np.full(n, np.nan)
     summaries: List[Dict[str, Any]] = []
+    fold_reports: List[Dict[str, Any]] = []
 
     print("=" * 80)
     print(f"🔁 STAGE 2 CROSS-FIT — {len(folds)} folds | {n:,} training rows")
@@ -245,10 +270,15 @@ def crossfit_stage2(
             rf_proba[va] = rf_pipe.predict_proba(Xva_eng)[:, 1]
 
             # 3. GLASS Router fit on training folds only
+            router_kwargs = {}
+            if nested_ranker:      # opt-in only, so the historical call is unchanged
+                router_kwargs["feature_ranker_factory"] = make_rf_feature_ranker_factory(
+                    rf_params, random_state)
             glass = GlassRouterPipeline(
                 glass_config,
                 rf_model=rf_pipe.named_steps["clf"] if glass_rf_model == "fold_rf" else None,
                 rule_logger=rule_logger_factory(),
+                **router_kwargs,
             )
             glass.fit(Xtr_eng, y_tr)
 
@@ -275,6 +305,20 @@ def crossfit_stage2(
             "pass2_recall": float(((p == SUBSCRIBE) & (yv == SUBSCRIBE)).sum() / subs),
             "seconds": round(time.perf_counter() - t0, 1),
         }
+        # PR 37 Commit 3 (F17): the realised Pass 2 fitting population, when the
+        # fit selected one (oof_remainder). "full" fits add nothing here.
+        fit_report = getattr(glass, "fit_report_", None) or {}
+        if "remainder_rows" in fit_report:
+            summary.update(
+                remainder_rows=int(fit_report["remainder_rows"]),
+                remainder_positives=int(fit_report["remainder_positives"]),
+                remainder_base_rate=float(fit_report["remainder_base_rate"]),
+            )
+            fold_reports.append({
+                **{k: v for k, v in fit_report.items() if k != "remainder_mask"},
+                "fold": k,
+                "remainder_index": X_tr.index[np.asarray(fit_report["remainder_mask"], bool)],
+            })
         summaries.append(summary)
         print(
             f"   fold {k}: RF AUC {summary['rf_auc']:.4f} | GLASS rules "
@@ -312,6 +356,7 @@ def crossfit_stage2(
         "rf": "tuned params reused, refit per fold with train_rf_stage sample weights (no re-tuning)",
         "glass_rf_model": glass_rf_model,
         "glass_pass2_population": getattr(glass_config, "pass2_population", "full"),
+        "glass_inner_feature_ranker": inner_ranker,
         "glass_abstain_label": "uncertain",
         "test_outputs": "from full-train refit models (not produced here)",
     }
@@ -326,4 +371,5 @@ def crossfit_stage2(
         rf_proba=rf_proba,
         protocol=protocol,
         fold_summaries=summaries,
+        fold_fit_reports=fold_reports,
     )

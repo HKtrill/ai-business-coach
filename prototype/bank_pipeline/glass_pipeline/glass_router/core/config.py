@@ -9,6 +9,16 @@
 from dataclasses import dataclass, fields
 from typing import Optional
 
+#: Feature ranker for the inner-fold Pass 1 searches of
+#: ``pass2_population="oof_remainder"`` (PR 37 Commit 3, F17).
+#: "outer_rf"       historical: the caller's ``rf_model`` (in the cross-fit, the
+#:                  outer fold's RF, fitted on every row the inner folds hold out).
+#: "fold_nested_rf" opt-in: a fresh ranker fitted only on each inner fold's
+#:                  training rows, by ``GlassRouterPipeline.feature_ranker_factory``.
+INNER_RANKER_OUTER_RF = "outer_rf"
+INNER_RANKER_FOLD_NESTED_RF = "fold_nested_rf"
+INNER_FEATURE_RANKERS = (INNER_RANKER_OUTER_RF, INNER_RANKER_FOLD_NESTED_RF)
+
 
 @dataclass
 class GlassRouterConfig:
@@ -115,6 +125,9 @@ class GlassRouterConfig:
     pass1_oof_folds: int = 5
     random_state: int = 42
     remainder_min_size: int = 500
+    # Inner-fold Pass 1 feature ranker (oof_remainder only); see
+    # INNER_FEATURE_RANKERS above. Default = historical behaviour.
+    inner_feature_ranker: str = INNER_RANKER_OUTER_RF
 
     def __post_init__(self):
         """Validate that all required parameters are set."""
@@ -128,6 +141,7 @@ class GlassRouterConfig:
             'pass1_oof_folds',
             'random_state',
             'remainder_min_size',
+            'inner_feature_ranker',
         }
         
         missing = []
@@ -193,6 +207,11 @@ class GlassRouterConfig:
             errors.append("pass1_oof_folds must be >= 2")
         if self.remainder_min_size < 1:
             errors.append("remainder_min_size must be >= 1")
+        if self.inner_feature_ranker not in INNER_FEATURE_RANKERS:
+            errors.append(
+                f"inner_feature_ranker must be one of {list(INNER_FEATURE_RANKERS)}, "
+                f"got {self.inner_feature_ranker!r}"
+            )
         
         if errors:
             raise ValueError(

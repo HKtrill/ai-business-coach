@@ -432,7 +432,10 @@ class _BaseRouter:
         Build band confidences from training OOF at the current thresholds.
 
         Requires ``thresholds_`` to be set, so it runs after the solve. The
-        support floor is the stricter of the two per-pass minimums.
+        support floor checked here is the SMALLER of the two per-pass minimums,
+        applied to both bands. That is a redundant check: the solver has already
+        enforced each pass's own floor (``ThresholdSolver.solve_pass1`` /
+        ``solve_pass2``), so it never binds on a solved operating point.
         """
         c = self.config.constraints
         return BandConfidence.from_oof(

@@ -26,6 +26,14 @@ Notes
 Confidence is measured on TRAINING OOF data only. ``from_oof`` takes the same
 arrays the thresholds were solved from, so a band's confidence is the precision
 the operating point was chosen under, not a fresh estimate from the test split.
+Choosing a cut on the same OOF scores its band is measured on creates a risk
+that the band estimate is optimistic for new rows. PR 38 measures the per-fold
+gap (PR 37 F31, requirement R3).
+
+Under ``RFRouterConfig.eligibility = "nested_t1"`` (opt-in, PR 37 F31 W4), the
+Pass 2 band is measured on the fold-nested remainder: rows whose Pass 1 OOF
+score clears their inner fold's own ``t1_j``. The Pass 1 band is unchanged: it
+is still measured on ``p1_oof < t1`` with the deployed ``t1``.
 
 **``BinnedBandConfidence`` and :func:`make_band_confidence` are currently
 unwired.** ``_BaseRouter._make_bands`` always constructs ``BandConfidence``,

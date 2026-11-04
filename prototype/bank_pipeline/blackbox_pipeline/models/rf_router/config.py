@@ -32,7 +32,19 @@ import numpy as np
 
 from .constraints import OperatingConstraints
 
-__all__ = ["RFRouterConfig", "DEFAULT_RF_PARAMS", "validate_rf_params", "check_rf_param"]
+__all__ = ["RFRouterConfig", "DEFAULT_RF_PARAMS", "validate_rf_params", "check_rf_param",
+           "ELIGIBILITY_GLOBAL_T1", "ELIGIBILITY_NESTED_T1", "ELIGIBILITY_MODES"]
+
+#: How the two-pass router cuts its Pass 2 training remainder (PR 37 Commit 3,
+#: F17; ``oof.eligibility``). ``"global_t1"`` is the historical rule: one ``t1``
+#: solved from every training label. ``"nested_t1"`` (opt-in) cuts each inner
+#: fold's rows with a ``t1`` solved without them, so no router component uses a
+#: row's own label to decide its own Pass 2 membership. That isolation is
+#: router-level, conditional on features engineered on the whole outer-training
+#: partition (PR 37 F17 limitation L1; audited by PR 38 gate G13).
+ELIGIBILITY_GLOBAL_T1 = "global_t1"
+ELIGIBILITY_NESTED_T1 = "nested_t1"
+ELIGIBILITY_MODES = (ELIGIBILITY_GLOBAL_T1, ELIGIBILITY_NESTED_T1)
 
 
 # Mirrors glass_pipeline.glass_router.rf.rf_training._normalize_params output shape so that
@@ -180,6 +192,17 @@ class RFRouterConfig:
         protocol — see ``router.py`` for the discussion.
     n_inner_folds
         Inner folds for the nested diagnostic.
+    eligibility
+        How the Pass 2 training remainder is cut (``two_pass`` only).
+        ``"global_t1"`` (default, historical): ``OOF p1 >= t1`` with one ``t1``
+        solved from every training label. ``"nested_t1"`` (opt-in, PR 37
+        Commit 3): each inner fold's rows are cut by a ``t1`` solved only from
+        the other folds (``oof.eligibility``); about ``n_oof_folds *
+        eligibility_folds`` extra Pass 1 fits. The deployed ``t1`` is the same
+        under both.
+    eligibility_folds
+        Folds used to score the rows outside each inner fold under
+        ``"nested_t1"``.
     verbose
         Print progress.
     """
@@ -198,6 +221,9 @@ class RFRouterConfig:
 
     validate_nested: bool = False
     n_inner_folds: int = 5
+
+    eligibility: str = ELIGIBILITY_GLOBAL_T1
+    eligibility_folds: int = 5
 
     verbose: bool = True
 
@@ -244,11 +270,22 @@ class RFRouterConfig:
         # (remainder_min_size=True was a floor of 1, n_oof_folds=5.5 failed
         # only inside the fold splitter).
         for name, low in (("n_oof_folds", 2), ("n_inner_folds", 2),
-                          ("remainder_min_size", 1), ("random_state", 0)):
+                          ("remainder_min_size", 1), ("random_state", 0),
+                          ("eligibility_folds", 2)):
             try:
                 _integer(getattr(self, name), name, low)
             except ValueError as exc:
                 errors.append(str(exc))
+
+        if self.eligibility not in ELIGIBILITY_MODES:
+            errors.append(
+                f"eligibility must be one of {list(ELIGIBILITY_MODES)}, got {self.eligibility!r}"
+            )
+        elif self.eligibility != ELIGIBILITY_GLOBAL_T1 and self.mode == "single_rf":
+            errors.append(
+                "eligibility applies to the two_pass cascade only; the single_rf "
+                "ablation has no Pass 2 remainder."
+            )
 
         if self.mode == "single_rf" and self.validate_nested:
             errors.append(

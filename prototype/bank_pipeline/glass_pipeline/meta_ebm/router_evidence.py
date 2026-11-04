@@ -18,8 +18,12 @@ from its own decision point, in probability units): the router's decision
 point is the base rate, where a rule stops being evidence for either route.
 A rule on the wrong side of the base rate gets zero confidence, never
 confidence for the opposite outcome. ``r`` is the rule's in-sample rate on
-the router's training rows (selected rules: optimistic), not a calibrated
-P(y = 1) for the routed row.
+the rows the rule was selected on (selected rules: optimistic), not a
+calibrated P(y = 1) for the routed row. Those rows are all of the router's
+training rows under ``pass2_population="full"``. Under ``"oof_remainder"``,
+Pass 2 rules are selected on the OOF Pass 1 remainder, so their ``r`` is
+measured there; Pass 1 rules still use all training rows (PR 37 F31, W2). The
+same read-back gives an RF Router band's precision in the F29 crossover.
 
 Before F25 the confidence was |p - 0.5| on the router's stored probability.
 Pass 2 rules with precision below ~0.44 (every rule selected so far) then

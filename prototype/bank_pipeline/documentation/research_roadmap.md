@@ -24,13 +24,26 @@
 
 **Deferred from PR 36**
 
-- [ ] Decide whether GLASS should retain `full` or switch to `oof_remainder` for a more directly controlled router comparison
-- [ ] **(conditional):** Reassess RF Router confidence-blending assumptions only if Stage 2 probability construction changes. Otherwise, retain the validated implementation.
+- [x] Decide whether GLASS should retain `full` or switch to `oof_remainder` for a more directly controlled router comparison — decided in Commit 3: both routers fit Pass 2 on their own OOF Pass 1 remainder, with both nested safeguards on; GLASS `full` is kept only as sensitivity analysis S1 ([F17 decision record](methodology/pr37_f17_decision_record.md))
+- [x] **(conditional):** Reassess RF Router confidence-blending assumptions only if Stage 2 probability construction changes. Otherwise, retain the validated implementation. — reviewed in Commit 3: construction retained (Disposition A); PR 38 owes validation and provenance requirements R1–R8 ([F31 disposition record](methodology/pr37_f31_disposition_record.md))
+
+**Methodological safeguards and cross-arm independence**
+
+- [x] Verify and regression-protect independent fitted-estimator ownership across GLASS and the black-box arm; distinguish shared RF hyperparameters from shared fitted model state — Commit 3: no fitted estimator crosses arms; pinned by `tests/parity/test_stage2_cross_arm_independence.py` ([F17 record, section 5](methodology/pr37_f17_decision_record.md))
+- [ ] Resolve whether RF Router hyperparameters should continue to be sourced from a GLASS-side artifact or an independent, versioned configuration — open Commit 4 decision D6 ([handoff](methodology/pr37_commit3_handoff.md))
+- [x] Specify whether `nested_t1` and `fold_nested_rf` will be required in the PR 38 primary protocol — both required (F17 gate G1); opt-in code and synthetic tests in Commit 3 ([F17 record](methodology/pr37_f17_decision_record.md))
+- [x] Define validation and explicit failure requirements for infeasible inner folds and insufficient remainder support — F17 gates G3 (feasibility preflight) and G8 (explicit rejection, no fallback), implemented as refusals in Commit 3; the uniform no-feasible-candidate rule is Commit 4 decision D4 ([F17 record](methodology/pr37_f17_decision_record.md))
+- [x] Finalize and version-control the Step 3A methodological investigation and F17/F31 decision records — the three records and the Commit 3 handoff, under `documentation/methodology/` ([index](methodology/pr37_commit3_handoff.md))
+- [x] Document remaining differences between fit-time rule constraints and shared outer-OOF evaluation requirements — documented in F17 L2 and F31 K2; resolving the GLASS fit-time constraint mapping remains open Commit 4 decision D3 ([handoff](methodology/pr37_commit3_handoff.md))
 
 #### PR 38 — Stage 2 Cross-Fit and Router Complementarity
 
 **Corrected-selector Stage 2 rerun**
 
+- [ ] Validate the PR 37 F17/F31 obligations before treating any corrected rerun as primary evidence ([Commit 3 handoff](methodology/pr37_commit3_handoff.md)):
+  - before the full 5-fold primary reruns, pass the preflight and implementation gates: G1 configuration, G2 wiring, G3 feasibility preflight, G5 persistence, G8 explicit rejection, G9 independent contract, G13 feature-engineering audit (a confirmed material own-label dependency must be corrected and validated before primary results are accepted)
+  - with the primary reruns, verify G4 isolation provenance, G7 reproducibility, G10 versioned artifacts and pins, G11 baseline preservation; record the mandatory F31 requirements R1–R5, R7 and R8 (R6, band-level spread, is an optional diagnostic)
+  - afterwards, G12: sensitivity analysis S1 (GLASS `full` vs `oof_remainder`, descriptive only), begun once the applicable primary-run gates other than G6 have passed; G6 Pass 1 invariance is verified during S1, and S1 is not accepted unless it passes
 - [ ] Run the corrected GLASS Router under the frozen Stage 2 operating contract
 - [ ] Run the RF Router under the same operating contract
 - [ ] Rerun the full 5-fold Stage 2 outer cross-fit for both arms
