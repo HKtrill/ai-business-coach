@@ -23,6 +23,10 @@ from .greedy_selector import GreedySelector
 from .ilp_deduplicator import ILPDeduplicator
 from .utils import (
     get_covered_array, union_row_weights, membership_atoms, validate_scoring_mode,
+    exact_fraction, UnionObligations, union_obligation_violations,
+)
+from glass_pipeline.glass_router.core.config import (
+    PASS2_OBJECTIVE_POSITIVES, PASS2_OBJECTIVE_ROWS, union_obligation_errors,
 )
 from glass_pipeline.glass_router.rule_generator.feature_validator import FeatureValidator
 from glass_pipeline.glass_router.core.rule import EvaluatedRule, SelectedRule
@@ -79,6 +83,13 @@ class ILPRuleSelector:
       Off (None) by default; the per-rule gates are unchanged either way.
     - Solve outcomes are recorded in self.selection_report_[pass_name]
     - Modular architecture with reusable components
+    - Optional set-level obligations (PR 37 Commit 4, Step 4B; all off by
+      default): Pass 1 union NPV and union support, Pass 2 union precision and
+      union support, checked on the selected union with exact atom indicators
+      and integer coefficients; and an optional Pass 2 objective of union ROWS
+      (routed-set coverage) instead of union positives, valid only together
+      with the union precision floor. Every returned selection, ILP or greedy,
+      is validated against them independently
     """
 
     # CBC time limit per solve (the original policy)
@@ -110,6 +121,13 @@ class ILPRuleSelector:
         # Optional selected-set cap: subscribers routed by the Pass 1 UNION
         # <= rate * all subscribers. None = off (per-rule gates only, as before).
         max_union_leakage_rate_pass1: Optional[float] = None,
+        # Optional set-level obligations (PR 37 Commit 4, Step 4B). None /
+        # "positives" = off: the historical model is built unchanged.
+        min_union_npv_pass1: Optional[float] = None,
+        min_union_support_pass1: Optional[int] = None,
+        min_union_precision_pass2: Optional[float] = None,
+        min_union_support_pass2: Optional[int] = None,
+        pass2_union_objective: str = PASS2_OBJECTIVE_POSITIVES,
         
         # ============================================================
         # NOVELTY CONSTRAINTS - REQUIRED (tuning params)
@@ -183,6 +201,15 @@ class ILPRuleSelector:
                 f"max_union_leakage_rate_pass1 must be in [0, 1] or None, "
                 f"got {max_union_leakage_rate_pass1!r}"
             )
+        union_errors = union_obligation_errors(
+            min_union_npv_pass1=min_union_npv_pass1,
+            min_union_support_pass1=min_union_support_pass1,
+            min_union_precision_pass2=min_union_precision_pass2,
+            min_union_support_pass2=min_union_support_pass2,
+            pass2_union_objective=pass2_union_objective,
+        )
+        if union_errors:
+            raise ValueError("ILPRuleSelector: " + "; ".join(union_errors))
         
         # ============================================================
         # STORE PASS-LEVEL PARAMETERS
@@ -198,6 +225,11 @@ class ILPRuleSelector:
         self.min_novelty_ratio_pass1 = min_novelty_ratio_pass1
         self.min_novelty_ratio_pass2 = min_novelty_ratio_pass2
         self.max_union_leakage_rate_pass1 = max_union_leakage_rate_pass1
+        self.min_union_npv_pass1 = min_union_npv_pass1
+        self.min_union_support_pass1 = min_union_support_pass1
+        self.min_union_precision_pass2 = min_union_precision_pass2
+        self.min_union_support_pass2 = min_union_support_pass2
+        self.pass2_union_objective = pass2_union_objective
         
         # ============================================================
         # INITIALIZE MODULAR COMPONENTS
@@ -243,6 +275,12 @@ class ILPRuleSelector:
         )
         
         self.deduplicator = ILPDeduplicator()
+        # Step 4B: under set-level obligations each solve also records CBC's
+        # final objective and best bound (the MIP gap PuLP does not return).
+        self.ilp_builder.record_solver_log = any(v is not None for v in (
+            min_union_npv_pass1, min_union_support_pass1,
+            min_union_precision_pass2, min_union_support_pass2,
+        ))
         self.selection_report_: Dict[str, dict] = {}
         
         print("✅ ILPRuleSelector initialized (all tuning params validated)")
@@ -344,6 +382,8 @@ class ILPRuleSelector:
             max_base_reuse=self.max_base_reuse_pass1,
             min_novelty_ratio=self.min_novelty_ratio_pass1,
             max_union_leakage_rate=self.max_union_leakage_rate_pass1,
+            min_union_ratio=self.min_union_npv_pass1,
+            min_union_support=self.min_union_support_pass1,
         ) if "pass1" in passes else []
 
         pass2_evaluated = self._optimize_pass(
@@ -355,6 +395,9 @@ class ILPRuleSelector:
             y_val=y_val,  # needed for union recall; gate choice still keys on pass_name
             max_base_reuse=self.max_base_reuse_pass2,
             min_novelty_ratio=self.min_novelty_ratio_pass2,
+            min_union_ratio=self.min_union_precision_pass2,
+            min_union_support=self.min_union_support_pass2,
+            union_objective=self.pass2_union_objective,
         ) if "pass2" in passes else []
 
         if "pass1" in passes:
@@ -402,10 +445,44 @@ class ILPRuleSelector:
         max_base_reuse: Optional[int] = None,
         min_novelty_ratio: float = 0.20,
         max_union_leakage_rate: Optional[float] = None,
+        min_union_ratio: Optional[float] = None,
+        min_union_support: Optional[int] = None,
+        union_objective: Optional[str] = None,
     ) -> List[EvaluatedRule]:
-        """Optimize a single pass using ILP or greedy fallback."""
+        """
+        Optimize a single pass using ILP or greedy fallback.
+
+        min_union_ratio / min_union_support (PR 37 Commit 4, Step 4B): set-level
+        floors on the selected union, on these selection rows. The ratio is the
+        union NPV for Pass 1 (precision_first) and the union precision for
+        Pass 2 (recall_first). union_objective "rows" makes Pass 2 maximise
+        union rows (needs min_union_ratio); None / "positives" is historical.
+        """
         validate_scoring_mode(scoring_mode)
         self._validate_cardinality(pass_name, min_rules, max_rules)
+        if union_objective not in (None, PASS2_OBJECTIVE_POSITIVES, PASS2_OBJECTIVE_ROWS):
+            raise ValueError(f"{pass_name}: union_objective must be None, 'positives' or 'rows', "
+                             f"got {union_objective!r}")
+        rows_objective = union_objective == PASS2_OBJECTIVE_ROWS
+        if rows_objective and (scoring_mode != "recall_first" or min_union_ratio is None):
+            raise ValueError(f"{pass_name}: the 'rows' objective is a Pass 2 option and needs a "
+                             "union precision floor")
+        set_level = self._set_level_spec(scoring_mode, y_val, min_union_ratio, min_union_support)
+
+        def require_nonempty_union(stage: str) -> None:
+            """Step 4B: an empty union never meets set-level obligations."""
+            if set_level is None:
+                return
+            self.selection_report_[pass_name] = {
+                "source": "infeasible", "min_rules": min_rules, "stage": stage,
+                "union_support_floor": set_level.support,
+            }
+            raise SelectorInfeasibleError(
+                f"{pass_name}: no candidate rule remains after {stage}, but the set-level "
+                f"obligations need a union of >= {set_level.support} row(s) - no feasible "
+                f"selection exists.",
+                proven=True,
+            )
 
         def require_min_rules(available: int, stage: str) -> None:
             """A1: fewer candidates than the configured minimum -> no feasible set."""
@@ -424,6 +501,7 @@ class ILPRuleSelector:
         if not candidates:
             print(f"⚠️  No candidates for {pass_name}")
             require_min_rules(0, "candidate generation")
+            require_nonempty_union("candidate generation")
             self.selection_report_[pass_name] = {"source": "empty (min_rules = 0)",
                                                  "min_rules": min_rules, "n_selected": 0}
             return []
@@ -444,6 +522,7 @@ class ILPRuleSelector:
             print(f"  ⚠️  No valid candidates after quality gates!")
         require_min_rules(len(valid), "quality gates")
         if len(valid) == 0:
+            require_nonempty_union("quality gates")
             self.selection_report_[pass_name] = {"source": "empty (min_rules = 0)",
                                                  "min_rules": min_rules, "n_selected": 0}
             return []
@@ -455,14 +534,18 @@ class ILPRuleSelector:
         if y_val is None:
             raise ValueError(f"{pass_name}: y_val is required for union-coverage selection")
         n_rows = len(y_val)
-        row_weight = union_row_weights(y_val, scoring_mode)
+        if rows_objective:
+            # Step 4B opt-in: Pass 2 maximises the rows its union flags.
+            row_weight = np.ones(n_rows, dtype=np.int64)
+        else:
+            row_weight = union_row_weights(y_val, scoring_mode)
         arrays = {r.rule_id: get_covered_array(r, n_rows) for r in valid}
         novelty_on = self.novelty_analyzer.enable_novelty_constraints
         # Set-level floor (ratio, min unique rows); min 1 row => never keep a zero-marginal rule
         floor = (min_novelty_ratio, 1) if novelty_on else None
         base_limit = (max_base_reuse if max_base_reuse is not None
                       else self.diversity_analyzer.max_feature_usage)
-        weight_name = "rows" if scoring_mode == "precision_first" else "positives"
+        weight_name = "rows" if (scoring_mode == "precision_first" or rows_objective) else "positives"
 
         # Optional union leakage cap: positives (subscribers) routed by the selected
         # set, each counted once, <= rate * all positives in y_val - the same
@@ -503,6 +586,13 @@ class ILPRuleSelector:
             "candidates_after_merge": len(valid),
             "union_leakage_cap": None if leakage is None else leakage[1],
         }
+        if set_level is not None:
+            # Step 4B keys; absent from historical reports.
+            report.update(
+                union_objective=weight_name, union_ratio=set_level.ratio_name,
+                union_ratio_floor=None if set_level.floor is None else str(set_level.floor),
+                union_support_floor=set_level.support,
+            )
         self.selection_report_[pass_name] = report
 
         def union_weight(rules):
@@ -519,7 +609,8 @@ class ILPRuleSelector:
 
         def violations(rules):
             return self._hard_constraint_violations(
-                rules, min_rules, actual_max, max_base_reuse, floor, n_rows, leakage
+                rules, min_rules, actual_max, max_base_reuse, floor, n_rows, leakage,
+                set_level=set_level,
             )
 
         def infeasible(proven, problems=None):
@@ -527,7 +618,8 @@ class ILPRuleSelector:
                 self._infeasible_message(pass_name, proven, min_rules, actual_max,
                                          floor, base_limit, n_gated, len(valid), problems,
                                          None if leakage is None else
-                                         (max_union_leakage_rate, leakage[1], total_pos)),
+                                         (max_union_leakage_rate, leakage[1], total_pos),
+                                         set_level=set_level),
                 proven=proven,
             )
 
@@ -555,6 +647,9 @@ class ILPRuleSelector:
             )
         if leakage is not None:
             self.ilp_builder.add_union_leakage_cap(prob, decision_vars, atoms, pos_mask, leakage[1])
+        if set_level is not None:
+            report["union_indicators"] = self.ilp_builder.add_union_set_obligations(
+                prob, decision_vars, atoms, set_level.good, set_level.floor, set_level.support)
 
         # Same-contract greedy: the fallback if CBC returns nothing usable. It is NOT
         # passed to CBC as a MIP start: in testing, CBC's MIP start produced a wrong
@@ -562,7 +657,7 @@ class ILPRuleSelector:
         incumbent = self.greedy_selector.greedy_select(
             valid, actual_max, scoring_mode, row_weight,
             floor=floor, base_reuse_limit=base_limit, min_rules=min_rules, verbose=False,
-            leakage=leakage,
+            leakage=leakage, set_level=set_level,
         )
         incumbent_problems = violations(incumbent)
 
@@ -592,7 +687,7 @@ class ILPRuleSelector:
             fallback = self.greedy_selector.greedy_select(
                 valid, actual_max, scoring_mode, row_weight,
                 floor=floor, base_reuse_limit=base_limit, min_rules=min_rules, verbose=True,
-                leakage=leakage,
+                leakage=leakage, set_level=set_level,
             )
             problems = violations(fallback)
             if problems:
@@ -601,6 +696,9 @@ class ILPRuleSelector:
             report.update(source="greedy_fallback", lexicographic_guarantee="not applicable",
                           union_coverage=union_weight(fallback), n_selected=len(fallback),
                           union_positives=union_positives(fallback))
+            if set_level is not None:
+                report.update(self._union_counts(fallback, n_rows, set_level))
+                report["selected_rule_ids"] = [r.rule_id for r in fallback]
             print(f"  ✅ Selected {len(fallback)} rules via validated greedy fallback "
                   f"(NOT an ILP optimum)")
             return fallback
@@ -644,6 +742,9 @@ class ILPRuleSelector:
         report.update(source="ilp", lexicographic_guarantee=guarantee,
                       union_coverage=union_weight(selected), n_selected=len(selected),
                       union_positives=union_positives(selected))
+        if set_level is not None:
+            report.update(self._union_counts(selected, n_rows, set_level))
+            report["selected_rule_ids"] = [r.rule_id for r in selected]
         print(f"  Lexicographic guarantee: {guarantee}")
         if leakage is not None:
             print(f"  Union leakage: {union_positives(selected)} / {total_pos} positives "
@@ -691,12 +792,16 @@ class ILPRuleSelector:
         independent validation raises RuntimeError (formulation bug); an
         unproven incumbent that fails it is rejected.
         """
+        self.ilp_builder.last_solver_log = None   # never carry one solve's log to the next
         status = self.ilp_builder.solve(
             prob, time_limit=self.TIME_LIMIT_PER_SOLVE, warm_start=False, gap_rel=0.0
         )
         sol_status = self.ilp_builder.last_sol_status
         state = self._classify_solution(status, sol_status)
         info = {"status": status, "sol_status": sol_status, "state": state, "problems": []}
+        if self.ilp_builder.record_solver_log:
+            # Step 4B: objective / best bound read from CBC's log; None = not available.
+            info["solver_log"] = self.ilp_builder.last_solver_log
         if state in (INFEASIBLE, NO_SOLUTION):
             return state, [], info
 
@@ -726,8 +831,33 @@ class ILPRuleSelector:
             return REJECTED, [], info
         return state, selected, info
 
+    @staticmethod
+    def _set_level_spec(scoring_mode, y_val, min_union_ratio, min_union_support):
+        """The pass's set-level obligations (Step 4B), or None when none is set."""
+        if min_union_ratio is None and min_union_support is None:
+            return None
+        if y_val is None:
+            raise ValueError("set-level union obligations need y_val")
+        y = np.asarray(y_val)
+        good = (y == 0) if scoring_mode == "precision_first" else (y == 1)
+        return UnionObligations(
+            good=good,
+            floor=None if min_union_ratio is None else exact_fraction(min_union_ratio),
+            support=max(1, int(min_union_support or 0)),
+            ratio_name="NPV" if scoring_mode == "precision_first" else "precision",
+        )
+
+    @staticmethod
+    def _union_counts(rules, n_rows, set_level) -> dict:
+        covered = np.zeros(n_rows, dtype=bool)
+        for r in rules:
+            covered[get_covered_array(r, n_rows)] = True
+        return {"union_rows": int(covered.sum()),
+                "union_good": int(set_level.good[covered].sum())}
+
     def _hard_constraint_violations(self, rules, min_rules, max_rules, max_base_reuse,
-                                    floor=None, n_rows=None, leakage=None) -> List[str]:
+                                    floor=None, n_rows=None, leakage=None,
+                                    set_level=None) -> List[str]:
         """Every hard selector constraint, checked directly on a rule list."""
         problems = []
         ids = [r.rule_id for r in rules]
@@ -754,14 +884,20 @@ class ILPRuleSelector:
             leaked = int(pos_mask[covered].sum())
             if leaked > cap:
                 problems.append(f"union leakage {leaked} positives above cap {cap}")
+        if set_level is not None:
+            union = np.zeros(len(set_level.good), dtype=bool)
+            for r in rules:
+                union[get_covered_array(r, len(set_level.good))] = True
+            problems += union_obligation_violations(union, set_level)
         return problems
 
     def _meets_hard_constraints(self, rules, min_rules, max_rules, max_base_reuse,
-                                floor=None, n_rows=None, leakage=None) -> bool:
-        """Cardinality + base-feature reuse + (when active) the novelty floor and
-        the union leakage cap."""
+                                floor=None, n_rows=None, leakage=None, set_level=None) -> bool:
+        """Cardinality + base-feature reuse + (when active) the novelty floor, the
+        union leakage cap and the set-level union obligations."""
         return not self._hard_constraint_violations(
-            rules, min_rules, max_rules, max_base_reuse, floor, n_rows, leakage
+            rules, min_rules, max_rules, max_base_reuse, floor, n_rows, leakage,
+            set_level=set_level,
         )
 
     def _merge_equivalent_rules(self, rules, arrays, scoring_mode):
@@ -791,7 +927,8 @@ class ILPRuleSelector:
 
     @staticmethod
     def _infeasible_message(pass_name, proven, min_rules, actual_max, floor,
-                            base_limit, n_gated, n_merged, problems=None, leakage=None) -> str:
+                            base_limit, n_gated, n_merged, problems=None, leakage=None,
+                            set_level=None) -> str:
         how = ("the ILP PROVED that no feasible selection exists" if proven else
                "CBC returned no usable solution (stopped without an incumbent, or its "
                "incumbent failed validation) and the greedy fallback could not build "
@@ -808,6 +945,10 @@ class ILPRuleSelector:
             f"  candidates       = {n_gated} after quality gates + segment dedup, "
             f"{n_merged} after constraint-equivalent merge",
         ]
+        if set_level is not None:
+            lines.insert(-1, f"  union {set_level.ratio_name:<10} = "
+                             + ("off" if set_level.floor is None else f">= {set_level.floor}")
+                             + f"; union rows >= {set_level.support}")
         if problems:
             lines.append(f"  fallback result  : {'; '.join(problems)}")
         lines.append("  Lower min_rules, the novelty floor or (if set) raise the union leakage "

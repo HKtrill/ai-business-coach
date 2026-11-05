@@ -1,0 +1,187 @@
+{
+  "contract_id": "pr37-stage2-primary",
+  "schema_version": "stage2-operating-contract/2",
+  "contract_version": "1.0.0",
+  "status": "frozen",
+  "objective": "lexicographic_coverage:max_pass1_routed_rows,then_max_pass2_routed_rows",
+  "metric_definitions": "pr37.stage2.contract_metrics/1",
+  "min_pass1_npv": 0.95,
+  "max_pass1_leakage_rate": 0.15,
+  "max_pass1_leakage_count": null,
+  "min_pass2_precision": 0.3,
+  "min_pass1_support": 125,
+  "min_pass2_support": 75,
+  "recall_denominator": "global",
+  "provenance": "Frozen Step 4D record for the PR 38 primary Stage 2 comparison. Both routers receive these obligations unchanged and each maximises its own feasible coverage lexicographically (Pass 1 routed rows, then Pass 2 routed rows on its own remainder). Every numerical value, the objective and the metric definitions are unchanged from the Step 4A working profile 0.1.0-working (fingerprint a6ca7462d4773005). The values were chosen after historical out-of-fold results and the test split had been examined; they are pre-registered relative to the PR 38 corrected reruns, not prospectively uninformed. Frozen before any corrected-router result existed.",
+  "provenance_record": {
+    "rationale": {
+      "min_pass1_npv": {
+        "basis": "protective_guard",
+        "text": "A floor of 0.95 caps positive contamination among rows Pass 1 routes NOT_SUBSCRIBE at 5%, about 0.44 times the 11.27% training base rate. It is a guard, not the primary Pass 1 lever: for any fit, the leakage ceiling implies this floor whenever Pass 1 coverage is at least L*b/(1-F) = 0.338, so it binds only for a weaker Pass 1. It is retained because that condition is not guaranteed for every arm or fit."
+      },
+      "max_pass1_leakage_rate": {
+        "basis": "substantive_requirement",
+        "text": "Pass 1 may route at most 15% of all actual positives in its population to NOT_SUBSCRIBE (global denominator). This is the primary Pass 1 obligation: it limits how much of the positive mass Stage 2 may label confidently negative. Stage 4 consumes router routes as evidence rather than as a veto, so leakage is not a final loss, but a router that routes many positives away degrades that evidence. 0.15 matches the Pass 1 out-of-fold leakage target the GLASS notebook already declared; that target was set with historical out-of-fold results visible."
+      },
+      "max_pass1_leakage_count": {
+        "basis": "structural_argument",
+        "text": "No absolute count cap. The primary protocol fits routers on populations of different sizes (32,950 full-train rows, 26,360 per outer fold, about 21,088 per nested eligibility solve), so a fixed count means a different rate in each fit. The shared rate ceiling behaves consistently across them. Historically the count cap equalled the rate cap at full train and could not bind in any outer-fold router."
+      },
+      "min_pass2_precision": {
+        "basis": "substantive_requirement",
+        "text": "A floor of 0.30 requires Pass 2 flags to be meaningfully enriched over the population Pass 2 serves: historical remainder prevalence was about 15-16% (0.158 in the full-train RF fit), so 0.30 is roughly a 1.9-fold lift, and about 2.7 times the 11.27% base rate. A floor at or below a fit's remainder prevalence would let Pass 2 flag its whole remainder and remove abstention; under this floor that requires a Pass 1 routing at least 1 - b/0.30 = 62% of rows."
+      },
+      "min_pass1_support": {
+        "basis": "historical_configuration_anchor",
+        "text": "Frozen as a protective guard: 125 routed rows, the RF band-support floor the black-box notebook used, which carried no recorded rationale. It prevents a Pass 1 set routed from a tiny extreme tail. It is not an estimation-precision guarantee: a 125-row band at NPV 0.95 has a 95% Wilson half-width of about 4 percentage points. Reviewed in Step 4D and kept as a guard (M5); a different floor needs a new contract version (M4)."
+      },
+      "min_pass2_support": {
+        "basis": "historical_configuration_anchor",
+        "text": "Frozen as a protective guard: 75 routed rows, the RF band-support floor the black-box notebook used, which carried no recorded rationale. It prevents a Pass 2 set flagged from a tiny extreme tail. It is not an estimation-precision guarantee: a 75-row band at precision 0.30 has a 95% Wilson half-width of about 10 percentage points. Reviewed in Step 4D and kept as a guard (M5); a different floor needs a new contract version (M4)."
+      }
+    },
+    "evidence": [
+      {
+        "id": "baseline:pr37_stage2_pre_correction_v1",
+        "kind": "baseline_package",
+        "split": "train_oof",
+        "role": "context",
+        "location": "prototype/bank_pipeline/research_logs/baselines/pr37_stage2_pre_correction_v1/MANIFEST.json",
+        "sha256": "905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b",
+        "fields_used": [
+          "tables/states.csv",
+          "tables/common_population.csv",
+          "tables/policy_audit.csv",
+          "REPORT.md"
+        ],
+        "description": "Frozen pre-correction outer out-of-fold diagnostics for both routers. Examined before the values were chosen; used for context (historical operating points, per-fold fit-time versus out-of-fold gaps, remainder prevalence), not as a basis for any value."
+      },
+      {
+        "id": "artifact:rf_router_two_pass_metadata",
+        "kind": "artifact_sidecar",
+        "split": "train_oof",
+        "role": "feasibility_screen",
+        "location": "prototype/bank_pipeline/models/rf_router/rf_router_two_pass_metadata.json (Git-ignored; created 2026-10-23T15:58:16Z)",
+        "sha256": "0f10435bd5b52f1fc0015b6cdb6fe82e0937622a2103bdbb2d031d83fe3d3b67",
+        "fields_used": [
+          "fit_report.thresholds",
+          "fit_report.remainder",
+          "fit_report.bands",
+          "fit_report.nested_check",
+          "config.rf_params",
+          "extra.oof_fold_summary"
+        ],
+        "description": "Full-train RF Router sidecar. That router was fitted under the historical match_glass_oof constraints (baseline disclosure D13). Training-side fields only. Membership in the PR 36 SHA256SUMS.txt snapshot verified locally (Step 4B validation)."
+      },
+      {
+        "id": "artifact:rf_router_two_pass_pass1_sweep",
+        "kind": "threshold_sweep",
+        "split": "train_oof",
+        "role": "feasibility_screen",
+        "location": "prototype/bank_pipeline/models/rf_router/rf_router_two_pass_pass1_sweep.csv (Git-ignored)",
+        "sha256": "784dc7b23baf5878247a614a272737377884041fae77576961a1977c7127cade",
+        "fields_used": [
+          "band_size",
+          "subscribers_routed",
+          "threshold"
+        ],
+        "description": "Full-train RF Pass 1 out-of-fold threshold sweep (32,950 rows, 3,712 positives). Identity verified against the sidecar fit report. Snapshot membership verified locally (Step 4B validation)."
+      },
+      {
+        "id": "artifact:rf_router_two_pass_pass2_sweep",
+        "kind": "threshold_sweep",
+        "split": "train_oof",
+        "role": "feasibility_screen",
+        "location": "prototype/bank_pipeline/models/rf_router/rf_router_two_pass_pass2_sweep.csv (Git-ignored)",
+        "sha256": "9aba534236b77a4747183aeb759ebb129ec6fc22d405447767dd80d4a3fea07c",
+        "fields_used": [
+          "band_size",
+          "positives_in_band",
+          "threshold"
+        ],
+        "description": "Full-train RF Pass 2 out-of-fold sweep on the historical remainder only (20,263 rows, 3,204 positives), the remainder left by the historical t1 solved under the match_glass_oof constraints. Identity verified against the sidecar fit report. Snapshot membership verified locally (Step 4B validation)."
+      },
+      {
+        "id": "record:pr37_commit4_contract_record",
+        "kind": "methodology_record",
+        "split": "not_applicable",
+        "role": "provenance",
+        "location": "prototype/bank_pipeline/documentation/methodology/pr37_commit4_contract_record.md",
+        "sha256": null,
+        "fields_used": [],
+        "description": "Step 4A decisions M1-M8, metric definitions, rationale, the feasibility screening and its limitations; the Step 4D freeze (section 24)."
+      },
+      {
+        "id": "record:pr37_commit3_decisions",
+        "kind": "methodology_record",
+        "split": "not_applicable",
+        "role": "context",
+        "location": "prototype/bank_pipeline/documentation/methodology/ (pr37_f17_decision_record.md, pr37_f31_disposition_record.md, pr37_commit3_handoff.md at ab7b063)",
+        "sha256": null,
+        "fields_used": [],
+        "description": "Approved F17 and F31 decisions and the open Commit 4 decisions this contract resolves."
+      },
+      {
+        "id": "contract:pr37-stage2-primary@0.1.0-working",
+        "kind": "code_reference",
+        "split": "not_applicable",
+        "role": "provenance",
+        "location": "prototype/bank_pipeline/shared/stage2/contracts/stage2_primary_working.json",
+        "sha256": null,
+        "fields_used": [],
+        "description": "The Step 4A working profile (fingerprint a6ca7462d4773005). This record freezes it: the numerical values, objective and metric definitions are identical."
+      },
+      {
+        "id": "protocol:pr38-stage2-evaluation@1.0.0",
+        "kind": "methodology_record",
+        "split": "not_applicable",
+        "role": "context",
+        "location": "prototype/bank_pipeline/shared/stage2/protocols/pr38_evaluation_v1.json; documentation/methodology/pr38_evaluation_protocol.md",
+        "sha256": null,
+        "fields_used": [],
+        "description": "The frozen PR 38 evaluation protocol that binds this contract and classifies observed outer out-of-fold shortfalls."
+      }
+    ],
+    "exposure": {
+      "historical_oof_examined": true,
+      "test_split_examined": true,
+      "details": [
+        "The historical outer out-of-fold results of both routers (the frozen pre-correction baseline) were examined before these values were chosen.",
+        "Historically the RF Router's constraints came from the match_glass_oof pathway: they were read off GLASS's pooled outer out-of-fold metrics (baseline disclosure D13). That pathway is described here as historical evidence only; no value in this record is computed from, copied from or set to match it.",
+        "derived_from_arm_realised_performance = false means exactly that: no value was computed from, copied from or mechanically set to match an arm's realised performance. It does not claim that the historical exposure left the methodological decisions uninformed; historical_exposure_informed_decisions = true discloses that it did inform them.",
+        "The nominal test split was evaluated in PRs 33-36 and cannot be described as untouched; the PR 35 research log reports test-split constraint satisfaction for both arms.",
+        "During the Step 4A review the full RF sidecar, which also stores historical test-split metrics, was shared. Those metrics were excluded from every analysis and from this record.",
+        "The single-RF ablation sweeps were also inspected: its Pass 1 frontier is identical to the two-pass one; its Pass 2 sweep covers a different population and was not used.",
+        "Only the RF arm has a saved feasibility frontier; no GLASS frontier exists without a fit.",
+        "No corrected PR 38 result existed when this record was frozen; nothing in it was revised between the working profile and the freeze."
+      ]
+    },
+    "derived_from_arm_realised_performance": false,
+    "historical_exposure_informed_decisions": true,
+    "feasibility_screening": {
+      "scope": "Read-only screen of these values on the historical full-train RF Router's training out-of-fold sweeps; RF only.",
+      "result": "Feasible and non-degenerate. Pass 1: largest feasible band 13,496 of 32,950 rows (coverage 0.4096), 555 of 3,712 positives leaked (0.1495) against an integer cap of 556; leakage binds, NPV 0.9589 is slack, support is far above 125. Pass 2 on the historical remainder (20,263 rows, prevalence 0.1581): largest feasible band 8,122 rows, precision 0.3015; precision binds, support is far above 75. The remainder these Pass 1 values leave has prevalence 0.1623, below the 0.30 floor.",
+      "limitations": [
+        "Full-train router only (32,950 rows, all training labels, global_t1 eligibility); the PR 38 primary uses outer-fold routers with nested_t1, whose frontiers were never saved.",
+        "The Pass 2 result applies only to the historical remainder and its forest; other Pass 1 values or nested_t1 retrain Pass 2 on a different population.",
+        "No total coverage or abstention is inferred for these values; the only valid bound is Pass 2 coverage at most 0.3194 on this remainder.",
+        "It says nothing about GLASS feasibility under union-level obligations; that is first observed at the PR 38 fit-only preflight."
+      ]
+    },
+    "limitations": [
+      "These values are not independently established optima; they were chosen with historical out-of-fold results and the test split already examined.",
+      "Historical RF feasibility does not establish GLASS feasibility or corrected nested-fit feasibility; the PR 38 fit-only preflight is required.",
+      "GLASS enforces Pass 1 union NPV, leakage and support and Pass 2 union precision and support at fit time (Step 4B), so the obligations are shared in enforcement as well as in definition.",
+      "Fit-time estimation differs by arm: RF checks inner out-of-fold scores, GLASS checks in-sample rule matches.",
+      "Both arms select at the edge of their feasible sets, so observed outer out-of-fold violations are expected often; their classification follows the frozen PR 38 protocol.",
+      "The support floors are guards, not estimation-precision guarantees."
+    ],
+    "relation_to_pr38": "Frozen before any corrected-router result. PR 38 loads it with load_frozen_contract (status 'frozen', pinned fingerprint) and builds both arms' configs from it with their frozen profiles. A failed fit-only preflight stops the run; any revision needs explicit approval, a new version, preserved provenance and disclosure before corrected outer out-of-fold results are inspected (M4).",
+    "approval": {
+      "state": "frozen",
+      "approved_by": "Phillip Harris",
+      "approved_on": "2026-11-05",
+      "note": "Frozen in PR 37 Commit 4, Step 4D; formally approved by Phillip Harris on 2026-11-05. Numerical values, objective and metric definitions unchanged from 0.1.0-working (a6ca7462d4773005). Takes effect when Commit 4 is created after local validation, including the real-artifact re-verification."
+    }
+  }
+}

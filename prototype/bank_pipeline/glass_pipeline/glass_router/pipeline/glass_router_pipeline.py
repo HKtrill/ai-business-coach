@@ -5,6 +5,7 @@
 # ============================================================
 
 import contextlib
+import copy
 import hashlib
 import io
 
@@ -22,6 +23,10 @@ from shared.stage_io import label_fingerprint
 
 #: ``_new_generator(rf_model=...)`` default: use the pipeline's own ``rf_model``.
 _OWN_RF = object()
+
+#: ``ILPRuleSelector.selection_report_`` keys of the two passes.
+PASS1_REPORT_KEY = "Pass 1 (NOT_SUBSCRIBE)"
+PASS2_REPORT_KEY = "Pass 2 (SUBSCRIBE)"
 
 
 def feature_order_fingerprint(estimator, columns) -> str:
@@ -198,6 +203,12 @@ class GlassRouterPipeline:
             lambda_rf_uncertainty=c.lambda_rf_uncertainty,
             lambda_rf_misalignment=c.lambda_rf_misalignment,
             max_union_leakage_rate_pass1=getattr(c, "max_union_leakage_rate_pass1", None),
+            # PR 37 Commit 4, Step 4B: set-level obligations (None / "positives" = off).
+            min_union_npv_pass1=getattr(c, "min_union_npv_pass1", None),
+            min_union_support_pass1=getattr(c, "min_union_support_pass1", None),
+            min_union_precision_pass2=getattr(c, "min_union_precision_pass2", None),
+            min_union_support_pass2=getattr(c, "min_union_support_pass2", None),
+            pass2_union_objective=getattr(c, "pass2_union_objective", "positives"),
         )
 
     # ================================================================
@@ -276,6 +287,10 @@ class GlassRouterPipeline:
         y = pd.Series(np.asarray(y), index=X.index) if not isinstance(y, pd.Series) else y
         y_arr = np.asarray(y).astype(int)
         n, total_pos = len(y_arr), int(y_arr.sum())
+        # PR 37 Commit 4, Step 4B: the selectors whose reports selection_reports()
+        # returns. Registered before each solve so an infeasible pass stays visible.
+        self.inner_pass1_selectors_ = []
+        self.pass2_ilp_selector_ = None
 
         # ---- 1. Pass 1 on the full population ---------------------------
         print("\n[oof_remainder] Pass 1 on the full training population")
@@ -299,9 +314,11 @@ class GlassRouterPipeline:
             with contextlib.redirect_stdout(io.StringIO()):
                 generator = (self._new_generator(rf_model=ranker) if nested_ranker
                              else self._new_generator())
+                selector_k = self._new_selector()
+                self.inner_pass1_selectors_.append(selector_k)
                 rules_k = self._fit_pass1_only(
                     X.iloc[tr], y.iloc[tr],
-                    generator, self._new_evaluator(), self._new_selector(),
+                    generator, self._new_evaluator(), selector_k,
                 )
             routed_oof[va] = self._rules_mask(rules_k, X.iloc[va])
             inner_rules.append(len(rules_k))
@@ -334,7 +351,8 @@ class GlassRouterPipeline:
             # Remainder-relative -> global denominators (all positives / all rows)
             r.recall = r.recall * recall_scale
             r.coverage = r.coverage * coverage_scale
-        sel2 = self._new_selector().select_rules(
+        self.pass2_ilp_selector_ = self._new_selector()
+        sel2 = self.pass2_ilp_selector_.select_rules(
             evaluated_rules=ev2, y_val=y_rem, X_val=X_rem,
             segment_builder=self.segment_builder, passes=("pass2",),
         )
@@ -397,6 +415,30 @@ class GlassRouterPipeline:
         return ranker
 
     # ----------------------------------------------------------------
+    def selection_reports(self) -> dict:
+        """
+        ILP selection reports of the last fit, by pass (PR 37 Commit 4, Step 4B).
+
+        ``{"pass1": ..., "pass2": ..., "inner_pass1": [...]}``: each entry is a
+        copy of the selector's ``selection_report_`` for that pass (``None`` if
+        the pass was not reached). ``inner_pass1`` lists the inner-fold Pass 1
+        selections that built the OOF remainder (``oof_remainder`` only; empty
+        for ``full``). Read from the selectors the fit kept; ``fit_report_`` is
+        unchanged. Feed an entry to ``glass_router.contract.glass_fit_outcome``.
+        """
+        def entry(selector, key):
+            report = getattr(selector, "selection_report_", None) or {}
+            return copy.deepcopy(report.get(key))
+
+        if self.pass2_population == "full":
+            return {"pass1": entry(self.ilp_selector, PASS1_REPORT_KEY),
+                    "pass2": entry(self.ilp_selector, PASS2_REPORT_KEY),
+                    "inner_pass1": []}
+        return {"pass1": entry(self.ilp_selector, PASS1_REPORT_KEY),
+                "pass2": entry(getattr(self, "pass2_ilp_selector_", None), PASS2_REPORT_KEY),
+                "inner_pass1": [entry(s, PASS1_REPORT_KEY)
+                                for s in getattr(self, "inner_pass1_selectors_", [])]}
+
     def _fit_pass1_only(self, X, y, generator, evaluator, selector):
         """Generate, evaluate and select Pass 1 (NOT_SUBSCRIBE) rules only."""
         cands = [r for r in generator.generate_candidates(X, y) if r.predicted_class == NOT_SUBSCRIBE]

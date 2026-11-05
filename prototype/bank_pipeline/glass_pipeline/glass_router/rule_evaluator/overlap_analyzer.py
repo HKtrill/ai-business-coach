@@ -43,17 +43,8 @@ class OverlapAnalyzer:
             if len(pass_rules) < 2:
                 continue
             
-            overlaps = []
-            
             # Compute pairwise Jaccard
-            for i, r1 in enumerate(pass_rules):
-                mask1 = self.matcher.match_rule(r1, segments_df)
-                for r2 in pass_rules[i+1:]:
-                    mask2 = self.matcher.match_rule(r2, segments_df)
-                    intersection = (mask1 & mask2).sum()
-                    union = (mask1 | mask2).sum()
-                    jaccard = intersection / union if union > 0 else 0
-                    overlaps.append(jaccard)
+            overlaps = self.pairwise_jaccards(pass_rules, segments_df)
             
             # Log statistics
             if overlaps:
@@ -64,6 +55,30 @@ class OverlapAnalyzer:
                 print(f"  Maximum Jaccard: {max_overlap:.3f}")
                 print(f"  Rules with >0.5 overlap: {sum(1 for o in overlaps if o > 0.5)} / {len(overlaps)}")
     
+    def pairwise_jaccards(self, rules: list, segments_df) -> list:
+        """
+        Jaccard similarity of every rule pair (i, j), i < j, in row-major order.
+
+        Each rule is matched once (len(rules) calls to match_rule) instead of
+        once per pair. Intersection and union sizes are exact integer counts
+        (|A u B| = |A| + |B| - |A n B|), so every value equals the historical
+        pairwise loop bit for bit (PR 37 Commit 4, Step 4B).
+        """
+        if len(rules) < 2:
+            return []
+        masks = np.vstack([
+            np.asarray(self.matcher.match_rule(rule, segments_df), dtype=bool)
+            for rule in rules
+        ])
+        sizes = np.count_nonzero(masks, axis=1).astype(np.int64)
+        overlaps = []
+        for i in range(len(rules) - 1):
+            inter = np.count_nonzero(masks[i + 1:] & masks[i], axis=1).astype(np.int64)
+            union = sizes[i] + sizes[i + 1:] - inter
+            for intersection, size in zip(inter, union):
+                overlaps.append(intersection / size if size > 0 else 0)
+        return overlaps
+
     def compute_pairwise_overlap(self, rule1, rule2, segments_df) -> float:
         """
         Compute Jaccard overlap between two rules.

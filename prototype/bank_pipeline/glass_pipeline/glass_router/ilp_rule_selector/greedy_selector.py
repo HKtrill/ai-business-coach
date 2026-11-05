@@ -82,6 +82,7 @@ class GreedySelector:
         min_rules: int = 0,
         verbose: bool = True,
         leakage: Optional[Tuple[np.ndarray, int]] = None,
+        set_level=None,
     ) -> List[EvaluatedRule]:
         """
         Perform greedy selection by marginal union gain.
@@ -95,6 +96,10 @@ class GreedySelector:
                    ILP has novelty constraints disabled
             base_reuse_limit: max selected rules per base feature (ILP limit)
             leakage: (positive-row mask, cap) when the ILP has a union leakage cap
+            set_level: utils.UnionObligations when the ILP has set-level union
+                   obligations. A rule is admissible only if the union keeps
+                   its ratio floor after adding it; the support floor is checked
+                   on the result by the caller (PR 37 Commit 4, Step 4B)
             min_rules: only used for the log message; the caller validates
             verbose: print progress
 
@@ -127,6 +132,8 @@ class GreedySelector:
         unique: List[int] = []                       # unique rows of each selected rule
         base_used: Counter = Counter()
         leaked = 0                                   # positives in the selected union
+        union_rows = 0                               # rows in the selected union (set_level)
+        union_good = 0                               # "good" rows in it (set_level)
         selected: List[EvaluatedRule] = []
         remaining = rules.copy()
 
@@ -146,6 +153,11 @@ class GreedySelector:
                     continue  # adds nothing to the union objective
                 if leakage is not None and leaked + int(leakage[0][fresh].sum()) > leakage[1]:
                     continue  # would push the union over the leakage cap
+                if set_level is not None and set_level.floor is not None:
+                    g = union_good + int(set_level.good[fresh].sum())
+                    r = union_rows + int(fresh.size)
+                    if g * set_level.floor.denominator < set_level.floor.numerator * r:
+                        continue  # would take the union below its ratio floor
                 new_samples = int(fresh.size)
                 novelty = new_samples / idx.size
 
@@ -179,6 +191,9 @@ class GreedySelector:
             c = cnt[idx]
             if leakage is not None:
                 leaked += int(leakage[0][idx[c == 0]].sum())
+            if set_level is not None:
+                union_rows += int((c == 0).sum())
+                union_good += int(set_level.good[idx[c == 0]].sum())
             shared = idx[c == 1]
             if shared.size:
                 losses = np.bincount(owner[shared], minlength=len(selected))

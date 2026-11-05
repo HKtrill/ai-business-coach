@@ -241,8 +241,9 @@ class RFRouterConfig:
 
         if self.constraints is None:
             errors.append(
-                "constraints is required — build it with "
-                "OperatingConstraints.from_glass_config(GLASS_CONFIG)"
+                "constraints is required — build it from the shared contract with "
+                "rf_constraints_from_contract_v2 (blackbox_pipeline.models.rf_router.contract), "
+                "or state an OperatingConstraints explicitly"
             )
         elif not isinstance(self.constraints, OperatingConstraints):
             errors.append(

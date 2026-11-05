@@ -1,0 +1,104 @@
+{
+  "profile_id": "pr37-glass-router-primary",
+  "schema_version": "stage2-arm-profile/1",
+  "arm": "glass",
+  "profile_version": "1.0.0",
+  "status": "frozen",
+  "settings": {
+    "router_config": {
+      "mode": "strict",
+      "min_support_pass1": 120,
+      "min_support_pass2": 25,
+      "max_leakage_rate_depth2": 0.9,
+      "max_leakage_fraction_depth2": 0.9,
+      "max_jaccard_overlap": 0.5,
+      "max_high_overlap_rules": 20,
+      "min_pass1_rules": 2,
+      "max_pass1_rules": 8,
+      "min_precision_not_subscribe": 0.93,
+      "max_precision_not_subscribe": 1.0,
+      "max_subscriber_leakage_rate": 0.05,
+      "max_subscriber_leakage_absolute": 800,
+      "min_pass2_rules": 2,
+      "max_pass2_rules": 8,
+      "min_precision_subscribe": 0.2,
+      "max_precision_subscribe": 1.0,
+      "min_recall_subscribe": 0.01,
+      "max_recall_subscribe": 0.35,
+      "min_novelty_ratio_pass1": 0.2,
+      "min_novelty_ratio_pass2": 0.25,
+      "enable_novelty_constraints": true,
+      "max_complexity": 3,
+      "diversity_weight": 0.35,
+      "max_feature_reuse_pass1": null,
+      "max_feature_reuse_pass2": null,
+      "lambda_rf_uncertainty": null,
+      "lambda_rf_misalignment": null,
+      "pass2_population": "oof_remainder",
+      "pass1_oof_folds": 5,
+      "random_state": 42,
+      "remainder_min_size": 500,
+      "inner_feature_ranker": "fold_nested_rf"
+    },
+    "ranker": {
+      "glass_rf_model": "fold_rf",
+      "rf_params": {
+        "n_estimators": 650,
+        "max_depth": 6,
+        "min_samples_leaf": 12,
+        "max_features": 0.39989815740885837,
+        "minority_weight": 1.3001084911026792,
+        "class_weight": "balanced"
+      }
+    }
+  },
+  "provenance": {
+    "summary": "The GLASS Router's arm-internal configuration for the PR 38 primary outer-fold routers: per-rule quality gates, rule counts, depth-2 pruning, overlap, novelty, complexity and diversity settings, and the RF feature ranker. None of these is a contract obligation, but each shapes GLASS coverage, so they are fixed before any corrected result. The union obligations are not part of this profile: they come only from the frozen shared contract (glass_config_from_contract).",
+    "historical_sources": [
+      {
+        "role": "glass_notebook.cell13_legacy_profile",
+        "path": "glass_pipeline/glass_cascade.ipynb (Cell 13, CONFIG_PROFILE='legacy', _SHARED and _PROFILES['legacy'])",
+        "sha256": null,
+        "fields": [
+          "_SHARED",
+          "_PROFILES.legacy"
+        ]
+      },
+      {
+        "role": "stage2.glass_router",
+        "path": "models/glass_router/glass_router_20261023_025611.joblib",
+        "sha256": "2c70879bfe04f2adb320d55a3d735a1b1d08cd0e4821621a7a5075ad89fa2fa8",
+        "fields": [
+          "config_full"
+        ]
+      },
+      {
+        "role": "glass_arm.rf_result",
+        "path": "models/rf/rf_result_20261023_025611.joblib",
+        "sha256": "76b198aa5eff376e663237333e36dec8adde26e870e2296d77c594a68719f412",
+        "fields": [
+          "params"
+        ]
+      }
+    ],
+    "derivation": "The legacy profile behind the historical GLASS artifacts, preserved exactly, with three changes and nothing else: (1) max_union_leakage_rate_pass1 (legacy 0.14) is removed from the profile, because every union obligation comes from the contract (0.15 under the frozen contract); (2) pass2_population, pass1_oof_folds, random_state, remainder_min_size and inner_feature_ranker are the F17 primary (legacy pass2_population 'full' remains the S1 sensitivity only); (3) the Pass 2 union objective is 'rows', set by the contract adapter. lambda_rf_uncertainty and lambda_rf_misalignment stay unset, as in the legacy profile: the ILP's defaults (0.15 / 0.08) act as a tie-break only. The ranker's glass_rf_model 'fold_rf' and rf_params are the historical cross-fit settings (Cell 14: rf_params = rf_result.params).",
+    "tuning": "Not tuned for the shared contract. The legacy gates were set by hand in PRs 33-36 with historical out-of-fold results visible; the ranker's RF hyperparameters were tuned once (Optuna TPE, seed 42, 200 trials, 5-fold ROC-AUC on all of X_eng_train).",
+    "exposure": [
+      "The legacy profile was chosen with historical out-of-fold results visible (F17 limitation L3).",
+      "The ranker's hyperparameter tuning saw all training rows and target-encoded features informed by its own validation labels.",
+      "Fixed before any corrected PR 38 result existed; the 'recommended' preset in the notebook was not run in the historical baseline and is not this profile."
+    ],
+    "limitations": [
+      "The per-rule gates are candidate filters, not union compliance: every obligation is enforced on the selected union by the ILP.",
+      "A legacy gate looser than its union obligation (min_precision_subscribe 0.20 against the union precision floor 0.30) only widens the candidate pool; a stricter one (per-rule leakage 0.05) can narrow it and reduce feasible coverage.",
+      "GLASS feasibility under these settings is first observed at the PR 38 fit-only preflight (G3); an infeasible preflight stops and needs a new version (M4), never a silent change."
+    ],
+    "relation_to_pr38": "PR 38 builds every primary GLASS config with glass_router.profile.glass_primary_config(contract): this frozen profile (pinned fingerprint) plus the frozen contract's union obligations, and passes ranker_settings() to the cross-fit. A different value needs a new profile version, approval and disclosure before corrected outer out-of-fold results are inspected."
+  },
+  "approval": {
+    "state": "frozen",
+    "approved_by": "Phillip Harris",
+    "approved_on": "2026-11-05",
+    "note": "Frozen in PR 37 Commit 4, Step 4D; formally approved by Phillip Harris on 2026-11-05, who approved the historical legacy GLASS Router profile as the primary PR 38 configuration, with the frozen F17 population settings and the shared Stage 2 operating constraints (union obligations delegated to the contract). Takes effect when Commit 4 is created after local validation."
+  }
+}
