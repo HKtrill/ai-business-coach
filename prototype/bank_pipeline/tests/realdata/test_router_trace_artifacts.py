@@ -13,8 +13,10 @@ handoff, not logic: the implementation never uses them.
 Nothing is fitted, written or regenerated, and no test label is read (the
 loader is tests.support.router_artifacts, shared with the Commit 1 tests).
 Every artifact file the trace reads is hashed before it is first loaded and
-again at the end: all must be unchanged. With ``PR37_BASELINE_SHA256SUMS`` set,
-the router files and the RF result must also equal the preserved baseline.
+again at the end: all must be unchanged. All files are read from the preserved
+October 23 archive (``PR37_BASELINE_SHA256SUMS``;
+tests.support.archived_artifacts), never from the live models/ folders, and
+each must equal its recorded SHA-256.
 """
 
 from __future__ import annotations
@@ -28,11 +30,11 @@ import pytest
 from shared.stage2 import diagnostics as d
 from shared.stage2.diagnostics import trace as tr
 from shared.stage2.diagnostics.boundary import RF_PASS2_REMAINDER_PROTOCOL
+from tests.support.archived_artifacts import HistoricalReal
 from tests.support.router_artifacts import (
     ROUTER_SPLIT_FP,
     STAGE_IO_SPLIT_FP,
     TRAIN_LABEL_FP,
-    Real,
 )
 
 pytestmark = pytest.mark.realdata
@@ -56,7 +58,7 @@ DECISION_CLAIMS = ("decision.pass1_precedence", "decision.pass2_eligibility",
 @pytest.fixture(scope="module")
 def run():
     """Each file is hashed before its first load; everything is built once."""
-    real = Real()
+    real = HistoricalReal()
     before: dict = {}
 
     def remember(p) -> Path:

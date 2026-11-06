@@ -10,9 +10,10 @@ and intersection) on all training rows, and against label-free rate-matched LR
 handoff's and the validated Steps 2A / 2B results: expectations only.
 
 Nothing is fitted, written or regenerated; no test label is read (loader:
-tests.support.router_artifacts). Every artifact file read is hashed before
-its first load and again at the end; with ``PR37_BASELINE_SHA256SUMS`` set,
-the router, LR and EBM files must also equal the preserved baseline.
+tests.support.router_artifacts). Every artifact file read is hashed before its
+first load and again at the end. All files are read from the preserved October
+23 archive (``PR37_BASELINE_SHA256SUMS``; tests.support.archived_artifacts),
+never from the live models/ folders, and each must equal its recorded SHA-256.
 """
 
 from __future__ import annotations
@@ -26,7 +27,7 @@ import pytest
 
 from shared.stage2 import diagnostics as d
 from shared.stage2.diagnostics import contribution as cb
-from tests.support.router_artifacts import Real
+from tests.support.archived_artifacts import HistoricalReal
 
 pytestmark = pytest.mark.realdata
 
@@ -41,7 +42,7 @@ ARMS = ("glass", "blackbox")
 @pytest.fixture(scope="module")
 def run():
     """Each file is hashed before its first load; everything is built once."""
-    real = Real()
+    real = HistoricalReal()
     before: dict = {}
 
     def remember(p) -> Path:

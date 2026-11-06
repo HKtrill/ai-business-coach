@@ -12,8 +12,9 @@ implementation never uses these numbers.
 
 Nothing is fitted, written or regenerated; no test label is read (loader:
 tests.support.router_artifacts). Every artifact file read is hashed before its
-first load and again at the end; with ``PR37_BASELINE_SHA256SUMS`` set, the
-router, LR, EBM and RF-result files must also equal the preserved baseline.
+first load and again at the end. All files are read from the preserved October
+23 archive (``PR37_BASELINE_SHA256SUMS``; tests.support.archived_artifacts),
+never from the live models/ folders, and each must equal its recorded SHA-256.
 """
 
 from __future__ import annotations
@@ -28,7 +29,7 @@ import pytest
 from shared.stage2 import diagnostics as d
 from shared.stage2.diagnostics import overlap as ov
 from shared.stage2.diagnostics import trace as tr
-from tests.support.router_artifacts import Real
+from tests.support.archived_artifacts import HistoricalReal
 
 pytestmark = pytest.mark.realdata
 
@@ -55,7 +56,7 @@ EBM_NESTED_THRESHOLDS = (0.56, 0.56, 0.54, 0.49, 0.49)
 @pytest.fixture(scope="module")
 def run():
     """Each file is hashed before its first load; everything is built once."""
-    real = Real()
+    real = HistoricalReal()
     before: dict = {}
 
     def remember(p) -> Path:

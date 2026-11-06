@@ -7,8 +7,7 @@ PR 37 Commit 5: the PR 38 handoff.
    as separate arguments, so before Commit 5 a re-tuned or hand-edited value
    (GLASS notebook Cell 12 re-tunes the RF) went unchecked on the strict pathway.
 2. The handoff record names the identities the code pins, and the gates and
-   requirements PR 38 owes; the roadmap carries the historical-versus-corrected
-   comparison section and keeps Step 4D closed.
+   requirements PR 38 owes. (The roadmap is maintained by hand; no test pins it.)
 
 Version-controlled records and synthetic values only; nothing is fitted or read
 from an artifact.
@@ -33,41 +32,7 @@ from shared.stage2.contract import ContractViolation
 
 BANK_ROOT = Path(__file__).resolve().parents[2]
 HANDOFF = BANK_ROOT / "documentation/methodology/pr38_handoff.md"
-ROADMAP = BANK_ROOT / "documentation/research_roadmap.md"
 MANIFEST = BANK_ROOT / "research_logs/baselines/pr37_stage2_pre_correction_v1/MANIFEST.json"
-
-#: The PR 38 roadmap section "Historical vs. Corrected Stage 2 Artifact Comparison",
-#: as the owner worded it (Commit 5).
-COMPARISON_ITEMS = (
-    "Preserve and inventory existing historical GLASS and RF Router artifacts before any new "
-    "notebook execution or corrected cross-fit.",
-    "Record artifact identities, dataset/split fingerprints, feature contracts, configuration "
-    "identities, and source provenance.",
-    "Store newly generated artifacts separately to prevent overwriting historical results.",
-    "Verify row alignment, fold identity, target definitions, and metric comparability before "
-    "conducting paired analyses.",
-    "Compare historical versus corrected three-state routing decisions, including a row-level "
-    "Pass 1 / Pass 2 / abstain transition matrix.",
-    "Compare total coverage, per-pass coverage, abstention, NPV, positive leakage, Pass 2 "
-    "precision, and class-conditional behavior.",
-    "Compare unique-positive discoveries, upstream LR/EBM overlap, redundancy, and "
-    "false-positive suppression.",
-    "Compare selected symbolic rules, rule counts, selected-union coverage, selector outcomes, "
-    "solver termination, and fallback behavior where equivalent evidence exists.",
-    "Compare execution runtimes for candidate generation, overlap diagnostics, ILP selection, "
-    "nested folds, and total Stage 2 execution where comparable timing measurements are "
-    "available.",
-    "Distinguish effects associated with F17, shared constraints, coverage optimization, and any "
-    "complementarity-aware ablation. Do not claim causal attribution that the available "
-    "comparisons cannot support.",
-    "Generate reproducible before-and-after comparison tables, visualizations, and a documented "
-    "research summary.",
-    "Preserve the immutable 19-file pre-correction research baseline permanently.",
-    "Verify archival integrity and reproducibility before retiring redundant historical working "
-    "artifacts. Never automatically delete historical evidence required for research "
-    "reproduction.",
-)
-
 
 def _primary_ranker() -> dict:
     return glass_profile.ranker_settings()
@@ -207,7 +172,7 @@ def test_the_ranker_check_takes_no_record_and_is_keyword_only():
 
 
 # ======================================================================
-# 2. the handoff record and the roadmap
+# 2. the handoff record
 # ======================================================================
 def _text(path: Path) -> str:
     return path.read_text(encoding="utf-8").replace("\r\n", "\n")
@@ -237,21 +202,3 @@ def test_the_handoff_record_covers_every_gate_and_requirement():
     assert missing == []
     for span in ("V1–V8", "O1–O4", "C1–C9", "D-C6", "D-C7", "D-C11", "M3", "M4", "S1"):
         assert span in text, span
-
-
-def test_the_roadmap_carries_the_comparison_section_verbatim():
-    text = _text(ROADMAP)
-    section = text[text.index("#### PR 38"):text.index("#### PR 39")]
-    assert "**Historical vs. Corrected Stage 2 Artifact Comparison**" in section
-    items = re.findall(r"^- \[[ x]\] (.+)$", section, flags=re.M)
-    assert [i for i in COMPARISON_ITEMS if i not in items] == []
-
-
-def test_step_4d_stays_closed_in_the_roadmap():
-    text = _text(ROADMAP)
-    section = text[text.index("#### PR 37"):text.index("#### PR 38")]
-    step_4d = section[section.index("**Contract freeze and configuration provenance**"):
-                      section.index("**Local validation evidence**")]
-    assert re.findall(r"^- \[x\] ", step_4d, flags=re.M)
-    assert not re.findall(r"^- \[ \] ", step_4d, flags=re.M)
-    assert "pending local validation" not in step_4d

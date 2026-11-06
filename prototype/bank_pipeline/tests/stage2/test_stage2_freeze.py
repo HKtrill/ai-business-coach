@@ -12,7 +12,6 @@ PR 37 Commit 4, Step 4D: the frozen Stage 2 specification.
    contract, F17 primary settings; the RF pathway reads no GLASS artifact.
 4. D-C11: a GLASS fold is accepted only with selection reports that correspond
    exactly to the required selections.
-5. The roadmap's PR 39 onward is unchanged; PR 37 / PR 38 hold no duplicates.
 
 Synthetic inputs and version-controlled records only; nothing is fitted or read
 from an artifact. ``tests/realdata/test_stage2_freeze_artifacts.py`` re-verifies
@@ -24,7 +23,6 @@ from __future__ import annotations
 import ast
 import copy
 import dataclasses
-import hashlib
 import json
 import re
 from pathlib import Path
@@ -47,7 +45,6 @@ from shared.stage2.obligations import PassCounts, check_pass1_fit, check_pass2_f
 
 BANK_ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = BANK_ROOT / "research_logs/baselines/pr37_stage2_pre_correction_v1/MANIFEST.json"
-ROADMAP = BANK_ROOT / "documentation/research_roadmap.md"
 
 #: Pinned identities of the Step 4D frozen records.
 FROZEN_CONTRACT_FINGERPRINT = "0817825b9eecbd11"
@@ -60,8 +57,6 @@ WORKING_PROTOCOL_FINGERPRINT = "161c6c589696b859"
 #: D-C10: computed by the read-only audit of the pinned artifacts.
 LR_FLAG_FINGERPRINT = "64d511516d69e73e"
 EBM_FLAG_FINGERPRINT = "907a7d2d1cad6908"
-#: LF-normalised SHA-256 of the roadmap from "#### PR 39" to the end (unchanged by PR 37).
-ROADMAP_PR39_ONWARD_SHA256 = "f533362b8fbd0e87aae64724cf54795fd64454dee54f1c4eb36a9aa6228524c4"
 
 HISTORICAL_RF_PARAMS = {"n_estimators": 650, "max_depth": 6, "min_samples_leaf": 12,
                         "max_features": 0.39989815740885837,
@@ -771,25 +766,3 @@ def test_glass_fit_outcomes_from_real_report_shapes_reproduce(contract, protocol
         fit = _classify(_records(reports, contract, protocol), protocol, reports)
         assert fit.completeness.complete, (report, fit.completeness.problems())
         assert fit.by_key["pass1"] == status
-
-
-# ============================================================================
-# 5. the roadmap
-# ============================================================================
-def _roadmap() -> str:
-    return ROADMAP.read_text(encoding="utf-8").replace("\r\n", "\n")
-
-
-def test_the_roadmap_from_pr_39_onward_is_unchanged():
-    text = _roadmap()
-    tail = text[text.index("#### PR 39"):]
-    assert hashlib.sha256(tail.encode("utf-8")).hexdigest() == ROADMAP_PR39_ONWARD_SHA256
-
-
-def test_the_pr37_and_pr38_roadmap_sections_hold_no_duplicate_tasks():
-    text = _roadmap()
-    section = text[text.index("#### PR 37"):text.index("#### PR 39")]
-    items = [re.sub(r"\s+", " ", m.group(1)).strip().lower()
-             for m in re.finditer(r"^\s*- \[[ x]\] (.+)$", section, flags=re.M)]
-    assert items and len(items) == len(set(items))
-    assert "Step 4D" in section and "Commit 5" in section and "#### PR 38" in section

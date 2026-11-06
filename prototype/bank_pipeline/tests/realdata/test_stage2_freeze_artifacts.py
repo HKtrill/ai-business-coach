@@ -23,7 +23,10 @@ Every record is read through its strict loader (status, pinned fingerprint,
 confirmed approval), as PR 38 reads it.
 
 Nothing is fitted, written or regenerated, no corrected result exists, and no
-test label is read (loader: tests.support.router_artifacts).
+test label is read (loader: tests.support.router_artifacts). All files are
+read from the preserved October 23 archive (``PR37_BASELINE_SHA256SUMS``;
+tests.support.archived_artifacts), never from the live models/ folders, and
+each must equal its recorded SHA-256.
 """
 
 from __future__ import annotations
@@ -36,13 +39,13 @@ import shared.stage2.evaluation_protocol as ep
 from blackbox_pipeline.models.rf_router import profile as rf_profile
 from glass_pipeline.glass_router import profile as glass_profile
 from shared.stage2 import diagnostics as d
-from tests.support.router_artifacts import Real
+from tests.support.archived_artifacts import HistoricalReal
 
 pytestmark = pytest.mark.realdata
 
 
 def _load():
-    real = Real()
+    real = HistoricalReal()
     ref = real.ref()
     glass, rf, lr, ebm = (real.view(w) for w in ("glass", "rf", "lr", "ebm"))
     return SimpleNamespace(real=real, ref=ref, trace=d.build_router_trace(glass, rf, ref),

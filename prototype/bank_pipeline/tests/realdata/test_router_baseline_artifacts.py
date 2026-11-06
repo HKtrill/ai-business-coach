@@ -1,7 +1,8 @@
 """
 PR 37 Commit 2 (Step 2E): the Pre-Correction Stage 2 Baseline built from the
-SAVED October 23 artifacts - opt-in, like every realdata test, and it needs the
-preserved snapshot's SHA256SUMS:
+archived October 23 artifacts - opt-in, like every realdata test, and it needs
+the preserved snapshot's SHA256SUMS (the artifacts are read from that snapshot,
+never from the live models/ folders; tests.support.archived_artifacts):
 
     $env:PR37_BASELINE_SHA256SUMS = "...\\pr36_regen_2026-10-23\\SHA256SUMS.txt"
     pytest -m realdata tests/realdata/test_router_baseline_artifacts.py
@@ -28,7 +29,12 @@ import pytest
 from shared.stage2 import diagnostics as d
 from shared.stage2.diagnostics import baseline as b
 from tests.support.notebooks import BANK_ROOT
-from tests.support.router_artifacts import SUMS_ENV, PinnedReal, Real, collect_baseline_sources
+from tests.support.archived_artifacts import (
+    HistoricalReal,
+    baseline_arbiters,
+    collect_archived_baseline_sources,
+)
+from tests.support.router_artifacts import SUMS_ENV
 
 pytestmark = pytest.mark.realdata
 
@@ -73,11 +79,12 @@ def run():
     sums = os.environ.get(SUMS_ENV)
     assert sums, (f"set {SUMS_ENV} to the preserved snapshot's SHA256SUMS.txt: the baseline is "
                   "built only from attested sources")
-    real = Real()
-    sources = collect_baseline_sources(real, sums_path=sums)
+    real = HistoricalReal(sums_path=sums)
+    sources = collect_archived_baseline_sources(real)
     code = b.code_identity(BANK_ROOT)
     first, second = b.build_baseline(sources, code), b.build_baseline(sources, code)
-    return {"sources": sources, "code": code, "pkg": first, "again": second, "sums": sums}
+    return {"sources": sources, "code": code, "pkg": first, "again": second, "sums": sums,
+            "archive": real.archive.root}
 
 
 def _csv(pkg, name) -> pd.DataFrame:
@@ -117,7 +124,7 @@ def test_sources_are_the_attested_artifacts(run):
     for role in (b.ROLE_ARBITER_GLASS, b.ROLE_ARBITER_RF):
         assert by[role]["snapshot_attested"] in (True, None), role
     for s in m["sources"]:
-        assert not Path(s["path"]).is_absolute() and (Path(BANK_ROOT) / s["path"]).is_file()
+        assert not Path(s["path"]).is_absolute() and (run["archive"] / s["path"]).is_file()
         for f in s["fields_read"] or ():
             assert not any(t in f.lower() for t in d.FORBIDDEN_FIELD_TOKENS), f
     assert m["snapshot"]["entries"] == SNAPSHOT_ENTRIES
@@ -225,14 +232,12 @@ def test_the_frozen_package_is_reproduced_from_its_recorded_sources(run):
         pytest.skip("the baseline has not been generated yet (stage2_baseline.py --generate)")
     assert b.verify_baseline(target).ok
     frozen = json.loads((target / b.MANIFEST).read_bytes())
-    paths = {s["role"]: s["path"] for s in frozen["sources"]}
-    pinned = PinnedReal({"meta_ebm": Path(BANK_ROOT) / paths[b.ROLE_ARBITER_GLASS],
-                         "meta_ebm_on_blackbox": Path(BANK_ROOT) / paths[b.ROLE_ARBITER_RF]})
-    sources = collect_baseline_sources(pinned, sums_path=run["sums"])
+    pinned = HistoricalReal(sums_path=run["sums"], arbiters=baseline_arbiters(frozen))
+    sources = collect_archived_baseline_sources(pinned)
     cmp = b.compare_baseline(b.build_baseline(sources, run["code"]), target)
     assert cmp.reproduced, cmp.lines()
 
 
 def test_no_artifact_file_was_changed(run):
     for a in run["sources"].artifacts:
-        assert d.file_sha256(Path(BANK_ROOT) / a.path) == a.sha256, a.role
+        assert d.file_sha256(run["archive"] / a.path) == a.sha256, a.role

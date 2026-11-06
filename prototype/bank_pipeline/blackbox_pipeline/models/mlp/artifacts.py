@@ -13,6 +13,16 @@ predictions from disk. v2.0 always writes the training out-of-fold
 probabilities, fold ids and labels (indexed Series), and — when a
 ``StageOutput`` is passed — the full shared contract including test
 probabilities and the threshold's provenance.
+
+Versions (PR 37)
+----------------
+Every save writes an immutable, read-only version
+``<name>_<YYYYMMDD_HHMMSS_ffffff>.joblib`` (UTC) with its own sidecars and
+returns its path, which is what downstream stages should record.
+``<name>.joblib`` and its sidecars are a mutable latest alias, a copy of the
+newest version (see ``shared.artifact_versions``). A fixed-name artifact saved
+before PR 37 is kept as ``<name>_preserved_<sha256[:12]>.joblib`` before the
+alias is replaced.
 """
 
 from __future__ import annotations
@@ -27,6 +37,8 @@ import joblib
 import numpy as np
 import pandas as pd
 import sklearn
+
+from shared.artifact_versions import save_versioned
 
 __all__ = ["save_stage1_mlp", "load_stage1_mlp"]
 
@@ -62,7 +74,8 @@ def save_stage1_mlp(
     Returns
     -------
     pathlib.Path
-        Path to the saved ``.joblib`` artifact.
+        The immutable version ``<name>_<id>.joblib``; ``<name>.joblib`` is
+        updated as the mutable latest alias (module docstring).
 
     Raises
     ------
@@ -115,29 +128,38 @@ def save_stage1_mlp(
         },
     }
 
-    path = out / f"{name}.joblib"
-    joblib.dump(payload, path, compress=3)
-
     meta = {
         k: v for k, v in payload.items()
         if k not in ("scaler", "model", "calibrated_model", "train_proba_oof",
                      "train_fold_id", "y_train", "stage_output")
     }
-    (out / f"{name}_metadata.json").write_text(
-        json.dumps(meta, indent=2, default=str)
-    )
 
+    tables = {}
     if stage.threshold_sweep is not None:
-        stage.threshold_sweep.to_csv(out / f"{name}_threshold_sweep.csv", index=False)
+        tables["_threshold_sweep.csv"] = (
+            lambda p: stage.threshold_sweep.to_csv(p, index=False))
 
     if stage.tuning_trials is not None:
-        stage.tuning_trials.to_csv(out / f"{name}_tuning_trials.csv", index=False)
+        tables["_tuning_trials.csv"] = lambda p: stage.tuning_trials.to_csv(p, index=False)
 
     if getattr(stage.model, "history_", None) is not None:
-        stage.model.history_.to_csv(out / f"{name}_training_history.csv", index=False)
+        tables["_training_history.csv"] = (
+            lambda p: stage.model.history_.to_csv(p, index=False))
 
-    print(f"✅ saved Stage 1 MLP → {path}")
-    return path
+    saved = save_versioned(
+        out, name,
+        write_model=lambda p: joblib.dump(payload, p, compress=3),
+        metadata=meta,
+        dump_metadata=lambda m: json.dumps(m, indent=2, default=str),
+        tables=tables,
+        companions=("_threshold_sweep.csv", "_tuning_trials.csv", "_training_history.csv"),
+    )
+
+    print(f"✅ saved Stage 1 MLP → {saved.path} (immutable version)")
+    print(f"   latest alias : {saved.alias} (mutable copy of the newest version)")
+    for kept in saved.preserved:
+        print(f"   kept earlier unversioned file as {kept.name}")
+    return saved.path
 
 
 def load_stage1_mlp(path: str | Path) -> dict:

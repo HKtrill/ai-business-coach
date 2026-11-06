@@ -10,7 +10,10 @@ SHA-256, LR threshold record, EBM fold-nested thresholds, flag counts). These
 tests check those pins against the historical trace and the GLASS arm's LR /
 EBM views that the pre-correction baseline was built from. Nothing is fitted,
 written or regenerated, no corrected result exists, and no test label is read
-(loader: tests.support.router_artifacts).
+(loader: tests.support.router_artifacts). All files are read from the
+preserved October 23 archive (``PR37_BASELINE_SHA256SUMS``;
+tests.support.archived_artifacts), never from the live models/ folders, and
+each must equal its recorded SHA-256.
 
 The row-aligned flag fingerprints are pinned at Step 4D (D-C10). Until then
 they are reported as pending; print them, read-only, with
@@ -27,7 +30,7 @@ import pytest
 import shared.stage2.evaluation_protocol as ep
 from shared.stage2 import diagnostics as d
 from tests.realdata.test_router_trace_artifacts import HISTORICAL_STATE_COUNTS
-from tests.support.router_artifacts import Real
+from tests.support.archived_artifacts import HistoricalReal
 
 pytestmark = pytest.mark.realdata
 
@@ -35,7 +38,7 @@ P1, P2, AB = d.PASS_1_NOT_SUBSCRIBE, d.PASS_2_SUBSCRIBE, d.ABSTAIN
 
 
 def _load():
-    real = Real()
+    real = HistoricalReal()
     ref = real.ref()
     glass, rf, lr, ebm = (real.view(w) for w in ("glass", "rf", "lr", "ebm"))
     protocol = ep.load_evaluation_protocol(ep.working_protocol_path())

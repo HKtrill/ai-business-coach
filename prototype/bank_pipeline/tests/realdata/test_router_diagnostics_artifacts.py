@@ -12,9 +12,11 @@ y_train only).
 
 Files: the GLASS LR / GLASS Router / GLASS EBM recorded by the native
 Meta-EBM, the RF Router recorded by the black-box-upstream Meta-EBM, and the
-GLASS-arm RF result named by the RF Router's ``rf_params_origin``. Optional:
-``PR37_BASELINE_SHA256SUMS`` (the baseline snapshot's SHA256SUMS.txt) makes
-each file's SHA-256 an attested match against the preserved baseline.
+GLASS-arm RF result named by the RF Router's ``rf_params_origin``. All files
+are read from the preserved October 23 archive (``PR37_BASELINE_SHA256SUMS``;
+tests.support.archived_artifacts), never from the live models/ folders, and
+each must equal its recorded SHA-256. The same checks on the newest live
+artifacts are in test_current_artifacts.py.
 """
 
 from __future__ import annotations
@@ -22,11 +24,11 @@ from __future__ import annotations
 import pytest
 
 from shared.stage2 import diagnostics as d
+from tests.support.archived_artifacts import HistoricalReal
 from tests.support.router_artifacts import (
     ROUTER_SPLIT_FP,
     STAGE_IO_SPLIT_FP,
     TRAIN_LABEL_FP,
-    Real,
 )
 
 pytestmark = pytest.mark.realdata
@@ -34,7 +36,7 @@ pytestmark = pytest.mark.realdata
 
 @pytest.fixture(scope="module")
 def real():
-    return Real()
+    return HistoricalReal()
 
 
 def _status(view) -> dict:
