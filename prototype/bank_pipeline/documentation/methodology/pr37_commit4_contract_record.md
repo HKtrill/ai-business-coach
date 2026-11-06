@@ -8,8 +8,8 @@
 | Branch | `pr-37-router-baseline-contract` |
 | Base | `ab7b063` (Commit 3) |
 | Contract record | Frozen: [`shared/stage2/contracts/stage2_primary_v1.json`](../../shared/stage2/contracts/stage2_primary_v1.json), `pr37-stage2-primary` `1.0.0`, fingerprint `0817825b9eecbd11`. Working profile kept for history: [`stage2_primary_working.json`](../../shared/stage2/contracts/stage2_primary_working.json), `0.1.0-working`, fingerprint `a6ca7462d4773005` |
-| Status | **Frozen in Step 4D** (section 24); formally approved by Phillip Harris on 2026-11-05. The freeze takes effect when Commit 4 is created after local validation, including the real-artifact re-verification |
-| Related | [`pr38_evaluation_protocol.md`](pr38_evaluation_protocol.md) (Step 4C); [`pr37_commit3_handoff.md`](pr37_commit3_handoff.md); [`pr37_f17_decision_record.md`](pr37_f17_decision_record.md); [`pr37_f31_disposition_record.md`](pr37_f31_disposition_record.md) |
+| Status | **Frozen in Step 4D** (section 24); formally approved by Phillip Harris on 2026-11-05. In effect from Commit 4 (`f7a987e`), created after local validation, including the real-artifact re-verification |
+| Related | [`pr38_evaluation_protocol.md`](pr38_evaluation_protocol.md) (Step 4C); [`pr37_commit3_handoff.md`](pr37_commit3_handoff.md); [`pr37_f17_decision_record.md`](pr37_f17_decision_record.md); [`pr37_f31_disposition_record.md`](pr37_f31_disposition_record.md); [`pr38_handoff.md`](pr38_handoff.md) (Commit 5: the PR 38 execution checklist) |
 | Date | 2026-11-05 |
 
 No corrected-router run has been conducted. Nothing here is activated in a notebook. Step 4B adds opt-in GLASS enforcement and both arm adapters; no default changes. Step 4C pre-registers the PR 38 evaluation protocol (section 23); it computes no corrected result. Step 4D freezes the contract, the protocol and both arms' configurations without changing any value (section 24).
@@ -73,6 +73,8 @@ These are recorded as approved on 2026-11-04 and are not reopened here.
 | M6 | Available GLASS inner-OOF Pass 1 union NPV and leakage are reported as diagnostics, never used to select the contract, with no extra fitting |
 | M7 | Working candidate: NPV ≥ 0.95, leakage ≤ 0.15, precision ≥ 0.30, no count cap, support 125 / 75 |
 | M8 | Independent, version-controlled ownership of the existing RF hyperparameters, values preserved exactly with their original tuning provenance; the tuning and feature-engineering dependence documented; no nested tuning in PR 37 |
+
+**Resolved at the Step 4D freeze (section 24):** M2's 2-standard-error threshold became D-C2, a descriptive heuristic, not a compliance test; M5's floors were reviewed and kept as protective guards, not precision guarantees; M7's working candidate is the frozen contract, every value unchanged.
 
 ## 3. The shared objective
 
@@ -140,7 +142,7 @@ Identifier `pr37.stage2.contract_metrics/1`. The names, numerators and denominat
 
 Support floors are **fit-time** obligations on the rows a pass routes. At evaluation the routed counts are reported, not judged: an outer held-out fold is about a quarter of its fit population.
 
-The floors prevent degenerate tail sets. They do **not** guarantee narrow estimates: at the floors the 95% Wilson half-widths are about ±4.0 percentage points (125 rows at NPV 0.95) and ±10.2 (75 rows at precision 0.30). Their justification remains under review (M5).
+The floors prevent degenerate tail sets. They do **not** guarantee narrow estimates: at the floors the 95% Wilson half-widths are about ±4.0 percentage points (125 rows at NPV 0.95) and ±10.2 (75 rows at precision 0.30). At the freeze they were reviewed and kept as protective guards (M5; section 24).
 
 The F17 remainder floor (500 rows, both classes) is an arm setting fixed by F17, not a contract field.
 
@@ -280,9 +282,9 @@ The version-controlled record is [`rf_router_primary_v1.json`](../../blackbox_pi
 | Step | Requirement |
 |---|---|
 | 4D | Done (section 24): frozen contract `1.0.0` (`0817825b9eecbd11`), frozen protocol `1.0.0` (`245a1a68fb68cf4e`) resolving D-C1 to D-C11 with the D-C10 fingerprints pinned, frozen GLASS (`198731d5cdf263f4`) and RF (`4e3f9c07e6ecc8ad`) profiles, the roadmap reconciled. The PR 38 solve time limit is unchanged; it is decided only if the preflight requires it, under M4 |
-| Before Commit 4 | `tests/realdata/test_stage2_freeze_artifacts.py` passes on the pinned artifacts; the combined local validation passes |
-| Commit 5 | Final integration verification on the final branch, a documentation consistency pass, the single PR 38 handoff checklist and the readiness sign-off |
-| PR 38 | Re-verify the frozen specification on the artifacts; build both arms' configs with `glass_primary_config` and `rf_primary_config` from `load_frozen_contract()`; G13, then the fit-only G3 preflight for both arms; reruns; persistence of `selection_reports()` (inner folds included) and solver logs with the artifacts (D-C11); reproduction reruns for any unproven incumbent; the evaluation runner and report under the frozen protocol, in the order of protocol section 16; R1–R8; M6 diagnostics |
+| Before Commit 4 | Done: `tests/realdata/test_stage2_freeze_artifacts.py` and the combined local validation passed before Commit 4 (`f7a987e`) |
+| Commit 5 | Final integration verification on the final branch, a documentation consistency pass, the single PR 38 handoff record ([`pr38_handoff.md`](pr38_handoff.md)) and the readiness sign-off; `check_glass_primary_ranker` closes the one gap the audit found (the ranker settings passed to the cross-fit were unchecked) |
+| PR 38 | Re-verify the frozen specification on the artifacts; build both arms' configs with `glass_primary_config` and `rf_primary_config` from `load_frozen_contract()`, checking the GLASS ranker settings with `check_glass_primary_ranker`; G13, then the fit-only G3 preflight for both arms; reruns; persistence of `selection_reports()` (inner folds included) and solver logs with the artifacts (D-C11); reproduction reruns for any unproven incumbent; the evaluation runner and report under the frozen protocol, in the order of protocol section 16; R1–R8; M6 diagnostics |
 
 ## 15. Regression coverage and preservation
 
@@ -449,7 +451,7 @@ Timings are from the sandbox and only indicate relative cost. Locally (Windows),
 
 ## 23. Step 4C: the pre-registered PR 38 evaluation protocol
 
-The protocol is [`pr38_evaluation_protocol.md`](pr38_evaluation_protocol.md), with its record `shared/stage2/protocols/pr38_evaluation_working.json` (`pr38-stage2-evaluation` `0.1.0-working`, fingerprint `161c6c589696b859`). It binds this contract (`a6ca7462d4773005`). It is **working, not frozen**, and `require_frozen` stops it from governing PR 38 until Step 4D freezes it.
+The protocol is [`pr38_evaluation_protocol.md`](pr38_evaluation_protocol.md), with its record `shared/stage2/protocols/pr38_evaluation_working.json` (`pr38-stage2-evaluation` `0.1.0-working`, fingerprint `161c6c589696b859`). It binds this contract (`a6ca7462d4773005`). It is **working, not frozen**, and `require_frozen` stops it from governing PR 38 until Step 4D freezes it. (Superseded at Step 4D: the frozen record `pr38_evaluation_v1.json` governs PR 38; section 24.)
 
 It was written before any corrected result existed. It reuses the diagnostics registry, the three-state trace, the Step 2B and 2C contribution and matched-rate code, and the Step 4A observation checks: all imported, none modified. It adds only:
 

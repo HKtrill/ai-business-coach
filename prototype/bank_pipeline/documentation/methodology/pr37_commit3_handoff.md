@@ -8,6 +8,7 @@
 | Base | `e5c437c` (Commit 2: Stage 2 router diagnostics and the frozen pre-correction baseline) |
 | Resolves | F17 (Pass 2 training population) and F31 (conditional RF confidence-blending review) |
 | Date | 2026-11-04 |
+| Status | Historical record of Commit 3. Its open Commit 4 decisions (D1–D6, P1, P2) were resolved in Commit 4 (`f7a987e`); PR 38 executes from [`pr38_handoff.md`](pr38_handoff.md) (Commit 5), which lists the resolutions |
 
 ## 1. Records
 

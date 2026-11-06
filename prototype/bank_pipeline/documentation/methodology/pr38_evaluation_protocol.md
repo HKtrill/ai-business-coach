@@ -8,7 +8,7 @@
 | Tests | `tests/stage2/test_stage2_evaluation_protocol.py`, `tests/stage2/test_stage2_freeze.py`; opt-in: `tests/realdata/test_evaluation_protocol_artifacts.py`, `tests/realdata/test_stage2_freeze_artifacts.py` (the freeze re-verification) |
 | Binds | Contract `pr37-stage2-primary` `1.0.0`, fingerprint `0817825b9eecbd11`; arm profiles `pr37-glass-router-primary` `1.0.0` (`198731d5cdf263f4`) and `pr37-rf-router-primary` `1.0.0` (`4e3f9c07e6ecc8ad`) |
 | Written | PR 37, Commit 4, Step 4C, revised after two reviews: (1) upstream identity, fit completeness, reference alignment, C6; (2) fold-ledger evidence, verified adoption reference, malformed bootstrap runs, the Pass 2 budget policy. No corrected PR 38 result existed when it was written |
-| Freeze | Step 4D, formally approved by Phillip Harris on 2026-11-05. Every pending decision is resolved (section 17). `load_frozen_protocol` and `require_frozen` refuse any record without a confirmed approval. `tests/realdata/test_stage2_freeze_artifacts.py` re-verifies the pinned values on the real artifacts and must pass before the freeze is relied on; a failure voids it |
+| Freeze | Step 4D, formally approved by Phillip Harris on 2026-11-05. Every pending decision is resolved (section 17). `load_frozen_protocol` and `require_frozen` refuse any record without a confirmed approval. `tests/realdata/test_stage2_freeze_artifacts.py` re-verifies the pinned values on the real artifacts and must pass before the freeze is relied on; a failure voids it. In effect from Commit 4 (`f7a987e`); the PR 38 execution checklist is [`pr38_handoff.md`](pr38_handoff.md) (Commit 5) |
 
 This protocol fixes how the corrected Stage 2 routers will be judged. It does not choose or improve a router. Three kinds of statement appear below, and each result PR 38 reports carries one of these labels:
 
@@ -496,7 +496,7 @@ The runner loads no test split, test prediction or test metric.
 
 1. Re-verify the frozen specification on the artifacts (`tests/realdata/test_stage2_freeze_artifacts.py`); then `load_frozen_specification()` (the strictly loaded protocol and contract, bound). No record is taken from the caller.
 2. `check_arm_profile_binding` for both strictly loaded arm profiles.
-3. Build both configs with `glass_primary_config()` and `rf_primary_config()`; check every config used with `check_glass_primary_config` / `check_rf_primary_config` and run the adapter checks (V2).
+3. Build both configs with `glass_primary_config()` and `rf_primary_config()`; check every config used with `check_glass_primary_config` / `check_rf_primary_config`, and the GLASS ranker settings with `check_glass_primary_ranker` (Commit 5), and run the adapter checks (V2).
 4. G13 and the fit-only preflight (section 10).
 5. Five-fold runs.
 6. `extract_router_view`, then `build_router_trace`.
