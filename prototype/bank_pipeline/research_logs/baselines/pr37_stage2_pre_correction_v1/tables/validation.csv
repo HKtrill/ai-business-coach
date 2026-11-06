@@ -1,0 +1,128 @@
+source,section,stage,check,passed,detail
+trace,Stage 2 router trace,reference,T1 reference is a TrainReference (build_train_reference),true,TrainReference
+trace,Stage 2 router trace,glass,T1 input is a RouterOOFView (extract_router_view),true,RouterOOFView
+trace,Stage 2 router trace,glass,T1 arm is 'glass' and model family is 'glass_router',true,'glass' / 'glass_router'
+trace,Stage 2 router trace,glass,"T2 row index = training index (same rows, same order)",true,"32,950 rows vs 32,950 training rows"
+trace,Stage 2 router trace,glass,T2 row index is unique,true,
+trace,Stage 2 router trace,glass,T2 every per-row field has one entry per training row,true,"y (32950,), fold_id (32950,), state (32950,), source_decision (32950,), source_pred (32950,)"
+trace,Stage 2 router trace,glass,T3 labels = training labels,true,
+trace,Stage 2 router trace,glass,T3 labels are binary 0 / 1,true,
+trace,Stage 2 router trace,glass,T4 every state is one of ROUTER_STATES,true,"32,950 rows"
+trace,Stage 2 router trace,glass,T4 exactly one of Pass 1 / Pass 2 / Abstain per row,true,
+trace,Stage 2 router trace,glass,T5 decision tokens are exactly 'pass1' / 'pass2' / 'uncertain',true,"32,950 rows"
+trace,Stage 2 router trace,glass,T5 state = SOURCE_DECISIONS[token] on every row,true,0 row(s) differ
+trace,Stage 2 router trace,glass,T5 source_pred = SOURCE_DECISIONS[token] pred on every row,true,dtype int64
+trace,Stage 2 router trace,glass,"T6 fold ids are integers 0..4, every fold non-empty",true,"fold ids [0, 1, 2, 3, 4]"
+trace,Stage 2 router trace,glass,T7 pooled state counts sum to the training rows,true,"32,950 vs 32,950"
+trace,Stage 2 router trace,glass,T7 pooled state positives sum to the training positives,true,"3,712 vs 3,712"
+trace,Stage 2 router trace,glass,"T7 per-fold state counts, positives and negatives sum to the pooled values",true,
+trace,Stage 2 router trace,glass,T7 each fold's Pass 1 + Pass 2 + Abstain = the fold's rows,true,
+trace,Stage 2 router trace,blackbox,T1 input is a RouterOOFView (extract_router_view),true,RouterOOFView
+trace,Stage 2 router trace,blackbox,T1 arm is 'blackbox' and model family is 'rf_router',true,'blackbox' / 'rf_router'
+trace,Stage 2 router trace,blackbox,"T2 row index = training index (same rows, same order)",true,"32,950 rows vs 32,950 training rows"
+trace,Stage 2 router trace,blackbox,T2 row index is unique,true,
+trace,Stage 2 router trace,blackbox,T2 every per-row field has one entry per training row,true,"y (32950,), fold_id (32950,), state (32950,), source_decision (32950,), source_pred (32950,)"
+trace,Stage 2 router trace,blackbox,T3 labels = training labels,true,
+trace,Stage 2 router trace,blackbox,T3 labels are binary 0 / 1,true,
+trace,Stage 2 router trace,blackbox,T4 every state is one of ROUTER_STATES,true,"32,950 rows"
+trace,Stage 2 router trace,blackbox,T4 exactly one of Pass 1 / Pass 2 / Abstain per row,true,
+trace,Stage 2 router trace,blackbox,T5 decision tokens are exactly 'pass1' / 'pass2' / 'uncertain',true,"32,950 rows"
+trace,Stage 2 router trace,blackbox,T5 state = SOURCE_DECISIONS[token] on every row,true,0 row(s) differ
+trace,Stage 2 router trace,blackbox,T5 source_pred = SOURCE_DECISIONS[token] pred on every row,true,dtype int64
+trace,Stage 2 router trace,blackbox,"T6 fold ids are integers 0..4, every fold non-empty",true,"fold ids [0, 1, 2, 3, 4]"
+trace,Stage 2 router trace,blackbox,T7 pooled state counts sum to the training rows,true,"32,950 vs 32,950"
+trace,Stage 2 router trace,blackbox,T7 pooled state positives sum to the training positives,true,"3,712 vs 3,712"
+trace,Stage 2 router trace,blackbox,"T7 per-fold state counts, positives and negatives sum to the pooled values",true,
+trace,Stage 2 router trace,blackbox,T7 each fold's Pass 1 + Pass 2 + Abstain = the fold's rows,true,
+trace,Stage 2 router trace,glass x blackbox,T2 both arms cover the same training rows in the same order,true,
+trace,Stage 2 router trace,glass x blackbox,T3 both arms carry the same labels,true,
+trace,Stage 2 router trace,glass x blackbox,T6 both arms use the same outer fold ids (shared five-fold plan),true,0 row(s) differ
+trace,Stage 2 router trace,glass x blackbox,T6 both arms declare the same fold fingerprint,true,8aea082fcaf371b7 vs 8aea082fcaf371b7
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,stage is 'stage1',true,'stage1'
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,arm is 'glass',true,'glass'
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,feature_names = shared.stage1 LR_FEATURES,true,"['cellular_crisis', 'euribor3m_local_rate', 'dow_month_encoded']"
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,train_proba_oof index = X_train index (same order),true,
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,y_train index = X_train index (same order),true,
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,train_fold_id index = X_train index (same order),true,
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,carried training labels = GLOBAL_SPLIT y_train,true,
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,"train_proba_oof finite in [0, 1]",true,
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,fold ids: one per training row,true,32950 vs 32950
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,fold ids: partition 0..k-1,true,expected 10 folds
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,fold ids: reproduce shared.stage_io.fold_assignment at the declared seed,true,seed 42
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,threshold_source is a shared.stage_io THRESHOLD_SOURCES key,true,'in_stage_f2_cv'
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,"threshold finite in (0, 1)",true,0.1
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,OOF calibration nested inside each fold (oof_provenance),true,"refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model "
+stage1.lr,Stage 2 diagnostics boundary,glass Stage 1 LR,stage_io split fingerprint = attested value,true,d6cddadc3439 vs attested d6cddadc3439
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,train_outputs_oof is True,true,True
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,row index = GLOBAL_SPLIT X_train index (same order),true,
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,decisions are exactly 'pass1' / 'pass2' / 'uncertain',true,"32,950 rows"
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,train_pred = 0 / 1 / -1 for pass1 / pass2 / uncertain,true,
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,"confidence finite in [0, 1]",true,
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,confidence exactly 0.0 on abstained rows,true,max on abstain np.float64(0.0)
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,"router score finite in [0, 1]",true,
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,fold ids: one per training row,true,32950 vs 32950
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,fold ids: partition 0..k-1,true,expected 5 folds
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,fold ids: declared n_folds = fold ids,true,declared 5
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,fold ids: reproduce shared.stage_io.fold_assignment at the declared seed,true,seed 42
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,fold ids: fold fingerprint matches,true,8aea082fcaf371b7
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,router score = route transform with fold base rates (|diff| <= 1e-12),true,max |diff| 0
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,router split fingerprint = recomputed (row indices only),true,fc3e73a5ef91aea4 vs fc3e73a5ef91aea4
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,cross-fit label fingerprint = training rows and labels,true,
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,full-train label fingerprint = training rows and labels,true,
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,training_base_rate = training positive rate,true,0.112656 vs 0.112656
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,features = shared.stage2 RF_FEATURES_BINARY,true,29 binary bins
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,"Pass 2 population declared for the cross-fit and the full-train fit, equal and known",true,"cross-fit 'full', full-train 'full'"
+stage2.glass_router,Stage 2 diagnostics boundary,glass router,config_full Pass 2 population = fit_report,true,'full'
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,model_family is 'ebm',true,'ebm'
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,config arm is 'glass',true,'glass'
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,features = shared.stage3 EBM_FEATURES,true,13 features
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,feature_fit_scope is 'per_fold',true,'per_fold'
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,index_train = X_train index (same order),true,
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,carried training labels = GLOBAL_SPLIT y_train,true,
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,oof fold_id = fold_plan fold_id,true,
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,fold ids: one per training row,true,32950 vs 32950
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,fold ids: partition 0..k-1,true,expected 5 folds
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,fold ids: declared n_folds = fold ids,true,declared 5
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,fold ids: reproduce shared.stage_io.fold_assignment at the declared seed,true,seed 42
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,"raw OOF score finite in [0, 1]",true,
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,"calibrated OOF probability finite in [0, 1]",true,
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,per-fold calibration gates recorded (PR 36 F22),true,"[True, True, True, True, True]"
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,"global raw threshold finite in (0, 1)",true,0.53
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,"global calibrated threshold finite in (0, 1)",true,0.11
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,drives_train_decisions is a bool,true,True
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,nested thresholds: per-row threshold constant per fold and = by_fold[k],true,"[0.56, 0.56, 0.54, 0.49, 0.49]"
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,stored decision = (raw OOF score >= per-row nested threshold),true,
+stage3.ebm,Stage 2 diagnostics boundary,glass Stage 3 EBM,split fingerprint (stage_io scheme) = attested value,true,d6cddadc3439 vs attested d6cddadc3439
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,train_outputs_oof is True,true,True
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,row index = GLOBAL_SPLIT X_train index (same order),true,
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,decisions are exactly 'pass1' / 'pass2' / 'uncertain',true,"32,950 rows"
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,train_pred = 0 / 1 / -1 for pass1 / pass2 / uncertain,true,
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,"confidence finite in [0, 1]",true,
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,confidence exactly 0.0 on abstained rows,true,max on abstain np.float64(0.0)
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,"router score finite in [0, 1]",true,
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,fold ids: one per training row,true,32950 vs 32950
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,fold ids: partition 0..k-1,true,expected 5 folds
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,fold ids: declared n_folds = fold ids,true,declared 5
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,fold ids: reproduce shared.stage_io.fold_assignment at the declared seed,true,seed 42
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,fold ids: fold fingerprint matches,true,8aea082fcaf371b7
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,router score = route transform with fold base rates (|diff| <= 1e-12),true,max |diff| 0
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,router split fingerprint = recomputed (row indices only),true,fc3e73a5ef91aea4 vs fc3e73a5ef91aea4
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,oof_protocol split fingerprint = artifact split fingerprint,true,fc3e73a5ef91aea4
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,cross-fit label fingerprint = training rows and labels,true,
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,full-train label fingerprint = training rows and labels,true,
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,training_base_rate = training positive rate,true,0.112656 vs 0.112656
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,features = shared.stage2 RF_FEATURES_BINARY,true,29 binary bins
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,RF Router mode is 'two_pass',true,'two_pass'
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,Pass 2 population is the OOF Pass 1 remainder (exact declaration),true,'OOF Pass 1 remainder (RF router design)'
+stage2.rf_router,Stage 2 diagnostics boundary,blackbox router,oof_fold_summary: one finite t1 / t2 per outer fold,true,
+glass_arm.rf_result,Stage 2 diagnostics boundary,GLASS-arm RF result,train_outputs_oof is True,true,True
+glass_arm.rf_result,Stage 2 diagnostics boundary,GLASS-arm RF result,oof_index = X_train index (same order),true,
+glass_arm.rf_result,Stage 2 diagnostics boundary,GLASS-arm RF result,"oof_proba finite in [0, 1]",true,
+glass_arm.rf_result,Stage 2 diagnostics boundary,GLASS-arm RF result,fold ids: one per training row,true,32950 vs 32950
+glass_arm.rf_result,Stage 2 diagnostics boundary,GLASS-arm RF result,fold ids: partition 0..k-1,true,expected 5 folds
+glass_arm.rf_result,Stage 2 diagnostics boundary,GLASS-arm RF result,fold ids: declared n_folds = fold ids,true,declared 5
+glass_arm.rf_result,Stage 2 diagnostics boundary,GLASS-arm RF result,fold ids: reproduce shared.stage_io.fold_assignment at the declared seed,true,seed 42
+glass_arm.rf_result,Stage 2 diagnostics boundary,GLASS-arm RF result,fold ids: fold fingerprint matches,true,8aea082fcaf371b7
+glass_arm.rf_result,Stage 2 diagnostics boundary,GLASS-arm RF result,cross-fit label fingerprint = training rows and labels,true,
+glass_arm.rf_result,Stage 2 diagnostics boundary,GLASS-arm RF result,router split fingerprint = recomputed,true,fc3e73a5ef91aea4 vs fc3e73a5ef91aea4
+glass_arm.rf_result,Stage 2 diagnostics boundary,GLASS-arm RF result,params is a dict,true,dict

@@ -5,18 +5,40 @@
 # ============================================================
 
 import contextlib
+import copy
+import hashlib
 import io
 
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold
 
+from glass_pipeline.glass_router.core.config import INNER_RANKER_FOLD_NESTED_RF, INNER_RANKER_OUTER_RF
 from glass_pipeline.glass_router.core.segment_builder import BankSegmentBuilder
 from glass_pipeline.glass_router.ilp_rule_selector.ilp_rule_selector import ILPRuleSelector
 from glass_pipeline.glass_router.rule_generator.rule_generator import RuleGenerator
 from glass_pipeline.glass_router.rule_evaluator.rule_evaluator import RuleEvaluator
 from glass_pipeline.glass_router.core.rule import SUBSCRIBE, NOT_SUBSCRIBE, ABSTAIN
 from shared.stage_io import label_fingerprint
+
+#: ``_new_generator(rf_model=...)`` default: use the pipeline's own ``rf_model``.
+_OWN_RF = object()
+
+#: ``ILPRuleSelector.selection_report_`` keys of the two passes.
+PASS1_REPORT_KEY = "Pass 1 (NOT_SUBSCRIBE)"
+PASS2_REPORT_KEY = "Pass 2 (SUBSCRIBE)"
+
+
+def feature_order_fingerprint(estimator, columns) -> str:
+    """
+    SHA-256 (16 hex) of the feature order a ranker induces.
+
+    The order mirrors ``RuleGenerator._get_feature_order``: importance
+    descending, ties in column order (Python's sort is stable).
+    """
+    imp = np.asarray(estimator.feature_importances_, dtype=float)
+    order = sorted(range(len(columns)), key=lambda i: imp[i], reverse=True)
+    return hashlib.sha256("\n".join(str(columns[i]) for i in order).encode("utf-8")).hexdigest()[:16]
 
 
 class GlassRouterPipeline:
@@ -37,6 +59,20 @@ class GlassRouterPipeline:
                         training population. Pass 2 recall stays on the global
                         denominator (all training positives) in both modes.
 
+    Inner-fold feature ranking (``config.inner_feature_ranker``, oof_remainder
+    only; PR 37 Commit 3, F17):
+        "outer_rf"       (default, historical) every inner-fold Pass 1 search is
+                        ordered by ``rf_model``. In the cross-fit that RF was
+                        fitted on every row the inner folds hold out.
+        "fold_nested_rf" (opt-in) each inner fold's search is ordered by a fresh
+                        ranker, ``feature_ranker_factory(X_inner_train,
+                        y_inner_train)``, so it is never trained on the rows
+                        it routes. Router-level isolation only, conditional on
+                        the engineered features (fitted on the whole outer-
+                        training partition; PR 37 F17 L1, PR 38 gate G13).
+                        The full-population Pass 1 and the Pass 2 search keep
+                        ``rf_model``. No factory -> fit() refuses (no fallback).
+
     Attributes exposed directly for ModelSaver compatibility:
         mode, min_support_pass1, min_support_pass2, max_jaccard_overlap,
         min_precision_not_subscribe, max_subscriber_leakage_rate,
@@ -44,11 +80,15 @@ class GlassRouterPipeline:
         min_novelty_ratio_pass1, min_novelty_ratio_pass2, enable_novelty_constraints
     """
 
-    def __init__(self, config, rf_model=None, segment_builder=None, rule_logger=None):
+    def __init__(self, config, rf_model=None, segment_builder=None, rule_logger=None,
+                 feature_ranker_factory=None):
         self.config = config
         self.rf_model = rf_model
         self.segment_builder = segment_builder or BankSegmentBuilder()
         self.rule_logger = rule_logger
+        # Opt-in (inner_feature_ranker="fold_nested_rf"): (X, y) -> a fitted
+        # estimator exposing feature_importances_, fitted on exactly (X, y).
+        self.feature_ranker_factory = feature_ranker_factory
 
         # ============================================================
         # EXPOSE CONFIG ATTRIBUTES DIRECTLY (ModelSaver compatibility)
@@ -75,6 +115,7 @@ class GlassRouterPipeline:
         self.max_feature_reuse_pass1 = config.max_feature_reuse_pass1
         self.max_feature_reuse_pass2 = config.max_feature_reuse_pass2
         self.pass2_population = getattr(config, "pass2_population", "full")
+        self.inner_feature_ranker = getattr(config, "inner_feature_ranker", INNER_RANKER_OUTER_RF)
 
         # Components used by the main (full-population) fit
         self.rule_generator = self._new_generator()
@@ -99,7 +140,7 @@ class GlassRouterPipeline:
     # Fresh instances per fit so no state (e.g. a generator's lazily trained
     # RF) carries from one population to another.
 
-    def _new_generator(self, recall_scale: float = 1.0):
+    def _new_generator(self, recall_scale: float = 1.0, rf_model=_OWN_RF):
         """
         RuleGenerator for this config.
 
@@ -107,11 +148,13 @@ class GlassRouterPipeline:
         measures recall against the population it is given; when that is the
         Pass 1 remainder, the global recall bounds are divided by this factor so
         the depth-3 gates keep their global meaning.
+
+        rf_model: the feature ranker; default = this pipeline's ``rf_model``.
         """
         c = self.config
         return RuleGenerator(
             segment_builder=self.segment_builder,
-            rf_model=self.rf_model,
+            rf_model=self.rf_model if rf_model is _OWN_RF else rf_model,
             min_support_pass1=c.min_support_pass1,
             min_support_pass2=c.min_support_pass2,
             max_complexity=c.max_complexity,
@@ -160,6 +203,12 @@ class GlassRouterPipeline:
             lambda_rf_uncertainty=c.lambda_rf_uncertainty,
             lambda_rf_misalignment=c.lambda_rf_misalignment,
             max_union_leakage_rate_pass1=getattr(c, "max_union_leakage_rate_pass1", None),
+            # PR 37 Commit 4, Step 4B: set-level obligations (None / "positives" = off).
+            min_union_npv_pass1=getattr(c, "min_union_npv_pass1", None),
+            min_union_support_pass1=getattr(c, "min_union_support_pass1", None),
+            min_union_precision_pass2=getattr(c, "min_union_precision_pass2", None),
+            min_union_support_pass2=getattr(c, "min_union_support_pass2", None),
+            pass2_union_objective=getattr(c, "pass2_union_objective", "positives"),
         )
 
     # ================================================================
@@ -191,6 +240,13 @@ class GlassRouterPipeline:
                 raise ValueError(
                     "pass2_population='oof_remainder' defines the Pass 2 remainder "
                     "over training rows; pass X_val=None (or the training data)."
+                )
+            if (self.inner_feature_ranker == INNER_RANKER_FOLD_NESTED_RF
+                    and self.feature_ranker_factory is None):
+                raise ValueError(
+                    "inner_feature_ranker='fold_nested_rf' needs a feature_ranker_factory "
+                    "(crossfit_stage2 supplies one); refusing to fall back to the "
+                    "outer rf_model."
                 )
             self._fit_oof_remainder(X_train, y_train)
 
@@ -231,6 +287,10 @@ class GlassRouterPipeline:
         y = pd.Series(np.asarray(y), index=X.index) if not isinstance(y, pd.Series) else y
         y_arr = np.asarray(y).astype(int)
         n, total_pos = len(y_arr), int(y_arr.sum())
+        # PR 37 Commit 4, Step 4B: the selectors whose reports selection_reports()
+        # returns. Registered before each solve so an infeasible pass stays visible.
+        self.inner_pass1_selectors_ = []
+        self.pass2_ilp_selector_ = None
 
         # ---- 1. Pass 1 on the full population ---------------------------
         print("\n[oof_remainder] Pass 1 on the full training population")
@@ -242,14 +302,23 @@ class GlassRouterPipeline:
         print(f"[oof_remainder] OOF Pass 1 routing ({c.pass1_oof_folds} inner folds)")
         routed_oof = np.zeros(n, dtype=bool)
         inner_rules = []
+        nested_ranker = self.inner_feature_ranker == INNER_RANKER_FOLD_NESTED_RF
+        ranker_provenance, ranker_objs = [], []
         skf = StratifiedKFold(
             n_splits=c.pass1_oof_folds, shuffle=True, random_state=c.random_state
         )
         for k, (tr, va) in enumerate(skf.split(np.zeros(n), y_arr)):
+            ranker = (self._fit_inner_ranker(k, X.iloc[tr], y.iloc[tr],
+                                             ranker_provenance, ranker_objs)
+                      if nested_ranker else None)
             with contextlib.redirect_stdout(io.StringIO()):
+                generator = (self._new_generator(rf_model=ranker) if nested_ranker
+                             else self._new_generator())
+                selector_k = self._new_selector()
+                self.inner_pass1_selectors_.append(selector_k)
                 rules_k = self._fit_pass1_only(
                     X.iloc[tr], y.iloc[tr],
-                    self._new_generator(), self._new_evaluator(), self._new_selector(),
+                    generator, self._new_evaluator(), selector_k,
                 )
             routed_oof[va] = self._rules_mask(rules_k, X.iloc[va])
             inner_rules.append(len(rules_k))
@@ -282,7 +351,8 @@ class GlassRouterPipeline:
             # Remainder-relative -> global denominators (all positives / all rows)
             r.recall = r.recall * recall_scale
             r.coverage = r.coverage * coverage_scale
-        sel2 = self._new_selector().select_rules(
+        self.pass2_ilp_selector_ = self._new_selector()
+        sel2 = self.pass2_ilp_selector_.select_rules(
             evaluated_rules=ev2, y_val=y_rem, X_val=X_rem,
             segment_builder=self.segment_builder, passes=("pass2",),
         )
@@ -302,9 +372,73 @@ class GlassRouterPipeline:
             "recall_denominator": "global",
             "pass2_precision_measured_on": "remainder",
             "remainder_mask": remainder,
+            # PR 37 Commit 3 (F17): what ordered the inner-fold Pass 1 searches.
+            "inner_feature_ranker": self.inner_feature_ranker,
         }
+        if nested_ranker:
+            # Metadata only in the report (it is saved with the artifact); the
+            # fitted rankers stay on the instance for in-memory audits.
+            self.fit_report_["inner_ranker_provenance"] = ranker_provenance
+            self.inner_rankers_ = ranker_objs
 
     # ----------------------------------------------------------------
+    def _fit_inner_ranker(self, k, X_tr, y_tr, provenance, seen):
+        """
+        Fit inner fold k's feature ranker on its training rows only (opt-in).
+
+        Refuses a ranker that is not a fresh, fitted estimator with one
+        importance per column: reusing the outer ``rf_model`` or another fold's
+        ranker would defeat the nesting.
+        """
+        ranker = self.feature_ranker_factory(X_tr, y_tr)
+        imp = getattr(ranker, "feature_importances_", None)
+        if imp is None or len(imp) != X_tr.shape[1]:
+            raise ValueError(
+                f"inner fold {k}: feature_ranker_factory must return a fitted estimator "
+                f"with {X_tr.shape[1]} feature_importances_"
+            )
+        if ranker is self.rf_model or any(ranker is r for r in seen):
+            raise ValueError(
+                f"inner fold {k}: feature_ranker_factory returned an estimator already in "
+                "use (the outer rf_model or another fold's ranker); each inner fold needs "
+                "its own ranker fitted on its own training rows"
+            )
+        seen.append(ranker)
+        provenance.append({
+            "fold": int(k),
+            "n_train": int(len(X_tr)),
+            "train_label_fingerprint": label_fingerprint(X_tr.index, y_tr),
+            "estimator": type(ranker).__name__,
+            "random_state": getattr(ranker, "random_state", None),
+            "feature_order_fingerprint": feature_order_fingerprint(ranker, list(X_tr.columns)),
+        })
+        return ranker
+
+    # ----------------------------------------------------------------
+    def selection_reports(self) -> dict:
+        """
+        ILP selection reports of the last fit, by pass (PR 37 Commit 4, Step 4B).
+
+        ``{"pass1": ..., "pass2": ..., "inner_pass1": [...]}``: each entry is a
+        copy of the selector's ``selection_report_`` for that pass (``None`` if
+        the pass was not reached). ``inner_pass1`` lists the inner-fold Pass 1
+        selections that built the OOF remainder (``oof_remainder`` only; empty
+        for ``full``). Read from the selectors the fit kept; ``fit_report_`` is
+        unchanged. Feed an entry to ``glass_router.contract.glass_fit_outcome``.
+        """
+        def entry(selector, key):
+            report = getattr(selector, "selection_report_", None) or {}
+            return copy.deepcopy(report.get(key))
+
+        if self.pass2_population == "full":
+            return {"pass1": entry(self.ilp_selector, PASS1_REPORT_KEY),
+                    "pass2": entry(self.ilp_selector, PASS2_REPORT_KEY),
+                    "inner_pass1": []}
+        return {"pass1": entry(self.ilp_selector, PASS1_REPORT_KEY),
+                "pass2": entry(getattr(self, "pass2_ilp_selector_", None), PASS2_REPORT_KEY),
+                "inner_pass1": [entry(s, PASS1_REPORT_KEY)
+                                for s in getattr(self, "inner_pass1_selectors_", [])]}
+
     def _fit_pass1_only(self, X, y, generator, evaluator, selector):
         """Generate, evaluate and select Pass 1 (NOT_SUBSCRIBE) rules only."""
         cands = [r for r in generator.generate_candidates(X, y) if r.predicted_class == NOT_SUBSCRIBE]

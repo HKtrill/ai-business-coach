@@ -64,6 +64,10 @@ Thumbs.db
 **/models/**/*.joblib
 **/models/**/*.pkl
 **/models/**/*.json
+# PR 37: immutable versions of fixed-name artifacts (<stem>_<YYYYMMDD_HHMMSS_ffffff>_*.csv)
+# and preserved pre-PR 37 files; only the latest-alias CSVs (<stem>_*.csv) are tracked.
+**/models/**/*_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9]_*.csv
+**/models/**/*_preserved_*.csv
 
 # ----------------------
 # Jupyter / test caches

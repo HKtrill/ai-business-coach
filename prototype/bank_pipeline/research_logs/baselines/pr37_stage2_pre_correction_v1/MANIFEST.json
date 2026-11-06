@@ -1,0 +1,1356 @@
+{
+  "format": "pr37.stage2_router_baseline",
+  "format_version": 1,
+  "baseline_id": "pr37_stage2_pre_correction_v1",
+  "label": "Pre-Correction Stage 2 Baseline",
+  "designation": "pre_correction",
+  "status": "frozen",
+  "supersedes": null,
+  "scope": "GLASS Router and RF Router, outer cross-fit (training-side, out-of-fold) outputs of the historical artifacts; Steps 2A-2D diagnostics against the GLASS arm's frozen Stage 1 LR / Stage 3 EBM reference flags. Train OOF only; no test label, test prediction or test-derived threshold.",
+  "relation_to_pr38": "PR 38's corrected-selector results are compared with this baseline; they never replace it. A future baseline gets a new baseline_id and directory.",
+  "population": {
+    "training_rows": 32950,
+    "positives": 3712,
+    "negatives": 29238,
+    "outer_folds": 5,
+    "rows_per_fold": [
+      6590,
+      6590,
+      6590,
+      6590,
+      6590
+    ],
+    "positives_per_fold": [
+      742,
+      742,
+      742,
+      743,
+      743
+    ]
+  },
+  "identities": {
+    "router_split_fingerprint": {
+      "value": "fc3e73a5ef91aea4",
+      "status": "validated",
+      "detail": "16-hex; hashes row indices only (no labels)"
+    },
+    "train_label_fingerprint": {
+      "value": "b984d2a50527",
+      "status": "validated",
+      "detail": "training rows and labels; both routers' cross-fit and full-train records match"
+    },
+    "stage_io_split_fingerprint": {
+      "value": "d6cddadc3439",
+      "status": "attested",
+      "attestation": "PR 37 baseline snapshot PROVENANCE.json, identities.stage_io_split_fingerprint (recorded 2026-11-01; not recomputed)",
+      "detail": "never recomputed: its hash includes the test labels"
+    },
+    "fold_plan": {
+      "n_folds": 5,
+      "seed": 42,
+      "fingerprint": "8aea082fcaf371b7",
+      "status": "validated",
+      "detail": "shared Stage 2-3 outer plan; both routers, LR grouping, EBM"
+    },
+    "ebm_block_fingerprint": {
+      "value": "9cc10fa1f5cf8d858a9168a2169372758102d06283592bed024fb06e1040318c",
+      "status": "recorded_only",
+      "detail": "recorded by the Stage 3 EBM artifact; not re-verifiable here"
+    },
+    "feature_matrix_hash": {
+      "value": null,
+      "status": "not_recorded",
+      "detail": "no feature-matrix hash is stored in the artifacts"
+    },
+    "data_files": [
+      {
+        "path": "data/raw/bank-additional-full.csv",
+        "sha256": "233e260d5d1d506a2c10381da5b8c2f75f2c08d1b373ca7b825e39ebe1bd30df",
+        "role": "raw dataset (UCI bank-additional-full)",
+        "method": "sha256 of the file with CRLF normalised to LF"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "role": "stage4_arbiter.meta_ebm",
+      "path": "models/meta_ebm/meta_ebm_20261023_070055_573687.joblib",
+      "sha256": "82a893e134e5a8ae0f10e8371c6d3398cb7cbd35df0440bdb9d744a365c86344",
+      "bytes": 2412318,
+      "snapshot_attested": true,
+      "read_by": "tests.support.artifact_audit.upstream_paths (recorded Stage 1-3 paths only)",
+      "fields_read": null,
+      "extractor_checks": null
+    },
+    {
+      "role": "stage4_arbiter.meta_ebm_on_blackbox",
+      "path": "blackbox_pipeline/models/stage4_crossover/arbiter_on_blackbox/meta_ebm_20261023_095719_949475.joblib",
+      "sha256": "b4b78c589ec27743b1645fddf430f20add657955fcd32eb86139fddd5ff0cf07",
+      "bytes": 2412670,
+      "snapshot_attested": true,
+      "read_by": "tests.support.artifact_audit.upstream_paths (recorded Stage 2 path only)",
+      "fields_read": null,
+      "extractor_checks": null
+    },
+    {
+      "role": "stage1.lr",
+      "path": "models/lr/lr_calibrated_20261023_003319.joblib",
+      "sha256": "61a6b144b625e7a5028a151860d55ff86c08c3a0c9ef68ab1be73c0fbc995759",
+      "bytes": 851455,
+      "snapshot_attested": true,
+      "read_by": "shared.stage2.diagnostics.boundary.extract_lr_view",
+      "fields_read": [
+        "arm",
+        "calibration_method",
+        "config.random_state",
+        "feature_names",
+        "model",
+        "oof_provenance",
+        "split_fingerprint",
+        "stage",
+        "threshold",
+        "threshold_source",
+        "train_fold_id",
+        "train_proba_oof",
+        "y_train"
+      ],
+      "extractor_checks": {
+        "total": 15,
+        "passed": 15
+      }
+    },
+    {
+      "role": "stage2.glass_router",
+      "path": "models/glass_router/glass_router_20261023_025611.joblib",
+      "sha256": "2c70879bfe04f2adb320d55a3d735a1b1d08cd0e4821621a7a5075ad89fa2fa8",
+      "bytes": 2674722,
+      "snapshot_attested": true,
+      "read_by": "shared.stage2.diagnostics.boundary.extract_router_view (expected_arm='glass')",
+      "fields_read": [
+        "config_full.pass2_population",
+        "features",
+        "fit_report.pass2_population",
+        "oof_protocol.fold_fingerprint",
+        "oof_protocol.glass_pass2_population",
+        "oof_protocol.n_folds",
+        "oof_protocol.random_state",
+        "oof_protocol.train_label_fingerprint",
+        "split_fingerprint",
+        "train_confidence",
+        "train_decisions",
+        "train_fold_id",
+        "train_idx",
+        "train_label_fingerprint",
+        "train_outputs_oof",
+        "train_pred",
+        "train_proba",
+        "training_base_rate"
+      ],
+      "extractor_checks": {
+        "total": 20,
+        "passed": 20
+      }
+    },
+    {
+      "role": "stage3.ebm",
+      "path": "models/ebm/ebm_stage3_20261023_070053_780762.joblib",
+      "sha256": "cfdac6d206d737909f3b3ba2efc3eec48de7ae2b98f42f7c478b3e01da77f55b",
+      "bytes": 8296795,
+      "snapshot_attested": true,
+      "read_by": "shared.stage2.diagnostics.boundary.extract_ebm_view",
+      "fields_read": [
+        "block_fingerprint",
+        "calibration.fold_applied",
+        "config.arm",
+        "feature_fit_scope",
+        "features",
+        "fold_plan.fold_id",
+        "fold_plan.n_splits",
+        "fold_plan.random_state",
+        "index_train",
+        "model_family",
+        "oof.decision",
+        "oof.fold_id",
+        "oof.proba",
+        "oof.proba_calibrated",
+        "oof.threshold_per_row",
+        "split_fingerprint",
+        "threshold.oof.threshold",
+        "threshold.oof_calibrated_space.threshold",
+        "threshold.oof_nested.by_fold",
+        "threshold.oof_nested.drives_train_decisions",
+        "y_train"
+      ],
+      "extractor_checks": {
+        "total": 20,
+        "passed": 20
+      }
+    },
+    {
+      "role": "stage2.rf_router",
+      "path": "models/rf_router/rf_router_two_pass.joblib",
+      "sha256": "5204a2d6732352ab06b2518e0285cd099643ea91d03c79810d784c3f38d75fb2",
+      "bytes": 3928078,
+      "snapshot_attested": true,
+      "read_by": "shared.stage2.diagnostics.boundary.extract_router_view (expected_arm='blackbox')",
+      "fields_read": [
+        "config.random_state",
+        "config.rf_params",
+        "extra.index_train",
+        "extra.oof_fold_summary",
+        "extra.oof_protocol.fold_fingerprint",
+        "extra.oof_protocol.n_folds",
+        "extra.oof_protocol.pass2_population",
+        "extra.oof_protocol.random_state",
+        "extra.oof_protocol.split_fingerprint",
+        "extra.oof_protocol.train_label_fingerprint",
+        "extra.train_confidence",
+        "extra.train_decisions",
+        "extra.train_fold_id",
+        "extra.train_outputs_oof",
+        "extra.train_pred",
+        "extra.train_proba",
+        "feature_names",
+        "mode",
+        "split_fingerprint",
+        "train_label_fingerprint",
+        "training_base_rate"
+      ],
+      "extractor_checks": {
+        "total": 22,
+        "passed": 22
+      }
+    },
+    {
+      "role": "glass_arm.rf_result",
+      "path": "models/rf/rf_result_20261023_025611.joblib",
+      "sha256": "76b198aa5eff376e663237333e36dec8adde26e870e2296d77c594a68719f412",
+      "bytes": 8306761,
+      "snapshot_attested": true,
+      "read_by": "shared.stage2.diagnostics.boundary.extract_rf_pass1_candidate",
+      "fields_read": [
+        "oof_fold_id",
+        "oof_index",
+        "oof_proba",
+        "oof_protocol.feature_engineering",
+        "oof_protocol.fold_fingerprint",
+        "oof_protocol.fold_source",
+        "oof_protocol.glass_rf_model",
+        "oof_protocol.n_folds",
+        "oof_protocol.random_state",
+        "oof_protocol.rf",
+        "oof_protocol.train_label_fingerprint",
+        "params",
+        "split_fingerprint",
+        "train_outputs_oof"
+      ],
+      "extractor_checks": {
+        "total": 11,
+        "passed": 11
+      }
+    }
+  ],
+  "snapshot": {
+    "label": "pr36_regen_2026-10-23/SHA256SUMS.txt",
+    "sha256": "e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a",
+    "entries": 37
+  },
+  "code": {
+    "method": "sha256 of the UTF-8 file with CRLF normalised to LF",
+    "files": {
+      "shared/stage2/diagnostics/__init__.py": "65466cb1815d7e53090e00086eb94cf3839644f671fda825b6a460d7a99b41ba",
+      "shared/stage2/diagnostics/schema.py": "f8d5ecad8cbf5566648754e6c890d1fca50630a327f7cbfc0ea949978d9fe4e2",
+      "shared/stage2/diagnostics/boundary.py": "0c653b69924b810e731cb3d212adb79fb12d9f13d17039d06f0f437b2448c724",
+      "shared/stage2/diagnostics/operating_points.py": "c9a9370b7371813ff4485234a133142764176a8d43d2208e33712202277bc81d",
+      "shared/stage2/diagnostics/metrics.py": "d8d76ff90f0fe18a5b3a84ce62c414e2769aad1fdceb607bcfd16a6d9d016f04",
+      "shared/stage2/diagnostics/equivalence.py": "a142c0fbf71d7fb034137e252836c642f0f8deb7a2e1da80ce80a764546db420",
+      "shared/stage2/diagnostics/trace.py": "c730d0c30c9aeb933f14c15e7564ac0dd517d1c4af7385b894d6e5e9c5137612",
+      "shared/stage2/diagnostics/suppression.py": "a86e71a77abad241cdb1d04304cdfded8bcde69fe2c722fd58d0539915453d64",
+      "shared/stage2/diagnostics/contribution.py": "0cb20e2d2477d4646a2366689a6e14b52e1462a199997234462953048c5bb2f5",
+      "shared/stage2/diagnostics/overlap.py": "d18fc93b91c950b11456c41a8fb8ef369d4924bdb03b04175c63ebd706a03332",
+      "shared/stage2/diagnostics/baseline.py": "d22c170fdc4fa861ecb5e87f60897b88ba03c61d0b94bf51ee93233b19fee023",
+      "shared/stage_io.py": "61df4a75e4a86d44acac7632af8342a96eb287e13cf907f4d1d3625467a1da88",
+      "tests/support/router_artifacts.py": "f91c209b3b39a5005ea9e2f1f3d095ebf22d22f9d90ca93f8bdf72e0641c640a",
+      "tests/support/artifact_audit.py": "015a6305af72a16d493138b3a5214d829956419f1dac8532b2c4de0e65538b0e",
+      "research_logs/baselines/stage2_baseline.py": "709132e78be698d86affed1111a51cf7d177db4057f6e7ce3b4fc50d74974987"
+    },
+    "note": "identity of the diagnostic and export code at generation; not the router implementations (see routers) and not a Git commit"
+  },
+  "routers": {
+    "glass": {
+      "router": "GLASS Router",
+      "model_family": "glass_router",
+      "router_mode": null,
+      "pass2_population": {
+        "cross_fit": "full",
+        "full_train": "full",
+        "normalised": "full"
+      },
+      "confidence_kind": "in-sample precision of the first matching rule of the outer fold's GLASS fit (0.0 on abstain)",
+      "metadata": {
+        "training_base_rate": 0.11265553869499241,
+        "split_fingerprint": "fc3e73a5ef91aea4",
+        "oof_protocol": {
+          "n_folds": 5,
+          "random_state": 42,
+          "fold_fingerprint": "8aea082fcaf371b7",
+          "train_label_fingerprint": "b984d2a50527",
+          "glass_pass2_population": "full",
+          "glass_abstain_label": "uncertain",
+          "fold_source": "default StratifiedKFold(n_splits=5, shuffle=True, random_state=42)"
+        },
+        "config_full": {
+          "mode": "strict",
+          "pass2_population": "full",
+          "min_support_pass1": 120,
+          "min_support_pass2": 25,
+          "min_precision_not_subscribe": 0.93,
+          "max_subscriber_leakage_rate": 0.05,
+          "max_union_leakage_rate_pass1": 0.14,
+          "min_precision_subscribe": 0.2,
+          "max_recall_subscribe": 0.35
+        },
+        "n_rules": {
+          "Pass 1": 4,
+          "Pass 2": 3
+        }
+      },
+      "fold_thresholds": null,
+      "provenance": [
+        {
+          "name": "train_outputs_oof",
+          "status": "validated",
+          "detail": "outer cross-fit outputs"
+        },
+        {
+          "name": "row_index",
+          "status": "validated",
+          "detail": "equals X_train index, same order"
+        },
+        {
+          "name": "decision_tokens",
+          "status": "validated",
+          "detail": "exact tokens; train_pred consistent"
+        },
+        {
+          "name": "confidence",
+          "status": "validated",
+          "detail": "finite, in [0, 1], 0.0 on abstain"
+        },
+        {
+          "name": "router_transform",
+          "status": "validated",
+          "detail": "max |diff| 0 <= 1e-12 (fold base rates)"
+        },
+        {
+          "name": "fold_plan",
+          "status": "validated",
+          "detail": "5 folds, seed 42, fingerprint 8aea082fcaf371b7"
+        },
+        {
+          "name": "router_split_fingerprint",
+          "status": "validated",
+          "detail": "fc3e73a5ef91aea4"
+        },
+        {
+          "name": "stage_io_split_fingerprint",
+          "status": "attested",
+          "detail": "d6cddadc3439 (from PR 37 baseline snapshot PROVENANCE.json, identities.stage_io_split_fingerprint (recorded 2026-11-01; not recomputed); not recomputed: its hash includes the test labels)"
+        },
+        {
+          "name": "train_label_fingerprint.cross_fit",
+          "status": "validated",
+          "detail": "b984d2a50527"
+        },
+        {
+          "name": "train_label_fingerprint.full_train",
+          "status": "validated",
+          "detail": "b984d2a50527"
+        },
+        {
+          "name": "training_base_rate",
+          "status": "validated",
+          "detail": "0.112656"
+        },
+        {
+          "name": "pass2_population",
+          "status": "validated",
+          "detail": "declared: cross-fit 'full', full-train 'full'"
+        },
+        {
+          "name": "features",
+          "status": "validated",
+          "detail": "RF_FEATURES_BINARY"
+        },
+        {
+          "name": "feature_hash",
+          "status": "not_recorded",
+          "detail": "no feature-matrix hash is stored"
+        },
+        {
+          "name": "file_sha256",
+          "status": "attested",
+          "detail": "2c70879bfe04f2adb320d55a3d735a1b1d08cd0e4821621a7a5075ad89fa2fa8 equals the supplied baseline value"
+        },
+        {
+          "name": "fold_rule_sets",
+          "status": "not_recorded",
+          "detail": "per-fold GLASS rule sets and candidate rules are not persisted"
+        },
+        {
+          "name": "fold_summaries",
+          "status": "not_recorded",
+          "detail": "GLASS cross-fit fold summaries are not persisted"
+        }
+      ]
+    },
+    "blackbox": {
+      "router": "RF Router",
+      "model_family": "rf_router",
+      "router_mode": "two_pass",
+      "pass2_population": {
+        "cross_fit": "OOF Pass 1 remainder (RF router design)",
+        "full_train": "mode 'two_pass'",
+        "normalised": "oof_remainder"
+      },
+      "confidence_kind": "band precision measured on the outer fold router's inner OOF (0.0 on abstain)",
+      "metadata": {
+        "training_base_rate": 0.11265553869499241,
+        "split_fingerprint": "fc3e73a5ef91aea4",
+        "oof_protocol": {
+          "n_folds": 5,
+          "random_state": 42,
+          "fold_fingerprint": "8aea082fcaf371b7",
+          "train_label_fingerprint": "b984d2a50527",
+          "split_fingerprint": "fc3e73a5ef91aea4",
+          "pass2_population": "OOF Pass 1 remainder (RF router design)"
+        },
+        "mode": "two_pass",
+        "rf_params": {
+          "n_estimators": 650,
+          "max_depth": 6,
+          "min_samples_leaf": 12,
+          "max_features": 0.39989815740885837,
+          "minority_weight": 1.3001084911026792,
+          "class_weight": "balanced"
+        },
+        "random_state": 42,
+        "n_oof_folds": 5,
+        "constraints": {
+          "min_precision_not_subscribe": 0.9553485943075986,
+          "max_subscriber_leakage_rate": 0.13820043103448276,
+          "max_subscriber_leakage_absolute": 513,
+          "min_pass1_coverage": null,
+          "min_precision_subscribe": 0.2759801606046292,
+          "min_recall_subscribe": null,
+          "recall_denominator": "global",
+          "min_band_support_pass1": 125,
+          "min_band_support_pass2": 75,
+          "require_band_ordering": true
+        },
+        "constraint_source": "match_glass_oof",
+        "rf_params_origin": "recorded in the artifact as a local absolute path; the file is the source with role 'glass_arm.rf_result'",
+        "full_train_thresholds": {
+          "t1": 0.2971074949641583,
+          "t2": 0.3328543896369866
+        },
+        "bands": {
+          "kind": "flat",
+          "pass1_confidence": 0.9599590131630803,
+          "pass2_confidence": 0.2765635143908245
+        }
+      },
+      "fold_thresholds": {
+        "0": {
+          "t1": 0.30246739768994324,
+          "t2": 0.30749366935913147
+        },
+        "1": {
+          "t1": 0.30433138251755687,
+          "t2": 0.3146808925641723
+        },
+        "2": {
+          "t1": 0.3033492808648672,
+          "t2": 0.31076449214797086
+        },
+        "3": {
+          "t1": 0.2945056291833416,
+          "t2": 0.33125152650694867
+        },
+        "4": {
+          "t1": 0.28821250543597066,
+          "t2": 0.3362584837595451
+        }
+      },
+      "provenance": [
+        {
+          "name": "train_outputs_oof",
+          "status": "validated",
+          "detail": "outer cross-fit outputs"
+        },
+        {
+          "name": "row_index",
+          "status": "validated",
+          "detail": "equals X_train index, same order"
+        },
+        {
+          "name": "decision_tokens",
+          "status": "validated",
+          "detail": "exact tokens; train_pred consistent"
+        },
+        {
+          "name": "confidence",
+          "status": "validated",
+          "detail": "finite, in [0, 1], 0.0 on abstain"
+        },
+        {
+          "name": "router_transform",
+          "status": "validated",
+          "detail": "max |diff| 0 <= 1e-12 (fold base rates)"
+        },
+        {
+          "name": "fold_plan",
+          "status": "validated",
+          "detail": "5 folds, seed 42, fingerprint 8aea082fcaf371b7"
+        },
+        {
+          "name": "router_split_fingerprint",
+          "status": "validated",
+          "detail": "fc3e73a5ef91aea4"
+        },
+        {
+          "name": "stage_io_split_fingerprint",
+          "status": "attested",
+          "detail": "d6cddadc3439 (from PR 37 baseline snapshot PROVENANCE.json, identities.stage_io_split_fingerprint (recorded 2026-11-01; not recomputed); not recomputed: its hash includes the test labels)"
+        },
+        {
+          "name": "train_label_fingerprint.cross_fit",
+          "status": "validated",
+          "detail": "b984d2a50527"
+        },
+        {
+          "name": "train_label_fingerprint.full_train",
+          "status": "validated",
+          "detail": "b984d2a50527"
+        },
+        {
+          "name": "training_base_rate",
+          "status": "validated",
+          "detail": "0.112656"
+        },
+        {
+          "name": "pass2_population",
+          "status": "validated",
+          "detail": "declared: cross-fit 'OOF Pass 1 remainder (RF router design)', full-train \"mode 'two_pass'\""
+        },
+        {
+          "name": "features",
+          "status": "validated",
+          "detail": "RF_FEATURES_BINARY"
+        },
+        {
+          "name": "feature_hash",
+          "status": "not_recorded",
+          "detail": "no feature-matrix hash is stored"
+        },
+        {
+          "name": "file_sha256",
+          "status": "attested",
+          "detail": "5204a2d6732352ab06b2518e0285cd099643ea91d03c79810d784c3f38d75fb2 equals the supplied baseline value"
+        },
+        {
+          "name": "fold_thresholds",
+          "status": "validated",
+          "detail": "oof_fold_summary: one finite t1 / t2 per fold"
+        },
+        {
+          "name": "pass2_outer_scores",
+          "status": "not_recorded",
+          "detail": "RF Pass 2 outer out-of-fold scores are not persisted"
+        },
+        {
+          "name": "pass1_outer_scores",
+          "status": "not_recorded",
+          "detail": "RF Pass 1 outer scores are not stored in the router artifact; see check_rf_pass1_score_equivalence"
+        }
+      ]
+    }
+  },
+  "upstream_operating_points": {
+    "lr": {
+      "operating_point": "lr.in_stage_f2_cv",
+      "model": "lr",
+      "score_space": "calibrated_probability",
+      "threshold": 0.1,
+      "field": "stage_output.threshold",
+      "selection": "global: one value selected using the labels of ALL training rows, then applied back to those rows' out-of-fold scores (selection-dependent; disclose)",
+      "disclosure": "Stage 1 LR operating point (threshold_source in_stage_f2_cv, 0.10 in the Oct 23 artifact). In-selection: the threshold was chosen on the labels of the same training rows it is applied to; rates computed with it are optimistic.",
+      "components": [
+        "lr.in_stage_f2_cv"
+      ],
+      "flags": 7727,
+      "threshold_record": {
+        "value": 0.1,
+        "field": "stage_output.threshold",
+        "selection": "global: one value selected using the labels of ALL training rows, then applied back to those rows' out-of-fold scores (selection-dependent; disclose)",
+        "detail": "F2 argmax over the OOF probabilities of all training rows (threshold_source in_stage_f2_cv; not cross-fitted)"
+      }
+    },
+    "ebm": {
+      "operating_point": "ebm.nested_f2",
+      "model": "ebm",
+      "score_space": "raw_model_score",
+      "threshold": null,
+      "field": "oof.decision / oof.threshold_per_row",
+      "selection": "fold-nested: each fold's threshold selected on inner out-of-fold scores of that fold's training rows; the fold's own labels never reach it",
+      "disclosure": "Stage 3 EBM fold-nested operating point: each fold's raw-space threshold was selected on inner OOF scores of that fold's training rows.",
+      "components": [
+        "ebm.nested_f2"
+      ],
+      "flags": 6113,
+      "fold_thresholds": {
+        "0": 0.56,
+        "1": 0.56,
+        "2": 0.54,
+        "3": 0.49,
+        "4": 0.49
+      },
+      "fold_thresholds_note": "raw-score thresholds by router outer fold, each selected on inner OOF scores of that fold's training rows"
+    },
+    "union": {
+      "operating_point": "(lr.in_stage_f2_cv or ebm.nested_f2)",
+      "model": "lr+ebm",
+      "score_space": null,
+      "threshold": null,
+      "field": "stage_output.threshold or oof.decision / oof.threshold_per_row",
+      "selection": "global: one value selected using the labels of ALL training rows, then applied back to those rows' out-of-fold scores (selection-dependent; disclose); fold-nested: each fold's threshold selected on inner out-of-fold scores of that fold's training rows; the fold's own labels never reach it",
+      "disclosure": "Stage 1 LR operating point (threshold_source in_stage_f2_cv, 0.10 in the Oct 23 artifact). In-selection: the threshold was chosen on the labels of the same training rows it is applied to; rates computed with it are optimistic. | Stage 3 EBM fold-nested operating point: each fold's raw-space threshold was selected on inner OOF scores of that fold's training rows.",
+      "components": [
+        "lr.in_stage_f2_cv",
+        "ebm.nested_f2"
+      ],
+      "flags": 8001
+    },
+    "intersection": {
+      "operating_point": "(lr.in_stage_f2_cv and ebm.nested_f2)",
+      "model": "lr+ebm",
+      "score_space": null,
+      "threshold": null,
+      "field": "stage_output.threshold and oof.decision / oof.threshold_per_row",
+      "selection": "global: one value selected using the labels of ALL training rows, then applied back to those rows' out-of-fold scores (selection-dependent; disclose); fold-nested: each fold's threshold selected on inner out-of-fold scores of that fold's training rows; the fold's own labels never reach it",
+      "disclosure": "Stage 1 LR operating point (threshold_source in_stage_f2_cv, 0.10 in the Oct 23 artifact). In-selection: the threshold was chosen on the labels of the same training rows it is applied to; rates computed with it are optimistic. | Stage 3 EBM fold-nested operating point: each fold's raw-space threshold was selected on inner OOF scores of that fold's training rows.",
+      "components": [
+        "lr.in_stage_f2_cv",
+        "ebm.nested_f2"
+      ],
+      "flags": 5839
+    }
+  },
+  "rf_constraint_provenance": {
+    "constraint_source": "match_glass_oof",
+    "recorded_constraints": {
+      "min_precision_not_subscribe": 0.9553485943075986,
+      "max_subscriber_leakage_rate": 0.13820043103448276,
+      "max_subscriber_leakage_absolute": 513,
+      "min_pass1_coverage": null,
+      "min_precision_subscribe": 0.2759801606046292,
+      "min_recall_subscribe": null,
+      "recall_denominator": "global",
+      "min_band_support_pass1": 125,
+      "min_band_support_pass2": 75,
+      "require_band_ordering": true
+    },
+    "derivation_check": [
+      {
+        "constraint": "min_precision_not_subscribe",
+        "recorded": 0.9553485943075986,
+        "glass_metric": "pass1_npv",
+        "glass_numerator": 10976,
+        "glass_denominator": 11489,
+        "glass_value": 0.955348594308,
+        "status": "equal"
+      },
+      {
+        "constraint": "max_subscriber_leakage_rate",
+        "recorded": 0.13820043103448276,
+        "glass_metric": "pass1_leakage_share",
+        "glass_numerator": 513,
+        "glass_denominator": 3712,
+        "glass_value": 0.138200431034,
+        "status": "equal"
+      },
+      {
+        "constraint": "max_subscriber_leakage_absolute",
+        "recorded": 513,
+        "glass_metric": "pass1_positives",
+        "glass_numerator": 513,
+        "glass_denominator": null,
+        "glass_value": 513.0,
+        "status": "equal"
+      },
+      {
+        "constraint": "min_precision_subscribe",
+        "recorded": 0.2759801606046292,
+        "glass_metric": "pass2_precision",
+        "glass_numerator": 2337,
+        "glass_denominator": 8468,
+        "glass_value": 0.275980160605,
+        "status": "equal"
+      }
+    ],
+    "derivation_check_method": "each recorded constraint with a GLASS counterpart compared with the GLASS Router's pooled outer-OOF value in this baseline (|difference| <= 1e-12 = equal)",
+    "status": "historical. match_glass_oof makes the RF Router's targets depend on GLASS's realised OOF metrics; Commit 4 defines the pre-registered successor and PR 38 applies it. Not replaced here."
+  },
+  "analysis_settings": {
+    "score_bins": 10,
+    "joint_bins": 3,
+    "min_support": 30,
+    "threshold_band_within_fold_percentile": 0.05,
+    "stratifiers": [
+      "lr",
+      "ebm_raw",
+      "lr_x_ebm"
+    ],
+    "strata_requested_bins": {
+      "lr": 10,
+      "ebm_raw": 10,
+      "lr_x_ebm": 9
+    },
+    "strata_occupied_bins_by_fold": {
+      "lr": {
+        "0": 9,
+        "1": 8,
+        "2": 8,
+        "3": 10,
+        "4": 9
+      },
+      "ebm_raw": {
+        "0": 10,
+        "1": 10,
+        "2": 10,
+        "3": 10,
+        "4": 10
+      },
+      "lr_x_ebm": {
+        "0": 9,
+        "1": 8,
+        "2": 9,
+        "3": 9,
+        "4": 9
+      }
+    },
+    "threshold_within_fold_percentile_by_fold": {
+      "lr": {
+        "0": 0.772989377845,
+        "1": 0.763277693475,
+        "2": 0.765857359636,
+        "3": 0.752655538695,
+        "4": 0.772685887709
+      },
+      "ebm": {
+        "0": 0.828224582701,
+        "1": 0.830500758725,
+        "2": 0.818816388467,
+        "3": 0.793474962064,
+        "4": 0.801365705615
+      }
+    },
+    "strata_provenance": {
+      "lr": "stage_output.train_proba_oof: out-of-fold over 10 folds; calibration isotonic, nested per fold",
+      "ebm_raw": "oof.proba: out-of-fold EBM score; not calibrated",
+      "ebm_probability": "oof.proba_calibrated: per-fold calibration from inner OOF of each fold's training rows",
+      "lr_threshold": "stage_output.threshold = 0.1 (global: one value selected using the labels of ALL training rows, then applied back to those rows' out-of-fold scores (selection-dependent; disclose))",
+      "ebm_threshold": "oof.decision / oof.threshold_per_row, by fold (0.56, 0.56, 0.54, 0.49, 0.49) (raw space)"
+    },
+    "strata_fixed": "before any Step 2D result was inspected; label-free; never tuned",
+    "matched_rate": {
+      "population": "common eligible (rows neither router routed to Pass 1)",
+      "k": "the arm's Pass 2 rows in each router fold's common eligible population",
+      "ranking": "highest score first",
+      "scores": {
+        "lr": "calibrated_probability",
+        "ebm": "raw_model_score"
+      },
+      "tie_break": "ascending SHA-256 of the row's index label (label-free, fixed per row; not row order)",
+      "tie_bounds": "strict / inclusive cuts (operating_points.matched_rate_cut); neither preferred"
+    },
+    "router_transform_atol": 1e-12,
+    "float_format": ".12g (12 significant digits)"
+  },
+  "validation": {
+    "trace_checks": {
+      "total": 39,
+      "passed": 39
+    },
+    "rf_pass1_score_equivalence": "verified_from_artifacts",
+    "consistency": [
+      {
+        "check": "three-state accounting: states partition every fold and the pool",
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "check": "fold vs pooled: every pooled count, numerator and denominator is the sum of its folds",
+        "passed": true,
+        "detail": "974 pooled rows checked, 0 non-additive"
+      },
+      {
+        "check": "parity with Commit 1: router_upstream_metrics and router_router_table",
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "check": "reference flags: union = LR + EBM - intersection",
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "check": "state_standardization equals observed_expected for the six router-state groups",
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "check": "stratified expectations sum to the observed positives",
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "check": "score strata are label-free (unchanged under permuted labels)",
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "check": "matched selections: K = the arm's Pass 2 rows in the common population; selected = K within the strict / inclusive tie bounds",
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "check": "signal-level Pass 1 / Pass 2 overlap is reported unavailable, final-state overlap zero",
+        "passed": true,
+        "detail": ""
+      },
+      {
+        "check": "every exported ratio is registered in metrics.METRIC_DEFINITIONS",
+        "passed": true,
+        "detail": ""
+      }
+    ]
+  },
+  "outputs": {
+    "definitions.json": {
+      "sha256": "6536e741086131fb9daa6043f9f930578f7d3698d3f903c62f76f107b41b116a",
+      "bytes": 49981,
+      "description": "metric registry, table / column definitions and conventions"
+    },
+    "tables/states.csv": {
+      "sha256": "1a62b6646b888f4af722d8e52ee20f70bf4fbbfb82ef0d71b17705c11bacaa01",
+      "bytes": 4232,
+      "rows": 36,
+      "columns": [
+        "arm",
+        "fold",
+        "state",
+        "rows",
+        "n",
+        "positives",
+        "negatives",
+        "share",
+        "share_status",
+        "positive_rate",
+        "positive_rate_status",
+        "negative_rate",
+        "negative_rate_status"
+      ],
+      "description": "Three-state counts and class composition per router and fold."
+    },
+    "tables/ratios.csv": {
+      "sha256": "08c94d1487d78d73920eff4f73084635f7f072c2f68d11ead9ad8040b016821b",
+      "bytes": 826135,
+      "rows": 6159,
+      "columns": [
+        "section",
+        "arm",
+        "reference",
+        "population",
+        "group",
+        "score",
+        "fold",
+        "metric",
+        "label",
+        "numerator",
+        "denominator",
+        "value",
+        "status"
+      ],
+      "description": "Every count and ratio of the long-format diagnostics, with explicit numerator, denominator, value and status."
+    },
+    "tables/policy_audit.csv": {
+      "sha256": "1038e58d45ef6a9e913e3186e92c93a5d87f69aa15d6e652ff280ed9906839d4",
+      "bytes": 6412,
+      "rows": 16,
+      "columns": [
+        "arm",
+        "router",
+        "claim",
+        "description",
+        "status",
+        "basis",
+        "violations",
+        "evidence"
+      ],
+      "description": "Routing-policy claims per router: what the artifacts verify, what is code-level only, declared or not verifiable."
+    },
+    "tables/reference_flags.csv": {
+      "sha256": "ee1c37bae3a931053ac3e963d594cb2e69d8de6bd91c36dca0218125907b1b44",
+      "bytes": 1697,
+      "rows": 4,
+      "columns": [
+        "reference",
+        "operating_point",
+        "score_space",
+        "threshold",
+        "selection",
+        "fold_plan",
+        "flags",
+        "tp",
+        "fp",
+        "flag_rate",
+        "precision",
+        "precision_status"
+      ],
+      "description": "The frozen LR / EBM reference flags (and their union / intersection) used by every router-to-reference comparison."
+    },
+    "tables/pass2_breakdown.csv": {
+      "sha256": "531c28078c6d506499778987cc928201d063a615c08470443715cdd8a1631cdb",
+      "bytes": 675,
+      "rows": 12,
+      "columns": [
+        "arm",
+        "fold",
+        "pass2_tp",
+        "pass2_fp",
+        "tp_both",
+        "fp_both",
+        "tp_lr_only",
+        "fp_lr_only",
+        "tp_ebm_only",
+        "fp_ebm_only",
+        "tp_neither",
+        "fp_neither"
+      ],
+      "description": "Pass 2 TP / FP split by which frozen references flag them."
+    },
+    "tables/common_population.csv": {
+      "sha256": "599165f247959009ff7c1abbad05d47f89a24c6d37d70841721d5f4a77750164",
+      "bytes": 464,
+      "rows": 6,
+      "columns": [
+        "fold",
+        "rows",
+        "positives",
+        "glass_remainder_rows",
+        "rf_remainder_rows",
+        "common_rows",
+        "common_positives",
+        "glass_pass2_in_common",
+        "rf_pass2_in_common",
+        "glass_pass2_outside_common",
+        "rf_pass2_outside_common"
+      ],
+      "description": "The common eligible population (rows neither router routed to Pass 1) and what it excludes."
+    },
+    "tables/matched_selection.csv": {
+      "sha256": "895f8938a13ab61e9d2446ae3a2711e9c4213dd6bdf02554ca506d2af06e0d7a",
+      "bytes": 1944,
+      "rows": 20,
+      "columns": [
+        "arm",
+        "reference",
+        "model",
+        "score_space",
+        "fold",
+        "target_count",
+        "selected_rows",
+        "cut_value",
+        "exact",
+        "tie_block",
+        "strict_count",
+        "inclusive_count",
+        "tie_broken_rows"
+      ],
+      "description": "The label-free rate-matched reference selections: K, cut, tie block and tie-broken rows per arm, model and fold."
+    },
+    "tables/contingency.csv": {
+      "sha256": "31a79587879d7f685c290f98dff157815e3a5ffee696634d30216eca11c83000",
+      "bytes": 14121,
+      "rows": 288,
+      "columns": [
+        "arm",
+        "reference",
+        "fold",
+        "state",
+        "reference_flag",
+        "n",
+        "positives",
+        "negatives"
+      ],
+      "description": "Router state x reference flag: rows, positives and negatives."
+    },
+    "tables/crosstab.csv": {
+      "sha256": "350e46e90e072ce44307963d2042f2d6eadcb3cecedf4050fc77c9709ed4544b",
+      "bytes": 5804,
+      "rows": 54,
+      "columns": [
+        "fold",
+        "glass_state",
+        "rf_state",
+        "n",
+        "positives",
+        "negatives",
+        "positive_rate",
+        "positive_rate_status",
+        "share",
+        "lr_flags",
+        "lr_flagged_positives",
+        "ebm_flags",
+        "ebm_flagged_positives",
+        "union_flags",
+        "union_flagged_positives",
+        "intersection_flags",
+        "intersection_flagged_positives"
+      ],
+      "description": "GLASS state x RF state cells with label composition and reference flags."
+    },
+    "tables/pass2_cross_router.csv": {
+      "sha256": "ffd677c48db255c9336623fe890f41016e3bbc2e891133dfc84468f090c9fb5a",
+      "bytes": 3112,
+      "rows": 30,
+      "columns": [
+        "reference",
+        "fold",
+        "glass_unique_tp",
+        "rf_unique_tp",
+        "shared_tp",
+        "glass_only_tp",
+        "rf_only_tp",
+        "glass_unique_fp",
+        "rf_unique_fp",
+        "shared_fp",
+        "glass_only_fp",
+        "rf_only_fp",
+        "glass_only_tp_in_rf_pass1",
+        "glass_only_tp_in_rf_abstain",
+        "rf_only_tp_in_glass_pass1",
+        "rf_only_tp_in_glass_abstain",
+        "tp_jaccard",
+        "tp_jaccard_status",
+        "pool_positives",
+        "expected_shared_tp_if_unrelated"
+      ],
+      "description": "Pass 2 positives and negatives both routers / one router flag, overall and unique relative to each reference."
+    },
+    "tables/signal_availability.csv": {
+      "sha256": "8de857a66b6000d07dc3e45c918498281225388c77d829de950894f8bf788a7f",
+      "bytes": 3069,
+      "rows": 18,
+      "columns": [
+        "arm",
+        "signal",
+        "status",
+        "basis",
+        "rows",
+        "detail"
+      ],
+      "description": "Which pre-routing signals the artifacts persist, and which overlap analyses are therefore unavailable."
+    },
+    "tables/score_conditional.csv": {
+      "sha256": "3b9e961b74c2f6010beac5b7afef0c3c9b0a1f252756ae365ec571ef4190382c",
+      "bytes": 113809,
+      "rows": 1002,
+      "columns": [
+        "arm",
+        "stratifier",
+        "fold",
+        "stratum",
+        "state",
+        "stratum_rows",
+        "stratum_positives",
+        "n",
+        "positives",
+        "negatives",
+        "positive_rate",
+        "positive_rate_status",
+        "expected_lr_calibrated",
+        "expected_ebm_calibrated",
+        "low_support",
+        "lr_flags",
+        "ebm_flags",
+        "union_flags",
+        "intersection_flags"
+      ],
+      "description": "Router state x label-free score stratum: label composition, calibrated expectations and reference flags."
+    },
+    "tables/stratum_contrasts.csv": {
+      "sha256": "4ded34de61b3de4177aaed4d66926edb222a82f549d3bc7cba74b62f225221cd",
+      "bytes": 58387,
+      "rows": 1002,
+      "columns": [
+        "arm",
+        "stratifier",
+        "fold",
+        "stratum",
+        "contrast",
+        "n_a",
+        "n_b",
+        "difference_pp",
+        "status"
+      ],
+      "description": "Positive-rate differences between router states within a stratum (defined only where both states have minimum support)."
+    },
+    "tables/observed_expected.csv": {
+      "sha256": "74743d3b04f316bf3cfbdd901273c37753152c4ca22b09d66c1cac9c16c25d8f",
+      "bytes": 26513,
+      "rows": 126,
+      "columns": [
+        "group",
+        "description",
+        "fold",
+        "n",
+        "observed",
+        "positive_rate",
+        "expected_lr_calibrated",
+        "expected_ebm_calibrated",
+        "expected_stratified_lr",
+        "expected_stratified_ebm_raw",
+        "expected_stratified_lr_x_ebm",
+        "o_minus_e_lr_calibrated",
+        "o_minus_e_ebm_calibrated",
+        "o_minus_e_stratified_lr",
+        "o_minus_e_stratified_ebm_raw",
+        "o_minus_e_stratified_lr_x_ebm"
+      ],
+      "description": "Observed vs expected positives for the router states and the named disagreement populations (descriptive; not tests)."
+    },
+    "tables/chance_baselines.csv": {
+      "sha256": "edc3880e903b36073a04ecf64ce69fb3fe792da9161e00e8bce17168483bc2f8",
+      "bytes": 9001,
+      "rows": 96,
+      "columns": [
+        "setting",
+        "arm",
+        "reference",
+        "fold",
+        "flags",
+        "pool_rows",
+        "pool_positives",
+        "pool_rate",
+        "expected_positives",
+        "observed_positives",
+        "excess_positives"
+      ],
+      "description": "Arithmetic chance expectations for unique positives and Pass 1 interceptions (not statistical tests)."
+    },
+    "tables/model_disagreement.csv": {
+      "sha256": "e4c985b0b8bd8c804c5aebae6cbba50e467461c40fae62838d67f685421cfee0",
+      "bytes": 1315,
+      "rows": 18,
+      "columns": [
+        "setting",
+        "arm",
+        "fold",
+        "k",
+        "lr_flags",
+        "ebm_flags",
+        "lr_only_tp",
+        "ebm_only_tp",
+        "lr_only_fp",
+        "ebm_only_fp",
+        "ebm_minus_lr_tp",
+        "ebm_only_tp_expected_from_pool",
+        "router_unique_tp_vs_lr",
+        "router_unique_tp_vs_ebm"
+      ],
+      "description": "How much LR and EBM already disagree (frozen, and at each arm's matched K), next to the routers' unique positives."
+    },
+    "tables/validation.csv": {
+      "sha256": "862afcff837d09a2322a54e639bbc8e4a9c63a67ad35c4a09ef333950afa5e5c",
+      "bytes": 15025,
+      "rows": 127,
+      "columns": [
+        "source",
+        "section",
+        "stage",
+        "check",
+        "passed",
+        "detail"
+      ],
+      "description": "Every trace check (T1-T7) and boundary extractor check, with its result."
+    },
+    "REPORT.md": {
+      "sha256": "ca791bfbb8ed189457428eddd058e7cdc3850feec2ccbf2452f13b30c9a5e35b",
+      "bytes": 24773,
+      "description": "human-readable report"
+    }
+  },
+  "disclosures": [
+    {
+      "id": "D01",
+      "topic": "definitions",
+      "text": "Metric formulas and denominators: every ratio has its numerator, denominator, value and status in the table that reports it; ratio names are defined in metrics.METRIC_DEFINITIONS (definitions.json 'metrics'); wide-table columns are defined in definitions.json 'tables'. Undefined ratios stay undefined (empty value, status undefined_empty_denominator), never 0."
+    },
+    {
+      "id": "D02",
+      "topic": "pass1_precedence",
+      "text": "Pass 1 precedence and Pass 2 eligibility: Pass 1 claims rows first; Pass 2 only claims rows Pass 1 left; everything else abstains. Final Pass 1 and Pass 2 never overlap by construction. For the RF Router this is verified from the artifacts (Pass 1 score equivalence); for GLASS it is code-level only (no per-fold rule sets)."
+    },
+    {
+      "id": "D03",
+      "topic": "leakage",
+      "text": "Positive leakage: Pass 1 actual positives (routed NOT_SUBSCRIBE) / all positives (pass1_leakage_share); within-band leakage is Pass 1 positives / Pass 1 rows (pass1_positive_rate); Pass 1 NPV is Pass 1 negatives / Pass 1 rows."
+    },
+    {
+      "id": "D04",
+      "topic": "reference_flags",
+      "text": "Frozen reference flags: lr.in_stage_f2_cv (LR calibrated probability >= its stored threshold, selected on ALL training labels: in-selection, rates optimistic) and ebm.nested_f2 (stored fold-nested EBM raw-score decisions). Both come from the GLASS arm and are the common reference for both routers; the RF Router's own black-box cascade uses other upstream models."
+    },
+    {
+      "id": "D05",
+      "topic": "overall_vs_matched",
+      "text": "Overall (frozen) comparisons keep each side's own flag rate on all rows; matched-rate comparisons re-cut LR / EBM at each arm's Pass 2 count K per fold on the common eligible population, label-free. K is the router's observed count (a descriptive control, not a pre-registration); the two arms have different K."
+    },
+    {
+      "id": "D06",
+      "topic": "ebm_fold_local",
+      "text": "EBM raw scores are never pooled or ranked across folds (their fold-specific nested thresholds show the scales differ): EBM strata, ranks and threshold positions are within the router outer fold."
+    },
+    {
+      "id": "D07",
+      "topic": "ties",
+      "text": "LR calibrated probabilities are isotonic, so large tied blocks occur. Strata keep tied scores in one bin (merged edges). Matched selections break ties at the K-th score by a predetermined label-free rule (ascending SHA-256 of the row's index label (label-free, fixed per row; not row order)) and report strict / inclusive bounds."
+    },
+    {
+      "id": "D08",
+      "topic": "expectations",
+      "text": "Two kinds of expected positives: calibrated model expectations (sums of LR or EBM calibrated OOF probabilities; assume the calibration is right) and internal standardisation (expected_stratified_*: the group's rows' (fold, stratum) positive rates on the same labels). Neither is a null distribution or a test."
+    },
+    {
+      "id": "D09",
+      "topic": "low_support",
+      "text": "Cells with fewer than 30 rows are flagged low_support and excluded from within-stratum contrasts (difference left empty)."
+    },
+    {
+      "id": "D10",
+      "topic": "signal_overlap",
+      "text": "Final-state Pass 1 / Pass 2 overlap is available and zero by construction (a routing invariant, not evidence of independent signals). Pre-routing signal overlap is unavailable: GLASS candidate-rule matches and per-fold rule sets, and RF Pass 2 outer scores, were never persisted. The full-train GLASS rule set is not applied to training rows (in-sample)."
+    },
+    {
+      "id": "D11",
+      "topic": "shared_fold_rf",
+      "text": "Shared component, code-level only: crossfit_stage2 defaults to glass_rf_model='fold_rf', passing each outer fold's RF to the GLASS fit (segment prioritisation by its feature_importances_); that fold forest's oof_proba is the RF Router's Pass 1 score. The artifacts' own record of glass_rf_model is not read."
+    },
+    {
+      "id": "D12",
+      "topic": "pass2_populations",
+      "text": "Pass 2 fit-time populations differ historically: GLASS 'full', RF 'oof_remainder' (F17, Commit 3). Pass 2 differences are not attributable to the selector alone."
+    },
+    {
+      "id": "D13",
+      "topic": "match_glass_oof",
+      "text": "RF constraint_source='match_glass_oof' with recorded constraints {'min_precision_not_subscribe': 0.9553485943075986, 'max_subscriber_leakage_rate': 0.13820043103448276, 'max_subscriber_leakage_absolute': 513, 'min_pass1_coverage': None, 'min_precision_subscribe': 0.2759801606046292, 'min_recall_subscribe': None, 'recall_denominator': 'global', 'min_band_support_pass1': 125, 'min_band_support_pass2': 75, 'require_band_ordering': True}: derived from GLASS's realised OOF metrics (MANIFEST.json rf_constraint_provenance), so the arms are dependent and not exactly rate-matched. Commit 4 defines the successor; PR 38 applies it."
+    },
+    {
+      "id": "D14",
+      "topic": "glass_unoptimised",
+      "text": "The GLASS configuration is historical and not optimised; this is a baseline, not its performance potential."
+    },
+    {
+      "id": "D15",
+      "topic": "test_exposure",
+      "text": "Historical test-set exposure: the held-out test split was evaluated in PRs 33-36, and the October 23 artifacts store test metrics and test-oracle thresholds. PR 37 diagnostics read only allowlisted training-side fields and prevent further test-derived influence; they do not make the test split untouched. No test label, test prediction or test-derived threshold is read or exported here."
+    },
+    {
+      "id": "D16",
+      "topic": "scope",
+      "text": "No claim of Stage 3 / Stage 4 or integrated-cascade benefit, no independent external validation, no ranking of the routers, no significance test. Fold values are descriptive, not independent replicates; no standard errors are given."
+    },
+    {
+      "id": "D17",
+      "topic": "joint_grid_threshold_groups",
+      "text": "Known limitation (identified after Step 2D; definitions unchanged): the 3 x 3 joint grid splits each score at within-fold tertiles, so its top cell contains rows on both sides of both reference thresholds. For populations defined by those thresholds (reference-flag groups and 'unique vs' groups), expected_stratified_lr_x_ebm compares them with rows across the threshold and is not interpretable; use the calibrated expectations. Decile expectations share the bias to a smaller degree."
+    },
+    {
+      "id": "D18",
+      "topic": "pooled_lr_strata",
+      "text": "Known limitation (identified after Step 2D; definitions unchanged): pooled ('all') stratum rows sum bin k of every fold, and where LR isotonic ties merge decile edges the bin indices shift, so pooled LR bin k covers different score ranges in different folds (LR occupied bins by fold: fold 0: 9, fold 1: 8, fold 2: 8, fold 3: 10, fold 4: 9; merged in folds [0, 1, 2, 4]). Pooled LR strata and LR-conditioned pooled contrasts are approximate; per-fold cells and all expectations are unaffected; the EBM strata are aligned."
+    },
+    {
+      "id": "D19",
+      "topic": "code_identity",
+      "text": "The artifacts do not record the code that produced them. MANIFEST.json 'code' identifies the diagnostic and export code at generation (LF-normalised SHA-256), not the router implementations; router identity is the artifacts' own record (MANIFEST.json 'routers')."
+    }
+  ],
+  "diagnostic_notes": {
+    "2A.compare_state_distributions": [
+      "Historical test-set exposure: the held-out test split was evaluated in PRs 33-36, and the October 23 artifacts store test metrics and test-oracle thresholds. PR 37 diagnostics read only allowlisted training-side fields and prevent further test-derived influence; they do not make the test split untouched.",
+      "Observational comparison of the historical outer OOF routes on the same 32,950 training rows and 5 outer folds. Coverage and abstention describe how much each router decides, not how well: abstained rows continue to Stages 3-4, and a router state is not the cascade's final outcome. No ranking is implied and no significance test is made; per-fold values come from models fitted on overlapping training sets and are not independent replicates.",
+      "Pass 2 fit-time populations differ: GLASS 'full' (normalised 'full'); RF 'OOF Pass 1 remainder (RF router design)' (normalised 'oof_remainder'). At decision time both routers let Pass 2 claim only rows Pass 1 left; the difference is the rows Pass 2 was fitted and selected on (Commit 3, F17), so Pass 2 differences are not attributable to the rule selector or forest alone.",
+      "RF Router thresholds were tuned against constraints derived from the GLASS Router's historical pooled OOF metrics (constraint_source='match_glass_oof'). The arms are not independent, and because those pooled metrics include each outer fold's own rows, the RF Router's outer-fold thresholds depend weakly on that fold's labels. Independent shared criteria are Commit 4's.",
+      "Not recorded in the historical artifacts, so no score-level or rule-level comparison is made: GLASS Router: feature_hash (no feature-matrix hash is stored); GLASS Router: fold_rule_sets (per-fold GLASS rule sets and candidate rules are not persisted); GLASS Router: fold_summaries (GLASS cross-fit fold summaries are not persisted); RF Router: feature_hash (no feature-matrix hash is stored); RF Router: pass2_outer_scores (RF Pass 2 outer out-of-fold scores are not persisted); RF Router: pass1_outer_scores (RF Pass 1 outer scores are not stored in the router artifact; see check_rf_pass1_score_equivalence).",
+      "These observed distributions describe the historical routers. They must not be used to choose the Commit 4 operating-contract criteria, which are to be declared independently of both arms' observed performance."
+    ],
+    "2B.pass1_suppression_report": [
+      "Historical test-set exposure: the held-out test split was evaluated in PRs 33-36, and the October 23 artifacts store test metrics and test-oracle thresholds. PR 37 diagnostics read only allowlisted training-side fields and prevent further test-derived influence; they do not make the test split untouched.",
+      "Reference lr.in_stage_f2_cv: Stage 1 LR operating point (threshold_source in_stage_f2_cv, 0.10 in the Oct 23 artifact). In-selection: the threshold was chosen on the labels of the same training rows it is applied to; rates computed with it are optimistic.",
+      "Reference ebm.nested_f2: Stage 3 EBM fold-nested operating point: each fold's raw-space threshold was selected on inner OOF scores of that fold's training rows.",
+      "An intercepted reference false positive (Pass 1 & flag & negative) is a potential benefit; a suppressed reference true positive (Pass 1 & flag & positive) is an error. Both are reported with their own denominators and are never netted.",
+      "These are overlaps on the same training rows, not the integrated cascade's performance: Stage 4 combines router and upstream evidence, so a reference flag inside Pass 1 is not necessarily removed from the final output. 'Retained' counts and retained_upstream_precision describe a hypothetical Pass 1 veto of the reference flags.",
+      "Common reference: both routers are measured against the same flags, the GLASS arm's Stage 1 LR and Stage 3 EBM at their registered primary operating points. The RF Router's own black-box cascade uses other upstream models; this is not that cascade.",
+      "Fold plans: lr (lr.in_stage_f2_cv): 10 folds, not the routers' 5; router-fold values group this reference's out-of-fold flags by the routers' partition; ebm (ebm.nested_f2): same as the routers' outer folds. Fold-level rows use the routers' outer folds; per-fold values are descriptive, not independent replicates, and no significance test is made.",
+      "RF Router constraint_source='match_glass_oof' (recorded constraints: {'min_precision_not_subscribe': 0.9553485943075986, 'max_subscriber_leakage_rate': 0.13820043103448276, 'max_subscriber_leakage_absolute': 513, 'min_pass1_coverage': None, 'min_precision_subscribe': 0.2759801606046292, 'min_recall_subscribe': None, 'recall_denominator': 'global', 'min_band_support_pass1': 125, 'min_band_support_pass2': 75, 'require_band_ordering': True}). Its Pass 1 operating constraints were derived from the GLASS Router's pooled OOF metrics, so Pass 1 leakage, NPV and suppression are not independent between the arms; independent shared criteria are Commit 4's.",
+      "Scope: Pass 2 and abstained rows are not analysed here (Steps 2C / 2D), and no matched flag-rate comparison is made (Step 2C). The intersection reference is diagnostic context for the union, not a redundancy analysis (Step 2D)."
+    ],
+    "2C.pass2_frozen_contribution": [
+      "Historical test-set exposure: the held-out test split was evaluated in PRs 33-36, and the October 23 artifacts store test metrics and test-oracle thresholds. PR 37 diagnostics read only allowlisted training-side fields and prevent further test-derived influence; they do not make the test split untouched.",
+      "Reference lr.in_stage_f2_cv: Stage 1 LR operating point (threshold_source in_stage_f2_cv, 0.10 in the Oct 23 artifact). In-selection: the threshold was chosen on the labels of the same training rows it is applied to; rates computed with it are optimistic.",
+      "Reference ebm.nested_f2: Stage 3 EBM fold-nested operating point: each fold's raw-space threshold was selected on inner OOF scores of that fold's training rows.",
+      "Unique = relative to the stated reference flags only, never across the two router architectures (Step 2D).",
+      "Hypothetical OR: union_* counts describe 'Pass 2 or reference flag'. Its incremental TP / FP over the reference equal unique_tp / unique_fp. It is not Stage 4's behaviour and not a measured improvement of the integrated cascade.",
+      "Frozen operating points keep each side's own flag rate (Pass 2: GLASS Router 8,468, RF Router 9,427; reference flags: lr 7,727, ebm 6,113, union 8,001, intersection 5,839); rate differences drive unique counts - see the separate matched flag-rate analysis.",
+      "Common reference: the GLASS arm's Stage 1 LR and Stage 3 EBM for both routers; the RF Router's own black-box cascade uses other upstream models.",
+      "Pass 2 fit-time populations differ (GLASS 'full', RF 'oof_remainder'; Commit 3, F17), so Pass 2 differences are not attributable to the symbolic selector or the forest alone.",
+      "RF Router constraint_source='match_glass_oof': its Pass 2 precision floor (min_precision_subscribe=0.2759801606046292) and other constraints were derived from the GLASS Router's pooled OOF metrics, so Pass 2 precision and yield are not independent between the arms (Commit 4).",
+      "Descriptive retrospective diagnostics on training OOF rows: no significance test, no ranking of the routers."
+    ],
+    "2C.pass2_matched_contribution": [
+      "Historical test-set exposure: the held-out test split was evaluated in PRs 33-36, and the October 23 artifacts store test metrics and test-oracle thresholds. PR 37 diagnostics read only allowlisted training-side fields and prevent further test-derived influence; they do not make the test split untouched.",
+      "Matched flag rate on the common eligible population (16,189 rows neither router routed to Pass 1; a shared decision-time population, not either router's fit-time Pass 2 population). It excludes 74 GLASS Pass 2 rows that RF routed to Pass 1 and 813 RF Pass 2 rows that GLASS routed to Pass 1; frozen results on all rows are reported separately.",
+      "Selection: within each router outer fold, the reference's K highest-scoring common-eligible rows, K = that arm's Pass 2 rows in the fold's common population. No label is read. Ties at the K-th score: ascending SHA-256 of the row's index label (label-free, fixed per row; not row order); the strict / inclusive cuts (operating_points.matched_rate_cut) bound the tie effect and neither is preferred.",
+      "K is the router's observed count: a descriptive operating-rate control, not an independent pre-registration and not evidence of superiority. The matched LR / EBM flags are re-cut at each router's rate; they are not the frozen operating points or a configuration either model was tuned for.",
+      "Arm-specific: GLASS and RF have different K, so each arm is compared with its own matched references; this is not an equal-flag-count comparison between the routers. lr_or_ebm_matched is the union of two K-matched sets and its size is not matched.",
+      "Scores: LR calibrated_probability (out-of-fold over 10 folds; calibration isotonic, nested per fold); rows of one router fold come from several LR fold models and are compared in the calibrated space. EBM raw_model_score, ranked only within its own fold (EBM shares the routers' outer folds; its fold-specific nested thresholds show raw scores are not comparable across folds). GLASS / RF Pass 2 are never ranked or truncated.",
+      "Pass 2 fit-time populations differ (GLASS 'full', RF 'oof_remainder'; Commit 3, F17), so Pass 2 differences are not attributable to the symbolic selector or the forest alone.",
+      "RF Router constraint_source='match_glass_oof': its Pass 2 precision floor (min_precision_subscribe=0.2759801606046292) and other constraints were derived from the GLASS Router's pooled OOF metrics, so Pass 2 precision and yield are not independent between the arms (Commit 4)."
+    ],
+    "2D.overlap_notes": [
+      "Q1 (functional behaviour) is answered descriptively from final routing states. Q2 (incremental information) is only described here: score-conditional rates and expectations are not a controlled test, and nothing here measures Stage 4 or the integrated cascade.",
+      "Final Pass 1 and Pass 2 never overlap by construction (Pass 1 precedence). Zero final overlap is a routing invariant, not evidence of independent signals; candidate / signal overlap is unavailable because no per-row candidate matches, fold rule sets or RF Pass 2 outer scores were persisted.",
+      "Score strata were fixed before any result was inspected: within each router outer fold, 10 label-free quantile bins of the LR calibrated probability and of the EBM raw score, and a 3 x 3 LR x EBM grid; merged duplicate edges keep tied scores together; cells under 30 rows are low-support; the threshold band is +/- 0.05 in within-fold percentile.",
+      "Expected positives are descriptive. expected_lr_calibrated / expected_ebm_calibrated assume the calibrated OOF probabilities are right; expected_stratified_* use the same labels inside each (fold, stratum) cell (internal standardisation). Neither is a null distribution, and no standard error is given because rows, folds and model decisions are not independent.",
+      "Conditioning on one score at a time does not establish information beyond both; the joint grid is coarse, so within-cell variation remains possible.",
+      "Unique = relative to the stated reference or to the other router, as labelled. Agreement is not inherently better and disagreement is not inherently complementary.",
+      "Common reference: the GLASS arm's Stage 1 LR (threshold selected on all training labels; rates optimistic) and Stage 3 EBM (fold-nested raw thresholds) for both routers.",
+      "Pass 2 fit-time populations differ (GLASS 'full', RF 'oof_remainder'; Commit 3, F17).",
+      "RF constraint_source='match_glass_oof'; recorded constraints {'min_precision_not_subscribe': 0.9553485943075986, 'max_subscriber_leakage_rate': 0.13820043103448276, 'max_subscriber_leakage_absolute': 513, 'min_pass1_coverage': None, 'min_precision_subscribe': 0.2759801606046292, 'min_recall_subscribe': None, 'recall_denominator': 'global', 'min_band_support_pass1': 125, 'min_band_support_pass2': 75, 'require_band_ordering': True}. Derived from GLASS's realised OOF metrics, these targets make the arms dependent; they do not make the arms exactly rate-matched.",
+      "Shared component (code-level): crossfit_stage2 defaults to glass_rf_model='fold_rf' and passes each outer fold's RF to the GLASS fit, whose RuleGenerator uses that forest's feature_importances_ to prioritise segments; that same fold forest's oof_proba is the RF Router's Pass 1 score (Commit 1 equivalence). glass_rf_model is not read by the diagnostics boundary, so the artifacts' own record of it is not checked here.",
+      "The GLASS configuration is historical and not optimised; these results are a baseline, not its performance potential.",
+      "Strata with merged or empty bins (fewer than requested): lr: folds [0, 1, 2, 4]; lr_x_ebm: folds [1]. LR score: stage_output.train_proba_oof: out-of-fold over 10 folds; calibration isotonic, nested per fold. EBM: oof.proba: out-of-fold EBM score; not calibrated; calibrated oof.proba_calibrated: per-fold calibration from inner OOF of each fold's training rows."
+    ]
+  },
+  "historical_test_exposure": "Historical test-set exposure: the held-out test split was evaluated in PRs 33-36, and the October 23 artifacts store test metrics and test-oracle thresholds. PR 37 diagnostics read only allowlisted training-side fields and prevent further test-derived influence; they do not make the test split untouched.",
+  "regeneration": {
+    "tool": "research_logs/baselines/stage2_baseline.py (run from prototype/bank_pipeline/)",
+    "verify": "--verify: integrity only; no artifacts; never writes",
+    "check": "--check: rebuild from the recorded artifacts and compare; never writes",
+    "generate": "--generate: first write only; identical rerun is a no-op; divergence is refused"
+  }
+}

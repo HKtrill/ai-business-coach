@@ -5,16 +5,22 @@ Stage 2 operating constraints, represented as data.
 
 These are the *set-level* counterparts of the GLASS Stage 2 quality gates.
 
-GLASS applies its gates PER RULE (``QualityGateFilter`` tests each candidate
-rule in isolation; nothing in the ILP constrains the union of selected rules).
-A threshold on a continuous score has no per-rule analogue — a band is a single
-set — so every constraint here is evaluated on the routed SET.
+GLASS applies its precision and leakage gates PER RULE (``QualityGateFilter``
+tests each candidate rule in isolation). Its ILP's only set-level label
+constraint is the optional Pass 1 union leakage cap
+(``max_union_leakage_rate_pass1``); union NPV and union precision are not
+enforced at fit time (PR 37 Commit 4: Step 4B adds them, opt-in). A threshold on
+a continuous score has no per-rule analogue — a band is a single set — so every
+constraint here is evaluated on the routed SET.
 
-Consequence for the comparison: GLASS's realised set-level leakage can exceed
-``max_subscriber_leakage_rate`` by a multiple of the number of selected Pass 1
-rules, while the RF router is held to the number exactly. When reporting, treat
-the GLASS per-rule caps as *configuration* and compare only the measured
-set-level numbers produced by ``evaluation.router_metrics``.
+Consequence for the comparison: without the union cap, GLASS's realised
+set-level leakage can exceed ``max_subscriber_leakage_rate`` by a multiple of
+the number of selected Pass 1 rules, and union NPV or precision can fall below a
+per-rule floor, while the RF router is held to the numbers exactly. When
+reporting, treat the GLASS per-rule caps as *configuration* and compare only the
+measured set-level numbers produced by ``evaluation.router_metrics``. The shared
+obligations are defined in ``shared.stage2.contract`` and checked arm-neutrally
+by ``shared.stage2.obligations``.
 
 Nothing in this module touches data. It is pure configuration.
 """

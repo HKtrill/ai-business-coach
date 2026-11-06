@@ -18,6 +18,13 @@ split:
 The threshold sweeps are saved as CSV alongside the pickle: they are the audit
 trail showing which constraint bound at every candidate band, and they are what
 you reach for when a reviewer asks why t1 sits where it does.
+
+Versions (PR 37): every save writes an immutable, read-only version
+``<stem>_<YYYYMMDD_HHMMSS_ffffff>.joblib`` (UTC) with its own metadata and
+sweeps, and returns its path. ``<stem>.joblib`` and its sidecars are a mutable
+latest alias, a copy of the newest version kept for readers of the fixed name
+(see ``shared.artifact_versions``). A fixed-name router saved before PR 37 is
+kept as ``<stem>_preserved_<sha256[:12]>.joblib`` before the alias is replaced.
 """
 
 from __future__ import annotations
@@ -33,6 +40,8 @@ import joblib
 import numpy as np
 import pandas as pd
 import sklearn
+
+from shared.artifact_versions import alias_target, save_versioned
 
 __all__ = [
     "save_rf_router",
@@ -75,6 +84,12 @@ def save_rf_router(
         record only — nothing in the artifact is derived from it, and reloading
         an artifact never re-reads these numbers into the model. Test metrics
         must never feed back into threshold or configuration choices.
+
+    Returns
+    -------
+    pathlib.Path
+        The immutable version ``<stem>_<id>.joblib``. ``<stem>.joblib`` is
+        updated as the mutable latest alias (module docstring).
     """
     if not getattr(router, "is_fitted", False):
         raise ValueError("Router is not fitted; nothing to save")
@@ -116,27 +131,34 @@ def save_rf_router(
     else:
         payload["model"] = router.model_
 
-    model_path = out / f"{stem}.joblib"
-    joblib.dump(payload, model_path, compress=3)
-
     # Human-readable sidecar (models stripped).
     meta = {k: v for k, v in payload.items() if not _is_model_key(k)}
-    (out / f"{stem}_metadata.json").write_text(
-        json.dumps(_jsonable(meta), indent=2, default=str)
-    )
 
     # Threshold sweeps — the audit trail for the operating point.
+    tables = {}
     for pass_name, res in (
         ("pass1", router.thresholds_.pass1),
         ("pass2", router.thresholds_.pass2),
     ):
         if getattr(res, "sweep", None) is not None:
-            res.sweep.to_csv(out / f"{stem}_{pass_name}_sweep.csv", index=False)
+            tables[f"_{pass_name}_sweep.csv"] = (
+                lambda p, sweep=res.sweep: sweep.to_csv(p, index=False))
 
-    print(f"✅ saved {mode} router → {model_path}")
-    print(f"   metadata     : {out / f'{stem}_metadata.json'}")
-    print(f"   threshold sweeps written alongside")
-    return model_path
+    saved = save_versioned(
+        out, stem,
+        write_model=lambda p: joblib.dump(payload, p, compress=3),
+        metadata=meta,
+        dump_metadata=lambda m: json.dumps(_jsonable(m), indent=2, default=str),
+        tables=tables,
+        companions=("_pass1_sweep.csv", "_pass2_sweep.csv"),
+    )
+
+    print(f"✅ saved {mode} router → {saved.path} (immutable version)")
+    print(f"   latest alias : {saved.alias} (mutable copy of the newest version)")
+    print("   metadata and threshold sweeps written alongside both")
+    for kept in saved.preserved:
+        print(f"   kept earlier unversioned file as {kept.name}")
+    return saved.path
 
 
 # ======================================================================
@@ -198,6 +220,10 @@ def find_artifact_for_split(
     reported when ``verbose``), never used. An artifact fitted under another
     split may have trained on rows that are now test rows.
 
+    When the match is a mutable latest alias (``shared.artifact_versions``), the
+    immutable version it copies is returned instead, so the path a caller
+    records always names one fixed model.
+
     Returns
     -------
     (obj, path)
@@ -215,7 +241,7 @@ def find_artifact_for_split(
 
         fp = obj.get("split_fingerprint") if isinstance(obj, dict) else None
         if fp == expected_fp:
-            return obj, f
+            return obj, alias_target(f) or f
         if verbose:
             print(f"  (skip {f.name}: split_fingerprint {fp} != {expected_fp})")
 

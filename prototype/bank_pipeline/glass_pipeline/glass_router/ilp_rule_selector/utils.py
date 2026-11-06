@@ -1,3 +1,6 @@
+from fractions import Fraction
+from typing import NamedTuple, Optional
+
 import numpy as np
 from scipy.sparse import csr_matrix
 
@@ -156,3 +159,48 @@ def meets_novelty_floor(unique: int, size: int, min_ratio: float, min_new: int) 
     """Set-level novelty floor: a rule must keep >= min_ratio of its rows (and
     >= min_new rows) that no other selected rule covers."""
     return unique >= novelty_floor_rows(size, min_ratio, min_new)
+
+
+# ============================================================
+# SET-LEVEL (UNION) OBLIGATIONS (PR 37 Commit 4, Step 4B)
+# ============================================================
+
+def exact_fraction(value) -> Fraction:
+    """The decimal a limit is written as, exactly: 0.95 -> 19/20, 0.30 -> 3/10.
+
+    Same reading as ``shared.stage2.obligations.exact_limit`` (a test pins the
+    equivalence), so the ILP and the arm-neutral checker compare the same numbers.
+    """
+    return Fraction(repr(float(value)))
+
+
+class UnionObligations(NamedTuple):
+    """
+    Set-level obligations on one pass's selected union, on its selection rows.
+
+    good       rows that count toward the ratio's numerator: negatives for the
+               Pass 1 NPV floor, positives for the Pass 2 precision floor
+    floor      exact ratio floor (good rows / union rows), or None
+    support    minimum union rows (>= 1: an empty union is never feasible)
+    ratio_name "NPV" or "precision", for messages and reports
+    """
+
+    good: np.ndarray
+    floor: Optional[Fraction]
+    support: int
+    ratio_name: str
+
+
+def union_obligation_violations(covered: np.ndarray, spec: UnionObligations) -> list:
+    """Exact integer check of ``spec`` on a covered-row mask (the selected union)."""
+    rows = int(covered.sum())
+    good = int(spec.good[covered].sum())
+    problems = []
+    if rows < spec.support:
+        problems.append(f"union rows {rows} below the support floor {spec.support}")
+    if spec.floor is not None:
+        if rows == 0:
+            problems.append(f"empty union: its {spec.ratio_name} is undefined")
+        elif good * spec.floor.denominator < spec.floor.numerator * rows:
+            problems.append(f"union {spec.ratio_name} {good}/{rows} below the floor {spec.floor}")
+    return problems

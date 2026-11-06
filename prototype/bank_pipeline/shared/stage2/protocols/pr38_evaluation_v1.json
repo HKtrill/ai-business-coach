@@ -1,0 +1,547 @@
+{
+  "protocol_id": "pr38-stage2-evaluation",
+  "schema_version": "stage2-evaluation-protocol/1",
+  "protocol_version": "1.0.0",
+  "status": "frozen",
+  "purpose": "How the PR 38 corrected Stage 2 routers are judged: validity gates, primary and secondary outcomes, comparison families, uncertainty, shortfalls, fold accounting, ablation adoption, artifact acceptance and evidence tiers. Frozen in PR 37 Commit 4, Step 4D, before any corrected result existed; it governs PR 38. Any change needs a new version, a recorded rationale and approval before the results it would affect are inspected.",
+  "contract": {
+    "contract_id": "pr37-stage2-primary",
+    "contract_version": "1.0.0",
+    "contract_fingerprint": "0817825b9eecbd11",
+    "binding": "Every PR 38 primary fit and evaluation uses exactly this frozen contract (D-C9); a frozen protocol accepts only a frozen contract."
+  },
+  "population": {
+    "evaluation_rows": "the training rows of the global split, each scored out of fold by the outer cross-fit",
+    "positive_class": "SUBSCRIBE (y = 1)",
+    "rows": 32950,
+    "positives": 3712,
+    "outer_folds": 5,
+    "fold_seed": 42,
+    "fold_rows": [
+      6590,
+      6590,
+      6590,
+      6590,
+      6590
+    ],
+    "fold_positives": [
+      742,
+      742,
+      742,
+      743,
+      743
+    ],
+    "router_split_fingerprint": "fc3e73a5ef91aea4",
+    "train_label_fingerprint": "b984d2a50527",
+    "fold_fingerprint": "8aea082fcaf371b7",
+    "stage_io_split_fingerprint": "d6cddadc3439",
+    "stage_io_split_fingerprint_status": "attested",
+    "baseline_id": "pr37_stage2_pre_correction_v1",
+    "baseline_manifest_sha256": "905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b",
+    "alignment": "by row identity (index label), never by position; arms, labels and fold ids must be identical before any paired metric"
+  },
+  "f17_primary": {
+    "glass": {
+      "pass2_population": "oof_remainder",
+      "pass1_oof_folds": 5,
+      "random_state": 42,
+      "remainder_min_size": 500,
+      "inner_feature_ranker": "fold_nested_rf"
+    },
+    "rf": {
+      "mode": "two_pass",
+      "eligibility": "nested_t1",
+      "eligibility_folds": 5,
+      "n_oof_folds": 5,
+      "random_state": 42,
+      "remainder_min_size": 500
+    },
+    "secondary_sensitivity": "S1: GLASS pass2_population='full', single factor (F17 decision record, section 6); descriptive, never the primary"
+  },
+  "hierarchy": {
+    "validity_gates": [
+      {
+        "id": "V1",
+        "name": "population identity",
+        "sources": [
+          "T1-T7",
+          "population"
+        ]
+      },
+      {
+        "id": "V2",
+        "name": "configuration and contract",
+        "sources": [
+          "G1",
+          "G9"
+        ]
+      },
+      {
+        "id": "V3",
+        "name": "fit-time compliance and accepted fit outcomes",
+        "sources": [
+          "M3",
+          "G8"
+        ]
+      },
+      {
+        "id": "V4",
+        "name": "isolation and label leakage",
+        "sources": [
+          "G4",
+          "G13",
+          "no_test_labels"
+        ]
+      },
+      {
+        "id": "V5",
+        "name": "persistence and provenance",
+        "sources": [
+          "G5",
+          "R1",
+          "R2",
+          "R5"
+        ]
+      },
+      {
+        "id": "V6",
+        "name": "reproducibility",
+        "sources": [
+          "G7"
+        ]
+      },
+      {
+        "id": "V7",
+        "name": "artifacts, Stage 4 interface and baseline preservation",
+        "sources": [
+          "G2",
+          "G10",
+          "G11",
+          "R4"
+        ]
+      },
+      {
+        "id": "V8",
+        "name": "F31 confidence semantics",
+        "sources": [
+          "F31_A",
+          "R7",
+          "R8"
+        ]
+      }
+    ],
+    "primary_outcomes": [
+      {
+        "id": "O1",
+        "metric": "pass1_rate",
+        "level": "lexicographic objective, first",
+        "denominator": "all evaluated rows"
+      },
+      {
+        "id": "O2",
+        "metric": "pass2_rate",
+        "level": "lexicographic objective, second; read only with O1",
+        "denominator": "all evaluated rows"
+      },
+      {
+        "id": "O3a",
+        "metric": "pass1_npv",
+        "level": "observed contract outcome",
+        "denominator": "Pass 1 rows"
+      },
+      {
+        "id": "O3b",
+        "metric": "pass1_leakage_share",
+        "level": "observed contract outcome",
+        "denominator": "all positives"
+      },
+      {
+        "id": "O3c",
+        "metric": "pass2_precision",
+        "level": "observed contract outcome",
+        "denominator": "Pass 2 rows"
+      },
+      {
+        "id": "O4a",
+        "metric": "unique_tp",
+        "level": "Pass 2 contribution vs the frozen LR or EBM union",
+        "denominator": "count"
+      },
+      {
+        "id": "O4b",
+        "metric": "unique_fp",
+        "level": "its false-positive cost",
+        "denominator": "count"
+      },
+      {
+        "id": "O4c",
+        "metric": "pass1_fp_suppression",
+        "level": "Pass 1 contribution vs the frozen LR or EBM union",
+        "denominator": "union false positives"
+      },
+      {
+        "id": "O4d",
+        "metric": "pass1_tp_cost",
+        "level": "its positive cost",
+        "denominator": "union true positives"
+      }
+    ],
+    "descriptive_totals": [
+      "coverage",
+      "abstain_rate"
+    ],
+    "secondary_diagnostics": [
+      "pass1_negative_recall",
+      "pass1_positive_rate",
+      "pass2_recall",
+      "pass2_recall_eligible",
+      "pass2_remainder_rate",
+      "pass2_negative_routing_rate",
+      "abstain_positive_rate",
+      "abstain_negative_share",
+      "state_positive_rate",
+      "state_negative_rate",
+      "incremental_positive_recall",
+      "incremental_yield",
+      "marginal_precision",
+      "union_precision",
+      "pass2_upstream_redundancy",
+      "pass2_unique_positive_share",
+      "pass1_upstream_flag_rate",
+      "cross_state_agreement",
+      "cross_routed_agreement",
+      "cross_opposite_rate",
+      "cross_one_abstains_rate",
+      "cross_both_abstain_rate",
+      "jaccard_with_router"
+    ],
+    "statement_rule": {
+      "status": "approved",
+      "rule": "Per primary outcome, in the order O1, O2, O3, O4: report GLASS, RF and the paired difference GLASS - RF, pooled and per fold. Call a difference higher or lower only when its 95% stratified paired bootstrap interval excludes 0; otherwise report it as not resolved at this sample. No weighted or aggregate score and no overall winner. O2 is read with O1, and O3 qualifies O1 and O2."
+    }
+  },
+  "upstream": {
+    "operating_points": [
+      "lr.in_stage_f2_cv",
+      "ebm.nested_f2"
+    ],
+    "combinations": [
+      "or",
+      "and"
+    ],
+    "frozen": "the Stage 1 LR and Stage 3 EBM artifacts recorded by the baseline manifest; never retuned against corrected Stage 2 results",
+    "expected_flags": {
+      "lr.in_stage_f2_cv": 7727,
+      "ebm.nested_f2": 6113,
+      "or": 8001,
+      "and": 5839
+    },
+    "lr_threshold": 0.1,
+    "lr_threshold_field": "stage_output.threshold",
+    "ebm_fold_thresholds": [
+      0.56,
+      0.56,
+      0.54,
+      0.49,
+      0.49
+    ],
+    "ebm_decision_field": "oof.decision / oof.threshold_per_row",
+    "artifacts": {
+      "lr": {
+        "role": "stage1.lr",
+        "path": "models/lr/lr_calibrated_20261023_003319.joblib",
+        "sha256": "61a6b144b625e7a5028a151860d55ff86c08c3a0c9ef68ab1be73c0fbc995759"
+      },
+      "ebm": {
+        "role": "stage3.ebm",
+        "path": "models/ebm/ebm_stage3_20261023_070053_780762.joblib",
+        "sha256": "cfdac6d206d737909f3b3ba2efc3eec48de7ae2b98f42f7c478b3e01da77f55b"
+      }
+    },
+    "flag_fingerprint_method": "pr38.stage2.row_flag_fingerprint/1",
+    "flag_fingerprints": {
+      "lr.in_stage_f2_cv": "64d511516d69e73e",
+      "ebm.nested_f2": "907a7d2d1cad6908"
+    },
+    "flag_fingerprints_status": "pinned at Step 4D (D-C10) from the read-only audit of the pinned artifacts; the full five-layer upstream identity is re-verified on the real artifacts by the real-data freeze test",
+    "secondary_operating_points": "reported as secondary only (operating_points.SECONDARY_OPERATING_POINTS)"
+  },
+  "matched_budget": {
+    "label": "descriptive matched-budget comparison, not a deployable threshold",
+    "flag_event": "PASS_2_SUBSCRIBE",
+    "population": "common_eligible",
+    "k": "the arm's Pass 2 rows in each outer fold's common eligible population",
+    "ranking": "highest",
+    "scores": {
+      "lr": "calibrated_probability",
+      "ebm": "raw_model_score"
+    },
+    "rank_scope": "within each outer fold",
+    "tie_break": "ascending SHA-256 of the row's index label (label-free, fixed per row; not row order)",
+    "tie_bounds": "strict and inclusive cuts are reported; neither is preferred",
+    "exactness": "exactly K rows after the tie-break; the strict and inclusive bounds show the tie effect",
+    "router_scores": "GLASS and RF Pass 2 are never ranked or truncated: no continuous Pass 2 outer score is persisted",
+    "pass1": "secondary: each arm's Pass 1 set against the K lowest-scoring LR rows of all rows (metrics.matched_rate_comparison, strict and inclusive cuts)",
+    "labels": "used only to count outcomes after selection; never to choose K, a cut, a tie or a comparator"
+  },
+  "uncertainty": {
+    "method": "stratified_paired_bootstrap",
+    "procedure_id": "pr38.stage2.stratified_paired_bootstrap/1",
+    "strata": [
+      "outer_fold",
+      "label"
+    ],
+    "resample": "rows with replacement within each stratum; stratum sizes preserved",
+    "replicates": 2000,
+    "seed": 42,
+    "rng": "numpy default_rng (PCG64)",
+    "interval": "percentile",
+    "level": 0.95,
+    "quantile_method": "linear",
+    "conditioning": "fitted routers and upstream flags held fixed: the interval reflects evaluation-row sampling only, not refitting variability",
+    "undefined": "replicates with an empty denominator are counted; any such replicate makes the interval undefined, reported with the count",
+    "single_proportions": "Wilson score interval at 95%, descriptive, never an interval on a paired difference",
+    "folds": "five outer folds are not independent replications: per-fold values, minimum, maximum and range only; no fold-level standard error or test",
+    "compliance": "no interval establishes hard contract compliance"
+  },
+  "shortfall": {
+    "observed_status": "satisfied, violated or undefined: shared.stage2.obligations.observe_routing, exact",
+    "materiality": {
+      "status": "approved_descriptive_heuristic",
+      "rule": "binomial_se_at_limit",
+      "multiplier": 2,
+      "definition": "a violation is material when its shortfall exceeds 2 * sqrt(L * (1 - L) / n), L the limit and n the metric's denominator"
+    },
+    "low_support_threshold": 30,
+    "low_support": "an observed metric whose denominator is below the threshold is reported and labelled low support; never compliant by default",
+    "never": "a violation is never reported as compliant, whether or not it is material or inside an interval; bands and thresholds are never re-estimated after a shortfall; the contract is never revised after outer-OOF outcomes are seen"
+  },
+  "fit_status": {
+    "accepted": [
+      "valid_optimal",
+      "valid_unproven_documented",
+      "fallback_accepted_after_review"
+    ],
+    "not_accepted": [
+      "valid_unproven_undocumented",
+      "fallback_unreviewed",
+      "proven_infeasible",
+      "no_feasible_solution",
+      "insufficient_population_or_support",
+      "fit_time_invalid"
+    ],
+    "glass_selection_reports": "required"
+  },
+  "folds": {
+    "attempted": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "primary_comparison": "requires every attempted outer fold accepted in both arms",
+    "partial": "a pooled value over fewer folds is labelled accepted folds only (k of 5) and is never the primary comparison",
+    "failure": "a failed or unaccepted fold is reported with its outcome and stops corrected evaluation for investigation (M4)"
+  },
+  "f31": {
+    "measure": "strip A rows inside the fold router's flagged outer-OOF Pass 2 band / rows in that flagged band",
+    "trigger": "1/20",
+    "scope": "every RF outer fold router under nested_t1",
+    "action": "mandatory F31 review; not an acceptance criterion; a value below the trigger is not evidence that the confidence is valid",
+    "empty_band": "undefined; reported and reviewed (R1 requires a supported band)",
+    "confidence_label": "RF Router confidence is a heuristic blend (F31 Disposition A), not a calibrated probability"
+  },
+  "evidence_tiers": {
+    "tier1": "exploratory historical OOF evidence that informed research decisions or the contract",
+    "tier2": "the corrected nested cross-fitted outer-OOF evaluation, after the contract and protocol freeze",
+    "tier3": "data or cohorts never used for model selection, feature engineering, contract revision, threshold choice or protocol decisions",
+    "previously_exposed": "the Bank Marketing held-out test split, evaluated in PRs 33-36; never Tier 3",
+    "sources": {
+      "pr37_stage2_pre_correction_v1": "tier1",
+      "historical_oof_prs_33_36": "tier1",
+      "bank_marketing_test_split": "previously_exposed",
+      "pr38_corrected_outer_oof": "tier2"
+    },
+    "tier3_available": false
+  },
+  "complementarity": {
+    "role": "secondary ablation; never replaces the primary corrected selector on exploratory results",
+    "status": "approved",
+    "evidence_label": "exploratory (no Tier 3 data)",
+    "comparison": "primary corrected GLASS vs the complementarity-aware GLASS ablation, same contract, populations, upstream operating points, matched budgets and folds",
+    "reference": "or",
+    "reference_provenance": "the frozen LR-or-EBM union (O4a), taken only from upstream sources that pass check_upstream_identity on the paired rows; an official decision needs a frozen protocol and a complete identity, the row-aligned flag fingerprints included",
+    "criteria": {
+      "C1_unique_tp_gain": {
+        "lower_bound_above": 0,
+        "min_relative_gain": "1/20",
+        "flag_budget": "pooled over all attempted folds: ablation Pass 2 rows <= primary Pass 2 rows (exact outer-OOF counts, no tolerance)"
+      },
+      "C2_pass1_leakage": {
+        "pass2_only_ablation": "Pass 1 rules identical in every fold",
+        "otherwise_upper_bound_at_most": "1/200"
+      },
+      "C3_obligations": "fit-time compliance in every fold; no fold with a material outer-OOF violation the primary does not have",
+      "C4_coverage": {
+        "total_coverage_lower_bound_at_least": "-1/100"
+      },
+      "C5_fold_reproducibility": {
+        "folds_with_nonnegative_unique_tp_gain_at_least": 4,
+        "fold_counts_only_without_pass2_budget_inflation": true
+      },
+      "C6_uncertainty": "the reported intervals are a registered bootstrap run (procedure id, settings, protocol fingerprint, paired data and reference digests) that the evaluator reproduces exactly from the paired ablation data; a malformed or incomplete run fails",
+      "C7_solver": {
+        "no_worse_fit_status_in_any_fold": true,
+        "max_runtime_ratio": 3
+      },
+      "C8_class_conditional": {
+        "pass2_negative_routing_rate_upper_bound_at_most": "1/200",
+        "pass1_negative_recall_lower_bound_at_least": "-1/100"
+      },
+      "C9_complexity": "added rules, runtime and code documented; RF-equivalent objective implemented, or the asymmetry documented"
+    },
+    "failure": "if any criterion fails or cannot be evaluated, the non-complementarity-aware selector stays primary",
+    "adoption_effect": "an adopted ablation becomes the primary only under a later, versioned protocol; PR 38's primary results are not replaced",
+    "rf_symmetry": "adoption requires an RF objective with the same complementarity term, or a documented methodological asymmetry"
+  },
+  "acceptance": {
+    "structural": [
+      "V1",
+      "V2",
+      "V3",
+      "V4",
+      "V5",
+      "V6",
+      "V7",
+      "V8"
+    ],
+    "comparative_sections": [
+      "primary_outcomes",
+      "secondary_diagnostics",
+      "fold_variation",
+      "shortfalls",
+      "unique_contribution",
+      "matched_budget",
+      "pre_post",
+      "uncertainty",
+      "fold_ledger",
+      "solver_outcomes",
+      "declared_sensitivities"
+    ],
+    "separation": "structural acceptance never depends on performance; a disappointing result never makes an artifact structurally invalid"
+  },
+  "inputs": {
+    "allowed": "training-side outer-OOF routes, labels and fold ids; frozen upstream OOF scores and flags; fit-time selection reports, solver logs and fold records",
+    "prohibited_tokens": [
+      "test",
+      "holdout",
+      "oracle"
+    ],
+    "token_guard": "defense in depth only: it rejects suspicious input names and does not establish provenance; the runner's provenance checks (protocol section 15) do"
+  },
+  "pending_approvals": [],
+  "arm_profiles": {
+    "glass": {
+      "profile_id": "pr37-glass-router-primary",
+      "profile_version": "1.0.0",
+      "fingerprint": "198731d5cdf263f4"
+    },
+    "rf": {
+      "profile_id": "pr37-rf-router-primary",
+      "profile_version": "1.0.0",
+      "fingerprint": "4e3f9c07e6ecc8ad"
+    }
+  },
+  "freeze": {
+    "approved_by": "Phillip Harris",
+    "approved_on": "2026-11-05",
+    "supersedes": {
+      "protocol_version": "0.1.0-working",
+      "fingerprint": "161c6c589696b859"
+    },
+    "reverification": {
+      "test": "tests/realdata/test_stage2_freeze_artifacts.py",
+      "requirement": "Must pass on the pinned October 23 artifacts before Commit 4 and before any PR 38 run: population identity and the five-layer upstream identity complete (the pinned flag fingerprints included), the verified complementarity reference, and both arm profiles equal to the values the historical artifacts record. A failure voids the freeze."
+    },
+    "decisions": [
+      {
+        "id": "D-C1",
+        "resolution": "approved",
+        "kind": "reporting_rule",
+        "decision": "Per primary outcome, in the order O1-O4: GLASS, RF and the paired difference GLASS - RF, pooled and per fold. A difference is called higher or lower only when its 95% stratified paired bootstrap interval excludes 0; otherwise it is reported as not resolved. No aggregate score and no overall winner.",
+        "rationale": "Nine primary outcomes and intervals without a multiplicity adjustment support statements per outcome only, never a global superiority claim. The lexicographic reading is kept: O2 is read with O1, and O3 qualifies both."
+      },
+      {
+        "id": "D-C2",
+        "resolution": "approved",
+        "kind": "descriptive_heuristic",
+        "decision": "An outer out-of-fold violation is labelled material when its shortfall exceeds 2 * sqrt(L (1 - L) / n). The label escalates review; every observed violation remains a violation.",
+        "rationale": "A normal approximation, poor for small n and near the limits (hence the low-support label). About 0.7 material flags are expected by chance across about 30 checks at the limit. It is not a compliance test."
+      },
+      {
+        "id": "D-C3",
+        "resolution": "approved",
+        "kind": "registered_procedure",
+        "decision": "Uncertainty is the stratified paired bootstrap pr38.stage2.stratified_paired_bootstrap/1: 2,000 replicates, seed 42, outer fold x label strata, percentile 95% intervals with linear quantiles, run through run_registered_bootstrap.",
+        "rationale": "Monte Carlo error is small relative to the interval widths. The intervals are conditional on the fitted routers and frozen upstream flags: they exclude refitting variability and the earlier model-selection, feature-engineering and contract decisions."
+      },
+      {
+        "id": "D-C4",
+        "resolution": "approved",
+        "kind": "reporting_convention",
+        "decision": "An observed metric whose denominator is below 30 is labelled low support.",
+        "rationale": "The baseline's min_support convention: a reporting label, not a statistical threshold, and never a default of compliance."
+      },
+      {
+        "id": "D-C5",
+        "resolution": "approved",
+        "kind": "registered_criterion",
+        "decision": "Complementarity adoption requires every criterion C1-C9 with its margins, the Pass 2 flag budget held pooled in C1 and per fold in C5. A failed or non-evaluable criterion keeps the primary selector.",
+        "rationale": "The margins are pre-registered research and engineering judgements, fixed before any ablation result, not empirically established guarantees. Adoption evidence stays exploratory; an adopted ablation becomes primary only under a later protocol version."
+      },
+      {
+        "id": "D-C6",
+        "resolution": "approved",
+        "kind": "registered_criterion",
+        "decision": "The primary comparison requires every attempted outer fold accepted in both arms; otherwise it is unavailable and that failure is the reported outcome.",
+        "rationale": "Pooling different folds per arm would compare different populations. An infeasible fold is evidence, never a reason for easier constraints (M4)."
+      },
+      {
+        "id": "D-C7",
+        "resolution": "approved",
+        "kind": "registered_criterion",
+        "decision": "A greedy fallback is accepted only with a reviewer and rationale recorded at fit time, before that fold's outer out-of-fold results are examined.",
+        "rationale": "A fallback is not automatically equivalent to an optimised selection (M3); a review written after the outcomes are seen would be outcome-driven."
+      },
+      {
+        "id": "D-C8",
+        "resolution": "not_required",
+        "kind": "optional_diagnostic",
+        "decision": "RF Pass 2 outer scores are not required. An RF-truncated-to-GLASS-K diagnostic is reported only if such scores are persisted, as an asymmetric descriptive diagnostic.",
+        "rationale": "The primary comparison and every gate are defined without it; it must not become an unplanned PR 38 prerequisite."
+      },
+      {
+        "id": "D-C9",
+        "resolution": "approved",
+        "kind": "binding",
+        "decision": "The protocol binds the frozen contract pr37-stage2-primary 1.0.0 (0817825b9eecbd11) and the frozen GLASS and RF profiles; a frozen protocol accepts only frozen bindings.",
+        "rationale": "Freezing the contract changed its identity; protocol, contract and arm configurations are frozen together so PR 38 runs under one consistent specification."
+      },
+      {
+        "id": "D-C10",
+        "resolution": "approved",
+        "kind": "binding",
+        "decision": "The row-aligned flag fingerprints are pinned: lr.in_stage_f2_cv 64d511516d69e73e, ebm.nested_f2 907a7d2d1cad6908, computed by the read-only real-artifact audit from the pinned artifacts (counts 7,727 / 6,113 / 8,001 / 5,839).",
+        "rationale": "They close the gap layers 1-4 leave (a view edited after extraction). A copied value alone is not proof: the real-data freeze test re-runs the complete five-layer identity on the artifacts."
+      },
+      {
+        "id": "D-C11",
+        "resolution": "approved",
+        "kind": "registered_procedure",
+        "decision": "A GLASS fold is accepted only with its selection reports (selection_reports()), corresponding exactly to the required selections: none missing, unexpected or duplicated, and every selection record the classification of its report (outcome, ILP guarantee, selected rule ids). RF fit evidence remains its selection records.",
+        "rationale": "A GLASS fit outcome is derived from its selection report, so without the report it cannot be verified. The RF Router has no equivalent report; the asymmetry is documented, and the Step 4B solver semantics are unchanged."
+      }
+    ]
+  }
+}

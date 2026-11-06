@@ -30,6 +30,23 @@ matched rather than one being handicapped.
 recomputes the whole cascade with per-fold thresholds. Run it once; if the
 operating point and headline metrics agree with the cheap path, report the cheap
 path and cite the check. If they diverge, report the nested numbers.
+
+That check is a diagnostic: it leaves the fitted router unchanged. The opt-in
+``config.eligibility = "nested_t1"`` (PR 37 Commit 3, F17) removes the
+dependence from the fit itself: each inner fold's rows are cut by a ``t1``
+solved without them (``oof.eligibility``), so no router component uses a row's
+own label to decide its own Pass 2 membership. The deployed ``t1`` is
+unchanged. The default stays ``"global_t1"``, the historical rule. The
+isolation is router-level, conditional on features engineered on the whole
+outer-training partition (PR 37 F17 limitation L1, PR 38 gate G13).
+
+The GLASS comparison (PR 37 Commit 3 correction)
+------------------------------------------------
+The note above holds against GLASS ``pass2_population="oof_remainder"``. Under
+GLASS ``"full"``, the historical notebook profile, GLASS selects no Pass 2
+population at all: its Pass 2 rules are selected on every training row and
+applied to what Pass 1 leaves. The two arms' dependences are therefore not of
+the same kind under that profile.
 """
 
 from __future__ import annotations
@@ -41,9 +58,10 @@ import pandas as pd
 
 from shared.stage_io import label_fingerprint
 
-from ..config import RFRouterConfig
+from ..config import ELIGIBILITY_NESTED_T1, RFRouterConfig
 from ..forest import ForestTrainer
 from ..oof import OOFScorer, nested_cascade_oof
+from ..oof.eligibility import NESTED_SOURCE, nested_pass1_eligibility
 from ..threshhold import ThresholdPair, ThresholdSolver
 from .base import _BaseRouter, _FitReport, apply_cuts
 
@@ -112,7 +130,21 @@ class RFRouter(_BaseRouter):
         t1 = t1_res.threshold
 
         # ---- 3. remainder from OOF Pass 1 decisions -----------------------
-        remainder = p1_oof >= t1
+        nested = None
+        if cfg.eligibility == ELIGIBILITY_NESTED_T1:
+            # Opt-in (PR 37 Commit 3, F17): each inner fold's rows are cut by a
+            # t1 solved without them; the deployed t1 above is unchanged.
+            if cfg.verbose:
+                print("  [3/6] fold-nested eligibility (router-level: no row's own label in its cut)")
+            nested = nested_pass1_eligibility(
+                X, y, pass1_proba=p1_oof, fold_id=oof1.fold_id, trainer=p1_trainer,
+                solver=self.solver, n_folds=cfg.eligibility_folds,
+                random_state=cfg.random_state, stratify=cfg.stratify_oof,
+                verbose=cfg.verbose,
+            )
+            remainder = nested.remainder
+        else:
+            remainder = p1_oof >= t1
         n_rem, rem_pos = self._check_remainder(remainder, y_arr, len(X))
 
         # ---- 4. Pass 2 OOF within the remainder ---------------------------
@@ -182,6 +214,11 @@ class RFRouter(_BaseRouter):
                 "source": "OOF pass1 probabilities >= t1",
             },
         )
+        if nested is not None:
+            # Only the opt-in path adds keys; the historical report is unchanged.
+            self.fit_report_.remainder.update(
+                source=NESTED_SOURCE, eligibility=ELIGIBILITY_NESTED_T1, **nested.to_report()
+            )
         self.is_fitted = True
 
         if cfg.validate_nested:
@@ -267,8 +304,9 @@ class RFRouter(_BaseRouter):
 
         p1 = ForestTrainer.positive_proba(self.pass1_model_, Xa)
 
-        # Pass 2 only scores what Pass 1 left — in GLASS the remainder is
-        # likewise a runtime artefact, never a training-time subset.
+        # Pass 2 only scores what Pass 1 left. GLASS applies the same decision-
+        # time rule; whether GLASS also FITS Pass 2 on a remainder depends on
+        # its pass2_population ("full": no; "oof_remainder": yes).
         p2 = np.full(n, np.nan, dtype=float)
         rem_idx = np.flatnonzero(~(p1 < t1))
         if rem_idx.size:
@@ -282,6 +320,16 @@ class RFRouter(_BaseRouter):
 
     # ------------------------------------------------------------------
     def predict_train_oof(self):
+        """
+        Training-row routes from the stored OOF scores, cut at the deployed
+        ``t1`` / ``t2``. A diagnostic; Stage 4 consumes the outer cross-fit.
+
+        Under ``eligibility="nested_t1"`` it does NOT reproduce the Pass 2
+        fitting remainder (PR 37 F31, W3): rows with ``t1_j <= p1_oof < t1``
+        were in the remainder but are routed to Pass 1 here, and rows with
+        ``t1 <= p1_oof < t1_j`` were outside it, so their ``p2`` is NaN and
+        they abstain here.
+        """
         self._require_fitted()
         preds, decisions = apply_cuts(
             self.oof_pass1_proba_, self.oof_pass2_proba_,
@@ -303,6 +351,12 @@ class RFRouter(_BaseRouter):
         remainder untouched (e.g. a Pass 2-only change) behave as before.
         """
         self._require_fitted()
+        if self.config.eligibility == ELIGIBILITY_NESTED_T1:
+            raise ValueError(
+                "resolve_at is not supported under eligibility='nested_t1': the Pass 2 "
+                "remainder was cut by per-fold thresholds solved under the fit-time "
+                "constraints, so new constraints need a refit, not a re-solve."
+            )
         y = np.asarray(self._y_train_).astype(int)
         r1 = ThresholdSolver(constraints).solve_pass1(
             self.oof_pass1_proba_, y, keep_sweep=False

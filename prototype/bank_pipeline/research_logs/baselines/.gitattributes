@@ -1,0 +1,4 @@
+# Frozen baseline packages are byte-exact records verified by SHA-256: Git must
+# never convert their line endings (core.autocrlf would break every hash).
+# Applies to files inside each package directory, not to this folder's tool.
+*/** -text

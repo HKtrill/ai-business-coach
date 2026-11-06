@@ -1,0 +1,71 @@
+{
+  "profile_id": "pr37-rf-router-primary",
+  "schema_version": "stage2-arm-profile/1",
+  "arm": "rf",
+  "profile_version": "1.0.0",
+  "status": "frozen",
+  "settings": {
+    "router_config": {
+      "mode": "two_pass",
+      "rf_params": {
+        "n_estimators": 650,
+        "max_depth": 6,
+        "min_samples_leaf": 12,
+        "max_features": 0.39989815740885837,
+        "minority_weight": 1.3001084911026792,
+        "class_weight": "balanced"
+      },
+      "pass2_rf_params": null,
+      "n_oof_folds": 5,
+      "random_state": 42,
+      "stratify_oof": true,
+      "remainder_min_size": 500,
+      "n_inner_folds": 5,
+      "eligibility": "nested_t1",
+      "eligibility_folds": 5
+    }
+  },
+  "provenance": {
+    "summary": "The RF Router configuration for the PR 38 primary outer-fold routers, owned by the RF arm and versioned here. The forest hyperparameters are the historical values, copied once and exactly; no run reads them from a GLASS-side artifact. The constraints are not part of this profile: they come only from the frozen shared contract. The fold and eligibility settings are the approved F17 primary (gate G1).",
+    "historical_sources": [
+      {
+        "role": "glass_arm.rf_result",
+        "path": "models/rf/rf_result_20261023_025611.joblib",
+        "sha256": "76b198aa5eff376e663237333e36dec8adde26e870e2296d77c594a68719f412",
+        "fields": [
+          "params"
+        ]
+      },
+      {
+        "role": "stage2.rf_router",
+        "path": "models/rf_router/rf_router_two_pass.joblib",
+        "sha256": "5204a2d6732352ab06b2518e0285cd099643ea91d03c79810d784c3f38d75fb2",
+        "fields": [
+          "config.rf_params",
+          "config.n_oof_folds",
+          "config.random_state",
+          "mode"
+        ]
+      }
+    ],
+    "derivation": "rf_params equal the historical GLASS-arm RF result's params, which the black-box notebook loaded at run time (RF_PARAM_SOURCE='artifact', tuning.legacy.load_rf_params_from_artifact) and which the historical RF Router artifact records as config.rf_params (baseline MANIFEST routers.blackbox.metadata.rf_params). pass2_rf_params null: Pass 2 reuses the Pass 1 settings, as historically. n_inner_folds 5, stratify_oof true and remainder_min_size 500 are the historical settings. mode, eligibility, eligibility_folds, n_oof_folds and random_state are the F17 primary. verbose and validate_nested are run-time options outside the profile: they print, or add the nested diagnostic after the fit, and never change a selection.",
+    "tuning": "Optuna TPE, seed 42, 200 trials, mean 5-fold ROC-AUC CV on all of X_eng_train (features engineered on the full training set with its labels), run once in the GLASS notebook. No nested tuning in PR 37 (decision M8).",
+    "exposure": [
+      "The tuning CV saw all training rows, so each outer fold's held-out labels helped choose the hyperparameters of the router that routes it.",
+      "The tuning CV saw target-encoded features informed by its own validation labels.",
+      "The values were fixed before any corrected PR 38 result existed. No test-derived value was read; the artifacts also store historical test metrics, which were not used."
+    ],
+    "limitations": [
+      "Not independently tuned for the shared contract or for nested eligibility; the values are a historical anchor, not an optimum.",
+      "The RF Router uses these values in both forests, while GLASS uses an RF only to order its rule search, so any resulting optimism plausibly favours RF.",
+      "GLASS records the same six values for its own ranker (glass_router_primary_v1). The two arms share hyperparameter values, never a fitted estimator."
+    ],
+    "relation_to_pr38": "PR 38 builds every primary RF Router config with rf_router.profile.rf_primary_config(contract): this frozen profile (pinned fingerprint) plus the frozen contract's constraints. A different value needs a new profile version, approval and disclosure before corrected outer out-of-fold results are inspected."
+  },
+  "approval": {
+    "state": "frozen",
+    "approved_by": "Phillip Harris",
+    "approved_on": "2026-11-05",
+    "note": "Frozen in PR 37 Commit 4, Step 4D; formally approved by Phillip Harris on 2026-11-05 (decision M8: historical values preserved exactly, owned by the RF arm). Takes effect when Commit 4 is created after local validation."
+  }
+}

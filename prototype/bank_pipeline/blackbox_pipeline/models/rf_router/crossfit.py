@@ -38,7 +38,7 @@ import pandas as pd
 
 from shared.stage_io import label_fingerprint
 
-from .config import RFRouterConfig
+from .config import ELIGIBILITY_GLOBAL_T1, RFRouterConfig
 from .router import RFRouter
 from .router.decisions import ABSTAIN, DECISION_DTYPE, NOT_SUBSCRIBE, SUBSCRIBE, UNCERTAIN
 
@@ -110,6 +110,8 @@ def crossfit_rf_router(
     routed_once = np.zeros(n, dtype=int)
     rows = []
     t0 = time.time()
+    # PR 37 Commit 3 (F17): how each fold router cut its Pass 2 remainder.
+    fold_eligibility = []
 
     for k, (tr, va) in enumerate(folds):
         if np.intersect1d(tr, va).size:
@@ -126,11 +128,17 @@ def crossfit_rf_router(
         routed_once[va] += 1
 
         yv = y.iloc[va].to_numpy()
+        rem_k = r_k.fit_report_.remainder
+        fold_eligibility.append(
+            getattr(getattr(r_k, "config", None), "eligibility", ELIGIBILITY_GLOBAL_T1))
         rows.append({
             "fold": k,
             "t1": r_k.thresholds_.t1,
             "t2": r_k.thresholds_.t2,
-            "remainder_frac": r_k.fit_report_.remainder["fraction"],
+            "remainder_frac": rem_k["fraction"],
+            # PR 37 Commit 3 (F17): the realised Pass 2 fitting population.
+            "remainder_rows": rem_k.get("n_rows"),
+            "remainder_positives": rem_k.get("n_positives"),
             "pass1": (p == NOT_SUBSCRIBE).mean(),
             "pass2": (p == SUBSCRIBE).mean(),
             "abstain": (p == ABSTAIN).mean(),
@@ -145,6 +153,11 @@ def crossfit_rf_router(
                 f"abstain {(p == ABSTAIN).mean():.1%}"
             )
         del r_k
+
+    if len(set(fold_eligibility)) > 1:
+        raise AssertionError(
+            f"outer fold routers used different Pass 2 eligibility rules: {fold_eligibility}")
+    eligibility = fold_eligibility[0] if fold_eligibility else ELIGIBILITY_GLOBAL_T1
 
     if not (routed_once == 1).all():
         raise AssertionError(
@@ -163,6 +176,7 @@ def crossfit_rf_router(
         "feature_engineering": "engineer_features refit per fold; locked bins",
         "router": "full RFRouter refit per fold (inner OOF + per-fold t1/t2)",
         "pass2_population": "OOF Pass 1 remainder (RF router design)",
+        "pass2_eligibility": eligibility,
         "hyperparameters": hyperparameter_note,
         "test_outputs": "from the full-train router",
         "split_fingerprint": split_fp,
