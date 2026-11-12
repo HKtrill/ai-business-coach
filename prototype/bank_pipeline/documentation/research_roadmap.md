@@ -30,29 +30,29 @@
 
 **Step 2A — Configuration, Integration, and Leakage Safeguards**
 
-- [ ] Before any real-data fit (including the G13 audit), complete handoff Phase 0:
+- [x] Before any real-data fit (including the G13 audit), complete handoff Phase 0:
   - Verify the archived snapshot and historical baseline (`--verify`, archive `--check`).
   - Pin `$BANK_ARTIFACT_MANIFEST`.
   - Inventory historical router artifacts.
   - Establish a separate versioned PR 38 output location.
-- [ ] Validate G1: frozen primary configuration, including required `nested_t1` and `fold_nested_rf` safeguards.
-- [ ] Validate G2: correct GLASS/RF wiring, arm-specific ownership, and Pass 2 training on each arm's own OOF Pass 1 remainder.
-- [ ] Validate G5: required persistence, intermediate records, and training-side provenance support, including F31 R1, R2, and R5 records that must be produced inside the cross-fit.
-- [ ] Validate G8: explicit rejection of infeasible fits, missing valid incumbents, insufficient remainder support, and invalid configurations.
-- [ ] Validate G9: independent arm configuration and identical frozen shared-contract obligations.
-- [ ] Complete G13: audit label-derived feature engineering for own-label and cross-fold leakage, including density, curvature, and day × month encoders.
-  - [ ] Correct and validate any confirmed material own-label dependency, and decide whether the primary adopts the correction, before any five-fold primary run.
-- [ ] Add or update targeted regression tests for any implementation changes.
+- [x] Validate G1: frozen primary configuration, including required `nested_t1` and `fold_nested_rf` safeguards.
+- [x] Validate G2: correct GLASS/RF wiring, arm-specific ownership, and Pass 2 training on each arm's own OOF Pass 1 remainder.
+- [x] Validate G5: required persistence, intermediate records, and training-side provenance support, including F31 R1, R2, and R5 records that must be produced inside the cross-fit.
+- [x] Validate G8: explicit rejection of infeasible fits, missing valid incumbents, insufficient remainder support, and invalid configurations.
+- [x] Validate G9: independent arm configuration and identical frozen shared-contract obligations.
+- [x] Complete G13: audit label-derived feature engineering for own-label and cross-fold leakage, including density, curvature, and day × month encoders.
+  - [x] Correct and validate any confirmed material own-label dependency, and decide whether the primary adopts the correction, before any five-fold primary run.
+- [x] Add or update targeted regression tests for any implementation changes.
 
 **Step 2B — Real-Data Feasibility and Primary-Run Authorization**
 
-- [ ] Execute G3 real-data feasibility preflight under the frozen operating contract.
-- [ ] Verify Pass 1 and Pass 2 constraint feasibility, support requirements, and solver outcomes.
-- [ ] Verify training population boundaries, fold construction, and upstream OOF dependencies.
-- [ ] Confirm historical baselines and existing artifacts remain unchanged.
-- [ ] Run targeted regression and relevant integration tests.
-- [ ] Record preflight outcomes, limitations, and explicit pass/fail decisions.
-- [ ] Authorize the primary five-fold reruns only after required gates pass.
+- [x] Execute G3 real-data feasibility preflight under the frozen operating contract.
+- [x] Verify Pass 1 and Pass 2 constraint feasibility, support requirements, and solver outcomes.
+- [x] Verify training population boundaries, fold construction, and upstream OOF dependencies.
+- [x] Confirm historical baselines and existing artifacts remain unchanged.
+- [x] Run targeted regression and relevant integration tests.
+- [x] Record preflight outcomes, limitations, and explicit pass/fail decisions.
+- [x] Authorize the primary five-fold reruns only after required gates pass.
 
 **Deliverable:** Validated corrected-selector implementation with documented primary-run readiness.
 
@@ -144,8 +144,8 @@
 
 ### PR 38 — Final Completion Boundary
 
-- [ ] **Commit 1 complete:** PR 38 roadmap and validation requirements reviewed, finalized, and version-controlled.
-- [ ] **Commit 2 complete:** Preflight, leakage safeguards, and corrected-run readiness validated.
+- [x] **Commit 1 complete:** PR 38 roadmap and validation requirements reviewed, finalized, and version-controlled.
+- [x] **Commit 2 complete:** Preflight, leakage safeguards, and corrected-run readiness validated.
 - [ ] **Commit 3 complete:** Corrected GLASS/RF cross-fitting, complementarity analysis, and F17 sensitivity validated.
 - [ ] **Commit 4 complete:** Complementarity ablation disposition recorded, final selector selected, and Stage 2 frozen.
 - [ ] **PR 38 complete:** Stage 2 selector research concluded, validated artifacts and provenance preserved, and PR 39 handoff established.

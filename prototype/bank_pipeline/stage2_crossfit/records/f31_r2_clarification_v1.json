@@ -1,0 +1,22 @@
+{
+  "record_id": "pr38-stage2-evaluation-f31-r2-clarification",
+  "schema_version": "stage2-protocol-clarification/1",
+  "record_version": "1.0.0",
+  "status": "proposed",
+  "clarifies": {
+    "protocol": ["pr38-stage2-evaluation", "1.0.0", "245a1a68fb68cf4e"],
+    "field": "f31.measure",
+    "markdown": "documentation/methodology/pr38_evaluation_protocol.md, F31 section, 'Measure'"
+  },
+  "frozen_wording": {
+    "f31.measure": "strip A rows inside the fold router's flagged outer-OOF Pass 2 band / rows in that flagged band",
+    "markdown": "strip A rows (t1_j <= p1_oof < t1) inside its flagged outer-OOF Pass 2 band, divided by the rows of that band"
+  },
+  "authority": "documentation/methodology/pr37_f31_disposition_record.md: R2 (section 8) 'for each outer fold router under nested_t1 ... the strip A rows and positives inside the flagged OOF Pass 2 band (strip B has no p2). Computed inside the cross-fit, because fold routers are discarded'; section 3, item 3; trigger R2 (section 7) 'of any fold router's flagged Pass 2 band'",
+  "conflict": "strip A (t1_j <= p1_oof < t1) exists only on the fold router's training rows, the only rows with an inner-OOF p1_oof and an inner fold j. Its outer held-out rows have neither, so a strip A count inside an outer-OOF band is empty by construction. 'outer' qualifies the outer fold router in the authority, not the band",
+  "clarified_wording": {
+    "f31.measure": "strip A rows inside the outer fold router's flagged inner-OOF Pass 2 band (its remainder rows with p2_oof > t2) / rows in that flagged band"
+  },
+  "unchanged": ["f31.trigger 1/20", "f31.scope", "f31.action", "f31.empty_band", "the strip A and strip B definitions", "R3 (the outer-OOF optimism gap)", "the frozen protocol record and its fingerprint"],
+  "activation": "not active until the owner approves it in the Step 2B authorization (f31_r2_clarification: this record's identity, approver and date); until then R2 is reported as provisional"
+}

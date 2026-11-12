@@ -31,7 +31,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass, field
-from typing import Callable, Sequence, Tuple
+from typing import Any, Callable, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -60,11 +60,15 @@ class CrossfitResult:
         held-out leakage, cumulative seconds — the former ``RF_OOF_FOLDS``.
     protocol : dict
         Provenance — the former ``RF_OOF_PROTOCOL``.
+    fold_evidence : list
+        PR 38: per-fold return values of ``fold_callback``, taken before the
+        fold's held-out rows were routed. Empty when no callback was given.
     """
 
     oof: dict
     folds: pd.DataFrame
     protocol: dict = field(default_factory=dict)
+    fold_evidence: list = field(default_factory=list)
 
 
 def crossfit_rf_router(
@@ -79,6 +83,9 @@ def crossfit_rf_router(
     random_state: int,
     hyperparameter_note: str = "resolved once on full X_train (not refitted per fold)",
     verbose: bool = True,
+    fold_callback: Optional[Callable[[int, RFRouter, pd.DataFrame, pd.Series], Any]] = None,
+    report_outer: bool = True,
+    inner_features: Optional[Callable[[pd.DataFrame, pd.Series], Any]] = None,
 ) -> CrossfitResult:
     """
     Route every training row with a router that never saw its label.
@@ -96,6 +103,19 @@ def crossfit_rf_router(
         Zero-argument factory returning a fresh ``RFRouterConfig`` per fold.
     split_fp, fold_fp, random_state
         Provenance recorded in ``protocol``.
+    fold_callback
+        PR 38. ``fold_callback(k, router, X_tr_eng, y_tr)`` is called once per
+        fold after the fit and BEFORE the held-out rows are routed (the fold
+        router is deleted afterwards). Its return values are kept, in fold
+        order, in ``CrossfitResult.fold_evidence``; an exception stops the run.
+    report_outer
+        PR 38. False reads no held-out label and computes no outer-OOF metric:
+        the held-out rows are routed, and ``folds`` keeps each fold's
+        thresholds, remainder and time (no pass rates or leakage). True is
+        unchanged.
+    inner_features
+        PR 38 (G13), opt-in: a factory ``(X_tr_raw, y_tr) -> provider`` called
+        per fold; the provider is passed to ``RFRouter.fit``. None: unchanged.
     """
     if not X_raw.index.equals(y.index):
         raise AssertionError("X_raw and y are not index-aligned")
@@ -112,13 +132,21 @@ def crossfit_rf_router(
     t0 = time.time()
     # PR 37 Commit 3 (F17): how each fold router cut its Pass 2 remainder.
     fold_eligibility = []
+    fold_evidence = []
 
     for k, (tr, va) in enumerate(folds):
         if np.intersect1d(tr, va).size:
             raise AssertionError(f"outer fold {k}: train/validation overlap")
 
         X_tr_eng, X_va_eng = engineer(X_raw.iloc[tr], X_raw.iloc[va], y.iloc[tr])
-        r_k = RFRouter(make_config()).fit(X_tr_eng, y.iloc[tr], split_fp)
+        if inner_features is None:
+            r_k = RFRouter(make_config()).fit(X_tr_eng, y.iloc[tr], split_fp)
+        else:
+            r_k = RFRouter(make_config()).fit(
+                X_tr_eng, y.iloc[tr], split_fp,
+                inner_features=inner_features(X_raw.iloc[tr], y.iloc[tr]))
+        if fold_callback is not None:
+            fold_evidence.append(fold_callback(k, r_k, X_tr_eng, y.iloc[tr]))
 
         p, c, d, proba = r_k.predict_with_proba(X_va_eng)
         oof["pred"][va] = p
@@ -127,11 +155,10 @@ def crossfit_rf_router(
         oof["proba"][va] = proba
         routed_once[va] += 1
 
-        yv = y.iloc[va].to_numpy()
         rem_k = r_k.fit_report_.remainder
         fold_eligibility.append(
             getattr(getattr(r_k, "config", None), "eligibility", ELIGIBILITY_GLOBAL_T1))
-        rows.append({
+        row = {
             "fold": k,
             "t1": r_k.thresholds_.t1,
             "t2": r_k.thresholds_.t2,
@@ -139,13 +166,18 @@ def crossfit_rf_router(
             # PR 37 Commit 3 (F17): the realised Pass 2 fitting population.
             "remainder_rows": rem_k.get("n_rows"),
             "remainder_positives": rem_k.get("n_positives"),
-            "pass1": (p == NOT_SUBSCRIBE).mean(),
-            "pass2": (p == SUBSCRIBE).mean(),
-            "abstain": (p == ABSTAIN).mean(),
-            "leak": ((p == NOT_SUBSCRIBE) & (yv == 1)).sum() / max((yv == 1).sum(), 1),
-            "seconds": round(time.time() - t0, 1),
-        })
-        if verbose:
+        }
+        if report_outer:
+            yv = y.iloc[va].to_numpy()
+            row.update({
+                "pass1": (p == NOT_SUBSCRIBE).mean(),
+                "pass2": (p == SUBSCRIBE).mean(),
+                "abstain": (p == ABSTAIN).mean(),
+                "leak": ((p == NOT_SUBSCRIBE) & (yv == 1)).sum() / max((yv == 1).sum(), 1),
+            })
+        row["seconds"] = round(time.time() - t0, 1)
+        rows.append(row)
+        if verbose and report_outer:
             print(
                 f"   fold {k}: t1 {r_k.thresholds_.t1:.4f} t2 {r_k.thresholds_.t2:.4f} | "
                 f"pass1 {(p == NOT_SUBSCRIBE).mean():.1%} "
@@ -183,4 +215,5 @@ def crossfit_rf_router(
     }
     if verbose:
         print(f"\n⏱️  outer cross-fit: {time.time() - t0:.0f}s")
-    return CrossfitResult(oof=oof, folds=pd.DataFrame(rows), protocol=protocol)
+    return CrossfitResult(oof=oof, folds=pd.DataFrame(rows), protocol=protocol,
+                          fold_evidence=fold_evidence)

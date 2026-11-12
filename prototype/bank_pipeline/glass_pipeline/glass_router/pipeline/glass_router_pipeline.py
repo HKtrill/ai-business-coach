@@ -215,16 +215,28 @@ class GlassRouterPipeline:
     # FIT
     # ================================================================
 
-    def fit(self, X_train, y_train, X_val=None, y_val=None):
+    def fit(self, X_train, y_train, X_val=None, y_val=None, *, inner_features=None):
         """
         Fit the GLASS Router pipeline.
 
         Rules are evaluated on X_val / y_val, which default to the training
         data. In "oof_remainder" mode X_val must be the training data (or
         omitted), because the Pass 2 remainder is defined over training rows.
+
+        ``inner_features`` (PR 38, G13; opt-in, ``oof_remainder`` only):
+        ``inner_features(X, y, fold_id)`` returns ``{k: bins}``, inner fold k's
+        features for every training row computed without fold k's labels.
+        Inner fold k's Pass-1-only fit (nested ranker, generation, selection)
+        then runs on its training rows of ``bins[k]``, and its own rows are
+        routed with ``bins[k]``. The full-population Pass 1 and Pass 2 use
+        ``X_train``. Its provenance is kept in ``inner_feature_pathway_``; the
+        provider itself is not. None: unchanged.
         """
         if X_val is None:
             X_val, y_val = X_train, y_train
+        self.inner_feature_pathway_ = None
+        if inner_features is not None and self.pass2_population != "oof_remainder":
+            raise ValueError("inner_features applies to pass2_population='oof_remainder' only")
 
         self.training_base_rate = (
             y_train.mean() if hasattr(y_train, 'mean') else np.mean(y_train)
@@ -248,7 +260,7 @@ class GlassRouterPipeline:
                     "(crossfit_stage2 supplies one); refusing to fall back to the "
                     "outer rf_model."
                 )
-            self._fit_oof_remainder(X_train, y_train)
+            self._fit_oof_remainder(X_train, y_train, inner_features)
 
         self.is_fitted = True
         print(f"\n✅ Pass 1: {len(self.pass1_rules)} | Pass 2: {len(self.pass2_rules)}")
@@ -270,7 +282,7 @@ class GlassRouterPipeline:
         self.fit_report_ = {"pass2_population": "full"}
 
     # ----------------------------------------------------------------
-    def _fit_oof_remainder(self, X, y):
+    def _fit_oof_remainder(self, X, y, inner_features=None):
         """
         Pass 1 on the full population; Pass 2 on the OOF Pass 1 remainder.
 
@@ -291,6 +303,11 @@ class GlassRouterPipeline:
         # returns. Registered before each solve so an infeasible pass stays visible.
         self.inner_pass1_selectors_ = []
         self.pass2_ilp_selector_ = None
+        # PR 38 (G5, G13): each row's inner fold and each inner fold's Pass 1
+        # rules, so the evidence (selection counts, eligibility audits) can be
+        # rebuilt from the fit. Instance state only; fit_report_ is unchanged.
+        self.inner_fold_id_ = np.full(n, -1, dtype=int)
+        self.inner_pass1_rules_ = []
 
         # ---- 1. Pass 1 on the full population ---------------------------
         print("\n[oof_remainder] Pass 1 on the full training population")
@@ -307,20 +324,26 @@ class GlassRouterPipeline:
         skf = StratifiedKFold(
             n_splits=c.pass1_oof_folds, shuffle=True, random_state=c.random_state
         )
-        for k, (tr, va) in enumerate(skf.split(np.zeros(n), y_arr)):
-            ranker = (self._fit_inner_ranker(k, X.iloc[tr], y.iloc[tr],
-                                             ranker_provenance, ranker_objs)
-                      if nested_ranker else None)
-            with contextlib.redirect_stdout(io.StringIO()):
-                generator = (self._new_generator(rf_model=ranker) if nested_ranker
-                             else self._new_generator())
-                selector_k = self._new_selector()
-                self.inner_pass1_selectors_.append(selector_k)
-                rules_k = self._fit_pass1_only(
-                    X.iloc[tr], y.iloc[tr],
-                    generator, self._new_evaluator(), selector_k,
-                )
-            routed_oof[va] = self._rules_mask(rules_k, X.iloc[va])
+        splits = list(skf.split(np.zeros(n), y_arr))
+        frames = None
+        if inner_features is not None:          # PR 38 (G13), opt-in
+            plan = np.full(n, -1, dtype=int)
+            for k, (_, va) in enumerate(splits):
+                plan[va] = k
+            frames = inner_features(X, y, plan)
+            for k in range(len(splits)):
+                if not (frames[k].index.equals(X.index)
+                        and list(frames[k].columns) == list(X.columns)):
+                    raise ValueError(f"inner fold {k}'s features do not match X's rows/columns")
+            self.inner_feature_pathway_ = inner_features.provenance(plan)
+        for k, (tr, va) in enumerate(splits):
+            X_k = X if frames is None else frames[k]
+            rules_k = self._inner_pass1_fit(k, X_k.iloc[tr], y.iloc[tr], nested_ranker,
+                                            ranker_provenance, ranker_objs,
+                                            self.inner_pass1_selectors_)
+            routed_oof[va] = self._rules_mask(rules_k, X_k.iloc[va])
+            self.inner_fold_id_[va] = k
+            self.inner_pass1_rules_.append(list(rules_k))
             inner_rules.append(len(rules_k))
             print(f"   inner fold {k}: {len(rules_k)} Pass 1 rules | "
                   f"routes {routed_oof[va].mean():.1%} of held-out rows")
@@ -380,6 +403,22 @@ class GlassRouterPipeline:
             # fitted rankers stay on the instance for in-memory audits.
             self.fit_report_["inner_ranker_provenance"] = ranker_provenance
             self.inner_rankers_ = ranker_objs
+
+    # ----------------------------------------------------------------
+    def _inner_pass1_fit(self, k, X_tr, y_tr, nested_ranker, provenance, seen, selectors):
+        """
+        Inner fold k's Pass-1-only fit on its training rows. The selector is
+        appended to ``selectors`` before the solve, so an infeasible pass stays
+        visible. PR 38 (G13) re-runs it with its own lists; the fit is unchanged.
+        """
+        ranker = (self._fit_inner_ranker(k, X_tr, y_tr, provenance, seen)
+                  if nested_ranker else None)
+        with contextlib.redirect_stdout(io.StringIO()):
+            generator = (self._new_generator(rf_model=ranker) if nested_ranker
+                         else self._new_generator())
+            selector_k = self._new_selector()
+            selectors.append(selector_k)
+            return self._fit_pass1_only(X_tr, y_tr, generator, self._new_evaluator(), selector_k)
 
     # ----------------------------------------------------------------
     def _fit_inner_ranker(self, k, X_tr, y_tr, provenance, seen):

@@ -44,6 +44,7 @@ make_folds(y, n_splits, random_state)                   -> list[(train_pos, val_
 fold_fingerprint(fold_id)                               -> str
 oof_vs_insample(y, p_oof, p_insample)                   -> dict (optimism check)
 crossfit_stage2(X_train_raw, y_train, glass_config, rf_params, ...) -> Stage2OOF
+fit_glass_fold(X_tr, y_tr, X_va, glass_config, rf_params, ...) -> GlassFoldFit
 """
 
 from __future__ import annotations
@@ -95,6 +96,9 @@ class Stage2OOF:
                          without the positional mask, plus ``remainder_index``
                          (training-row labels). In memory only; not yet saved
                          by ModelSaver (PR 38).
+        fold_evidence    per-fold return values of ``fold_callback`` (PR 38),
+                         taken before the fold's held-out rows were scored.
+                         Empty when no callback was given.
     """
     index: pd.Index
     fold_id: np.ndarray
@@ -106,6 +110,7 @@ class Stage2OOF:
     protocol: Dict[str, Any]
     fold_summaries: List[Dict[str, Any]] = field(default_factory=list)
     fold_fit_reports: List[Dict[str, Any]] = field(default_factory=list)
+    fold_evidence: List[Any] = field(default_factory=list)
 
     def glass_train_out(self) -> Dict[str, Any]:
         """GLASS OOF block in the ModelSaver output contract."""
@@ -181,6 +186,102 @@ def _validate_folds(folds: Sequence[Fold], n: int) -> np.ndarray:
 
 
 # ---------------------------------------------------------------------------
+# One outer fold (PR 38: shared by the cross-fit and the fit-only preflight)
+# ---------------------------------------------------------------------------
+
+@dataclass
+class GlassFoldFit:
+    """
+    One outer fold's fitted GLASS arm, before any held-out row is scored.
+
+        glass     the fitted GlassRouterPipeline (fitted on X_tr_eng only)
+        rf_pipe   the GLASS-owned fold RF (ordering RF; fitted on X_tr_eng only)
+        X_tr_eng  the fold's engineered training rows (encoders fitted on them)
+        X_va_eng  the held-out rows, transformed by the same encoders (no label read)
+        y_tr      the training labels
+        inner_features  PR 38 (G13): the provider the inner folds' features came
+                  from (``fit_glass_fold(inner_features=...)``), or None
+    """
+    glass: Any
+    rf_pipe: Any
+    X_tr_eng: pd.DataFrame
+    X_va_eng: pd.DataFrame
+    y_tr: pd.Series
+    inner_features: Any = None
+
+
+def _nested_ranker(glass_config, glass_rf_model: str) -> bool:
+    inner_ranker = getattr(glass_config, "inner_feature_ranker", INNER_RANKER_OUTER_RF)
+    if inner_ranker == INNER_RANKER_FOLD_NESTED_RF and glass_rf_model != "fold_rf":
+        raise ValueError(
+            "inner_feature_ranker='fold_nested_rf' fits each inner ranker with the fold "
+            "RF's recipe, so it requires glass_rf_model='fold_rf'."
+        )
+    return (inner_ranker == INNER_RANKER_FOLD_NESTED_RF
+            and getattr(glass_config, "pass2_population", "full") == "oof_remainder")
+
+
+def fit_glass_fold(
+    X_tr: pd.DataFrame,
+    y_tr: pd.Series,
+    X_va: pd.DataFrame,
+    glass_config,
+    rf_params: Dict[str, Any],
+    random_state: int = 42,
+    glass_rf_model: str = "fold_rf",
+    rule_logger: Optional[RuleLogger] = None,
+    inner_features: Optional[Callable[[pd.DataFrame, pd.Series], Any]] = None,
+) -> GlassFoldFit:
+    """
+    Steps 1-3 of one outer fold, exactly as ``crossfit_stage2`` runs them:
+    feature engineering fitted on the training rows only, the fold RF refitted
+    with the tuned params, the GLASS Router fitted on the training rows only.
+    Nothing is scored; ``X_va`` is only transformed.
+
+    ``inner_features`` (PR 38, G13; opt-in): a factory ``(X_tr, y_tr) ->
+    provider``; the provider is passed to ``GlassRouterPipeline.fit``. None:
+    the historical call.
+    """
+    if glass_rf_model not in ("fold_rf", "none"):
+        raise ValueError("glass_rf_model must be 'fold_rf' or 'none'.")
+    nested_ranker = _nested_ranker(glass_config, glass_rf_model)
+
+    # 1. Feature engineering fit on training folds only
+    Xtr_eng, Xva_eng = engineer_features(X_tr, X_va, y_tr)
+
+    # 2. RF refit with tuned params (no re-tuning)
+    rf_pipe = _build_pipe(rf_params, random_state, n_jobs=-1)
+    rf_pipe.fit(
+        Xtr_eng, y_tr,
+        clf__sample_weight=_make_sample_weights(y_tr, rf_params.get("minority_weight", 1.0)),
+    )
+
+    # 3. GLASS Router fit on training folds only
+    router_kwargs = {}
+    if nested_ranker:      # opt-in only, so the historical call is unchanged
+        router_kwargs["feature_ranker_factory"] = make_rf_feature_ranker_factory(
+            rf_params, random_state)
+    glass = GlassRouterPipeline(
+        glass_config,
+        rf_model=rf_pipe.named_steps["clf"] if glass_rf_model == "fold_rf" else None,
+        rule_logger=rule_logger if rule_logger is not None else RuleLogger(enabled=False),
+        **router_kwargs,
+    )
+    provider = None if inner_features is None else inner_features(X_tr, y_tr)
+    try:
+        if provider is None:
+            glass.fit(Xtr_eng, y_tr)
+        else:
+            glass.fit(Xtr_eng, y_tr, inner_features=provider)
+    except Exception as exc:
+        # The same exception propagates; the unfinished fit rides along so a
+        # caller can record its selection reports (an infeasible pass stays visible).
+        exc.partial_fold_fit = GlassFoldFit(glass, rf_pipe, Xtr_eng, Xva_eng, y_tr, provider)
+        raise
+    return GlassFoldFit(glass, rf_pipe, Xtr_eng, Xva_eng, y_tr, provider)
+
+
+# ---------------------------------------------------------------------------
 # Cross-fit
 # ---------------------------------------------------------------------------
 
@@ -195,6 +296,10 @@ def crossfit_stage2(
     glass_rf_model: str = "fold_rf",
     rule_logger_factory: Optional[Callable[[], RuleLogger]] = None,
     verbose: bool = False,
+    *,
+    fold_callback: Optional[Callable[[int, "GlassFoldFit", np.ndarray, np.ndarray], Any]] = None,
+    report_outer: bool = True,
+    inner_features: Optional[Callable[[pd.DataFrame, pd.Series], Any]] = None,
 ) -> Stage2OOF:
     """
     Produce honest OOF Stage 2 outputs for GLASS Router and the RF router.
@@ -215,19 +320,24 @@ def crossfit_stage2(
     rule_logger_factory : returns a fresh RuleLogger per fold
                   (default: logging disabled).
     verbose     : show the per-fold feature-engineering / GLASS logs.
+    fold_callback : PR 38. ``fold_callback(k, fold_fit, train_pos, val_pos)``
+                  is called once per fold after the fit and BEFORE any held-out
+                  row is scored; its return values are kept, in fold order, in
+                  ``Stage2OOF.fold_evidence``. An exception it raises stops the
+                  cross-fit.
+    report_outer : PR 38. False reads no held-out label and computes no
+                  outer-OOF metric: held-out rows are only scored, and each
+                  per-fold summary keeps its sizes, rule counts, remainder and
+                  time (no AUC, rates, leakage or recall). True is unchanged.
+    inner_features : PR 38 (G13), opt-in: passed to ``fit_glass_fold`` for every
+                  fold (a factory ``(X_tr, y_tr) -> provider``). None: unchanged.
     """
     if not X_train_raw.index.equals(y_train.index):
         raise ValueError("X_train_raw and y_train must share the same index (order included).")
     if glass_rf_model not in ("fold_rf", "none"):
         raise ValueError("glass_rf_model must be 'fold_rf' or 'none'.")
     inner_ranker = getattr(glass_config, "inner_feature_ranker", INNER_RANKER_OUTER_RF)
-    nested_ranker = (inner_ranker == INNER_RANKER_FOLD_NESTED_RF
-                     and getattr(glass_config, "pass2_population", "full") == "oof_remainder")
-    if inner_ranker == INNER_RANKER_FOLD_NESTED_RF and glass_rf_model != "fold_rf":
-        raise ValueError(
-            "inner_feature_ranker='fold_nested_rf' fits each inner ranker with the fold "
-            "RF's recipe, so it requires glass_rf_model='fold_rf'."
-        )
+    _nested_ranker(glass_config, glass_rf_model)          # refuses fold_nested_rf without fold_rf
     if rule_logger_factory is None:
         rule_logger_factory = lambda: RuleLogger(enabled=False)  # noqa: E731
 
@@ -246,6 +356,7 @@ def crossfit_stage2(
     rf_proba = np.full(n, np.nan)
     summaries: List[Dict[str, Any]] = []
     fold_reports: List[Dict[str, Any]] = []
+    fold_evidence: List[Any] = []
 
     print("=" * 80)
     print(f"🔁 STAGE 2 CROSS-FIT — {len(folds)} folds | {n:,} training rows")
@@ -258,29 +369,17 @@ def crossfit_stage2(
 
         quiet = contextlib.nullcontext() if verbose else contextlib.redirect_stdout(io.StringIO())
         with quiet:
-            # 1. Feature engineering fit on training folds only
-            Xtr_eng, Xva_eng = engineer_features(X_tr, X_va, y_tr)
-
-            # 2. RF refit with tuned params (no re-tuning)
-            rf_pipe = _build_pipe(rf_params, random_state, n_jobs=-1)
-            rf_pipe.fit(
-                Xtr_eng, y_tr,
-                clf__sample_weight=_make_sample_weights(y_tr, rf_params.get("minority_weight", 1.0)),
-            )
-            rf_proba[va] = rf_pipe.predict_proba(Xva_eng)[:, 1]
-
-            # 3. GLASS Router fit on training folds only
-            router_kwargs = {}
-            if nested_ranker:      # opt-in only, so the historical call is unchanged
-                router_kwargs["feature_ranker_factory"] = make_rf_feature_ranker_factory(
-                    rf_params, random_state)
-            glass = GlassRouterPipeline(
-                glass_config,
-                rf_model=rf_pipe.named_steps["clf"] if glass_rf_model == "fold_rf" else None,
-                rule_logger=rule_logger_factory(),
-                **router_kwargs,
-            )
-            glass.fit(Xtr_eng, y_tr)
+            # 1-3. Feature engineering, fold RF and GLASS Router, training folds only
+            fit = fit_glass_fold(X_tr, y_tr, X_va, glass_config, rf_params,
+                                 random_state=random_state, glass_rf_model=glass_rf_model,
+                                 rule_logger=rule_logger_factory(),
+                                 inner_features=inner_features)
+            glass, Xva_eng = fit.glass, fit.X_va_eng
+        if fold_callback is not None:
+            # PR 38: fit-time evidence, recorded before any held-out row is scored
+            fold_evidence.append(fold_callback(k, fit, np.asarray(tr), np.asarray(va)))
+        with quiet:
+            rf_proba[va] = fit.rf_pipe.predict_proba(Xva_eng)[:, 1]
 
             # 4. Score the held-out fold
             p, c, d = glass.predict(Xva_eng)
@@ -289,22 +388,23 @@ def crossfit_stage2(
             glass_dec[va] = d
             glass_proba[va] = glass.predict_proba(Xva_eng)
 
-        yv = y_arr[va]
-        subs = max(int((yv == SUBSCRIBE).sum()), 1)
-        summary = {
-            "fold": k,
-            "n_train": len(tr),
-            "n_val": len(va),
-            "rf_auc": float(roc_auc_score(yv, rf_proba[va])) if len(np.unique(yv)) > 1 else np.nan,
-            "glass_pass1_rules": len(glass.pass1_rules),
-            "glass_pass2_rules": len(glass.pass2_rules),
-            "pass1_rate": float((p == NOT_SUBSCRIBE).mean()),
-            "pass2_rate": float((p == SUBSCRIBE).mean()),
-            "abstain_rate": float((p == ABSTAIN).mean()),
-            "pass1_leakage": float(((p == NOT_SUBSCRIBE) & (yv == SUBSCRIBE)).sum() / subs),
-            "pass2_recall": float(((p == SUBSCRIBE) & (yv == SUBSCRIBE)).sum() / subs),
-            "seconds": round(time.perf_counter() - t0, 1),
-        }
+        summary = {"fold": k, "n_train": len(tr), "n_val": len(va)}
+        if report_outer:
+            yv = y_arr[va]
+            subs = max(int((yv == SUBSCRIBE).sum()), 1)
+            summary["rf_auc"] = (float(roc_auc_score(yv, rf_proba[va]))
+                                 if len(np.unique(yv)) > 1 else np.nan)
+        summary.update(glass_pass1_rules=len(glass.pass1_rules),
+                       glass_pass2_rules=len(glass.pass2_rules))
+        if report_outer:
+            summary.update(
+                pass1_rate=float((p == NOT_SUBSCRIBE).mean()),
+                pass2_rate=float((p == SUBSCRIBE).mean()),
+                abstain_rate=float((p == ABSTAIN).mean()),
+                pass1_leakage=float(((p == NOT_SUBSCRIBE) & (yv == SUBSCRIBE)).sum() / subs),
+                pass2_recall=float(((p == SUBSCRIBE) & (yv == SUBSCRIBE)).sum() / subs),
+            )
+        summary["seconds"] = round(time.perf_counter() - t0, 1)
         # PR 37 Commit 3 (F17): the realised Pass 2 fitting population, when the
         # fit selected one (oof_remainder). "full" fits add nothing here.
         fit_report = getattr(glass, "fit_report_", None) or {}
@@ -320,28 +420,30 @@ def crossfit_stage2(
                 "remainder_index": X_tr.index[np.asarray(fit_report["remainder_mask"], bool)],
             })
         summaries.append(summary)
-        print(
-            f"   fold {k}: RF AUC {summary['rf_auc']:.4f} | GLASS rules "
-            f"{summary['glass_pass1_rules']}+{summary['glass_pass2_rules']} | "
-            f"pass1 {summary['pass1_rate']:.1%} pass2 {summary['pass2_rate']:.1%} "
-            f"abstain {summary['abstain_rate']:.1%} | leak {summary['pass1_leakage']:.1%} "
-            f"| {summary['seconds']}s"
-        )
+        if report_outer:
+            print(
+                f"   fold {k}: RF AUC {summary['rf_auc']:.4f} | GLASS rules "
+                f"{summary['glass_pass1_rules']}+{summary['glass_pass2_rules']} | "
+                f"pass1 {summary['pass1_rate']:.1%} pass2 {summary['pass2_rate']:.1%} "
+                f"abstain {summary['abstain_rate']:.1%} | leak {summary['pass1_leakage']:.1%} "
+                f"| {summary['seconds']}s"
+            )
 
     if np.isnan(rf_proba).any():
         raise RuntimeError("Some training rows received no OOF RF score.")
 
-    subs_all = max(int((y_arr == SUBSCRIBE).sum()), 1)
     print("-" * 80)
     print(f"   Fold fingerprint         : {fold_fingerprint(fold_id)}")
-    print(f"   OOF RF AUC (all rows)   : {roc_auc_score(y_arr, rf_proba):.4f}")
-    print(f"   OOF GLASS pass1/pass2/abstain: "
-          f"{(glass_pred == NOT_SUBSCRIBE).mean():.1%} / {(glass_pred == SUBSCRIBE).mean():.1%} / "
-          f"{(glass_pred == ABSTAIN).mean():.1%}")
-    print(f"   OOF GLASS Pass 1 leakage : "
-          f"{((glass_pred == NOT_SUBSCRIBE) & (y_arr == SUBSCRIBE)).sum() / subs_all:.1%}")
-    print(f"   OOF GLASS Pass 2 recall  : "
-          f"{((glass_pred == SUBSCRIBE) & (y_arr == SUBSCRIBE)).sum() / subs_all:.1%}")
+    if report_outer:
+        subs_all = max(int((y_arr == SUBSCRIBE).sum()), 1)
+        print(f"   OOF RF AUC (all rows)   : {roc_auc_score(y_arr, rf_proba):.4f}")
+        print(f"   OOF GLASS pass1/pass2/abstain: "
+              f"{(glass_pred == NOT_SUBSCRIBE).mean():.1%} / "
+              f"{(glass_pred == SUBSCRIBE).mean():.1%} / {(glass_pred == ABSTAIN).mean():.1%}")
+        print(f"   OOF GLASS Pass 1 leakage : "
+              f"{((glass_pred == NOT_SUBSCRIBE) & (y_arr == SUBSCRIBE)).sum() / subs_all:.1%}")
+        print(f"   OOF GLASS Pass 2 recall  : "
+              f"{((glass_pred == SUBSCRIBE) & (y_arr == SUBSCRIBE)).sum() / subs_all:.1%}")
     print("=" * 80)
 
     protocol = {
@@ -372,4 +474,5 @@ def crossfit_stage2(
         protocol=protocol,
         fold_summaries=summaries,
         fold_fit_reports=fold_reports,
+        fold_evidence=fold_evidence,
     )

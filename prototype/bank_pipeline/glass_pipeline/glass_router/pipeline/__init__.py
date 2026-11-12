@@ -3,7 +3,8 @@
 # ============================================================
 
 from .glass_router_pipeline import GlassRouterPipeline
-from .crossfit import crossfit_stage2, make_folds, fold_fingerprint, oof_vs_insample, Stage2OOF
+from .crossfit import (crossfit_stage2, make_folds, fold_fingerprint, oof_vs_insample, Stage2OOF,
+                       GlassFoldFit, fit_glass_fold)
 
 __all__ = [
     "GlassRouterPipeline",
@@ -12,4 +13,6 @@ __all__ = [
     "fold_fingerprint",
     "oof_vs_insample",
     "Stage2OOF",
+    "GlassFoldFit",
+    "fit_glass_fold",
 ]

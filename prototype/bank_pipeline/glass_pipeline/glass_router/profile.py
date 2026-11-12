@@ -25,6 +25,7 @@ and tests only. Nothing here opens an artifact.
 
 from __future__ import annotations
 
+import dataclasses
 from collections.abc import Mapping
 from dataclasses import fields
 from pathlib import Path
@@ -50,7 +51,8 @@ from .core.config import GlassRouterConfig
 __all__ = ["PROFILES_DIR", "PRIMARY_PROFILE_FINGERPRINT", "PROFILE_FIELDS", "RANKER_PARAM_KEYS",
            "primary_profile_path", "load_glass_primary_profile", "glass_base_config",
            "glass_config_from_profile", "ranker_settings_from_profile", "glass_primary_config",
-           "ranker_settings", "check_glass_primary_config", "check_glass_primary_ranker"]
+           "ranker_settings", "check_glass_primary_config", "check_glass_primary_ranker",
+           "S1_FACTOR", "glass_s1_full_config", "check_glass_s1_config"]
 
 PROFILES_DIR = Path(__file__).resolve().parent / "profiles"
 _PRIMARY = "glass_router_primary_v1.json"
@@ -210,3 +212,41 @@ def check_glass_primary_ranker(*, glass_rf_model, rf_params) -> None:
         raise ContractViolation("not the frozen PR 38 primary ranker settings "
                                 f"(ranker_settings()): missing {missing}, unknown {unknown}, "
                                 f"differ {differ}")
+
+
+# ----------------------------------------------------------------------
+# PR 38: the S1 sensitivity configuration (F17 decision record, section 6)
+# ----------------------------------------------------------------------
+#: The single factor S1 changes, and its S1 value. Everything else, the ranker
+#: settings included, is the primary's.
+S1_FACTOR = ("pass2_population", "full")
+
+
+def glass_s1_full_config() -> GlassRouterConfig:
+    """
+    The S1 arm: ``glass_primary_config()`` with only ``pass2_population="full"``.
+
+    The contract's union obligations, their provenance and every arm setting
+    stay the primary's (``inner_feature_ranker`` stays ``"fold_nested_rf"``; it
+    acts only under ``oof_remainder``). Descriptive only: ``check_glass_primary_config``
+    refuses it, and so does ``check_glass_config_follows_contract`` (it is not
+    the F17 primary), so it can never stand in for the primary.
+    """
+    name, value = S1_FACTOR
+    return dataclasses.replace(glass_primary_config(), **{name: value})
+
+
+def check_glass_s1_config(config: GlassRouterConfig) -> None:
+    """Refuse a config that is not exactly ``glass_s1_full_config()``."""
+    if not isinstance(config, GlassRouterConfig):
+        raise ContractViolation(f"expected a GlassRouterConfig, got {type(config).__name__}")
+    primary, want, got = (glass_primary_config().to_dict(), glass_s1_full_config().to_dict(),
+                          config.to_dict())
+    factor = sorted(k for k in primary if want[k] != primary[k])
+    if factor != [S1_FACTOR[0]]:                       # the S1 definition itself
+        raise ContractViolation(f"S1 must differ from the primary in {S1_FACTOR[0]!r} only, "
+                                f"not {factor}")
+    differ = sorted(k for k in want if got.get(k) != want[k])
+    if differ:
+        raise ContractViolation("not the S1 GLASS config (glass_s1_full_config()): "
+                                f"{differ} differ")
