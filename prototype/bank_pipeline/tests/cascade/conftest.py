@@ -66,7 +66,7 @@ import shared.stage_io as stage_io
 from shared.stage_io import split_fingerprint
 from tests.stage2.conftest import TINY_RF, legacy_config, selected_rule
 from tests.stage3.conftest import EBM_TEST_BAGS, EBM_TEST_PARAMS
-from tests.support.synthetic import TARGET, make_bank_frame
+from tests.support.synthetic_bank import TARGET, make_bank_frame
 
 N_ROWS, POSITIVE_RATE = 500, 0.19        # 76 training positives: fold base rates differ
 

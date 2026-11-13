@@ -1,0 +1,16 @@
+{
+  "record_id": "pr38-stage2-f17-g10-pin-scope-clarification",
+  "schema_version": "stage2-protocol-clarification/1",
+  "record_version": "1.0.0",
+  "status": "proposed",
+  "clarifies": {
+    "gate": "F17 G10 (documentation/methodology/pr37_f17_decision_record.md, section 8), as V7 of the frozen protocol cites it",
+    "handoff": "documentation/methodology/pr38_handoff.md, section 5, 'Artifacts (G10, G11)'",
+    "protocol": ["pr38-stage2-evaluation", "1.0.0", "245a1a68fb68cf4e"]
+  },
+  "frozen_wording": "Regenerated Stage 2 artifacts under new versioned names, validated by the Stage 4 contract. test_the_glass_notebook_runs_the_full_population_profile_for_both_fits and the GLASS full expectation in tests/support/artifact_audit.py are updated deliberately, in the same change",
+  "conflict": "Both pins describe the GLASS notebook pathway (CONFIG_PROFILE 'legacy', pass2_population 'full') and the Stage 4 arbiters the notebooks produced and the real-data audit reads. PR 38 Commit 3A writes isolated candidate artifacts under models/pr38/<run_id>/primary/, which no notebook, Stage 4 audit root or newest-file reader consumes. Changing the pins in that change would make the audit of the unchanged notebook artifacts fail, needs a notebook change (PRs 40-41), and registers a code-identity change on stage2_baseline.py --check (G11). The frozen wording does not say which change counts as the one that regenerates the Stage 2 artifacts",
+  "clarified_wording": "The two pins are updated in the change in which an audited Stage 2 artifact (a notebook output or a Stage 4 audit root) becomes a corrected one, with the stage2_baseline.py --check code-identity change recorded or a new baseline version. PR 38 candidates isolated under models/pr38/ satisfy G10 by new versioned names and the Stage 4 contract's router checks, with the pins unchanged",
+  "unchanged": ["the regenerated-artifact requirement: new versioned names, validated by the Stage 4 contract", "G11 and baseline v1, never edited", "the frozen contract, protocol, arm profiles and their fingerprints", "PR 39 artifact regeneration and the PR 40-41 notebooks"],
+  "activation": "not active until the owner approves it in the run's acceptance dispositions: G10:artifact_audit_pins with decision 'clarification_approved' and this record's identity [record_id, record_version, fingerprint]"
+}

@@ -36,7 +36,7 @@ from blackbox_pipeline.models.rf_router.router.base import apply_cuts
 from tests.stage2.conftest import new_router
 from tests.support import mutations as mut
 from tests.support.rf_router_world import serial_forests
-from tests.support.stage2_synthetic import (
+from tests.support.synthetic_rf_router import (
     CONSTRAINTS_DEGENERATE, CONSTRAINTS_OK, SMALL_PARAMS, make_data, router_config,
 )
 

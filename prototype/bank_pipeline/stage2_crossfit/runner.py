@@ -33,7 +33,9 @@ Cross-fit and full-train fits (Commit 3; refused without an authorization)
     refuses unless every attempted fold is accepted in the ``FoldLedger`` and
     each full-train fit is accepted, then writes new, versioned CANDIDATE
     artifacts (``accepted: False``) in the Stage 4 layouts plus the evidence
-    and a SHA-256 manifest. Structural acceptance (V1-V8) is Commit 3A.
+    and a SHA-256 manifest. ``run_primary`` runs all three once per run and
+    records a stop with the evidence taken so far (``primary_stopped.json``).
+    Structural acceptance (V1-V8) is ``stage2_crossfit.acceptance``.
 
 A failure is recorded, then raised (G8): nothing falls back to ``global_t1``,
 ``outer_rf`` or ``full``, and no constraint is relaxed.
@@ -82,9 +84,10 @@ from . import inner_features as IF
 
 __all__ = ["RANDOM_STATE", "N_FOLDS", "PREFLIGHT_FOLD", "ROLE_PRIMARY", "ROLE_S1",
            "RunnerError", "TrainSide", "ArmSettings", "make_train_side", "load_train_side",
-           "check_population", "primary_settings", "s1_settings", "settings_record",
+           "document_unproven",
+           "check_population", "primary_settings", "s1_settings", "settings_record", "fit_status",
            "fit_fold", "preflight_checks", "run_crossfit", "fit_full_train", "fold_ledger",
-           "save_run", "require_authorization", "write_record", "sha256_file"]
+           "save_run", "run_primary", "require_authorization", "write_record", "sha256_file"]
 
 RANDOM_STATE = 42
 N_FOLDS = 5
@@ -354,6 +357,25 @@ def _rf_fold(ts: TrainSide, settings: ArmSettings, k: int, verbose: bool):
     return router, X_tr_eng, y_tr, provider
 
 
+def document_unproven(ev: Dict[str, Any], refit: Callable[[], Any]) -> Dict[str, Any]:
+    """
+    M3: if any GLASS selection ended as an unproven ILP incumbent, repeat the
+    identical fit once (``refit``: same rows, configuration and seed; returns
+    the refitted ``GlassRouterPipeline``) and record its selections beside the
+    untouched evidence (``E.m3_record``). Classification then applies the frozen
+    ``glass_record_reproduction``: ``valid_unproven_documented`` only if CBC's
+    status and log gap are recorded and the rerun selected the identical rules
+    and union. A rerun that differs or raises leaves ``valid_unproven_undocumented``.
+    """
+    keys = E.unproven_selections(ev)
+    if keys:
+        try:
+            ev[E.M3_KEY] = E.m3_record(keys, refit().selection_reports())
+        except Exception as exc:                    # recorded; the status stays undocumented
+            ev[E.M3_KEY] = E.m3_record(keys, error=f"{type(exc).__name__}: {exc}")
+    return ev
+
+
 def fit_fold(ts: TrainSide, settings: ArmSettings, k: int = PREFLIGHT_FOLD, *,
              arms: Sequence[str] = (E.ARM_GLASS, E.ARM_RF), verbose: bool = False,
              keep_fits: bool = False) -> Dict[str, Any]:
@@ -373,6 +395,7 @@ def fit_fold(ts: TrainSide, settings: ArmSettings, k: int = PREFLIGHT_FOLD, *,
                 fit = _glass_fold(ts, settings, k, verbose)
                 ev = E.glass_fold_evidence(fit.glass, fit.X_tr_eng, fit.y_tr, fold=k,
                                            heldout_index=held, inner_features=fit.inner_features)
+                ev = document_unproven(ev, lambda: _glass_fold(ts, settings, k, verbose).glass)
                 out["fits"][arm] = fit
             else:
                 router, X_tr_eng, y_tr, provider = _rf_fold(ts, settings, k, verbose)
@@ -481,6 +504,16 @@ class RunResult:
     seconds: Dict[str, float] = field(default_factory=dict)
 
 
+def fit_status(ev: Mapping[str, Any], settings: ArmSettings) -> dict:
+    """
+    A fold's fit status under the run's role: S1 by ``E.s1_fold_status`` (GLASS
+    ``full`` makes no inner Pass 1 selection), every other role by ``E.fold_status``.
+    """
+    if settings.role == ROLE_S1:
+        return E.s1_fold_status(ev, settings.contract)
+    return E.fold_status(ev, settings.contract, settings.protocol)
+
+
 def run_crossfit(ts: TrainSide, settings: ArmSettings, *,
                  arms: Sequence[str] = (E.ARM_GLASS, E.ARM_RF), verbose: bool = False,
                  result: Optional[RunResult] = None) -> RunResult:
@@ -504,7 +537,8 @@ def run_crossfit(ts: TrainSide, settings: ArmSettings, *,
             ev = E.glass_fold_evidence(fit.glass, fit.X_tr_eng, fit.y_tr, fold=k,
                                        heldout_index=ts.X_train.index[va],
                                        inner_features=fit.inner_features)
-            ev["fit_status"] = E.fold_status(ev, settings.contract, settings.protocol)
+            ev = document_unproven(ev, lambda: _glass_fold(ts, settings, k, verbose).glass)
+            ev["fit_status"] = fit_status(ev, settings)
             evs.append(ev)
             stop_unless_accepted(E.ARM_GLASS, ev)
             return ev
@@ -580,21 +614,36 @@ def fit_full_train(ts: TrainSide, settings: ArmSettings, result: RunResult, *,
         rf_params, rs = settings.rf_params, ts.random_state
         glass_rf_model = settings.ranker["glass_rf_model"]
         nested = _nested_ranker(settings.glass_config, glass_rf_model)
-        with _quiet(verbose):
+
+        def new_glass():
             # The full-train ordering RF: the frozen ranker settings, the fold-RF recipe.
             ordering_rf = (make_rf_feature_ranker_factory(rf_params, rs)(X_eng_train, ts.y_train)
                            if glass_rf_model == "fold_rf" else None)
             kwargs = ({"feature_ranker_factory": make_rf_feature_ranker_factory(rf_params, rs)}
                       if nested else {})
-            glass = GlassRouterPipeline(settings.glass_config, rf_model=ordering_rf,
-                                        rule_logger=RuleLogger(enabled=False), **kwargs)
+            return GlassRouterPipeline(settings.glass_config, rf_model=ordering_rf,
+                                       rule_logger=RuleLogger(enabled=False), **kwargs)
+
+        def new_provider():
             g_factory = settings.glass_inner_features
-            provider = None if g_factory is None else g_factory(ts.X_train, ts.y_train)
+            return None if g_factory is None else g_factory(ts.X_train, ts.y_train)
+
+        def fit(glass, provider):
+            if provider is None:
+                glass.fit(X_eng_train, ts.y_train)
+            else:
+                glass.fit(X_eng_train, ts.y_train, inner_features=provider)
+
+        def refit():                                # M3: the identical full-train fit again
+            with _quiet(verbose):
+                g = new_glass()
+                fit(g, new_provider())
+            return g
+        with _quiet(verbose):
+            glass = new_glass()
+            provider = new_provider()
             try:
-                if provider is None:
-                    glass.fit(X_eng_train, ts.y_train)
-                else:
-                    glass.fit(X_eng_train, ts.y_train, inner_features=provider)
+                fit(glass, provider)
             except Exception as exc:
                 result.full_train_evidence[E.ARM_GLASS] = E.stop_evidence(
                     E.ARM_GLASS, "full_train", exc, glass.selection_reports())
@@ -603,7 +652,8 @@ def fit_full_train(ts: TrainSide, settings: ArmSettings, result: RunResult, *,
             test_proba = glass.predict_proba(X_eng_test)
         ev = E.glass_fold_evidence(glass, X_eng_train, ts.y_train, fold="full_train",
                                    inner_features=provider)
-        ev["fit_status"] = E.fold_status(ev, settings.contract, settings.protocol)
+        ev = document_unproven(ev, refit)
+        ev["fit_status"] = fit_status(ev, settings)
         result.full_train_evidence[E.ARM_GLASS] = ev
         result.glass_full = {"glass": glass, "test_out": test_out, "test_proba": test_proba}
         result.seconds["glass_full_train"] = round(time.perf_counter() - t0, 1)
@@ -668,8 +718,30 @@ def fold_ledger(result: RunResult, settings: ArmSettings) -> ep.FoldLedger:
     return ep.FoldLedger.build(status, settings.protocol)
 
 
-def _require_accepted(result: RunResult, settings: ArmSettings) -> ep.FoldLedger:
-    """Every attempted fold accepted in each arm run, and each full-train fit accepted."""
+def _require_s1_accepted(result: RunResult, settings: ArmSettings) -> List[Dict[str, Any]]:
+    """S1: GLASS only; every attempted fold and the full-train fit re-classified as accepted."""
+    evs = {int(ev["fold"]): ev for ev in result.evidence.get(E.ARM_GLASS) or []}
+    attempted = [int(k) for k in settings.protocol["folds"]["attempted"]]
+    problems = [] if result.rf_crossfit is None else ["an S1 run has no RF arm"]
+    if sorted(evs) != attempted:
+        problems.append(f"GLASS folds {sorted(evs)} are not the attempted folds {attempted}")
+    fits = {**evs, "full_train": result.full_train_evidence.get(E.ARM_GLASS) or {"stop": {
+        "fit_status": "missing", "reason": "no full-train fit"}}}
+    status = {k: E.s1_fold_status(ev, settings.contract) for k, ev in fits.items()}
+    problems += [f"GLASS {k}: {st['status']}" for k, st in status.items() if not st["accepted"]]
+    if problems:
+        raise RunnerError(f"not saved: {problems}")
+    return [{"arm": E.ARM_GLASS, "fold": k, "status": st["status"], "by_key": st["by_key"]}
+            for k, st in status.items()]
+
+
+def _require_accepted(result: RunResult, settings: ArmSettings):
+    """
+    Every attempted fold accepted in each arm run, and each full-train fit
+    accepted: the ``FoldLedger``, or for S1 its fold statuses (``_require_s1_accepted``).
+    """
+    if settings.role == ROLE_S1:
+        return _require_s1_accepted(result, settings)
     arms = [a for a, cf in ((E.ARM_GLASS, result.glass_oof), (E.ARM_RF, result.rf_crossfit))
             if cf is not None]
     try:
@@ -748,7 +820,9 @@ def save_run(result: RunResult, ts: TrainSide, settings: ArmSettings, run_root, 
                                                   name=f"rf_router_pr38_{settings.role}_{run_id}",
                                                   test_metrics=None, extra_metadata=extra)
     evidence = {"format": RUN_FORMAT, "run_id": run_id, "role": settings.role,
-                "acceptance": acceptance, "fold_ledger": ledger.summary().to_dict("records"),
+                "acceptance": acceptance,
+                "fold_ledger": (ledger if settings.role == ROLE_S1
+                                else ledger.summary().to_dict("records")),
                 "folds": result.evidence, "full_train": result.full_train_evidence,
                 "seconds": result.seconds}
     write_record(root / "evidence.json", evidence)
@@ -769,6 +843,93 @@ def save_run(result: RunResult, ts: TrainSide, settings: ArmSettings, run_root, 
     write_record(root / "MANIFEST.json", manifest)
     (root / "MANIFEST.json.sha256").write_text(sha256_file(root / "MANIFEST.json") + "\n")
     return {"root": root, "written": written, "manifest": manifest}
+
+
+PRIMARY_ATTEMPT_FORMAT = "pr38.stage2.primary_attempt/1"
+PRIMARY_STOP_FORMAT = "pr38.stage2.primary_stopped/1"
+PRIMARY_ATTEMPT_FILE = "primary_attempt.json"
+PRIMARY_RECORDS = (PRIMARY_ATTEMPT_FILE, "primary_MANIFEST.json", "primary_stopped.json")
+
+
+def _write_durable(path: Path, record: Mapping[str, Any]) -> Path:
+    """``write_record``, flushed and fsynced before it returns (survives an interruption)."""
+    import os
+    text = json.dumps(E.to_json_safe(record), indent=2, sort_keys=True)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "x", encoding="utf-8") as fh:
+        fh.write(text + "\n")
+        fh.flush()
+        os.fsync(fh.fileno())
+    return path
+
+
+def _slim(ev: Mapping[str, Any]) -> Dict[str, Any]:
+    """An evidence dict without the remainder's row identities."""
+    out = dict(ev)
+    if isinstance(out.get("remainder"), Mapping):
+        out["remainder"] = {k: v for k, v in out["remainder"].items() if k != "index"}
+    return out
+
+
+def run_primary(ts: TrainSide, settings: ArmSettings, run_root, run_id: str, record_dir, *,
+                population: Optional[Mapping[str, Any]] = None,
+                attempt: Optional[Mapping[str, Any]] = None,
+                verbose: bool = False) -> Dict[str, Any]:
+    """
+    The five-fold primary, once per run: cross-fit, full-train fits and the
+    candidate artifacts. Refused before any fit if the run already has a
+    primary attempt (its candidate directory or any of ``PRIMARY_RECORDS``).
+    ``primary_attempt.json`` (with ``attempt``, e.g. the authorization's
+    SHA-256) is written and fsynced before the first fit, so an interrupted
+    primary still blocks a rerun under the run. A stop at any step (a fold
+    not accepted, a fit that raised, a refused save, an interruption) writes
+    ``primary_stopped.json`` with every fold's evidence recorded so far
+    (slimmed), then raises: the run is reported, not retried (M4).
+    """
+    run_root, record_dir = Path(run_root), Path(record_dir)
+    done = [str(p) for p in (run_root, *(record_dir / n for n in PRIMARY_RECORDS)) if p.exists()]
+    if done:
+        raise RunnerError(f"run {run_id!r} already has a primary attempt {done}: a stopped, "
+                          "interrupted or completed primary is investigated, never rerun under "
+                          "the same run")
+    _write_durable(record_dir / PRIMARY_ATTEMPT_FILE, {
+        "format": PRIMARY_ATTEMPT_FORMAT, "run_id": run_id, "role": settings.role,
+        "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "feature_pathway": IF.pathway_identity(settings.feature_pathway),
+        "identities": settings.checks.get("identities"), "population": population,
+        **dict(attempt or {}),
+        "note": "written before the first fit; an attempt with neither primary_MANIFEST.json nor "
+                "primary_stopped.json was interrupted and is investigated, never rerun"})
+    result = RunResult(settings.role)
+    step = "cross-fit"
+    try:
+        run_crossfit(ts, settings, verbose=verbose, result=result)
+        step = "full-train fits"
+        fit_full_train(ts, settings, result, verbose=verbose)
+        step = "save"
+        saved = save_run(result, ts, settings, run_root, run_id)
+    except BaseException as exc:                     # an interruption is recorded too
+        import traceback
+        rec = {"format": PRIMARY_STOP_FORMAT, "run_id": run_id, "role": settings.role,
+               "stopped_at": step, "exception": type(exc).__name__, "reason": str(exc),
+               "traceback": traceback.format_exc().splitlines()[-12:],
+               "accepted": False, "population": population,
+               "feature_pathway": IF.pathway_identity(settings.feature_pathway),
+               "identities": settings.checks.get("identities"),
+               "fit_status_by_fold": {arm: {str(ev["fold"]): (ev.get("fit_status") or {}).get(
+                                                "status") or (ev.get("stop") or {}).get("fit_status")
+                                            for ev in evs}
+                                      for arm, evs in result.evidence.items()},
+               "folds": {arm: [_slim(ev) for ev in evs] for arm, evs in result.evidence.items()},
+               "full_train": {arm: _slim(ev) for arm, ev in result.full_train_evidence.items()},
+               "seconds": result.seconds,
+               "note": "not a primary result: no outer-OOF metric was computed"}
+        path = _write_durable(record_dir / "primary_stopped.json", rec)
+        if not isinstance(exc, Exception):
+            raise                                    # KeyboardInterrupt / SystemExit as raised
+        raise RunnerError(f"primary stopped during the {step}: {exc} (evidence: {path})") from exc
+    write_record(record_dir / "primary_MANIFEST.json", saved["manifest"])
+    return {"saved": saved, "result": result}
 
 
 def _referenced_file(rec: Mapping[str, Any], key: str) -> Path:

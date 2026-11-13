@@ -46,7 +46,7 @@ from glass_pipeline.lr.lr_stage_calibrated import CalibratedLRStage
 from shared.stage3.data import FoldPlan
 from shared.stage_io import fold_assignment, split_fingerprint
 from tests.support.notebooks import BANK_ROOT
-from tests.support.synthetic import make_bank_frame
+from tests.support.synthetic_bank import make_bank_frame
 
 NOTEBOOKS = {"glass": BANK_ROOT / "glass_pipeline" / "glass_cascade.ipynb",
              "blackbox": BANK_ROOT / "blackbox_pipeline" / "blackbox_cascade.ipynb"}

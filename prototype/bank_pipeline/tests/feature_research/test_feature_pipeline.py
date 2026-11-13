@@ -19,7 +19,7 @@ from feature_research.feature_engineering import (
 )
 from feature_research.validation import validate_engineered_features
 from tests.support import mutations as mut
-from tests.support.synthetic import TARGET
+from tests.support.synthetic_bank import TARGET
 
 TARGET_DEPENDENT = ["dow_month_encoded", "euribor3m_local_rate", "neighborhood_subscription_density"]
 TARGET_FREE = ["cellular_crisis", "economic_crisis_score", "euribor3m_sigmoid_slope", "campaign"]

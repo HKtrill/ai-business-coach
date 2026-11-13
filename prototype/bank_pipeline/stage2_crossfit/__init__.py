@@ -15,6 +15,18 @@ runner
     Train-side data and identity checks, the strict primary and S1
     configurations (G1, G2, G9), the fit-only preflight (G3), the outer
     cross-fit and full-train fits, and versioned artifact writing (G5, G10).
+acceptance
+    Commit 3A after the primary: the G7 reproduction of one outer fold and
+    structural acceptance V1-V8 of the candidate artifacts; the Step 3B entry
+    point (``require_accepted``). No outer-OOF metric is computed.
+complementarity
+    Commit 3, Step 3B: the comparative analysis of an accepted run (protocol
+    sections 3-12), gated by ``acceptance.require_accepted``; one write-once,
+    versioned package of tables and provenance per run.
+sensitivity
+    Commit 3, Step 3C: the G12 sensitivity S1 (GLASS ``full``) for an accepted
+    primary, its mandatory G6 Pass 1 invariance (S1 is accepted only if it
+    passes), and the S1 package, reported apart from the primary comparison.
 phase0
     Read-only historical integrity checks and the PR 38 output root (Phase 0).
 g13

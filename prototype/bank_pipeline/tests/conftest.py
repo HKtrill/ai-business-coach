@@ -10,7 +10,7 @@ from __future__ import annotations
 import pytest
 
 from tests.support.recorders import CallLog
-from tests.support.synthetic import make_bank_frame, split_frame
+from tests.support.synthetic_bank import make_bank_frame, split_frame
 
 
 def pytest_collection_modifyitems(config, items):

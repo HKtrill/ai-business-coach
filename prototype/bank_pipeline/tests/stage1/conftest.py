@@ -56,7 +56,7 @@ from glass_pipeline.lr.lr_stage_calibrated import CalibratedLRStage
 from shared.stage1.feature_engineering import LRFeatureEngineer
 from shared.stage_io import StageOutput
 from tests.support.recorders import Call, CallLog, row_keys
-from tests.support.synthetic import make_bank_frame, split_frame
+from tests.support.synthetic_bank import make_bank_frame, split_frame
 
 #: Raw, label-free columns: a control feature set with no target encoding.
 LABEL_FREE_FEATURES = ["euribor3m", "emp.var.rate", "nr.employed", "cons.conf.idx", "previous"]

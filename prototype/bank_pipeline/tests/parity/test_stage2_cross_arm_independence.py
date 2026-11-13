@@ -35,8 +35,8 @@ from blackbox_pipeline.models.rf_router import RFRouterConfig
 from blackbox_pipeline.models.rf_router.tuning.legacy import load_rf_params_from_artifact
 from glass_pipeline.glass_router.pipeline import crossfit_stage2
 from tests.stage2.conftest import TINY_RF, legacy_config
-from tests.support.stage2_synthetic import CONSTRAINTS_OK, SMALL_PARAMS, make_data
-from tests.support.synthetic import make_bank_frame, split_frame
+from tests.support.synthetic_rf_router import CONSTRAINTS_OK, SMALL_PARAMS, make_data
+from tests.support.synthetic_bank import make_bank_frame, split_frame
 
 
 def test_the_glass_rf_artifact_hands_the_black_box_arm_hyperparameters_only(tmp_path):

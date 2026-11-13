@@ -30,7 +30,7 @@ import stage2_crossfit.__main__ as cli
 import stage2_crossfit.inner_features as IF
 import stage2_crossfit.phase0 as P
 import stage2_crossfit.runner as R
-from tests.support import step2b_world as S
+from tests.support import authorization_world as S
 
 FOLD, OUTER = IF.PATHWAY_FOLD, IF.PATHWAY_OUTER
 

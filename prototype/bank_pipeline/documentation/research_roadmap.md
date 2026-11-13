@@ -11,13 +11,21 @@
 **Objective:** Establish the PR 38 execution sequence, requirements, dependencies, and acceptance criteria before implementation or corrected training.
 
 - [x] Review the completed PR 37 handoff, frozen Stage 2 contract, F17/F31 decision records, and pre-registered evaluation protocol.
+
 - [x] Map F17 gates G1–G13 and F31 requirements R1–R8 to their PR 38 execution and validation steps.
+
 - [x] Identify existing PR 37 functionality that can be reused versus work requiring new implementation.
+
 - [x] Define the corrected GLASS/RF execution sequence and required training-side inputs.
+
 - [x] Define the preflight, primary rerun, sensitivity-analysis, and complementarity-ablation boundaries.
+
 - [x] Establish test, reproducibility, artifact-provenance, and final acceptance requirements.
+
 - [x] Preserve the frozen PR 37 operating contract and historical baselines without retroactive modification.
+
 - [x] Define the PR 38/PR 39 boundary: selector design freezes in PR 38; final binning, calibration, and cascade regeneration remain PR 39.
+
 - [x] Finalize and version-control the updated PR 38 roadmap.
 
 **Deliverable:** Reviewed, approved, and version-controlled PR 38 roadmap.
@@ -28,30 +36,48 @@
 
 **Objective:** Complete all required implementation and feasibility gates before initiating the corrected five-fold primary reruns.
 
-**Step 2A — Configuration, Integration, and Leakage Safeguards**
+#### **Step 2A — Configuration, Integration, and Leakage Safeguards**
 
 - [x] Before any real-data fit (including the G13 audit), complete handoff Phase 0:
+
   - Verify the archived snapshot and historical baseline (`--verify`, archive `--check`).
+
   - Pin `$BANK_ARTIFACT_MANIFEST`.
+
   - Inventory historical router artifacts.
+
   - Establish a separate versioned PR 38 output location.
+
 - [x] Validate G1: frozen primary configuration, including required `nested_t1` and `fold_nested_rf` safeguards.
+
 - [x] Validate G2: correct GLASS/RF wiring, arm-specific ownership, and Pass 2 training on each arm's own OOF Pass 1 remainder.
+
 - [x] Validate G5: required persistence, intermediate records, and training-side provenance support, including F31 R1, R2, and R5 records that must be produced inside the cross-fit.
+
 - [x] Validate G8: explicit rejection of infeasible fits, missing valid incumbents, insufficient remainder support, and invalid configurations.
+
 - [x] Validate G9: independent arm configuration and identical frozen shared-contract obligations.
+
 - [x] Complete G13: audit label-derived feature engineering for own-label and cross-fold leakage, including density, curvature, and day × month encoders.
+
   - [x] Correct and validate any confirmed material own-label dependency, and decide whether the primary adopts the correction, before any five-fold primary run.
+
 - [x] Add or update targeted regression tests for any implementation changes.
 
-**Step 2B — Real-Data Feasibility and Primary-Run Authorization**
+#### **Step 2B — Real-Data Feasibility and Primary-Run Authorization**
 
 - [x] Execute G3 real-data feasibility preflight under the frozen operating contract.
+
 - [x] Verify Pass 1 and Pass 2 constraint feasibility, support requirements, and solver outcomes.
+
 - [x] Verify training population boundaries, fold construction, and upstream OOF dependencies.
+
 - [x] Confirm historical baselines and existing artifacts remain unchanged.
+
 - [x] Run targeted regression and relevant integration tests.
+
 - [x] Record preflight outcomes, limitations, and explicit pass/fail decisions.
+
 - [x] Authorize the primary five-fold reruns only after required gates pass.
 
 **Deliverable:** Validated corrected-selector implementation with documented primary-run readiness.
@@ -60,94 +86,138 @@
 
 ### Commit 3 — Corrected Stage 2 Cross-Fit and Complementarity Evaluation
 
-**Objective:** Generate corrected GLASS/RF cross-fitted predictions and evaluate router behavior using the pre-registered PR 37 protocol.
+**Objective:** Implement, execute, and validate corrected Stage 2 cross-fitting, complementarity analysis, and sensitivity experiments using the pre-registered PR 37 protocol. Complete all required testing, artifact verification, and structural acceptance before closing Commit 3.
 
-**Step 3A — Corrected Five-Fold Primary Reruns**
+#### Step 3A — Corrected Five-Fold Primary Reruns
 
-- [ ] Run corrected GLASS Router under the frozen Stage 2 operating contract.
-- [ ] Run corrected RF Router under the identical shared contract.
-- [ ] Complete the full five-fold Stage 2 outer cross-fit for both arms.
-- [ ] Verify G4: fold isolation, training-population boundaries, and OOF provenance.
-- [ ] Verify G7: deterministic reproducibility and fold identities.
-- [ ] Verify G10: versioned artifacts, configuration identities, and provenance pins.
-- [ ] Verify G11: preservation of historical baselines and previously frozen evidence.
-- [ ] Record mandatory F31 requirements R1–R5, R7, and R8; R6 band-level spread remains optional.
-- [ ] Verify routing semantics, Pass 1 precedence, Pass 2 remainder eligibility, and abstention accounting.
-- [ ] Record every fold's fit status, including infeasible fits, solver nonoptimality, greedy fallbacks, and unsuccessful fits.
-- [ ] Require all five folds accepted in both arms before any outer-OOF performance result is examined, without relaxing the contract.
-- [ ] Regenerate corrected Stage 2 OOF and required model artifacts.
-- [ ] Validate artifact serialization, fingerprints, metadata, and interface compatibility.
-- [ ] Pass structural acceptance V1–V8, including population and upstream identity verification, before any comparative analysis.
+- [x] Run corrected GLASS Router under the frozen Stage 2 operating contract.
+- [x] Run corrected RF Router under the identical shared contract.
+- [x] Complete the full five-fold Stage 2 outer cross-fit for both arms.
+- [x] Verify G4: fold isolation, training-population boundaries, and OOF provenance.
+- [x] Verify G7: deterministic reproducibility and fold identities.
+- [X] Verify G10: versioned artifacts, configuration identities, and provenance pins.
+- [x] Verify G11: preservation of historical baselines and previously frozen evidence.
+- [x] Record mandatory F31 requirements R1–R5, R7, and R8; R6 band-level spread remains optional.
+- [x] Verify routing semantics, Pass 1 precedence, Pass 2 remainder eligibility, and abstention accounting.
+- [x] Record every fold's fit status, including infeasible fits, solver nonoptimality, greedy fallbacks, and unsuccessful fits.
+- [x] Require all five folds accepted in both arms before any outer-OOF performance result is examined, without relaxing the contract.
+- [x] Regenerate corrected Stage 2 OOF and required model artifacts.
+- [x] Validate artifact serialization, fingerprints, metadata, and interface compatibility.
+- [x] Pass structural acceptance V1–V8, including population and upstream identity verification, before any comparative analysis.
 
-**Step 3B — Corrected-Router Complementarity Analysis**
+#### Step 3B — Corrected-Router Complementarity Analysis
 
-- [ ] Re-run the three-state router trace:
+- [x] Re-run the three-state router trace:
   - `PASS_1_NOT_SUBSCRIBE`
   - `PASS_2_SUBSCRIBE`
   - `ABSTAIN`
-- [ ] Re-measure Pass 2 unique-positive discovery at matched flag rates.
-- [ ] Re-measure Pass 1 false-positive suppression against frozen LR/EBM operating points.
-- [ ] Measure GLASS/RF routing coverage, precision, NPV, leakage, abstention, and class-conditional behavior.
-- [ ] Report observed outer-OOF constraint compliance and shortfalls under protocol section 11, separately from fit-time status.
-- [ ] Compare pre-correction versus post-correction redundancy and routed-row identities.
-- [ ] Measure GLASS Router versus LR/EBM decision overlap, score-conditional routing, and disagreement using the existing Step 2 diagnostic definitions.
-- [ ] Evaluate comparative results using the pre-registered metrics, paired comparisons, and uncertainty procedures.
-- [ ] Distinguish implementation correctness, contract feasibility, and empirical predictive performance.
+- [x] Re-measure Pass 2 unique-positive discovery at matched flag rates.
+- [x] Re-measure Pass 1 false-positive suppression against frozen LR/EBM operating points.
+- [x] Measure GLASS/RF routing coverage, precision, NPV, leakage, abstention, and class-conditional behavior.
+- [x] Report observed outer-OOF constraint compliance and shortfalls under protocol section 11, separately from fit-time status.
+- [x] Compare pre-correction versus post-correction redundancy and routed-row identities.
+- [x] Measure GLASS Router versus LR/EBM decision overlap, score-conditional routing, and disagreement using the existing Step 2 diagnostic definitions.
+- [x] Evaluate comparative results using the pre-registered metrics, paired comparisons, and uncertainty procedures.
+- [x] Distinguish implementation correctness, contract feasibility, and empirical predictive performance.
 
-**Step 3C — F17 Sensitivity and Final Validation**
+#### Step 3C — F17 Sensitivity and Final Validation
 
-- [ ] Execute G12 sensitivity analysis S1: GLASS `full` versus `oof_remainder`, descriptive only, after the applicable primary-run gates pass.
-- [ ] Verify G6 Pass 1 invariance during S1; reject S1 if its required invariance fails.
-- [ ] Report S1 separately from the corrected primary comparison.
-- [ ] Complete regression, provenance, reproducibility, and artifact-integrity verification.
-- [ ] Document corrected primary results, sensitivity findings, remaining limitations, and implications for complementarity-aware selection.
+- [x] Execute G12 sensitivity analysis S1: GLASS `full` versus `oof_remainder`, descriptive only, after the applicable primary-run gates pass.
+- [x] Verify G6 Pass 1 invariance during S1; reject S1 if its required invariance fails.
+- [x] Report S1 separately from the corrected primary comparison.
+- [x] Complete regression, provenance, reproducibility, and artifact-integrity verification.
+- [x] Document corrected primary results, sensitivity findings, remaining limitations, and implications for complementarity-aware selection.
 
-**Deliverable:** Corrected, validated Stage 2 cross-fitted artifacts and a complete pre/post-correction complementarity analysis.
+**Deliverable:** Corrected and structurally accepted GLASS/RF five-fold cross-fitted artifacts, completed complementarity and sensitivity analyses, passing regression and validation tests, verified provenance, and documented findings ready for Commit 4.
 
 ---
 
-### Commit 4 — Complementarity Ablation and Final Stage 2 Freeze
+### Commit 4 — Housekeeping Research Records and Report Organization
 
-**Objective:** Evaluate whether additional complementarity-aware selection improves Stage 2 beyond the corrected union-coverage baseline, then freeze the supported selector design.
+**Objective:** Organize PR 38 experimental records, JSON files, and validation reports into a consistent, easily navigable structure without changing pipeline functionality.
 
-**Step 4A — Complementarity-Aware Selection Experiment**
+- [ ] Establish clear locations for versioned methodology records, generated execution evidence, test reports, and final research outputs.
+- [ ] Organize records consistently by PR, run ID, and purpose.
+- [ ] Ensure important research evidence is version-controlled and accessible for read-only review on GitHub.
+- [ ] Keep temporary logs, redundant generated outputs, and large model artifacts out of Git where appropriate.
+- [ ] Preserve existing records, provenance, fingerprints, and write-once safeguards.
+- [ ] Update file paths and references only where necessary, without modifying algorithms, tests, validation criteria, or experimental behavior.
+- [ ] Verify affected record-storage and retrieval operations with focused checks only.
+
+**Deliverable:** Evidence-based complementarity-ablation decision, selected Stage 2 implementation and artifacts validated and frozen, and PR 39 regeneration requirements documented.
+
+---
+
+### Commit 5 — Complementarity Ablation and Final Stage 2 Freeze
+
+**Objective:** Prepare and validate the optional complementarity-aware selection experiment and final-selector workflow.
+
+**Execution scheduling:** Implement and test the conditional experiment and freeze workflow in Commit 4. Complete evidence-dependent evaluation and selector decisions.
+
+#### **Step 5A — Complementarity-Aware Selection Experiment**
 
 - [ ] Review Commit 3 evidence against the pre-registered criteria to determine whether the optional experiment is warranted.
+
 - [ ] If warranted, implement and evaluate complementarity-aware selection using train-side OOF upstream predictions only.
+
 - [ ] Evaluate rule objectives favoring:
+
   - [ ] Positive cases missed by Stage 1 LR.
+
   - [ ] Rows where LR and EBM disagree.
+
 - [ ] Compare standard union-coverage selection against complementarity-aware selection.
+
 - [ ] Measure unique-positive discovery, matched flag-budget performance, coverage, precision, leakage, uncertainty, and computational cost.
+
 - [ ] Verify training-side isolation and preservation of the frozen operating contract.
+
 - [ ] Treat complementarity-aware selection as a secondary ablation unless the pre-registered adoption criteria are satisfied.
+
 - [ ] If adoption is justified, implement an equivalent RF Router objective or explicitly document the methodological asymmetry.
+
 - [ ] Record an evidence-based adoption or rejection decision without changing the frozen criteria retroactively.
 
-**Step 4B — Final Selector Decision and Artifact Freeze**
+#### **Step 5B — Final Selector Decision and Artifact Freeze**
 
 - [ ] Select the final Stage 2 selector design based on the pre-registered comparisons and acceptance hierarchy.
+
 - [ ] If complementarity-aware selection is adopted, rerun the required GLASS/RF cross-fitting and evaluation under the frozen contract and a later, versioned evaluation protocol; preserve the Commit 3 primary results.
+
 - [ ] If the original selector is retained, re-verify and freeze the accepted Commit 3 artifacts without unnecessary retraining.
+
 - [ ] Regenerate final PR 38 Stage 2 OOF and required test artifacts only when the selected design requires regeneration.
+
 - [ ] Verify final fold identities, OOF provenance, constraint compliance, routing semantics, and mirrored contracts.
+
 - [ ] Validate artifact versions, fingerprints, serialization, upstream compatibility, and reproducibility.
+
 - [ ] Confirm historical baseline preservation and no unintended model-artifact or notebook changes.
+
 - [ ] Run final targeted, regression, and applicable real-data validation.
+
 - [ ] Freeze the selected Stage 2 implementation, configuration, and PR 38 research artifacts.
+
 - [ ] Document the final selector decision, experimental evidence, methodological limitations, and PR 39 regeneration requirements.
+
 - [ ] Confirm all PR 38 acceptance criteria and reconcile the roadmap.
 
-**Deliverable:** Frozen Stage 2 selector implementation, validated PR 38 research artifacts, and an explicit PR 39 handoff.
+**Deliverable:** Tested optional ablation and selector-freeze implementation, ready for an evidence-based decision in Commit 5.
 
 ---
 
 ### PR 38 — Final Completion Boundary
 
 - [x] **Commit 1 complete:** PR 38 roadmap and validation requirements reviewed, finalized, and version-controlled.
+
 - [x] **Commit 2 complete:** Preflight, leakage safeguards, and corrected-run readiness validated.
-- [ ] **Commit 3 complete:** Corrected GLASS/RF cross-fitting, complementarity analysis, and F17 sensitivity validated.
-- [ ] **Commit 4 complete:** Complementarity ablation disposition recorded, final selector selected, and Stage 2 frozen.
+
+- [x] **Commit 3 complete:** Corrected five-fold GLASS/RF cross-fitting, complementarity analysis, and sensitivity experiments executed, validated, and structurally accepted.
+
+- [ ] **Commit 4 complete:** Research records, JSON evidence, and validation reports reorganized into a consistent, structured storage system; relevant evidence version-controlled, with provenance, reproducibility, and existing pipeline functionality preserved.
+
+- [ ] **Commit 5 complete:** Optional complementarity ablation evaluated against pre-registered criteria, final Stage 2 selector selected and frozen, and PR 39 handoff requirements documented.
+
 - [ ] **PR 38 complete:** Stage 2 selector research concluded, validated artifacts and provenance preserved, and PR 39 handoff established.
 
 **Out of scope:** Stage 1 calibration changes, Stage 1 feature renaming, final Stage 2 binning revisions, Stage 4 regeneration, final cascade notebook presentation, and paper-level independent validation. These remain assigned to subsequent PRs.

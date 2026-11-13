@@ -25,7 +25,7 @@ import stage2_crossfit.evidence as E
 import stage2_crossfit.runner as R
 import shared.stage2.evaluation_protocol as ep
 from shared.stage2.contract import load_frozen_contract
-from tests.support import pr38_world as W
+from tests.support import stage2_crossfit_world as W
 from tests.support.rf_router_world import serial_forests
 
 

@@ -60,7 +60,7 @@ from tests.stage1.conftest import (
 from tests.support import mutations as mut
 from tests.support.checks import assert_never_fit_on, assert_oof_provenance
 from tests.support.notebooks import BANK_ROOT
-from tests.support.synthetic import make_bank_frame
+from tests.support.synthetic_bank import make_bank_frame
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Got `batch_size` less than 1 or larger than sample size:UserWarning")

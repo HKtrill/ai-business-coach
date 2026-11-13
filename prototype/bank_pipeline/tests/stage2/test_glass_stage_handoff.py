@@ -25,7 +25,7 @@ from shared.stage_io import fold_assignment, split_fingerprint
 from tests.stage1.conftest import fit_glass_stage1, stage1_split
 from tests.stage2.conftest import run_crossfit
 from tests.support.checks import assert_never_fit_on
-from tests.support.synthetic import BANK_SCHEMA, TARGET
+from tests.support.synthetic_bank import BANK_SCHEMA, TARGET
 
 
 @pytest.fixture(scope="module")

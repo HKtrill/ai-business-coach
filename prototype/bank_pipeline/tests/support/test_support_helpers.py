@@ -23,7 +23,7 @@ from tests.support.recorders import (
     CallLog, RecordingEstimator, RecordingStage3Estimator, RowTaggedEstimator, array_row_labels,
     row_keys, tag_rows,
 )
-from tests.support.synthetic import BANK_SCHEMA, TARGET, make_bank_frame, split_frame
+from tests.support.synthetic_bank import BANK_SCHEMA, TARGET, make_bank_frame, split_frame
 
 FOLDS = StratifiedKFold(n_splits=4, shuffle=True, random_state=0)
 

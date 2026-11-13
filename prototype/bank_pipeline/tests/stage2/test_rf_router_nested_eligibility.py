@@ -47,7 +47,7 @@ from blackbox_pipeline.models.rf_router.oof.eligibility import (
 )
 from tests.support.recorders import CallLog
 from tests.support.rf_router_world import recording_forests, serial_forests
-from tests.support.stage2_synthetic import CONSTRAINTS_OK, SMALL_PARAMS, make_data, router_config
+from tests.support.synthetic_rf_router import CONSTRAINTS_OK, SMALL_PARAMS, make_data, router_config
 
 N_FOLDS, E_FOLDS, SEED = 3, 3, 7
 

@@ -21,7 +21,7 @@ from feature_research import (
 from feature_research.interactions import quantile_bin_codes
 from feature_research.metrics import cohens_d, cramers_v, wilson_ci
 from feature_research.separation import compute_categorical_separation, compute_numeric_separation
-from tests.support.synthetic import TARGET
+from tests.support.synthetic_bank import TARGET
 
 
 # ----------------------------------------------------------------------

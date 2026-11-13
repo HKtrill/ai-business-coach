@@ -35,9 +35,9 @@ import stage2_crossfit.evidence as E
 import stage2_crossfit.g13 as G
 import stage2_crossfit.runner as R
 from shared.stage2.feature_engineering import RF_SOURCE_FEATURES, RFFeatureEngineer
-from tests.support import pr38_world as W
+from tests.support import stage2_crossfit_world as W
 from tests.support.rf_router_world import serial_forests
-from tests.support.synthetic import make_bank_frame
+from tests.support.synthetic_bank import make_bank_frame
 
 
 def _inner(y, k=5, seed=42):

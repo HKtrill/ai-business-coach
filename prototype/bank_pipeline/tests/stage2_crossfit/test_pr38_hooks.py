@@ -29,11 +29,11 @@ from glass_pipeline.glass_router.rule_generator.rule_logger import RuleLogger
 from shared.stage4 import router_stream
 from shared.stage4.upstream import upstream_record
 from tests.stage2.conftest import TINY_RF, legacy_config, run_crossfit
-from tests.support import pr38_world as W
+from tests.support import stage2_crossfit_world as W
 from tests.support.rf_router_world import (
     bank_world, engineer, router_config, serial_forests, stage4_block,
 )
-from tests.support.synthetic import make_bank_frame, split_frame
+from tests.support.synthetic_bank import make_bank_frame, split_frame
 
 
 # ======================================================================

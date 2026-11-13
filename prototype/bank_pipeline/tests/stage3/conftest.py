@@ -36,7 +36,7 @@ from shared.stage3.feature_engineering import EBM_FEATURES, EBMFeaturePipeline
 from shared.stage3.runner import Stage3Runner
 from shared.stage_io import split_fingerprint
 from tests.support.recorders import CallLog, RecordingStage3Estimator
-from tests.support.synthetic import make_bank_frame, split_frame
+from tests.support.synthetic_bank import make_bank_frame, split_frame
 
 N_TUNE, N_EVAL = 3, 3
 # interpret's default is 14 outer bags; 2 keep each fit ~0.1 s. Bagging only

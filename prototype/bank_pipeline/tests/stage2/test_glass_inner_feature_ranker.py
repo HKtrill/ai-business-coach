@@ -46,8 +46,8 @@ from glass_pipeline.glass_router.rf.feature_ranker import make_rf_feature_ranker
 from glass_pipeline.glass_router.rf.rf_training import _build_pipe
 from shared.stage_io import label_fingerprint
 from tests.stage2.conftest import TINY_RF, legacy_config, new_router, selected_rule
-from tests.support.stage2_synthetic import make_data, router_config
-from tests.support.synthetic import irregular_index, make_bank_frame, split_frame
+from tests.support.synthetic_rf_router import make_data, router_config
+from tests.support.synthetic_bank import irregular_index, make_bank_frame, split_frame
 
 N, INNER, SEED, FULL_BUCKET = 600, 3, 42, 3
 

@@ -23,7 +23,7 @@ import stage2_crossfit.evidence as E
 import stage2_crossfit.g13 as G
 import stage2_crossfit.inner_features as IF
 import stage2_crossfit.runner as R
-from tests.support import pr38_world as W
+from tests.support import stage2_crossfit_world as W
 from tests.support.rf_router_world import serial_forests
 
 REVIEW = {"reviewer": "owner", "rationale": "reviewed", "date": "2026-11-12"}

@@ -38,8 +38,8 @@ from glass_pipeline.glass_router.ilp_rule_selector.ilp_rule_selector import Sele
 from glass_pipeline.glass_router.pipeline import GlassRouterPipeline
 from tests.stage2.conftest import selected_rule
 from tests.stage2.test_stage2_operating_contract_v2 import _v2
-from tests.support.stage2_synthetic import SMALL_PARAMS
-from tests.support.synthetic import make_bank_frame, split_frame
+from tests.support.synthetic_rf_router import SMALL_PARAMS
+from tests.support.synthetic_bank import make_bank_frame, split_frame
 
 P1, P2 = "Pass 1 (NOT_SUBSCRIBE)", "Pass 2 (SUBSCRIBE)"
 PASS1_SEGMENT, PASS2_SEGMENT = [("behav_cold", 1)], [("jed_hot", 1)]

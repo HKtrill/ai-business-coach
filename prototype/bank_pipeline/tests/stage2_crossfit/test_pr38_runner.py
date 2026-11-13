@@ -49,8 +49,8 @@ from glass_pipeline.glass_router.contract import check_glass_config_follows_cont
 from blackbox_pipeline.models.rf_router import RFRouter
 from shared.stage2.contract import ContractViolation, load_frozen_contract
 from shared.stage4 import router_stream
-from tests.support import pr38_world as W
-from tests.support import step2b_world as S
+from tests.support import stage2_crossfit_world as W
+from tests.support import authorization_world as S
 from tests.support.rf_router_world import serial_forests
 
 
@@ -428,7 +428,7 @@ def test_the_manifest_hashes_every_file_and_no_run_overwrites_one(saved):
 # 6. authorization
 # ======================================================================
 def _authorization(tmp_path, *, g3=None, g13=None, **fields):
-    """A complete authorization (Step 2B evidence: ``step2b_world``); ``g3`` / ``g13`` override
+    """A complete authorization (Step 2B evidence: ``authorization_world``); ``g3`` / ``g13`` override
     the G3 block and the original G13 record, ``fields`` the authorization's own fields."""
     bodies = S.records()
     real = bodies["g3"]["g3"]

@@ -48,10 +48,10 @@ from tests.support.rf_router_world import (
     N_STAGE_FOLDS, RANDOM_STATE, TEST_SIZE, bank_world, engineer, fit_ids, fold_segments,
     recording_forests, router_config, serial_forests,
 )
-from tests.support.stage2_synthetic import (
+from tests.support.synthetic_rf_router import (
     ALT_PARAMS, N_FOLDS, ROUTER_SEED, SMALL_PARAMS, make_data,
 )
-from tests.support.stage2_synthetic import router_config as small_router_config
+from tests.support.synthetic_rf_router import router_config as small_router_config
 
 
 @pytest.fixture(scope="module")

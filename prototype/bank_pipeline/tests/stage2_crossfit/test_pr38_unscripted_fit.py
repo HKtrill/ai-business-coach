@@ -22,7 +22,7 @@ import stage2_crossfit.g13 as G
 import stage2_crossfit.runner as R
 from glass_pipeline.glass_router import profile as glass_profile
 from glass_pipeline.glass_router.contract import glass_config_from_contract
-from tests.support import pr38_world as W
+from tests.support import stage2_crossfit_world as W
 from tests.support.rf_router_world import serial_forests
 
 pytestmark = pytest.mark.slow

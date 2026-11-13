@@ -45,7 +45,7 @@ from blackbox_pipeline.models.rf_router.tuning import (
 )
 from tests.support.notebooks import BANK_ROOT
 from tests.support.rf_router_world import quiet
-from tests.support.stage2_synthetic import ALT_PARAMS, SMALL_PARAMS, make_data, router_config
+from tests.support.synthetic_rf_router import ALT_PARAMS, SMALL_PARAMS, make_data, router_config
 
 NOTEBOOK = BANK_ROOT / "blackbox_pipeline" / "blackbox_cascade.ipynb"
 KEYS = ("n_estimators", "max_depth", "min_samples_leaf", "max_features", "minority_weight",

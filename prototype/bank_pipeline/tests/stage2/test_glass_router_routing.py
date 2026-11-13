@@ -23,7 +23,7 @@ from glass_pipeline.glass_router.model_outputs import build_glass_output
 from shared.stage4.adapters import normalize_router_decisions
 from tests.stage2.conftest import new_router, router_with_rules, selected_rule
 from tests.support import mutations as mut
-from tests.support.synthetic import irregular_index
+from tests.support.synthetic_bank import irregular_index
 
 PASS1 = [selected_rule(1, [("a", 1)], "pass1", 0.95),
          selected_rule(2, [("b", 1)], "pass1", 0.90)]

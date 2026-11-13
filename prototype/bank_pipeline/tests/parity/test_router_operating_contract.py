@@ -61,7 +61,7 @@ from tests.stage2.conftest import legacy_config, new_router, router_with_rules, 
 from tests.support.notebooks import BANK_ROOT
 from tests.support.rf_router_world import bank_world, quiet, router_config, save_world
 from tests.support.stage4_world import ROUTER_FP, build_world, make_router, make_stage1, make_stage3
-from tests.support.synthetic import make_bank_frame, split_frame
+from tests.support.synthetic_bank import make_bank_frame, split_frame
 
 RF_REMAINDER = "OOF Pass 1 remainder (RF router design)"       # crossfit_rf_router's protocol
 

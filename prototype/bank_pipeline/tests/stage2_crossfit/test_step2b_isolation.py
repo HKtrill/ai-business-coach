@@ -35,6 +35,7 @@ import pytest
 
 import glass_pipeline.glass_router.ilp_rule_selector.ilp_rule_selector as ilp_mod
 import shared.stage2.evaluation_protocol as ep
+import stage2_crossfit.acceptance as A
 import stage2_crossfit.evidence as E
 import stage2_crossfit.g13 as G
 import stage2_crossfit.inner_features as IF
@@ -48,7 +49,7 @@ from glass_pipeline.glass_router.pipeline import GlassRouterPipeline
 from glass_pipeline.glass_router.rf.feature_ranker import make_rf_feature_ranker_factory
 from glass_pipeline.glass_router.rule_generator.rule_logger import RuleLogger
 from shared.stage2.feature_engineering import engineer_features
-from tests.support import pr38_world as W
+from tests.support import stage2_crossfit_world as W
 from tests.support.rf_router_world import serial_forests
 
 FOLD = IF.PATHWAY_FOLD
@@ -323,6 +324,12 @@ def test_the_crossfit_full_train_and_saving_run_on_the_corrected_pathway(monkeyp
         assert all(ev["fit_status"]["accepted"] for ev in evs), arm
     for arm, ev in res.full_train_evidence.items():
         assert ev["inner_feature_pathway"]["pathway"] == FOLD and ev["fit_status"]["accepted"]
+    # acceptance V4 (G13) and V8 (R8) read these records, provenance fingerprints included
+    every_fit = [ev for evs in res.evidence.values() for ev in evs] + list(
+        res.full_train_evidence.values())
+    assert len(every_fit) == 12 and len(every_fit[0]["inner_feature_pathway"]) > 2
+    assert A._pathways_ok(E.to_json_safe(every_fit), FOLD)
+    assert not A._pathways_ok(every_fit, IF.PATHWAY_OUTER)
     man = json.loads((info["root"] / "MANIFEST.json").read_text(encoding="utf-8"))
     assert man["feature_pathway"] == IF.pathway_identity(FOLD)
     assert _not_stored(res.glass_full["glass"]) and _not_stored(res.rf_full["router"])

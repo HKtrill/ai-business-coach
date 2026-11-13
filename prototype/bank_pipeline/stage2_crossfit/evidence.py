@@ -10,7 +10,8 @@ What is recorded (F17 G4, G5; F31 R1, R2, R5; protocol D-C11, M6):
 GLASS (``glass_fold_evidence``)
     ``selection_reports()`` (Pass 1, Pass 2, every inner Pass 1), the union
     counts of every selection recounted by matching the selected rules on the
-    rows each was selected on, the remainder (rows, positives, prevalence, row
+    rows each was selected on, the deployed Pass 1 rules (segment, class,
+    precision; F17 G6), the remainder (rows, positives, prevalence, row
     identities), the M6 inner-OOF Pass 1 union counts, the nested-ranker
     provenance, and isolation checks.
 RF Router (``rf_fold_evidence``)
@@ -45,19 +46,22 @@ import pandas as pd
 
 import shared.stage2.evaluation_protocol as ep
 from blackbox_pipeline.models.rf_router.config import ELIGIBILITY_NESTED_T1
-from glass_pipeline.glass_router.contract import glass_fit_outcome
+from glass_pipeline.glass_router.contract import (
+    _REPRODUCED_KEYS, glass_fit_outcome, glass_record_reproduction,
+)
 from glass_pipeline.glass_router.ilp_rule_selector.ilp_rule_selector import SelectorInfeasibleError
 from glass_pipeline.glass_router.pipeline import GlassRouterPipeline
 from shared.stage2.contract import ContractViolation, SharedOperatingContractV2
 from shared.stage2.obligations import (
-    OUTCOME_FEASIBLE_OPTIMAL, OUTCOME_INFEASIBLE, OUTCOME_INSUFFICIENT, OUTCOME_NO_SOLUTION,
-    PassCounts, check_pass1_fit, check_pass2_fit, classify_fit_outcome,
+    OUTCOME_FEASIBLE_OPTIMAL, OUTCOME_FEASIBLE_UNPROVEN, OUTCOME_INFEASIBLE, OUTCOME_INSUFFICIENT,
+    OUTCOME_NO_SOLUTION, PassCounts, check_pass1_fit, check_pass2_fit, classify_fit_outcome,
 )
 from shared.stage_io import label_fingerprint
 
-__all__ = ["ARM_GLASS", "ARM_RF", "EVIDENCE_FORMAT", "to_json_safe", "glass_fold_evidence",
-           "rf_fold_evidence", "stop_evidence", "selection_records", "classify_fold",
-           "fold_status"]
+__all__ = ["ARM_GLASS", "ARM_RF", "EVIDENCE_FORMAT", "S1_SELECTIONS", "M3_KEY", "to_json_safe",
+           "unproven_selections", "m3_record",
+           "glass_fold_evidence", "pass1_rule_record", "rf_fold_evidence", "stop_evidence",
+           "selection_records", "classify_fold", "fold_status", "s1_fold_status"]
 
 #: Arm names as the frozen protocol spells them.
 ARM_GLASS, ARM_RF = "glass", "blackbox"
@@ -134,6 +138,19 @@ def _bins_match(pathway, inner_features, X_fit, y, plan, who) -> bool:
                 == [frame_fingerprint(frames[j]) for j in sorted(frames)])
 
 
+def pass1_rule_record(rules) -> List[Dict[str, Any]]:
+    """
+    The deployed Pass 1 rules in deployment order, as G6 compares them across
+    the S1 pair (F17 section 6): each rule's segment (its conditions, sorted),
+    predicted class and precision, with its ``rule_id`` for reference.
+    """
+    return to_json_safe([{"rule_id": r.rule_id,
+                          "segment": [[str(f), v] for f, v in
+                                      sorted(r.segment, key=lambda c: (str(c[0]), str(c[1])))],
+                          "predicted_class": r.predicted_class, "precision": r.precision}
+                         for r in rules])
+
+
 def glass_fold_evidence(glass, X_fit: pd.DataFrame, y_fit, *, fold, heldout_index=None,
                         inner_features=None) -> dict:
     """
@@ -157,6 +174,7 @@ def glass_fold_evidence(glass, X_fit: pd.DataFrame, y_fit, *, fold, heldout_inde
         "selection_reports": to_json_safe(glass.selection_reports()),
         "rule_ids": {"pass1": [r.rule_id for r in glass.pass1_rules],
                      "pass2": [r.rule_id for r in glass.pass2_rules]},
+        "pass1_rules": pass1_rule_record(glass.pass1_rules),
     }
     isolation: Dict[str, Any] = {}
     held = pd.Index([]) if heldout_index is None else pd.Index(heldout_index)
@@ -401,6 +419,46 @@ def _scope(key: str) -> str:
     return "pass2" if key == "pass2" else "pass1"
 
 
+#: M3 (Commit 4 contract record; protocol section 10): an unproven GLASS ILP
+#: incumbent is documented by repeating the identical fit once. The rerun's
+#: selection fields sit beside the untouched original evidence under ``M3_KEY``;
+#: the frozen ``glass_record_reproduction`` compares them when the fold is classified.
+M3_KEY = "m3_reproduction"
+M3_FORMAT = "pr38.stage2.m3_reproduction/1"
+M3_FIELDS = tuple(_REPRODUCED_KEYS) + ("lexicographic_guarantee",)
+
+
+def _glass_slots(reports) -> Dict[str, Any]:
+    reports = reports or {}
+    slots = {"pass1": reports.get("pass1"), "pass2": reports.get("pass2")}
+    slots.update({f"inner_pass1[{j}]": r for j, r in enumerate(reports.get("inner_pass1") or [])})
+    return slots
+
+
+def unproven_selections(ev: Mapping[str, Any]) -> List[str]:
+    """The GLASS selections that ended as an ILP incumbent without a lexicographic proof."""
+    if ev.get("arm") != ARM_GLASS or "stop" in ev:
+        return []
+    return [k for k, r in _glass_slots(ev.get("selection_reports")).items()
+            if isinstance(r, Mapping) and r.get("source") == "ilp"
+            and r.get("lexicographic_guarantee") != "proven"]
+
+
+def m3_record(keys: List[str], rerun_reports=None, *, error: Optional[str] = None) -> dict:
+    """
+    The M3 record of ``keys``: each one's ``M3_FIELDS`` from the repeated fit's
+    selection reports, or ``None`` if the rerun raised (``error``) or made no
+    such selection. It never changes the original reports.
+    """
+    slots = _glass_slots(rerun_reports) if rerun_reports is not None else {}
+    return to_json_safe({
+        "format": M3_FORMAT, "error": error,
+        "method": "the identical fit repeated once (same rows, configuration and seed)",
+        "selections": {k: {"rerun": ({f: slots[k].get(f) for f in M3_FIELDS}
+                                     if isinstance(slots.get(k), Mapping) else None)}
+                       for k in keys}})
+
+
 def selection_records(ev: Mapping[str, Any],
                       contract: SharedOperatingContractV2) -> List[ep.SelectionRecord]:
     """
@@ -412,9 +470,8 @@ def selection_records(ev: Mapping[str, Any],
         return []
     out = []
     if ev["arm"] == ARM_GLASS:
-        reports = ev["selection_reports"]
-        slots = {"pass1": reports.get("pass1"), "pass2": reports.get("pass2")}
-        slots.update({f"inner_pass1[{j}]": r for j, r in enumerate(reports.get("inner_pass1") or [])})
+        slots = _glass_slots(ev["selection_reports"])
+        m3 = (ev.get(M3_KEY) or {}).get("selections") or {}
         for key, rep in slots.items():
             if rep is None:
                 continue                            # missing: the completeness check names it
@@ -422,7 +479,11 @@ def selection_records(ev: Mapping[str, Any],
             feasible = rep.get("source") in ("ilp", "greedy_fallback")
             try:
                 report = _check(scope, ev["counts"][key], contract) if feasible else None
-                out.append(ep.SelectionRecord(key, glass_fit_outcome(scope, rep, report)))
+                outcome = glass_fit_outcome(scope, rep, report)
+                rerun = (m3.get(key) or {}).get("rerun")
+                if outcome.outcome == OUTCOME_FEASIBLE_UNPROVEN and isinstance(rerun, Mapping):
+                    outcome = glass_record_reproduction(outcome, to_json_safe(rep), rerun)
+                out.append(ep.SelectionRecord(key, outcome))
             except (ContractViolation, KeyError) as exc:
                 out.append(ep.SelectionRecord(key, {"invalid": f"{type(exc).__name__}: {exc}"}))
         return out
@@ -457,3 +518,50 @@ def fold_status(ev: Mapping[str, Any], contract, protocol, reviews=None) -> dict
     return {"status": fit.status, "accepted": fit.status in ep.ACCEPTED_FIT_STATUSES,
             "status_only": False, "by_key": dict(fit.by_key),
             "problems": list(fit.completeness.problems())}
+
+
+#: The selections an S1 fit (GLASS ``full``; F17 section 6) makes: no inner Pass 1.
+S1_SELECTIONS = ("pass1", "pass2")
+
+
+def s1_fold_status(ev: Mapping[str, Any], contract: SharedOperatingContractV2) -> dict:
+    """
+    The fit status of one S1 fold or full-train fit, JSON-safe. The frozen
+    ``required_selection_keys`` describe the F17 primary, whose inner Pass 1
+    selections S1 does not make by definition (``pass2_population="full"``),
+    so the complete set here is exactly ``S1_SELECTIONS`` with no inner slot.
+    Each selection is classified by the frozen per-selection rules: the
+    independent recount (``selection_records``), its report's classification
+    (``ep._report_problem``) and its status (``ep._outcome_status``). No review
+    is read, so a greedy fallback is never accepted.
+    """
+    if "stop" in ev:
+        return {"status": ev["stop"]["fit_status"], "accepted": False, "status_only": True,
+                "problems": [ev["stop"]["reason"]]}
+    problems: List[str] = []
+    if ev.get("arm") != ARM_GLASS or ev.get("pass2_population") != "full":
+        problems.append(f"not an S1 GLASS fit (arm {ev.get('arm')!r}, pass2_population "
+                        f"{ev.get('pass2_population')!r})")
+    try:
+        slots = ep._report_slots(ev.get("selection_reports"))
+    except ep.ProtocolError as exc:
+        slots = {}
+        problems.append(str(exc))
+    entries = {k: r for k, r in slots.items() if r is not None}
+    problems += [f"missing {k}" for k in S1_SELECTIONS if k not in entries]
+    problems += [f"unexpected report {k}" for k in slots if k not in S1_SELECTIONS]
+    records = selection_records(ev, contract) if not problems else []
+    keys = [r.key for r in records]
+    problems += [f"duplicated {k}" for k in sorted(set(keys)) if keys.count(k) > 1]
+    by_key: Dict[str, str] = {}
+    for r in records:
+        problem = (f"{r.key}: {r.outcome}" if not isinstance(r.outcome, ep.FitOutcome)
+                   else ep._report_problem(r.key, r.outcome, entries[r.key]))
+        if problem:
+            problems.append(problem)
+        else:
+            by_key[r.key] = ep._outcome_status(r.outcome, None)
+    status = (ep.FIT_TIME_INVALID if problems or set(by_key) != set(S1_SELECTIONS)
+              else min(by_key.values(), key=ep.FIT_STATUSES.index))
+    return {"status": status, "accepted": status in ep.ACCEPTED_FIT_STATUSES,
+            "status_only": False, "by_key": by_key, "problems": problems}

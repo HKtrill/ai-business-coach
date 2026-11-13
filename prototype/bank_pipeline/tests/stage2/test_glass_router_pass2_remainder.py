@@ -28,7 +28,7 @@ from glass_pipeline.glass_router.pipeline import GlassRouterPipeline
 from tests.stage2.conftest import legacy_config, new_router, selected_rule
 from tests.support.checks import assert_oof_provenance
 from tests.support.recorders import Call, CallLog, row_keys
-from tests.support.synthetic import irregular_index
+from tests.support.synthetic_bank import irregular_index
 
 N, INNER, SEED = 600, 3, 42
 FULL_BUCKET = 3          # the full-population Pass 1 rule: bucket == 3
