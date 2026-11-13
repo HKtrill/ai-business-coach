@@ -191,6 +191,8 @@ Phase 4 runs only on artifacts that passed Phase 3, under the frozen protocol, i
 - **Freeze.** The Stage 2 implementation and artifacts are frozen for downstream regeneration (PR 39).
 - **Test-side outputs.** Test outputs are produced for the downstream stages only. Test-derived results never inform selector choice, contract revision, thresholds or adoption (protocol section 15).
 
+**Resolved at PR 38 Commit 5** ([`pr38_commit5_stage2_freeze.md`](pr38_commit5_stage2_freeze.md)): the primary is retained and frozen; no ablation was run. The Commit 3 cross-fit is the Stage 2 OOF regeneration, verified in the official acceptance. Test-side outputs, whose only consumer is Stage 4, are produced in PR 39's integrated regeneration (record, section 5).
+
 ## 10. Historical versus corrected comparison
 
 The comparison runs **after** the corrected artifacts pass Phase 3, under the frozen protocol's definitions. It has three kinds of content:

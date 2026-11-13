@@ -202,51 +202,51 @@
 
 #### **Step 5A — Complementarity-Aware Selection Experiment**
 
-- [ ] Review Commit 3 evidence against the pre-registered criteria to determine whether the optional experiment is warranted.
+- [x] Review Commit 3 evidence against the pre-registered criteria to determine whether the optional experiment is warranted.
 
-- [ ] If warranted, implement and evaluate complementarity-aware selection using train-side OOF upstream predictions only.
+- [x] If warranted, implement and evaluate complementarity-aware selection using train-side OOF upstream predictions only.
 
-- [ ] Evaluate rule objectives favoring:
+- [x] Evaluate rule objectives favoring:
 
-  - [ ] Positive cases missed by Stage 1 LR.
+  - [x] Positive cases missed by Stage 1 LR.
 
-  - [ ] Rows where LR and EBM disagree.
+  - [x] Rows where LR and EBM disagree.
 
-- [ ] Compare standard union-coverage selection against complementarity-aware selection.
+- [x] Compare standard union-coverage selection against complementarity-aware selection.
 
-- [ ] Measure unique-positive discovery, matched flag-budget performance, coverage, precision, leakage, uncertainty, and computational cost.
+- [x] Measure unique-positive discovery, matched flag-budget performance, coverage, precision, leakage, uncertainty, and computational cost.
 
-- [ ] Verify training-side isolation and preservation of the frozen operating contract.
+- [x] Verify training-side isolation and preservation of the frozen operating contract.
 
-- [ ] Treat complementarity-aware selection as a secondary ablation unless the pre-registered adoption criteria are satisfied.
+- [x] Treat complementarity-aware selection as a secondary ablation unless the pre-registered adoption criteria are satisfied.
 
-- [ ] If adoption is justified, implement an equivalent RF Router objective or explicitly document the methodological asymmetry.
+- [x] If adoption is justified, implement an equivalent RF Router objective or explicitly document the methodological asymmetry.
 
-- [ ] Record an evidence-based adoption or rejection decision without changing the frozen criteria retroactively.
+- [x] Record an evidence-based adoption or rejection decision without changing the frozen criteria retroactively.
 
 #### **Step 5B — Final Selector Decision and Artifact Freeze**
 
-- [ ] Select the final Stage 2 selector design based on the pre-registered comparisons and acceptance hierarchy.
+- [x] Select the final Stage 2 selector design based on the pre-registered comparisons and acceptance hierarchy.
 
-- [ ] If complementarity-aware selection is adopted, rerun the required GLASS/RF cross-fitting and evaluation under the frozen contract and a later, versioned evaluation protocol; preserve the Commit 3 primary results.
+- [x] If complementarity-aware selection is adopted, rerun the required GLASS/RF cross-fitting and evaluation under the frozen contract and a later, versioned evaluation protocol; preserve the Commit 3 primary results.
 
-- [ ] If the original selector is retained, re-verify and freeze the accepted Commit 3 artifacts without unnecessary retraining.
+- [x] If the original selector is retained, re-verify and freeze the accepted Commit 3 artifacts without unnecessary retraining.
 
-- [ ] Regenerate final PR 38 Stage 2 OOF and required test artifacts only when the selected design requires regeneration.
+- [x] Regenerate final PR 38 Stage 2 OOF and required test artifacts only when the selected design requires regeneration.
 
-- [ ] Verify final fold identities, OOF provenance, constraint compliance, routing semantics, and mirrored contracts.
+- [x] Verify final fold identities, OOF provenance, constraint compliance, routing semantics, and mirrored contracts.
 
-- [ ] Validate artifact versions, fingerprints, serialization, upstream compatibility, and reproducibility.
+- [x] Validate artifact versions, fingerprints, serialization, upstream compatibility, and reproducibility.
 
-- [ ] Confirm historical baseline preservation and no unintended model-artifact or notebook changes.
+- [x] Confirm historical baseline preservation and no unintended model-artifact or notebook changes.
 
-- [ ] Run final targeted, regression, and applicable real-data validation.
+- [x] Run final targeted, regression, and applicable real-data validation.
 
-- [ ] Freeze the selected Stage 2 implementation, configuration, and PR 38 research artifacts.
+- [x] Freeze the selected Stage 2 implementation, configuration, and PR 38 research artifacts.
 
-- [ ] Document the final selector decision, experimental evidence, methodological limitations, and PR 39 regeneration requirements.
+- [x] Document the final selector decision, experimental evidence, methodological limitations, and PR 39 regeneration requirements.
 
-- [ ] Confirm all PR 38 acceptance criteria and reconcile the roadmap.
+- [x] Confirm all PR 38 acceptance criteria and reconcile the roadmap.
 
 **Deliverable:** Evidence-based complementarity-ablation decision; any justified ablation completed and evaluated; final Stage 2 selector, accepted artifact identities, and PR 39 regeneration/handoff requirements documented and frozen.
 
@@ -262,48 +262,205 @@
 
 - [x] **Commit 4 complete:** Redundant research reporting consolidated into a compact GitHub-facing record set; owner-approved cleanup completed, required provenance preserved, and reporting compatibility verified in one or two patches.
 
-- [ ] **Commit 5 complete:** Optional complementarity ablation evaluated against pre-registered criteria, final Stage 2 selector selected and frozen, and PR 39 handoff requirements documented.
+- [x] **Commit 5 complete:** Optional complementarity ablation evaluated against pre-registered criteria, final Stage 2 selector selected and frozen, and PR 39 handoff requirements documented.
 
-- [ ] **PR 38 complete:** Stage 2 selector research concluded, validated artifacts and provenance preserved, and PR 39 handoff established.
+- [x] **PR 38 complete:** Stage 2 selector research concluded, validated artifacts and provenance preserved, and PR 39 handoff established.
 
 **Out of scope:** Stage 1 calibration changes, Stage 1 feature renaming, final Stage 2 binning revisions, Stage 4 regeneration, final cascade notebook presentation, and paper-level independent validation. These remain assigned to subsequent PRs.
 
-#### PR 39 — Protocol Finalization and Artifact Regeneration
+## PR 39 — Protocol Finalization, Artifact Regeneration, and Phase 1 Closure
 
-**Stage 1 calibration**
+**Objective:** Finalize Stage 1 calibration and feature naming, revalidate Stage 2 binning, standardize GLASS component naming, regenerate both cascades under their final contracts, and establish a validated pre-presentation baseline that concludes Phase 1.
 
-- [ ] Resolve sigmoid vs isotonic calibration once for both arms
-- [ ] Measure whether isotonic score granularity materially affects Stage 4
-- [ ] Freeze the shared Stage 1 calibration policy
+**Execution principles:**
 
-**Stage 1 feature naming**
+- Preserve the accepted PR 38 Stage 2 selector design, historical results, and provenance.
+- Complete all methodology and naming changes before final artifact regeneration.
+- Use train-only or properly cross-fitted evidence for decisions that affect modeling.
+- Apply the same shared operating obligations to both cascade arms.
+- Regenerate dependent artifacts in order, without repeating expensive runs unnecessarily.
+- Keep final notebook presentation and restructuring in Phase 2.
+- Perform comprehensive regression testing and clean-kernel notebook execution after integration stabilizes.
 
-- [ ] Rename:
+---
+
+### Commit 1 — Planning, Dependency Audit, and Finalization Contract
+
+**Objective:** Establish the PR 39 execution sequence, regeneration dependencies, evaluation requirements, and acceptance criteria before modifying the finalized cascades.
+
+- [ ] Review the PR 38 handoff, accepted run `c3_20261112_153333`, frozen Stage 2 selector, and outstanding PR 36 naming requirements.
+- [ ] Inventory Stage 1–4 artifacts, training scripts, shared contracts, downstream consumers, and notebook dependencies for both arms.
+- [ ] Identify which artifacts must be regenerated after calibration, feature naming, binning, or component naming changes.
+- [ ] Define the Stage 1 calibration comparison and decision criteria before examining new results.
+- [ ] Define the train-only Stage 2 binning evaluation, threshold-change criteria, and validation requirements.
+- [ ] Establish a versioned PR 39 artifact/provenance location without overwriting PR 38 evidence.
+- [ ] Define the Stage 1–3 regeneration sequence, Stage 4 dependencies, and 2×2 arbiter crossover protocol.
+- [ ] Establish testing, reproducibility, serialization, compatibility, and final notebook acceptance requirements.
+- [ ] Explicitly separate Phase 1 functional validation from Phase 2 notebook presentation and research preparation.
+- [ ] Finalize and version-control the PR 39 roadmap.
+
+**Deliverable:** Approved PR 39 execution plan with frozen decision criteria, artifact dependencies, and acceptance requirements.
+
+---
+
+### Commit 2 — Stage 1 Calibration and Feature Contract Finalization
+
+**Objective:** Resolve the remaining Stage 1 methodological and naming decisions before any downstream artifact regeneration.
+
+#### Step 2A — Calibration Policy
+
+- [ ] Review existing sigmoid and isotonic calibration implementations, diagnostics, and historical evidence.
+- [ ] Compare calibration quality using leakage-safe training-side OOF evidence, including probability reliability, score resolution, and calibration stability.
+- [ ] Measure whether isotonic score granularity materially affects Stage 4 inputs or decision behavior using an appropriately isolated diagnostic comparison.
+- [ ] Evaluate the comparison against the criteria established in Commit 1.
+- [ ] Select one shared calibration policy for the GLASS and black-box arms.
+- [ ] Update calibration configuration, provenance requirements, shared contracts, and focused tests.
+- [ ] Freeze the Stage 1 calibration policy without regenerating the full cascade yet.
+
+#### Step 2B — Feature Naming and Contract Migration
+
+- [ ] Rename the following Stage 1 features:
   - `cellular_crisis` → `cellular_downturn`
   - `euribor3m_local_rate` → `subscribe_rate_by_euribor_bin`
   - `dow_month_encoded` → `subscribe_rate_by_dow_month`
-- [ ] Update feature contracts, documentation, artifacts, and downstream references
+- [ ] Update feature definitions, training code, imports, metadata, documentation, and dependent references.
+- [ ] Verify that naming-only changes preserve feature values and mathematical behavior.
+- [ ] Revalidate leakage-safe handling of label-derived feature encodings, especially within OOF folds.
+- [ ] Update serialization and compatibility expectations for the new versioned artifact contracts.
+- [ ] Run focused calibration, feature-contract, and compatibility tests.
 
-**Stage 2 binning revalidation**
+**Deliverable:** Frozen Stage 1 calibration and feature contracts, with implementation changes validated and ready for regeneration.
 
-- [ ] Re-evaluate NSD and ECI bin thresholds using train-only, leakage-safe lift analysis
-- [ ] Compare current lift behavior against the original threshold rationale
-- [ ] Measure per-bin support, lift, and fold stability
-- [ ] Check conjunction / router utility before merging or removing weak bins
-- [ ] Re-derive thresholds where drift materially changes the intended bin semantics
-- [ ] Freeze the final Stage 2 binning contract before artifact regeneration
+---
 
-**Final regeneration**
+### Commit 3 — Stage 2 Binning and GLASS Naming Finalization
 
-- [ ] Regenerate affected Stage 1–3 artifacts under the finalized contracts
-- [ ] Rerun Stage 4 with finalized upstream artifacts
-- [ ] Re-run the 2×2 arbiter crossover
-- [ ] Revalidate mirrored contracts after all methodology changes
-- [ ] Record the final pre-presentation cascade baseline
+**Objective:** Resolve final Stage 2 feature-bin semantics and the outstanding GLASS component naming cleanup before retraining downstream models.
 
-**Deferred from PR 36**
+#### Step 3A — NSD and ECI Binning Revalidation
 
-- [ ] Standardize GLASS Router / GLASS Arbiter naming across modules, imports, artifact paths, metadata, and documentation where appropriate. Preserve model-family identities and validate compatibility before final artifact regeneration.
+- [ ] Re-examine existing NSD and ECI thresholds, original design rationale, and current bin definitions.
+- [ ] Perform train-only, leakage-safe lift analysis using appropriate fold boundaries.
+- [ ] Measure per-bin support, class rates, lift, and fold-level stability.
+- [ ] Identify weak, unstable, redundant, or overlapping bins without assuming they should be removed.
+- [ ] Evaluate conjunction behavior and actual GLASS/RF router utility before merging or changing bins.
+- [ ] Retain existing thresholds unless the pre-established evidence criteria justify revisions.
+- [ ] If changes are justified, update bin definitions, encoders, feature contracts, and dependent tests.
+- [ ] Preserve the PR 38 selector algorithm and frozen shared routing obligations; version any changed input contract explicitly.
+- [ ] Freeze the final Stage 2 binning configuration.
+
+#### Step 3B — GLASS Component Naming Standardization
+
+- [ ] Resolve naming inconsistencies between GLASS Router and GLASS Arbiter across modules, imports, interfaces, and documentation.
+- [ ] Update artifact paths, metadata, configuration identifiers, and downstream references where appropriate.
+- [ ] Preserve the distinction between GLASS and black-box model families.
+- [ ] Avoid changing modeling behavior during naming cleanup.
+- [ ] Validate compatibility and add focused regression tests only where changes require them.
+- [ ] Confirm the final Stage 1–2 contracts and naming structure are ready for regeneration.
+
+**Deliverable:** Finalized Stage 2 binning and GLASS component naming, with the frozen selector design preserved.
+
+---
+
+### Commit 4 — Final Stage 1–3 Artifact Regeneration
+
+**Objective:** Regenerate the affected upstream artifacts using the finalized methodology, while preserving historical baselines and validating the new training dependencies before Stage 4.
+
+#### Step 4A — Regeneration Readiness and Upstream Execution
+
+- [ ] Verify that the Commit 2 and Commit 3 methodology/configuration freezes are complete.
+- [ ] Verify historical artifact identities and initialize the versioned PR 39 regeneration records.
+- [ ] Regenerate Stage 1 artifacts for both arms using the shared calibration and updated feature contracts.
+- [ ] Regenerate affected Stage 2 GLASS/RF artifacts using the final bins and frozen selector design.
+- [ ] Recompute Stage 2 OOF predictions where changed upstream inputs or feature contracts require it.
+- [ ] Preserve nested training, fold isolation, Pass 1 precedence, and Pass 2 remainder eligibility.
+- [ ] Regenerate affected Stage 3 artifacts and OOF predictions under the finalized upstream dependencies.
+- [ ] Reuse unchanged artifacts only when provenance and compatibility checks establish that reuse is valid.
+
+#### Step 4B — Upstream Acceptance and Artifact Verification
+
+- [ ] Validate fold identities, OOF alignment, feature contracts, upstream fingerprints, and training-side isolation.
+- [ ] Verify both Stage 2 arms against the same frozen shared operating contract.
+- [ ] Record infeasible folds, solver outcomes, constraint compliance, and any deviations or limitations.
+- [ ] Validate serialization/deserialization, versions, metadata, artifact paths, and interface compatibility.
+- [ ] Verify that historical PR 38 results and model artifacts remain unchanged.
+- [ ] Run focused real-data and upstream regression tests.
+- [ ] Record an explicit Stage 1–3 acceptance decision before authorizing Stage 4 regeneration.
+
+**Deliverable:** Regenerated and validated Stage 1–3 artifacts and OOF dependencies, accepted for final Stage 4 training.
+
+---
+
+### Commit 5 — Stage 4 Regeneration and Arbiter Crossover
+
+**Objective:** Regenerate the final arbiters, execute the 2×2 crossover, and establish the complete cascade performance baseline under the finalized upstream contracts.
+
+#### Step 5A — Final Stage 4 Integration
+
+- [ ] Verify accepted Stage 1–3 artifacts and OOF inputs from Commit 4.
+- [ ] Regenerate the GLASS and black-box Stage 4 arbiters using leakage-safe finalized upstream OOF evidence.
+- [ ] Verify input alignment, model-family ownership, routing conventions, and calibration dependencies.
+- [ ] Validate Stage 4 artifact provenance, metadata, versioning, and serialization.
+- [ ] Confirm both complete cascade arms execute under their finalized contracts.
+- [ ] Run focused Stage 4 integration tests before comparative evaluation.
+
+#### Step 5B — 2×2 Crossover and Final Baseline
+
+- [ ] Re-run the registered 2×2 arbiter crossover using the finalized upstream artifacts.
+- [ ] Evaluate the registered combinations under consistent data splits, operating points, and comparison procedures.
+- [ ] Report predictive performance, calibration, abstention/coverage where applicable, and comparative uncertainty.
+- [ ] Examine Stage 2 contributions and GLASS/black-box differences without changing the frozen selector based on these results.
+- [ ] Revalidate mirrored contracts and identify any remaining integration limitations.
+- [ ] Record final model identities, crossover findings, and the pre-presentation cascade baseline.
+- [ ] Preserve earlier PR 38 comparisons as historical evidence rather than replacing them with PR 39 results.
+
+**Deliverable:** Regenerated Stage 4 arbiters, completed crossover analysis, and the final pre-presentation baseline for both cascades.
+
+---
+
+### Commit 6 — Final Validation, Notebook Execution, and Phase 1 Freeze
+
+**Objective:** Complete the final integrated verification, validate reproducibility from clean notebook kernels, and formally close Phase 1.
+
+#### Step 6A — Final Regression and Reproducibility Validation
+
+- [ ] Run the relevant targeted, regression, real-data, and end-to-end validation suites against the final implementation.
+- [ ] Verify shared and arm-specific contracts across Stages 1–4.
+- [ ] Validate training/test isolation, OOF provenance, model versions, serialization, fingerprints, and configuration identities.
+- [ ] Verify the final GLASS/RF Stage 2 constraints and three-state routing semantics.
+- [ ] Confirm the 2×2 crossover results and final baseline references remain reproducible.
+- [ ] Check historical baseline preservation and confirm no unexpected artifact or model-family changes.
+- [ ] Resolve material failures before freezing Phase 1; record any limitations that do not block acceptance.
+
+#### Step 6B — Clean-Kernel Notebook Runs and Phase 1 Handoff
+
+- [ ] Execute the relevant cascade notebooks from fresh kernels using the finalized implementation and artifact contracts.
+- [ ] Verify that notebook cells run in order without relying on stale kernel state or undocumented local variables.
+- [ ] Validate notebook references, artifact loading, output consistency, and integration with the finalized pipeline.
+- [ ] Resolve execution-breaking notebook issues without undertaking the Phase 2 presentation redesign.
+- [ ] Record final artifact identities, accepted baselines, test results, notebook execution outcomes, and known limitations.
+- [ ] Freeze the Phase 1 cascade implementations and validated research baseline.
+- [ ] Document the Phase 2 handoff, including notebook restructuring, baseline presentation, and remaining research deliverables.
+- [ ] Reconcile the PR 39 roadmap and confirm final acceptance.
+
+**Deliverable:** Validated, reproducible GLASS and black-box cascades, finalized artifact contracts, clean-kernel execution evidence, and an approved Phase 1 baseline.
+
+---
+
+### PR 39 — Final Completion Boundary
+
+- [ ] **Commit 1 complete:** PR 39 roadmap, dependency audit, evaluation rules, and regeneration sequence finalized.
+- [ ] **Commit 2 complete:** Shared Stage 1 calibration and feature naming frozen.
+- [ ] **Commit 3 complete:** Stage 2 binning and GLASS component naming finalized.
+- [ ] **Commit 4 complete:** Final Stage 1–3 artifacts regenerated and accepted.
+- [ ] **Commit 5 complete:** Stage 4 arbiters regenerated, 2×2 crossover completed, and cascade baselines established.
+- [ ] **Commit 6 complete:** Final regression, provenance, reproducibility, and clean-kernel notebook validation completed.
+- [ ] **PR 39 complete:** Both cascade implementations and their final Phase 1 artifact contracts frozen, with Phase 2 handoff established.
+- [ ] **Phase 1 complete:** GLASS and black-box cascades are operational, integrated, validated, and ready for final notebook organization and research presentation.
+
+**Out of scope:** Complementarity-aware selector redesign, additional Stage 2 training-objective experiments, notebook presentation restructuring, final notebook slicing and organization, paper-level independent validation, and new research extensions. These belong to later phases.
+
+**Execution policy:** Use the Patch Method throughout. Favor one focused implementation patch per substantial step, with additional patches only for genuine corrections. Run focused tests during development and reserve expensive complete regression/notebook execution for the final integrated state wherever the acceptance requirements permit.
 
 ### Phase 2 — Finalize the Notebooks and Freeze the Cascades
 
