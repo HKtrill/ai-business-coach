@@ -12,11 +12,13 @@ PR 38 command line, run from ``prototype/bank_pipeline``:
                                         --artifact-manifest <json> [--feature-pathway P]
                                                                                  (Commit 3A)
     python -m stage2_crossfit complementarity --run-id <id> --sums <SHA256SUMS.txt> [--check]
-                                                                                 (Step 3B)
+                                              [--packages-dir DIR]               (Step 3B)
     python -m stage2_crossfit s1        --run-id <id>
     python -m stage2_crossfit s1-accept --run-id <id>
     python -m stage2_crossfit s1-report --run-id <id> --sums <SHA256SUMS.txt> [--check]
-                                                                                 (Step 3C)
+                                        [--packages-dir DIR]                     (Step 3C)
+    python -m stage2_crossfit report    --run-id <id> [--packages-dir DIR] [--check]
+                                                                                 (Commit 4)
 
 ``--feature-pathway`` is the inner-fold feature pathway (G13): ``outer_engineer``
 (historical, the default) or ``fold_label_excluded`` (the correction).
@@ -36,7 +38,13 @@ before any data is read); its package is written once to
 ``s1`` (G12) fits GLASS ``full`` once per run after the primary's acceptance
 re-verifies; ``s1-accept`` records G6 and the S1 checks (S1 is accepted only if
 they all pass); ``s1-report`` writes ``s1_sensitivity_v1/`` for an accepted S1
-only (``stage2_crossfit.sensitivity``).
+only (``stage2_crossfit.sensitivity``). ``--packages-dir`` writes a package
+under ``DIR/<package>/`` instead of the run's record folder (a temporary place
+for a package that ``report`` consolidates). ``report`` migrates the run's
+packages into ``research_logs/pr38/<run_id>/report_v1/`` once, every package
+table reproduced first (``stage2_crossfit.reporting``); ``report --check``
+verifies the written report without any package. Neither reads a model,
+artifact or label, runs a gate or deletes a package.
 """
 
 from __future__ import annotations
@@ -114,6 +122,8 @@ def main(argv=None) -> int:
     cp.add_argument("--sums", required=True, help="the preserved snapshot's SHA256SUMS.txt")
     cp.add_argument("--check", action="store_true",
                     help="rebuild and compare with the written package; write nothing")
+    cp.add_argument("--packages-dir", help="the folder holding the run's packages (default: "
+                                           "the run's record folder)")
     for name, text in (("s1", "Step 3C: run S1 (GLASS full) for an accepted primary, once"),
                        ("s1-accept", "Step 3C: G6 and the S1 checks; record the S1 acceptance"),
                        ("s1-report", "Step 3C: the S1 package, for an accepted S1 only")):
@@ -124,8 +134,19 @@ def main(argv=None) -> int:
                             help="the preserved snapshot's SHA256SUMS.txt")
             sp.add_argument("--check", action="store_true",
                             help="rebuild and compare with the written package; write nothing")
+            sp.add_argument("--packages-dir", help="the folder holding the run's packages "
+                                                   "(default: the run's record folder)")
+    rp = sub.add_parser("report", help="Commit 4: migrate a run's packages into its research "
+                                       "report (writes report_v1/ once)")
+    rp.add_argument("--run-id", required=True)
+    rp.add_argument("--packages-dir", help="the folder holding the run's packages (default: the "
+                                           "run's record folder); migration only")
+    rp.add_argument("--check", action="store_true",
+                    help="verify the written report without any package; write nothing")
     args = ap.parse_args(argv)
     out_dir = _record_dir(args.run_id)
+    if args.cmd == "report":
+        return _commit4(args)
     if args.cmd == "complementarity":
         return _commit3b(args)
     if args.cmd in ("s1", "s1-accept", "s1-report"):
@@ -326,7 +347,8 @@ def _commit3b(args) -> int:
     from . import complementarity as C
     from . import runner as R
     try:
-        out = C.run(args.run_id, args.sums, check=args.check)
+        out = C.run(args.run_id, args.sums, check=args.check,
+                    out_dir=Path(args.packages_dir) / C.PACKAGE_DIR if args.packages_dir else None)
     except (R.RunnerError, ep.ProtocolError, d.RouterDiagnosticError) as exc:
         print(f"complementarity REFUSED; nothing was written\n{exc}")
         return 1
@@ -344,6 +366,30 @@ def _commit3b(args) -> int:
     ok = out["status"] in ("written", "identical", "reproduced_with_code_drift")
     return 0 if ok else 1
 
+
+def _commit4(args) -> int:
+    """``report``: the run's packages consolidated; every package table reproduced first."""
+    from . import reporting as RP
+    from . import runner as R
+    try:
+        out = RP.run(args.run_id, check=args.check, packages_dir=args.packages_dir)
+    except R.RunnerError as exc:
+        print(f"report REFUSED; nothing was written\n{exc}")
+        return 1
+    s = out["stats"]
+    print(f"research report {out['status'].upper()} -> {out['directory']}")
+    for p in out["problems"]:
+        print(f"  - {p}")
+    if out["mode"] == "migration":
+        print(f"  migration: {s['package_tables']} v1 package tables reproduced byte for byte: "
+              f"{s['consolidated']} in {s['report_tables']} report tables, {s['derived']} "
+              f"derived, {s['duplicate']} duplicate, {s['restated']} restated")
+        print("  report --check no longer needs the v1 packages; nothing was deleted")
+    else:
+        print(f"  verification without v1 packages: {s['package_tables']} historical v1 table "
+              "checksums reproduced from the report; every report file rebuilt")
+    ok = out["status"] in ("written", "identical", "reproduced_with_code_drift")
+    return 0 if ok else 1
 
 
 def _commit3c(args) -> int:
@@ -367,7 +413,9 @@ def _commit3c(args) -> int:
                 print(f"  {name}: {gate['status']}" + (f"; failed: {failed}" if failed else "")
                       + (f" ({gate['not_run']})" if gate.get("not_run") else ""))
             return 0 if rec["accepted"] else 1
-        out = S.report_s1(args.run_id, args.sums, check=args.check)
+        out = S.report_s1(args.run_id, args.sums, check=args.check,
+                          out_dir=(Path(args.packages_dir) / S.PACKAGE_DIR
+                                   if args.packages_dir else None))
     except (R.RunnerError, ep.ProtocolError, d.RouterDiagnosticError) as exc:
         print(f"{args.cmd} REFUSED\n{exc}")
         return 1

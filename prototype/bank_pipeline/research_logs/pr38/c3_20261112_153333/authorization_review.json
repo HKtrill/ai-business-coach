@@ -1,0 +1,92 @@
+{
+  "approved_by": "Phillip Harris",
+  "approved_on": "2026-11-12",
+  "authorization": {
+    "path": "research_logs\\pr38\\c3_20261112_153333\\authorization.json",
+    "sha256": "daff742e10d435b9018e9cbfac76ef19fcb275ab77c4d42dd5e020548c4655f8"
+  },
+  "f31_r2_clarification": {
+    "approved_by": "Phillip Harris",
+    "approved_on": "2026-11-12",
+    "record": [
+      "pr38-stage2-evaluation-f31-r2-clarification",
+      "1.0.0",
+      "d55e285570ce47d4"
+    ]
+  },
+  "feature_pathway": {
+    "pathway": "fold_label_excluded",
+    "record": [
+      "stage2-inner-fold-feature-isolation",
+      "1.0.0",
+      "0d4953ef34d1d3dc"
+    ]
+  },
+  "format": "pr38.stage2.authorization_review/1",
+  "frozen": {
+    "contract": [
+      "pr37-stage2-primary",
+      "1.0.0",
+      "0817825b9eecbd11"
+    ],
+    "glass_profile": {
+      "fingerprint": "198731d5cdf263f4",
+      "profile_id": "pr37-glass-router-primary",
+      "profile_version": "1.0.0"
+    },
+    "protocol": [
+      "pr38-stage2-evaluation",
+      "1.0.0",
+      "245a1a68fb68cf4e"
+    ],
+    "rf_profile": {
+      "fingerprint": "4e3f9c07e6ecc8ad",
+      "profile_id": "pr37-rf-router-primary",
+      "profile_version": "1.0.0"
+    }
+  },
+  "g13_decision": {
+    "adopted_pathway": "fold_label_excluded",
+    "adopted_record": [
+      "stage2-inner-fold-feature-isolation",
+      "1.0.0",
+      "0d4953ef34d1d3dc"
+    ],
+    "date": "2026-11-12",
+    "decision": "adopt_correction",
+    "materiality": "material",
+    "rationale": "G13 identified material inner-fold label dependency. Adopt fold_label_excluded to preserve training isolation. GLASS's frozen configuration, routing constraints, selection objectives, and abstention mechanism remain unchanged. No predictive-performance improvement is assumed.",
+    "reviewer": "Phillip Harris"
+  },
+  "gates": {
+    "G1": "pass",
+    "G13": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G5": "pass",
+    "G8": "pass",
+    "G9": "pass"
+  },
+  "referenced": {
+    "configs_record": {
+      "path": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\research_logs\\pr38\\c3_20261112_153333\\configs.json",
+      "sha256": "7b7f803155dae6bf245b49c1fa18eb60249b4878eaac685767b9d6012f932127"
+    },
+    "g13_corrected_record": {
+      "path": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\research_logs\\pr38\\c3_20261112_153333\\g13_fold0_fold_label_excluded.json",
+      "sha256": "64ddd85b83cd73fa22346e741d7511a671b569e892da0905ce31dd703ac31404"
+    },
+    "g13_record": {
+      "path": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\research_logs\\pr38\\s2a_20261111_155321\\g13_fold0.json",
+      "sha256": "a67bff3ce3bf35fa6c0f592da6b08b8381df0649a6d5515f389d44f4a9a8541c"
+    },
+    "g3_record": {
+      "path": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\research_logs\\pr38\\c3_20261112_153333\\g3_preflight_fold0.json",
+      "sha256": "41f80a0b402b0ac9e5502bfa9695d744b1cf240751525ff2ba6dd0265e9281bc"
+    },
+    "test_report": {
+      "path": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\research_logs\\pr38\\c3_20261112_153333\\pytest_fast.xml",
+      "sha256": "dd0599a78d3e6c1032f610a25e229dc589d3b2444188560abd60149f49a111f0"
+    }
+  }
+}

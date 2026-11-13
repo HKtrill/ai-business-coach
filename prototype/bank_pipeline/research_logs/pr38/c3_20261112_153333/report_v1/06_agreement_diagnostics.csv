@@ -1,0 +1,973 @@
+package,table,setting,arm,reference,group,description,fold,k,state,reference_flag,glass_state,rf_state,n,positives,negatives,positive_rate,positive_rate_status,share,lr_flags,lr_flagged_positives,ebm_flags,ebm_flagged_positives,union_flags,union_flagged_positives,intersection_flags,intersection_flagged_positives,lr_only_tp,ebm_only_tp,lr_only_fp,ebm_only_fp,ebm_minus_lr_tp,ebm_only_tp_expected_from_pool,router_unique_tp_vs_lr,router_unique_tp_vs_ebm,observed,expected_lr_calibrated,expected_ebm_calibrated,expected_stratified_lr,expected_stratified_ebm_raw,expected_stratified_lr_x_ebm,o_minus_e_lr_calibrated,o_minus_e_ebm_calibrated,o_minus_e_stratified_lr,o_minus_e_stratified_ebm_raw,o_minus_e_stratified_lr_x_ebm
+complementarity_v1,diagnostics/contingency,,glass,lr,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,11019,447,10572,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,640,96,544,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,all,,PASS_2_SUBSCRIBE,false,,,1348,111,1237,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,all,,PASS_2_SUBSCRIBE,true,,,5315,1938,3377,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,all,,ABSTAIN,false,,,12856,733,12123,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,all,,ABSTAIN,true,,,1772,387,1385,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,2048,94,1954,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,121,20,101,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,0,,PASS_2_SUBSCRIBE,false,,,296,20,276,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,0,,PASS_2_SUBSCRIBE,true,,,1232,416,816,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,0,,ABSTAIN,false,,,2750,152,2598,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,0,,ABSTAIN,true,,,143,40,103,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2035,58,1977,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,98,21,77,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,1,,PASS_2_SUBSCRIBE,false,,,209,25,184,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,1,,PASS_2_SUBSCRIBE,true,,,1159,382,777,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,1,,ABSTAIN,false,,,2786,174,2612,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,1,,ABSTAIN,true,,,303,82,221,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2414,107,2307,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,145,14,131,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,2,,PASS_2_SUBSCRIBE,false,,,252,22,230,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,2,,PASS_2_SUBSCRIBE,true,,,898,368,530,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,2,,ABSTAIN,false,,,2381,128,2253,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,2,,ABSTAIN,true,,,500,103,397,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2356,102,2254,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,90,21,69,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,3,,PASS_2_SUBSCRIBE,false,,,269,17,252,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,3,,PASS_2_SUBSCRIBE,true,,,1109,396,713,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,3,,ABSTAIN,false,,,2335,128,2207,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,3,,ABSTAIN,true,,,431,79,352,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2166,86,2080,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,186,20,166,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,4,,PASS_2_SUBSCRIBE,false,,,322,27,295,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,4,,PASS_2_SUBSCRIBE,true,,,917,376,541,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,4,,ABSTAIN,false,,,2604,151,2453,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,lr,,,4,,ABSTAIN,true,,,395,83,312,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,13833,562,13271,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,9,0,9,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,all,,PASS_2_SUBSCRIBE,false,,,1132,92,1040,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,all,,PASS_2_SUBSCRIBE,true,,,7137,2372,4765,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,all,,ABSTAIN,false,,,10258,637,9621,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,all,,ABSTAIN,true,,,581,49,532,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,3062,134,2928,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,9,0,9,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,0,,PASS_2_SUBSCRIBE,false,,,237,24,213,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,0,,PASS_2_SUBSCRIBE,true,,,1402,463,939,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,0,,ABSTAIN,false,,,1795,108,1687,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,0,,ABSTAIN,true,,,85,13,72,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2517,94,2423,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,1,,PASS_2_SUBSCRIBE,false,,,204,23,181,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,1,,PASS_2_SUBSCRIBE,true,,,1456,478,978,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,1,,ABSTAIN,false,,,2309,140,2169,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,1,,ABSTAIN,true,,,104,7,97,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2809,109,2700,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,2,,PASS_2_SUBSCRIBE,false,,,212,15,197,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,2,,PASS_2_SUBSCRIBE,true,,,1423,476,947,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,2,,ABSTAIN,false,,,2026,133,1893,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,2,,ABSTAIN,true,,,120,9,111,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2578,111,2467,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,3,,PASS_2_SUBSCRIBE,false,,,247,11,236,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,3,,PASS_2_SUBSCRIBE,true,,,1477,483,994,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,3,,ABSTAIN,false,,,2135,125,2010,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,3,,ABSTAIN,true,,,153,13,140,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2867,114,2753,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,4,,PASS_2_SUBSCRIBE,false,,,232,19,213,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,4,,PASS_2_SUBSCRIBE,true,,,1379,472,907,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,4,,ABSTAIN,false,,,1993,131,1862,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,lr,,,4,,ABSTAIN,true,,,119,7,112,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,11380,473,10907,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,279,70,209,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,all,,PASS_2_SUBSCRIBE,false,,,2053,150,1903,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,all,,PASS_2_SUBSCRIBE,true,,,4610,1899,2711,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,all,,ABSTAIN,false,,,13404,782,12622,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,all,,ABSTAIN,true,,,1224,338,886,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,2150,104,2046,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,19,10,9,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,0,,PASS_2_SUBSCRIBE,false,,,514,34,480,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,0,,PASS_2_SUBSCRIBE,true,,,1014,402,612,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,0,,ABSTAIN,false,,,2794,152,2642,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,0,,ABSTAIN,true,,,99,40,59,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2076,54,2022,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,57,25,32,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,1,,PASS_2_SUBSCRIBE,false,,,486,42,444,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,1,,PASS_2_SUBSCRIBE,true,,,882,365,517,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,1,,ABSTAIN,false,,,2911,199,2712,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,1,,ABSTAIN,true,,,178,57,121,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2544,117,2427,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,15,4,11,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,2,,PASS_2_SUBSCRIBE,false,,,319,29,290,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,2,,PASS_2_SUBSCRIBE,true,,,831,361,470,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,2,,ABSTAIN,false,,,2533,138,2395,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,2,,ABSTAIN,true,,,348,93,255,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2371,106,2265,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,75,17,58,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,3,,PASS_2_SUBSCRIBE,false,,,383,18,365,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,3,,PASS_2_SUBSCRIBE,true,,,995,395,600,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,3,,ABSTAIN,false,,,2475,137,2338,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,3,,ABSTAIN,true,,,291,70,221,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2239,92,2147,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,113,14,99,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,4,,PASS_2_SUBSCRIBE,false,,,351,27,324,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,4,,PASS_2_SUBSCRIBE,true,,,888,376,512,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,4,,ABSTAIN,false,,,2691,156,2535,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,ebm,,,4,,ABSTAIN,true,,,308,78,230,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,13828,555,13273,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,14,7,7,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,all,,PASS_2_SUBSCRIBE,false,,,2353,194,2159,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,all,,PASS_2_SUBSCRIBE,true,,,5916,2270,3646,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,all,,ABSTAIN,false,,,10656,656,10000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,all,,ABSTAIN,true,,,183,30,153,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,3065,132,2933,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,6,2,4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,0,,PASS_2_SUBSCRIBE,false,,,528,43,485,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,0,,PASS_2_SUBSCRIBE,true,,,1111,444,667,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,0,,ABSTAIN,false,,,1865,115,1750,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,0,,ABSTAIN,true,,,15,6,9,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2517,94,2423,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,1,,PASS_2_SUBSCRIBE,false,,,556,57,499,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,1,,PASS_2_SUBSCRIBE,true,,,1104,444,660,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,1,,ABSTAIN,false,,,2400,144,2256,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,1,,ABSTAIN,true,,,13,3,10,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2806,108,2698,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,3,1,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,2,,PASS_2_SUBSCRIBE,false,,,461,37,424,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,2,,PASS_2_SUBSCRIBE,true,,,1174,454,720,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,2,,ABSTAIN,false,,,2129,139,1990,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,2,,ABSTAIN,true,,,17,3,14,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2573,107,2466,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,5,4,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,3,,PASS_2_SUBSCRIBE,false,,,426,26,400,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,3,,PASS_2_SUBSCRIBE,true,,,1298,468,830,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,3,,ABSTAIN,false,,,2230,128,2102,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,3,,ABSTAIN,true,,,58,10,48,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2867,114,2753,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,4,,PASS_2_SUBSCRIBE,false,,,382,31,351,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,4,,PASS_2_SUBSCRIBE,true,,,1229,460,769,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,4,,ABSTAIN,false,,,2032,130,1902,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,ebm,,,4,,ABSTAIN,true,,,80,8,72,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,10955,438,10517,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,704,105,599,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,all,,PASS_2_SUBSCRIBE,false,,,1226,86,1140,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,all,,PASS_2_SUBSCRIBE,true,,,5437,1963,3474,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,all,,ABSTAIN,false,,,12768,711,12057,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,all,,ABSTAIN,true,,,1860,409,1451,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,2048,94,1954,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,121,20,101,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,0,,PASS_2_SUBSCRIBE,false,,,264,13,251,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,0,,PASS_2_SUBSCRIBE,true,,,1264,423,841,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,0,,ABSTAIN,false,,,2741,147,2594,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,0,,ABSTAIN,true,,,152,45,107,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2023,54,1969,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,110,25,85,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,1,,PASS_2_SUBSCRIBE,false,,,208,25,183,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,1,,PASS_2_SUBSCRIBE,true,,,1160,382,778,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,1,,ABSTAIN,false,,,2758,170,2588,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,1,,ABSTAIN,true,,,331,86,245,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2414,107,2307,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,145,14,131,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,2,,PASS_2_SUBSCRIBE,false,,,233,18,215,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,2,,PASS_2_SUBSCRIBE,true,,,917,372,545,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,2,,ABSTAIN,false,,,2363,125,2238,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,2,,ABSTAIN,true,,,518,106,412,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2336,101,2235,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,110,22,88,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,3,,PASS_2_SUBSCRIBE,false,,,241,11,230,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,3,,PASS_2_SUBSCRIBE,true,,,1137,402,735,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,3,,ABSTAIN,false,,,2324,121,2203,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,3,,ABSTAIN,true,,,442,86,356,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2134,82,2052,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,218,24,194,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,4,,PASS_2_SUBSCRIBE,false,,,280,19,261,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,4,,PASS_2_SUBSCRIBE,true,,,959,384,575,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,4,,ABSTAIN,false,,,2582,148,2434,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,union,,,4,,ABSTAIN,true,,,417,86,331,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,13819,555,13264,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,23,7,16,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,all,,PASS_2_SUBSCRIBE,false,,,999,60,939,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,all,,PASS_2_SUBSCRIBE,true,,,7270,2404,4866,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,all,,ABSTAIN,false,,,10131,620,9511,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,all,,ABSTAIN,true,,,708,66,642,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,3056,132,2924,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,15,2,13,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,0,,PASS_2_SUBSCRIBE,false,,,206,14,192,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,0,,PASS_2_SUBSCRIBE,true,,,1433,473,960,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,0,,ABSTAIN,false,,,1791,108,1683,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,0,,ABSTAIN,true,,,89,13,76,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2517,94,2423,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,1,,PASS_2_SUBSCRIBE,false,,,175,17,158,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,1,,PASS_2_SUBSCRIBE,true,,,1485,484,1001,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,1,,ABSTAIN,false,,,2297,138,2159,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,1,,ABSTAIN,true,,,116,9,107,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2806,108,2698,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,3,1,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,2,,PASS_2_SUBSCRIBE,false,,,192,12,180,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,2,,PASS_2_SUBSCRIBE,true,,,1443,479,964,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,2,,ABSTAIN,false,,,2012,130,1882,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,2,,ABSTAIN,true,,,134,12,122,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2573,107,2466,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,5,4,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,3,,PASS_2_SUBSCRIBE,false,,,233,8,225,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,3,,PASS_2_SUBSCRIBE,true,,,1491,486,1005,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,3,,ABSTAIN,false,,,2095,118,1977,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,3,,ABSTAIN,true,,,193,20,173,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2867,114,2753,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,4,,PASS_2_SUBSCRIBE,false,,,193,9,184,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,4,,PASS_2_SUBSCRIBE,true,,,1418,482,936,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,4,,ABSTAIN,false,,,1936,126,1810,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,union,,,4,,ABSTAIN,true,,,176,12,164,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,11444,482,10962,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,215,61,154,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,all,,PASS_2_SUBSCRIBE,false,,,2175,175,2000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,all,,PASS_2_SUBSCRIBE,true,,,4488,1874,2614,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,all,,ABSTAIN,false,,,13492,804,12688,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,all,,ABSTAIN,true,,,1136,316,820,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,2150,104,2046,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,19,10,9,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,0,,PASS_2_SUBSCRIBE,false,,,546,41,505,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,0,,PASS_2_SUBSCRIBE,true,,,982,395,587,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,0,,ABSTAIN,false,,,2803,157,2646,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,0,,ABSTAIN,true,,,90,35,55,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2088,58,2030,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,45,21,24,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,1,,PASS_2_SUBSCRIBE,false,,,487,42,445,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,1,,PASS_2_SUBSCRIBE,true,,,881,365,516,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,1,,ABSTAIN,false,,,2939,203,2736,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,1,,ABSTAIN,true,,,150,53,97,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2544,117,2427,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,15,4,11,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,2,,PASS_2_SUBSCRIBE,false,,,338,33,305,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,2,,PASS_2_SUBSCRIBE,true,,,812,357,455,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,2,,ABSTAIN,false,,,2551,141,2410,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,2,,ABSTAIN,true,,,330,90,240,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2391,107,2284,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,55,16,39,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,3,,PASS_2_SUBSCRIBE,false,,,411,24,387,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,3,,PASS_2_SUBSCRIBE,true,,,967,389,578,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,3,,ABSTAIN,false,,,2486,144,2342,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,3,,ABSTAIN,true,,,280,63,217,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2271,96,2175,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,81,10,71,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,4,,PASS_2_SUBSCRIBE,false,,,393,35,358,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,4,,PASS_2_SUBSCRIBE,true,,,846,368,478,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,4,,ABSTAIN,false,,,2713,159,2554,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,glass,intersection,,,4,,ABSTAIN,true,,,286,75,211,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,13842,562,13280,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,all,,PASS_2_SUBSCRIBE,false,,,2486,226,2260,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,all,,PASS_2_SUBSCRIBE,true,,,5783,2238,3545,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,all,,ABSTAIN,false,,,10783,673,10110,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,all,,ABSTAIN,true,,,56,13,43,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,3071,134,2937,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,0,,PASS_2_SUBSCRIBE,false,,,559,53,506,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,0,,PASS_2_SUBSCRIBE,true,,,1080,434,646,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,0,,ABSTAIN,false,,,1869,115,1754,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,0,,ABSTAIN,true,,,11,6,5,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2517,94,2423,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,1,,PASS_2_SUBSCRIBE,false,,,585,63,522,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,1,,PASS_2_SUBSCRIBE,true,,,1075,438,637,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,1,,ABSTAIN,false,,,2412,146,2266,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,1,,ABSTAIN,true,,,1,1,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2809,109,2700,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,2,,PASS_2_SUBSCRIBE,false,,,481,40,441,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,2,,PASS_2_SUBSCRIBE,true,,,1154,451,703,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,2,,ABSTAIN,false,,,2143,142,2001,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,2,,ABSTAIN,true,,,3,0,3,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2578,111,2467,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,3,,PASS_2_SUBSCRIBE,false,,,440,29,411,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,3,,PASS_2_SUBSCRIBE,true,,,1284,465,819,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,3,,ABSTAIN,false,,,2270,135,2135,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,3,,ABSTAIN,true,,,18,3,15,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2867,114,2753,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,4,,PASS_2_SUBSCRIBE,false,,,421,41,380,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,4,,PASS_2_SUBSCRIBE,true,,,1190,450,740,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,4,,ABSTAIN,false,,,2089,135,1954,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/contingency,,blackbox,intersection,,,4,,ABSTAIN,true,,,23,3,20,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,11019,447,10572,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,640,96,544,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,all,,PASS_2_SUBSCRIBE,false,,,989,73,916,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,all,,PASS_2_SUBSCRIBE,true,,,4433,1767,2666,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,all,,ABSTAIN,false,,,13215,771,12444,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,all,,ABSTAIN,true,,,2654,558,2096,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,2048,94,1954,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,121,20,101,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,0,,PASS_2_SUBSCRIBE,false,,,205,15,190,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,0,,PASS_2_SUBSCRIBE,true,,,780,320,460,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,0,,ABSTAIN,false,,,2841,157,2684,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,0,,ABSTAIN,true,,,595,136,459,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2035,58,1977,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,98,21,77,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,1,,PASS_2_SUBSCRIBE,false,,,155,11,144,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,1,,PASS_2_SUBSCRIBE,true,,,884,357,527,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,1,,ABSTAIN,false,,,2840,188,2652,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,1,,ABSTAIN,true,,,578,107,471,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2414,107,2307,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,145,14,131,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,2,,PASS_2_SUBSCRIBE,false,,,251,21,230,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,2,,PASS_2_SUBSCRIBE,true,,,897,367,530,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,2,,ABSTAIN,false,,,2382,129,2253,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,2,,ABSTAIN,true,,,501,104,397,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2356,102,2254,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,90,21,69,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,3,,PASS_2_SUBSCRIBE,false,,,262,16,246,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,3,,PASS_2_SUBSCRIBE,true,,,1054,384,670,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,3,,ABSTAIN,false,,,2342,129,2213,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,3,,ABSTAIN,true,,,486,91,395,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2166,86,2080,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,186,20,166,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,4,,PASS_2_SUBSCRIBE,false,,,116,10,106,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,4,,PASS_2_SUBSCRIBE,true,,,818,339,479,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,4,,ABSTAIN,false,,,2810,168,2642,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,lr,,,4,,ABSTAIN,true,,,494,120,374,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,13833,562,13271,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,9,0,9,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,all,,PASS_2_SUBSCRIBE,false,,,1132,92,1040,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,all,,PASS_2_SUBSCRIBE,true,,,7137,2372,4765,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,all,,ABSTAIN,false,,,10258,637,9621,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,all,,ABSTAIN,true,,,581,49,532,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,3062,134,2928,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,9,0,9,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,0,,PASS_2_SUBSCRIBE,false,,,237,24,213,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,0,,PASS_2_SUBSCRIBE,true,,,1402,463,939,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,0,,ABSTAIN,false,,,1795,108,1687,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,0,,ABSTAIN,true,,,85,13,72,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2517,94,2423,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,1,,PASS_2_SUBSCRIBE,false,,,204,23,181,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,1,,PASS_2_SUBSCRIBE,true,,,1456,478,978,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,1,,ABSTAIN,false,,,2309,140,2169,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,1,,ABSTAIN,true,,,104,7,97,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2809,109,2700,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,2,,PASS_2_SUBSCRIBE,false,,,212,15,197,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,2,,PASS_2_SUBSCRIBE,true,,,1423,476,947,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,2,,ABSTAIN,false,,,2026,133,1893,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,2,,ABSTAIN,true,,,120,9,111,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2578,111,2467,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,3,,PASS_2_SUBSCRIBE,false,,,247,11,236,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,3,,PASS_2_SUBSCRIBE,true,,,1477,483,994,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,3,,ABSTAIN,false,,,2135,125,2010,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,3,,ABSTAIN,true,,,153,13,140,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2867,114,2753,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,4,,PASS_2_SUBSCRIBE,false,,,232,19,213,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,4,,PASS_2_SUBSCRIBE,true,,,1379,472,907,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,4,,ABSTAIN,false,,,1993,131,1862,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,lr,,,4,,ABSTAIN,true,,,119,7,112,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,11380,473,10907,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,279,70,209,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,all,,PASS_2_SUBSCRIBE,false,,,1335,90,1245,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,all,,PASS_2_SUBSCRIBE,true,,,4087,1750,2337,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,all,,ABSTAIN,false,,,14122,842,13280,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,all,,ABSTAIN,true,,,1747,487,1260,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,2150,104,2046,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,19,10,9,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,0,,PASS_2_SUBSCRIBE,false,,,218,12,206,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,0,,PASS_2_SUBSCRIBE,true,,,767,323,444,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,0,,ABSTAIN,false,,,3090,174,2916,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,0,,ABSTAIN,true,,,346,119,227,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2076,54,2022,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,57,25,32,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,1,,PASS_2_SUBSCRIBE,false,,,252,17,235,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,1,,PASS_2_SUBSCRIBE,true,,,787,351,436,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,1,,ABSTAIN,false,,,3145,224,2921,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,1,,ABSTAIN,true,,,273,71,202,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2544,117,2427,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,15,4,11,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,2,,PASS_2_SUBSCRIBE,false,,,320,30,290,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,2,,PASS_2_SUBSCRIBE,true,,,828,358,470,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,2,,ABSTAIN,false,,,2532,137,2395,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,2,,ABSTAIN,true,,,351,96,255,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2371,106,2265,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,75,17,58,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,3,,PASS_2_SUBSCRIBE,false,,,364,16,348,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,3,,PASS_2_SUBSCRIBE,true,,,952,384,568,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,3,,ABSTAIN,false,,,2494,139,2355,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,3,,ABSTAIN,true,,,334,81,253,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2239,92,2147,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,113,14,99,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,4,,PASS_2_SUBSCRIBE,false,,,181,15,166,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,4,,PASS_2_SUBSCRIBE,true,,,753,334,419,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,4,,ABSTAIN,false,,,2861,168,2693,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,ebm,,,4,,ABSTAIN,true,,,443,120,323,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,13828,555,13273,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,14,7,7,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,all,,PASS_2_SUBSCRIBE,false,,,2353,194,2159,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,all,,PASS_2_SUBSCRIBE,true,,,5916,2270,3646,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,all,,ABSTAIN,false,,,10656,656,10000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,all,,ABSTAIN,true,,,183,30,153,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,3065,132,2933,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,6,2,4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,0,,PASS_2_SUBSCRIBE,false,,,528,43,485,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,0,,PASS_2_SUBSCRIBE,true,,,1111,444,667,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,0,,ABSTAIN,false,,,1865,115,1750,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,0,,ABSTAIN,true,,,15,6,9,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2517,94,2423,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,1,,PASS_2_SUBSCRIBE,false,,,556,57,499,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,1,,PASS_2_SUBSCRIBE,true,,,1104,444,660,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,1,,ABSTAIN,false,,,2400,144,2256,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,1,,ABSTAIN,true,,,13,3,10,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2806,108,2698,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,3,1,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,2,,PASS_2_SUBSCRIBE,false,,,461,37,424,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,2,,PASS_2_SUBSCRIBE,true,,,1174,454,720,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,2,,ABSTAIN,false,,,2129,139,1990,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,2,,ABSTAIN,true,,,17,3,14,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2573,107,2466,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,5,4,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,3,,PASS_2_SUBSCRIBE,false,,,426,26,400,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,3,,PASS_2_SUBSCRIBE,true,,,1298,468,830,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,3,,ABSTAIN,false,,,2230,128,2102,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,3,,ABSTAIN,true,,,58,10,48,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2867,114,2753,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,4,,PASS_2_SUBSCRIBE,false,,,382,31,351,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,4,,PASS_2_SUBSCRIBE,true,,,1229,460,769,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,4,,ABSTAIN,false,,,2032,130,1902,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,ebm,,,4,,ABSTAIN,true,,,80,8,72,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,10955,438,10517,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,704,105,599,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,all,,PASS_2_SUBSCRIBE,false,,,911,55,856,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,all,,PASS_2_SUBSCRIBE,true,,,4511,1785,2726,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,all,,ABSTAIN,false,,,13083,742,12341,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,all,,ABSTAIN,true,,,2786,587,2199,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,2048,94,1954,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,121,20,101,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,0,,PASS_2_SUBSCRIBE,false,,,181,9,172,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,0,,PASS_2_SUBSCRIBE,true,,,804,326,478,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,0,,ABSTAIN,false,,,2824,151,2673,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,0,,ABSTAIN,true,,,612,142,470,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2023,54,1969,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,110,25,85,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,1,,PASS_2_SUBSCRIBE,false,,,151,10,141,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,1,,PASS_2_SUBSCRIBE,true,,,888,358,530,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,1,,ABSTAIN,false,,,2815,185,2630,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,1,,ABSTAIN,true,,,603,110,493,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2414,107,2307,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,145,14,131,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,2,,PASS_2_SUBSCRIBE,false,,,233,18,215,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,2,,PASS_2_SUBSCRIBE,true,,,915,370,545,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,2,,ABSTAIN,false,,,2363,125,2238,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,2,,ABSTAIN,true,,,520,108,412,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2336,101,2235,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,110,22,88,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,3,,PASS_2_SUBSCRIBE,false,,,235,10,225,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,3,,PASS_2_SUBSCRIBE,true,,,1081,390,691,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,3,,ABSTAIN,false,,,2330,122,2208,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,3,,ABSTAIN,true,,,498,98,400,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2134,82,2052,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,218,24,194,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,4,,PASS_2_SUBSCRIBE,false,,,111,8,103,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,4,,PASS_2_SUBSCRIBE,true,,,823,341,482,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,4,,ABSTAIN,false,,,2751,159,2592,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,union,,,4,,ABSTAIN,true,,,553,129,424,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,13819,555,13264,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,23,7,16,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,all,,PASS_2_SUBSCRIBE,false,,,999,60,939,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,all,,PASS_2_SUBSCRIBE,true,,,7270,2404,4866,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,all,,ABSTAIN,false,,,10131,620,9511,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,all,,ABSTAIN,true,,,708,66,642,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,3056,132,2924,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,15,2,13,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,0,,PASS_2_SUBSCRIBE,false,,,206,14,192,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,0,,PASS_2_SUBSCRIBE,true,,,1433,473,960,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,0,,ABSTAIN,false,,,1791,108,1683,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,0,,ABSTAIN,true,,,89,13,76,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2517,94,2423,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,1,,PASS_2_SUBSCRIBE,false,,,175,17,158,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,1,,PASS_2_SUBSCRIBE,true,,,1485,484,1001,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,1,,ABSTAIN,false,,,2297,138,2159,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,1,,ABSTAIN,true,,,116,9,107,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2806,108,2698,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,3,1,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,2,,PASS_2_SUBSCRIBE,false,,,192,12,180,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,2,,PASS_2_SUBSCRIBE,true,,,1443,479,964,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,2,,ABSTAIN,false,,,2012,130,1882,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,2,,ABSTAIN,true,,,134,12,122,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2573,107,2466,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,5,4,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,3,,PASS_2_SUBSCRIBE,false,,,233,8,225,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,3,,PASS_2_SUBSCRIBE,true,,,1491,486,1005,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,3,,ABSTAIN,false,,,2095,118,1977,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,3,,ABSTAIN,true,,,193,20,173,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2867,114,2753,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,4,,PASS_2_SUBSCRIBE,false,,,193,9,184,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,4,,PASS_2_SUBSCRIBE,true,,,1418,482,936,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,4,,ABSTAIN,false,,,1936,126,1810,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,union,,,4,,ABSTAIN,true,,,176,12,164,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,11444,482,10962,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,215,61,154,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,all,,PASS_2_SUBSCRIBE,false,,,1413,108,1305,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,all,,PASS_2_SUBSCRIBE,true,,,4009,1732,2277,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,all,,ABSTAIN,false,,,14254,871,13383,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,all,,ABSTAIN,true,,,1615,458,1157,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,2150,104,2046,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,19,10,9,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,0,,PASS_2_SUBSCRIBE,false,,,242,18,224,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,0,,PASS_2_SUBSCRIBE,true,,,743,317,426,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,0,,ABSTAIN,false,,,3107,180,2927,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,0,,ABSTAIN,true,,,329,113,216,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2088,58,2030,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,45,21,24,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,1,,PASS_2_SUBSCRIBE,false,,,256,18,238,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,1,,PASS_2_SUBSCRIBE,true,,,783,350,433,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,1,,ABSTAIN,false,,,3170,227,2943,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,1,,ABSTAIN,true,,,248,68,180,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2544,117,2427,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,15,4,11,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,2,,PASS_2_SUBSCRIBE,false,,,338,33,305,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,2,,PASS_2_SUBSCRIBE,true,,,810,355,455,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,2,,ABSTAIN,false,,,2551,141,2410,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,2,,ABSTAIN,true,,,332,92,240,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2391,107,2284,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,55,16,39,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,3,,PASS_2_SUBSCRIBE,false,,,391,22,369,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,3,,PASS_2_SUBSCRIBE,true,,,925,378,547,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,3,,ABSTAIN,false,,,2506,146,2360,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,3,,ABSTAIN,true,,,322,74,248,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2271,96,2175,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,81,10,71,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,4,,PASS_2_SUBSCRIBE,false,,,186,17,169,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,4,,PASS_2_SUBSCRIBE,true,,,748,332,416,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,4,,ABSTAIN,false,,,2920,177,2743,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,glass,intersection,,,4,,ABSTAIN,true,,,384,111,273,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,all,,PASS_1_NOT_SUBSCRIBE,false,,,13842,562,13280,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,all,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,all,,PASS_2_SUBSCRIBE,false,,,2486,226,2260,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,all,,PASS_2_SUBSCRIBE,true,,,5783,2238,3545,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,all,,ABSTAIN,false,,,10783,673,10110,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,all,,ABSTAIN,true,,,56,13,43,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,0,,PASS_1_NOT_SUBSCRIBE,false,,,3071,134,2937,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,0,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,0,,PASS_2_SUBSCRIBE,false,,,559,53,506,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,0,,PASS_2_SUBSCRIBE,true,,,1080,434,646,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,0,,ABSTAIN,false,,,1869,115,1754,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,0,,ABSTAIN,true,,,11,6,5,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,1,,PASS_1_NOT_SUBSCRIBE,false,,,2517,94,2423,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,1,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,1,,PASS_2_SUBSCRIBE,false,,,585,63,522,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,1,,PASS_2_SUBSCRIBE,true,,,1075,438,637,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,1,,ABSTAIN,false,,,2412,146,2266,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,1,,ABSTAIN,true,,,1,1,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,2,,PASS_1_NOT_SUBSCRIBE,false,,,2809,109,2700,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,2,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,2,,PASS_2_SUBSCRIBE,false,,,481,40,441,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,2,,PASS_2_SUBSCRIBE,true,,,1154,451,703,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,2,,ABSTAIN,false,,,2143,142,2001,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,2,,ABSTAIN,true,,,3,0,3,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,3,,PASS_1_NOT_SUBSCRIBE,false,,,2578,111,2467,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,3,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,3,,PASS_2_SUBSCRIBE,false,,,440,29,411,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,3,,PASS_2_SUBSCRIBE,true,,,1284,465,819,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,3,,ABSTAIN,false,,,2270,135,2135,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,3,,ABSTAIN,true,,,18,3,15,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,4,,PASS_1_NOT_SUBSCRIBE,false,,,2867,114,2753,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,4,,PASS_1_NOT_SUBSCRIBE,true,,,0,0,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,4,,PASS_2_SUBSCRIBE,false,,,421,41,380,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,4,,PASS_2_SUBSCRIBE,true,,,1190,450,740,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,4,,ABSTAIN,false,,,2089,135,1954,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/contingency,,blackbox,intersection,,,4,,ABSTAIN,true,,,23,3,20,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,all,,,,PASS_1_NOT_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,7858,266,7592,0.0338508526343,defined,0.238482549317,9,0,0,0,9,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,all,,,,PASS_1_NOT_SUBSCRIBE,PASS_2_SUBSCRIBE,601,101,500,0.168053244592,defined,0.0182397572079,393,80,236,68,437,88,192,60,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,all,,,,PASS_1_NOT_SUBSCRIBE,ABSTAIN,3200,176,3024,0.055,defined,0.0971168437026,238,16,43,2,258,17,23,1,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,all,,,,PASS_2_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,3,0,3,0,defined,9.10470409712e-05,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,all,,,,PASS_2_SUBSCRIBE,PASS_2_SUBSCRIBE,5494,1954,3540,0.355660720786,defined,0.166737481032,5096,1920,4527,1882,5156,1934,4467,1868,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,all,,,,PASS_2_SUBSCRIBE,ABSTAIN,1166,95,1071,0.0814751286449,defined,0.0353869499241,219,18,83,17,281,29,21,6,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,all,,,,ABSTAIN,PASS_1_NOT_SUBSCRIBE,5981,296,5685,0.0494900518308,defined,0.181517450683,0,0,14,7,14,7,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,all,,,,ABSTAIN,PASS_2_SUBSCRIBE,2174,409,1765,0.188132474701,defined,0.0659787556904,1648,372,1153,320,1677,382,1124,310,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,all,,,,ABSTAIN,ABSTAIN,6473,415,6058,0.0641124671713,defined,0.196449165402,124,15,57,11,169,20,12,6,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,0,,,,PASS_1_NOT_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,1657,67,1590,0.0404345202173,defined,0.251441578149,9,0,0,0,9,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,0,,,,PASS_1_NOT_SUBSCRIBE,PASS_2_SUBSCRIBE,120,20,100,0.166666666667,defined,0.0182094081942,105,19,19,10,105,19,19,10,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,0,,,,PASS_1_NOT_SUBSCRIBE,ABSTAIN,392,27,365,0.0688775510204,defined,0.0594840667678,7,1,0,0,7,1,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,0,,,,PASS_2_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,0,0,0,,undefined_empty_denominator,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,0,,,,PASS_2_SUBSCRIBE,PASS_2_SUBSCRIBE,1390,432,958,0.310791366906,defined,0.210925644917,1194,414,1010,402,1222,421,982,395,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,0,,,,PASS_2_SUBSCRIBE,ABSTAIN,138,4,134,0.0289855072464,defined,0.0209408194234,38,2,4,0,42,2,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,0,,,,ABSTAIN,PASS_1_NOT_SUBSCRIBE,1414,67,1347,0.0473833097595,defined,0.214567526555,0,0,6,2,6,2,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,0,,,,ABSTAIN,PASS_2_SUBSCRIBE,129,35,94,0.271317829457,defined,0.0195751138088,103,30,82,32,106,33,79,29,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,0,,,,ABSTAIN,ABSTAIN,1350,90,1260,0.0666666666667,defined,0.204855842185,40,10,11,6,40,10,11,6,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,1,,,,PASS_1_NOT_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,1348,32,1316,0.0237388724036,defined,0.204552352049,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,1,,,,PASS_1_NOT_SUBSCRIBE,PASS_2_SUBSCRIBE,105,26,79,0.247619047619,defined,0.01593323217,87,21,57,25,99,25,45,21,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,1,,,,PASS_1_NOT_SUBSCRIBE,ABSTAIN,680,21,659,0.0308823529412,defined,0.103186646434,11,0,0,0,11,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,1,,,,PASS_2_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,0,0,0,,undefined_empty_denominator,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,1,,,,PASS_2_SUBSCRIBE,PASS_2_SUBSCRIBE,1093,382,711,0.349496797804,defined,0.165857359636,1066,375,881,364,1067,375,880,364,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,1,,,,PASS_2_SUBSCRIBE,ABSTAIN,275,25,250,0.0909090909091,defined,0.0417298937785,93,7,1,1,93,7,1,1,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,1,,,,ABSTAIN,PASS_1_NOT_SUBSCRIBE,1169,62,1107,0.0530367835757,defined,0.177389984825,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,1,,,,ABSTAIN,PASS_2_SUBSCRIBE,462,93,369,0.201298701299,defined,0.0701062215478,303,82,166,55,319,84,150,53,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,1,,,,ABSTAIN,ABSTAIN,1458,101,1357,0.0692729766804,defined,0.22124430956,0,0,12,2,12,2,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,2,,,,PASS_1_NOT_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,1746,68,1678,0.0389461626575,defined,0.264946889226,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,2,,,,PASS_1_NOT_SUBSCRIBE,PASS_2_SUBSCRIBE,38,7,31,0.184210526316,defined,0.00576631259484,25,5,12,4,25,5,12,4,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,2,,,,PASS_1_NOT_SUBSCRIBE,ABSTAIN,775,46,729,0.0593548387097,defined,0.117602427921,120,9,3,0,120,9,3,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,2,,,,PASS_2_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,0,0,0,,undefined_empty_denominator,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,2,,,,PASS_2_SUBSCRIBE,PASS_2_SUBSCRIBE,957,369,588,0.385579937304,defined,0.145220030349,898,368,826,358,912,369,812,357,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,2,,,,PASS_2_SUBSCRIBE,ABSTAIN,193,21,172,0.108808290155,defined,0.0292867981791,0,0,5,3,5,3,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,2,,,,ABSTAIN,PASS_1_NOT_SUBSCRIBE,1063,41,1022,0.038570084666,defined,0.161305007587,0,0,3,1,3,1,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,2,,,,ABSTAIN,PASS_2_SUBSCRIBE,640,115,525,0.1796875,defined,0.0971168437026,500,103,336,92,506,105,330,90,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,2,,,,ABSTAIN,ABSTAIN,1178,75,1103,0.0636672325976,defined,0.17875569044,0,0,9,0,9,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,3,,,,PASS_1_NOT_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,1755,62,1693,0.0353276353276,defined,0.266312594841,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,3,,,,PASS_1_NOT_SUBSCRIBE,PASS_2_SUBSCRIBE,156,26,130,0.166666666667,defined,0.0236722306525,81,20,53,16,83,20,51,16,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,3,,,,PASS_1_NOT_SUBSCRIBE,ABSTAIN,535,35,500,0.0654205607477,defined,0.0811836115326,9,1,22,1,27,2,4,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,3,,,,PASS_2_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,3,0,3,0,defined,0.000455235204856,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,3,,,,PASS_2_SUBSCRIBE,PASS_2_SUBSCRIBE,1099,392,707,0.356687898089,defined,0.166767830046,1028,389,966,389,1040,392,954,386,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,3,,,,PASS_2_SUBSCRIBE,ABSTAIN,276,21,255,0.0760869565217,defined,0.0418816388467,81,7,29,6,97,10,13,3,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,3,,,,ABSTAIN,PASS_1_NOT_SUBSCRIBE,820,49,771,0.059756097561,defined,0.124430955994,0,0,5,4,5,4,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,3,,,,ABSTAIN,PASS_2_SUBSCRIBE,469,76,393,0.162046908316,defined,0.0711684370258,368,74,279,63,368,74,279,63,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,3,,,,ABSTAIN,ABSTAIN,1477,82,1395,0.0555179417739,defined,0.224127465857,63,5,7,3,69,8,1,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,4,,,,PASS_1_NOT_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,1352,37,1315,0.0273668639053,defined,0.205159332322,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,4,,,,PASS_1_NOT_SUBSCRIBE,PASS_2_SUBSCRIBE,182,22,160,0.120879120879,defined,0.0276176024279,95,15,95,13,125,19,65,9,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,4,,,,PASS_1_NOT_SUBSCRIBE,ABSTAIN,818,47,771,0.0574572127139,defined,0.124127465857,91,5,18,1,93,5,16,1,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,4,,,,PASS_2_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,0,0,0,,undefined_empty_denominator,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,4,,,,PASS_2_SUBSCRIBE,PASS_2_SUBSCRIBE,955,379,576,0.396858638743,defined,0.144916540212,910,374,844,369,915,377,839,366,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,4,,,,PASS_2_SUBSCRIBE,ABSTAIN,284,24,260,0.0845070422535,defined,0.043095599393,7,2,44,7,44,7,7,2,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,4,,,,ABSTAIN,PASS_1_NOT_SUBSCRIBE,1515,77,1438,0.0508250825083,defined,0.229893778452,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,4,,,,ABSTAIN,PASS_2_SUBSCRIBE,474,90,384,0.189873417722,defined,0.0719271623672,374,83,290,78,378,86,286,75,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/crosstab,,,,,,4,,,,ABSTAIN,ABSTAIN,1010,67,943,0.0663366336634,defined,0.153262518968,21,0,18,0,39,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,all,,,,PASS_1_NOT_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,7858,266,7592,0.0338508526343,defined,0.238482549317,9,0,0,0,9,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,all,,,,PASS_1_NOT_SUBSCRIBE,PASS_2_SUBSCRIBE,601,101,500,0.168053244592,defined,0.0182397572079,393,80,236,68,437,88,192,60,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,all,,,,PASS_1_NOT_SUBSCRIBE,ABSTAIN,3200,176,3024,0.055,defined,0.0971168437026,238,16,43,2,258,17,23,1,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,all,,,,PASS_2_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,0,0,0,,undefined_empty_denominator,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,all,,,,PASS_2_SUBSCRIBE,PASS_2_SUBSCRIBE,4612,1772,2840,0.384215091067,defined,0.139969650986,4293,1752,4035,1734,4341,1761,3987,1725,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,all,,,,PASS_2_SUBSCRIBE,ABSTAIN,810,68,742,0.083950617284,defined,0.0245827010622,140,15,52,16,170,24,22,7,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,all,,,,ABSTAIN,PASS_1_NOT_SUBSCRIBE,5984,296,5688,0.0494652406417,defined,0.181608497724,0,0,14,7,14,7,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,all,,,,ABSTAIN,PASS_2_SUBSCRIBE,3056,591,2465,0.193390052356,defined,0.092746585736,2451,540,1645,468,2492,555,1604,453,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,all,,,,ABSTAIN,ABSTAIN,6829,442,6387,0.0647239712989,defined,0.207253414264,203,18,88,12,280,25,11,5,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,0,,,,PASS_1_NOT_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,1657,67,1590,0.0404345202173,defined,0.251441578149,9,0,0,0,9,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,0,,,,PASS_1_NOT_SUBSCRIBE,PASS_2_SUBSCRIBE,120,20,100,0.166666666667,defined,0.0182094081942,105,19,19,10,105,19,19,10,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,0,,,,PASS_1_NOT_SUBSCRIBE,ABSTAIN,392,27,365,0.0688775510204,defined,0.0594840667678,7,1,0,0,7,1,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,0,,,,PASS_2_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,0,0,0,,undefined_empty_denominator,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,0,,,,PASS_2_SUBSCRIBE,PASS_2_SUBSCRIBE,875,329,546,0.376,defined,0.13277693475,754,316,766,322,778,322,742,316,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,0,,,,PASS_2_SUBSCRIBE,ABSTAIN,110,6,104,0.0545454545455,defined,0.0166919575114,26,4,1,1,26,4,1,1,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,0,,,,ABSTAIN,PASS_1_NOT_SUBSCRIBE,1414,67,1347,0.0473833097595,defined,0.214567526555,0,0,6,2,6,2,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,0,,,,ABSTAIN,PASS_2_SUBSCRIBE,644,138,506,0.214285714286,defined,0.0977238239757,543,128,326,112,550,132,319,108,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,0,,,,ABSTAIN,ABSTAIN,1378,88,1290,0.0638606676343,defined,0.209104704097,52,8,14,5,56,8,10,5,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,1,,,,PASS_1_NOT_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,1348,32,1316,0.0237388724036,defined,0.204552352049,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,1,,,,PASS_1_NOT_SUBSCRIBE,PASS_2_SUBSCRIBE,105,26,79,0.247619047619,defined,0.01593323217,87,21,57,25,99,25,45,21,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,1,,,,PASS_1_NOT_SUBSCRIBE,ABSTAIN,680,21,659,0.0308823529412,defined,0.103186646434,11,0,0,0,11,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,1,,,,PASS_2_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,0,0,0,,undefined_empty_denominator,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,1,,,,PASS_2_SUBSCRIBE,PASS_2_SUBSCRIBE,889,357,532,0.40157480315,defined,0.134901365706,857,355,782,349,857,355,782,349,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,1,,,,PASS_2_SUBSCRIBE,ABSTAIN,150,11,139,0.0733333333333,defined,0.0227617602428,27,2,5,2,31,3,1,1,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,1,,,,ABSTAIN,PASS_1_NOT_SUBSCRIBE,1169,62,1107,0.0530367835757,defined,0.177389984825,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,1,,,,ABSTAIN,PASS_2_SUBSCRIBE,666,118,548,0.177177177177,defined,0.101062215478,512,102,265,70,529,104,248,68,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,1,,,,ABSTAIN,ABSTAIN,1583,115,1468,0.0726468730259,defined,0.240212443096,66,5,8,1,74,6,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,2,,,,PASS_1_NOT_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,1746,68,1678,0.0389461626575,defined,0.264946889226,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,2,,,,PASS_1_NOT_SUBSCRIBE,PASS_2_SUBSCRIBE,38,7,31,0.184210526316,defined,0.00576631259484,25,5,12,4,25,5,12,4,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,2,,,,PASS_1_NOT_SUBSCRIBE,ABSTAIN,775,46,729,0.0593548387097,defined,0.117602427921,120,9,3,0,120,9,3,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,2,,,,PASS_2_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,0,0,0,,undefined_empty_denominator,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,2,,,,PASS_2_SUBSCRIBE,PASS_2_SUBSCRIBE,955,367,588,0.384293193717,defined,0.144916540212,897,367,823,355,910,367,810,355,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,2,,,,PASS_2_SUBSCRIBE,ABSTAIN,193,21,172,0.108808290155,defined,0.0292867981791,0,0,5,3,5,3,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,2,,,,ABSTAIN,PASS_1_NOT_SUBSCRIBE,1063,41,1022,0.038570084666,defined,0.161305007587,0,0,3,1,3,1,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,2,,,,ABSTAIN,PASS_2_SUBSCRIBE,642,117,525,0.182242990654,defined,0.0974203338392,501,104,339,95,508,107,332,92,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,2,,,,ABSTAIN,ABSTAIN,1178,75,1103,0.0636672325976,defined,0.17875569044,0,0,9,0,9,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,3,,,,PASS_1_NOT_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,1755,62,1693,0.0353276353276,defined,0.266312594841,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,3,,,,PASS_1_NOT_SUBSCRIBE,PASS_2_SUBSCRIBE,156,26,130,0.166666666667,defined,0.0236722306525,81,20,53,16,83,20,51,16,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,3,,,,PASS_1_NOT_SUBSCRIBE,ABSTAIN,535,35,500,0.0654205607477,defined,0.0811836115326,9,1,22,1,27,2,4,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,3,,,,PASS_2_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,0,0,0,,undefined_empty_denominator,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,3,,,,PASS_2_SUBSCRIBE,PASS_2_SUBSCRIBE,1043,380,663,0.364333652924,defined,0.158270106222,974,377,923,378,985,380,912,375,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,3,,,,PASS_2_SUBSCRIBE,ABSTAIN,273,20,253,0.0732600732601,defined,0.0414264036419,80,7,29,6,96,10,13,3,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,3,,,,ABSTAIN,PASS_1_NOT_SUBSCRIBE,823,49,774,0.0595382746051,defined,0.124886191199,0,0,5,4,5,4,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,3,,,,ABSTAIN,PASS_2_SUBSCRIBE,525,88,437,0.167619047619,defined,0.0796661608498,422,86,322,74,423,86,321,74,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,3,,,,ABSTAIN,ABSTAIN,1480,83,1397,0.0560810810811,defined,0.224582701062,64,5,7,3,70,8,1,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,4,,,,PASS_1_NOT_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,1352,37,1315,0.0273668639053,defined,0.205159332322,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,4,,,,PASS_1_NOT_SUBSCRIBE,PASS_2_SUBSCRIBE,182,22,160,0.120879120879,defined,0.0276176024279,95,15,95,13,125,19,65,9,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,4,,,,PASS_1_NOT_SUBSCRIBE,ABSTAIN,818,47,771,0.0574572127139,defined,0.124127465857,91,5,18,1,93,5,16,1,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,4,,,,PASS_2_SUBSCRIBE,PASS_1_NOT_SUBSCRIBE,0,0,0,,undefined_empty_denominator,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,4,,,,PASS_2_SUBSCRIBE,PASS_2_SUBSCRIBE,850,339,511,0.398823529412,defined,0.128983308042,811,337,741,330,811,337,741,330,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,4,,,,PASS_2_SUBSCRIBE,ABSTAIN,84,10,74,0.119047619048,defined,0.012746585736,7,2,12,4,12,4,7,2,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,4,,,,ABSTAIN,PASS_1_NOT_SUBSCRIBE,1515,77,1438,0.0508250825083,defined,0.229893778452,0,0,0,0,0,0,0,0,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,4,,,,ABSTAIN,PASS_2_SUBSCRIBE,579,130,449,0.224525043178,defined,0.0878603945372,473,120,393,117,482,126,384,111,,,,,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/crosstab,,,,,,4,,,,ABSTAIN,ABSTAIN,1210,81,1129,0.0669421487603,defined,0.183611532625,21,0,50,3,71,3,0,0,,,,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,frozen,,,,,all,,,,,,,,,,,,7727,,6113,,,,,,170,56,1718,218,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,frozen,,,,,0,,,,,,,,,,,,1496,,1132,,,,,,36,12,369,29,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,frozen,,,,,1,,,,,,,,,,,,1560,,1117,,,,,,46,8,438,33,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,frozen,,,,,2,,,,,,,,,,,,1543,,1194,,,,,,34,7,352,30,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,frozen,,,,,3,,,,,,,,,,,,1630,,1361,,,,,,28,14,300,45,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,frozen,,,,,4,,,,,,,,,,,,1498,,1309,,,,,,26,15,259,81,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,matched_same_k,glass,,,,all,6660,,,,,,,,,,,6660,,6660,,,,,,58,141,705,622,83,57.4433907714,161,113,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,matched_same_k,glass,,,,0,1528,,,,,,,,,,,1528,,1528,,,,,,12,17,168,163,5,11.8052738337,17,16,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,matched_same_k,glass,,,,1,1368,,,,,,,,,,,1368,,1368,,,,,,7,28,131,110,21,11.35625,31,27,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,matched_same_k,glass,,,,2,1150,,,,,,,,,,,1150,,1150,,,,,,16,45,142,113,29,14.1661166117,48,29,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,matched_same_k,glass,,,,3,1375,,,,,,,,,,,1375,,1375,,,,,,12,22,136,126,10,8.59403905447,28,16,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,matched_same_k,glass,,,,4,1239,,,,,,,,,,,1239,,1239,,,,,,11,29,128,110,18,11.2398921833,37,25,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,matched_same_k,blackbox,,,,all,7668,,,,,,,,,,,7668,,7668,,,,,,56,76,782,762,20,54.8501112711,60,59,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,matched_same_k,blackbox,,,,0,1519,,,,,,,,,,,1519,,1519,,,,,,12,16,168,164,4,11.7338709677,17,13,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,matched_same_k,blackbox,,,,1,1555,,,,,,,,,,,1555,,1555,,,,,,5,15,135,125,10,10.5828043855,17,16,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,matched_same_k,blackbox,,,,2,1597,,,,,,,,,,,1597,,1597,,,,,,14,8,151,157,-6,10.2297592998,10,12,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,matched_same_k,blackbox,,,,3,1568,,,,,,,,,,,1568,,1568,,,,,,14,16,173,171,2,10.0273816315,5,6,,,,,,,,,,,
+complementarity_v1,diagnostics/model_disagreement,matched_same_k,blackbox,,,,4,1429,,,,,,,,,,,1429,,1429,,,,,,11,21,155,145,10,11.9304482226,11,12,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,frozen,,,,,all,,,,,,,,,,,,7727,,6113,,,,,,170,56,1718,218,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,frozen,,,,,0,,,,,,,,,,,,1496,,1132,,,,,,36,12,369,29,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,frozen,,,,,1,,,,,,,,,,,,1560,,1117,,,,,,46,8,438,33,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,frozen,,,,,2,,,,,,,,,,,,1543,,1194,,,,,,34,7,352,30,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,frozen,,,,,3,,,,,,,,,,,,1630,,1361,,,,,,28,14,300,45,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,frozen,,,,,4,,,,,,,,,,,,1498,,1309,,,,,,26,15,259,81,,,,,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,matched_same_k,glass,,,,all,5422,,,,,,,,,,,5422,,5422,,,,,,71,221,625,475,150,60.904400607,202,104,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,matched_same_k,glass,,,,0,985,,,,,,,,,,,985,,985,,,,,,22,63,136,95,41,14.3778437191,57,17,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,matched_same_k,glass,,,,1,1039,,,,,,,,,,,1039,,1039,,,,,,6,33,106,79,27,10.408181414,32,18,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,matched_same_k,glass,,,,2,1148,,,,,,,,,,,1148,,1148,,,,,,17,45,141,113,28,14.1505494505,47,30,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,matched_same_k,glass,,,,3,1316,,,,,,,,,,,1316,,1316,,,,,,10,28,126,108,18,8.41097256858,33,16,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,matched_same_k,glass,,,,4,934,,,,,,,,,,,934,,934,,,,,,16,52,116,80,36,13.6500838457,33,23,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,matched_same_k,blackbox,,,,all,7668,,,,,,,,,,,7668,,7668,,,,,,56,76,782,762,20,54.8501112711,60,59,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,matched_same_k,blackbox,,,,0,1519,,,,,,,,,,,1519,,1519,,,,,,12,16,168,164,4,11.7338709677,17,13,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,matched_same_k,blackbox,,,,1,1555,,,,,,,,,,,1555,,1555,,,,,,5,15,135,125,10,10.5828043855,17,16,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,matched_same_k,blackbox,,,,2,1597,,,,,,,,,,,1597,,1597,,,,,,14,8,151,157,-6,10.2297592998,10,12,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,matched_same_k,blackbox,,,,3,1568,,,,,,,,,,,1568,,1568,,,,,,14,16,173,171,2,10.0273816315,5,6,,,,,,,,,,,
+s1_sensitivity_v1,diagnostics/model_disagreement,matched_same_k,blackbox,,,,4,1429,,,,,,,,,,,1429,,1429,,,,,,11,21,155,145,10,11.9304482226,11,12,,,,,,,,,,,
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1,GLASS Pass 1,all,,,,,,11659,,,0.0465734625611,,,,,,,,,,,,,,,,,,,543,605.039393719,549.843787227,632.322410373,573.589418301,728.590976079,-62.0393937194,-6.8437872265,-89.3224103733,-30.5894183008,-185.590976079
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1,GLASS Pass 1,0,,,,,,2169,,,0.0525587828492,,,,,,,,,,,,,,,,,,,114,107.497743483,97.7625962442,120.604455302,112.619262385,146.127823781,6.50225651745,16.2374037558,-6.60445530209,1.38073761493,-32.1278237814
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1,GLASS Pass 1,1,,,,,,2133,,,0.037037037037,,,,,,,,,,,,,,,,,,,79,111.600773342,110.887417083,114.98881847,105.486325375,129.997692606,-32.6007733422,-31.8874170834,-35.9888184697,-26.4863253751,-50.9976926064
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1,GLASS Pass 1,2,,,,,,2559,,,0.0472840953497,,,,,,,,,,,,,,,,,,,121,132.10117893,112.348035048,134.520950906,117.01217331,155.941838044,-11.1011789304,8.65196495212,-13.5209509056,3.98782668972,-34.9418380444
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1,GLASS Pass 1,3,,,,,,2446,,,0.0502861815209,,,,,,,,,,,,,,,,,,,123,123.444495395,114.981703407,130.269032141,115.194512348,139.057493643,-0.44449539539,8.01829659253,-7.26903214052,7.80548765207,-16.0574936429
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1,GLASS Pass 1,4,,,,,,2352,,,0.0450680272109,,,,,,,,,,,,,,,,,,,106,130.395202569,113.864035444,131.939153555,123.277144882,157.466128004,-24.3952025688,-7.86403544354,-25.9391535554,-17.2771448824,-51.4661280044
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass1,RF Pass 1,all,,,,,,13842,,,0.0406010692097,,,,,,,,,,,,,,,,,,,562,602.994709015,554.817173573,621.948955466,572.823329466,584.719053463,-40.9947090153,7.18282642729,-59.9489554665,-10.823329466,-22.7190534632
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass1,RF Pass 1,0,,,,,,3071,,,0.0436339954412,,,,,,,,,,,,,,,,,,,134,137.754913625,124.205746794,147.513015428,140.632070741,148.061991,-3.75491362503,9.7942532062,-13.5130154276,-6.63207074085,-14.0619910004
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass1,RF Pass 1,1,,,,,,2517,,,0.0373460468812,,,,,,,,,,,,,,,,,,,94,106.406343839,101.797152857,110.079034808,99.3355434694,99.8735268287,-12.4063438388,-7.79715285714,-16.079034808,-5.33554346943,-5.87352682871
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass1,RF Pass 1,2,,,,,,2809,,,0.0388038447846,,,,,,,,,,,,,,,,,,,109,123.158257584,110.73949563,120.973198097,114.341618814,113.162954288,-14.1582575838,-1.73949562965,-11.9731980966,-5.34161881393,-4.16295428762
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass1,RF Pass 1,3,,,,,,2578,,,0.0430566330489,,,,,,,,,,,,,,,,,,,111,109.226429713,101.287264309,112.758824631,98.0998015937,102.570744486,1.77357028676,9.71273569051,-1.75882463066,12.9001984063,8.42925551394
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass1,RF Pass 1,4,,,,,,2867,,,0.0397628182769,,,,,,,,,,,,,,,,,,,114,126.448764254,116.787513983,130.624882504,120.414294848,121.04983686,-12.4487642544,-2.78751398263,-16.6248825036,-6.41429484806,-7.04983686039
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2,GLASS Pass 2,all,,,,,,6663,,,0.307519135525,,,,,,,,,,,,,,,,,,,2049,2027.33015138,2089.88155518,1974.72743842,1996.13958375,1692.58101187,21.6698486195,-40.8815551794,74.2725615802,52.86041625,356.418988134
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2,GLASS Pass 2,0,,,,,,1528,,,0.285340314136,,,,,,,,,,,,,,,,,,,436,444.274562557,452.428042734,440.645959866,437.968145374,395.047813409,-8.27456255748,-16.4280427339,-4.64595986613,-1.96814537393,40.9521865911
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2,GLASS Pass 2,1,,,,,,1368,,,0.297514619883,,,,,,,,,,,,,,,,,,,407,434.492682413,419.720103787,410.445886695,402.4122245,336.849510641,-27.4926824132,-12.7201037866,-3.44588669524,4.58777550004,70.1504893585
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2,GLASS Pass 2,2,,,,,,1150,,,0.339130434783,,,,,,,,,,,,,,,,,,,390,365.160624581,386.738233578,361.39680477,361.904789718,299.712006685,24.8393754193,3.26176642206,28.6031952297,28.0952102816,90.2879933148
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2,GLASS Pass 2,3,,,,,,1378,,,0.299709724238,,,,,,,,,,,,,,,,,,,413,408.043576038,431.958572216,395.81244104,410.24844642,348.590820729,4.95642396187,-18.9585722161,17.1875589599,2.75155358046,64.4091792713
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2,GLASS Pass 2,4,,,,,,1239,,,0.325262308313,,,,,,,,,,,,,,,,,,,403,375.358705791,399.036602865,366.426346048,383.605977738,312.380860402,27.641294209,3.96339713513,36.5736539519,19.3940222618,90.6191395981
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2,RF Pass 2,all,,,,,,8269,,,0.297980408756,,,,,,,,,,,,,,,,,,,2464,2407.86561893,2483.01527435,2370.33705735,2434.68360699,2193.9965008,56.1343810718,-19.0152743536,93.6629426456,29.3163930098,270.0034992
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2,RF Pass 2,0,,,,,,1639,,,0.297132397804,,,,,,,,,,,,,,,,,,,487,474.096095133,495.585219028,471.116238575,482.625615314,439.781241708,12.9039048673,-8.58521902801,15.8837614254,4.37438468612,47.2187582924
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2,RF Pass 2,1,,,,,,1660,,,0.301807228916,,,,,,,,,,,,,,,,,,,501,498.197279858,505.634747594,474.181076224,485.302894254,425.593163595,2.80272014211,-4.63474759434,26.8189237757,15.6971057462,75.4068364051
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2,RF Pass 2,2,,,,,,1635,,,0.300305810398,,,,,,,,,,,,,,,,,,,491,485.707143711,500.795647476,476.673206147,489.104994596,431.356958979,5.29285628891,-9.7956474759,14.3267938526,1.89500540409,59.6430410212
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2,RF Pass 2,3,,,,,,1724,,,0.286542923434,,,,,,,,,,,,,,,,,,,494,489.436806098,502.119539653,483.999893355,499.620330995,463.917921568,4.56319390187,-8.11953965287,10.0001066454,-5.62033099489,30.0820784322
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2,RF Pass 2,4,,,,,,1611,,,0.304779639975,,,,,,,,,,,,,,,,,,,491,460.428294128,478.880120602,464.366643054,478.029771832,433.347214951,30.5717058716,12.1198793976,26.6333569464,12.9702281683,57.6527850488
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain,GLASS abstain,all,,,,,,14628,,,0.0765654908395,,,,,,,,,,,,,,,,,,,1120,1075.93223896,1082.47253693,1104.95015121,1142.27099795,1290.82801205,44.0677610419,37.5274630656,15.0498487931,-22.2709979492,-170.828012054
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain,GLASS abstain,0,,,,,,2893,,,0.0663670929831,,,,,,,,,,,,,,,,,,,192,181.702762412,185.992807554,180.749584832,191.412592241,200.82436281,10.2972375884,6.00719244556,11.2504151682,0.587407758999,-8.82436280962
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain,GLASS abstain,1,,,,,,3089,,,0.0828747167368,,,,,,,,,,,,,,,,,,,256,210.956613195,228.93007819,216.565294835,234.101450125,275.152796752,45.0433868049,27.0699218099,39.4347051649,21.8985498751,-19.1527967521
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain,GLASS abstain,2,,,,,,2881,,,0.0801804928844,,,,,,,,,,,,,,,,,,,231,252.066446319,252.73713927,246.082244324,263.083036971,286.34615527,-21.0664463189,-21.7371392696,-15.0822443241,-32.0830369713,-55.3461552705
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain,GLASS abstain,3,,,,,,2766,,,0.0748373101952,,,,,,,,,,,,,,,,,,,207,210.096774558,197.924713554,216.918526819,217.557041233,255.351685628,-3.09677455797,9.07528644644,-9.91852681939,-10.5570412325,-48.3516856284
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain,GLASS abstain,4,,,,,,2999,,,0.0780260086696,,,,,,,,,,,,,,,,,,,234,221.109642475,216.887798367,244.634500397,236.116877379,273.153011594,12.8903575255,17.1122016333,-10.6345003966,-2.11687737945,-39.1530115937
+complementarity_v1,diagnostics/observed_expected,,,,rf_abstain,RF abstain,all,,,,,,10839,,,0.0632899713996,,,,,,,,,,,,,,,,,,,686,697.441456114,684.365431414,719.713987179,704.493063544,933.284445737,-11.4414561144,1.63456858598,-33.7139871792,-18.4930635438,-247.284445737
+complementarity_v1,diagnostics/observed_expected,,,,rf_abstain,RF abstain,0,,,,,,1880,,,0.0643617021277,,,,,,,,,,,,,,,,,,,121,121.624059694,116.392480711,123.370745998,118.742313945,154.156767292,-0.624059693903,4.60751928925,-2.37074599782,2.25768605473,-33.156767292
+complementarity_v1,diagnostics/observed_expected,,,,rf_abstain,RF abstain,1,,,,,,2413,,,0.0609200165769,,,,,,,,,,,,,,,,,,,147,152.446445254,152.105698609,157.739888968,157.361562277,216.533309576,-5.4464452538,-5.10569860865,-10.7398889677,-10.3615622768,-69.5333095764
+complementarity_v1,diagnostics/observed_expected,,,,rf_abstain,RF abstain,2,,,,,,2146,,,0.0661696178938,,,,,,,,,,,,,,,,,,,142,140.462848535,140.28826479,144.353595756,138.55338659,197.480086734,1.5371514649,1.71173521012,-2.35359575602,3.44661340984,-55.4800867335
+complementarity_v1,diagnostics/observed_expected,,,,rf_abstain,RF abstain,3,,,,,,2288,,,0.0603146853147,,,,,,,,,,,,,,,,,,,138,142.92161018,141.458185215,146.241282015,145.279867411,176.511333946,-4.92161018012,-3.45818521472,-8.24128201479,-7.2798674114,-38.5113339461
+complementarity_v1,diagnostics/observed_expected,,,,rf_abstain,RF abstain,4,,,,,,2112,,,0.0653409090909,,,,,,,,,,,,,,,,,,,138,139.986492452,134.12080209,148.008474443,144.55593332,188.602948188,-1.98649245152,3.87919790998,-10.0084744428,-6.55593332022,-50.6029481884
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_lr_flag,GLASS Pass 1 rows LR flags (intercepted),all,,,,,,640,,,0.15,,,,,,,,,,,,,,,,,,,96,122.803233548,85.7626680648,123.587620628,95.3555343482,149.640350449,-26.8032335485,10.2373319352,-27.5876206278,0.644465651762,-53.6403504493
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_lr_flag,GLASS Pass 1 rows LR flags (intercepted),0,,,,,,121,,,0.165289256198,,,,,,,,,,,,,,,,,,,20,21.5710055282,16.9584433822,21.4132983588,16.5157115057,29.0131679744,-1.57100552817,3.04155661784,-1.4132983588,3.48428849425,-9.01316797435
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_lr_flag,GLASS Pass 1 rows LR flags (intercepted),1,,,,,,98,,,0.214285714286,,,,,,,,,,,,,,,,,,,21,24.3668747632,20.5513503958,22.7799836545,20.8209502397,20.8119861261,-3.36687476324,0.448649604215,-1.77998365452,0.179049760279,0.188013873856
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_lr_flag,GLASS Pass 1 rows LR flags (intercepted),2,,,,,,145,,,0.0965517241379,,,,,,,,,,,,,,,,,,,14,23.5759382439,13.8408488736,23.0224646744,14.716864444,32.5060952967,-9.57593824386,0.159151126359,-9.02246467444,-0.716864444007,-18.5060952967
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_lr_flag,GLASS Pass 1 rows LR flags (intercepted),3,,,,,,90,,,0.233333333333,,,,,,,,,,,,,,,,,,,21,21.2580663453,12.6849062775,22.9758821171,15.404346028,24.4368961927,-0.258066345283,8.3150937225,-1.97588211708,5.59565397205,-3.43689619269
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_lr_flag,GLASS Pass 1 rows LR flags (intercepted),4,,,,,,186,,,0.10752688172,,,,,,,,,,,,,,,,,,,20,32.0313486679,21.7271191357,33.395991823,27.8976621308,42.8722048593,-12.0313486679,-1.72711913574,-13.395991823,-7.89766213081,-22.8722048593
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_ebm_flag,GLASS Pass 1 rows EBM flags (intercepted),all,,,,,,279,,,0.250896057348,,,,,,,,,,,,,,,,,,,70,60.1152674687,63.4705917693,60.6766242581,74.6198347241,73.173995991,9.88473253134,6.52940823069,9.3233757419,-4.61983472409,-3.17399599104
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_ebm_flag,GLASS Pass 1 rows EBM flags (intercepted),0,,,,,,19,,,0.526315789474,,,,,,,,,,,,,,,,,,,10,6.61085539078,7.73871721086,6.87511108263,7.17298937785,5.301578354,3.38914460922,2.26128278914,3.12488891737,2.82701062215,4.698421646
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_ebm_flag,GLASS Pass 1 rows EBM flags (intercepted),1,,,,,,57,,,0.438596491228,,,,,,,,,,,,,,,,,,,25,16.3473866774,21.4836199414,15.1163573331,19.5690440061,14.2542487456,8.65261332262,3.5163800586,9.8836426669,5.43095599393,10.7457512544
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_ebm_flag,GLASS Pass 1 rows EBM flags (intercepted),2,,,,,,15,,,0.266666666667,,,,,,,,,,,,,,,,,,,4,3.89522282788,3.60318945191,3.27179631408,4.19271623672,4.24807903403,0.104777172119,0.396810548088,0.728203685923,-0.192716236722,-0.248079034029
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_ebm_flag,GLASS Pass 1 rows EBM flags (intercepted),3,,,,,,75,,,0.226666666667,,,,,,,,,,,,,,,,,,,17,14.4478708037,12.2082392948,15.4590638271,16.3246079919,17.8155012499,2.55212919627,4.79176070519,1.5409361729,0.675392008093,-0.815501249858
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_ebm_flag,GLASS Pass 1 rows EBM flags (intercepted),4,,,,,,113,,,0.12389380531,,,,,,,,,,,,,,,,,,,14,18.8139317689,18.4368258703,19.9542957012,27.3604771115,31.5545886076,-4.81393176889,-4.43682587033,-5.9542957012,-13.3604771115,-17.5545886076
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_union_flag,GLASS Pass 1 rows LR or EBM flags,all,,,,,,704,,,0.149147727273,,,,,,,,,,,,,,,,,,,105,127.048742286,96.7203044443,128.128093643,110.174172086,161.494868221,-22.048742286,8.27969555573,-23.1280936429,-5.17417208648,-56.4948682208
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_union_flag,GLASS Pass 1 rows LR or EBM flags,0,,,,,,121,,,0.165289256198,,,,,,,,,,,,,,,,,,,20,21.5710055282,16.9584433822,21.4132983588,16.5157115057,29.0131679744,-1.57100552817,3.04155661784,-1.4132983588,3.48428849425,-9.01316797435
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_union_flag,GLASS Pass 1 rows LR or EBM flags,1,,,,,,110,,,0.227272727273,,,,,,,,,,,,,,,,,,,25,25.1390568149,25.4360717794,23.5943450886,24.8740610136,22.4760709373,-0.139056814873,-0.436071779439,1.40565491137,0.125938986379,2.52392906273
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_union_flag,GLASS Pass 1 rows LR or EBM flags,2,,,,,,145,,,0.0965517241379,,,,,,,,,,,,,,,,,,,14,23.5759382439,13.8408488736,23.0224646744,14.716864444,32.5060952967,-9.57593824386,0.159151126359,-9.02246467444,-0.716864444007,-18.5060952967
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_union_flag,GLASS Pass 1 rows LR or EBM flags,3,,,,,,110,,,0.2,,,,,,,,,,,,,,,,,,,22,22.4527053025,14.8592624852,24.3852412423,19.0209368221,26.4633655455,-0.452705302518,7.14073751481,-2.38524124227,2.97906317791,-4.46336554551
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_union_flag,GLASS Pass 1 rows LR or EBM flags,4,,,,,,218,,,0.110091743119,,,,,,,,,,,,,,,,,,,24,34.3100363966,25.6256779238,35.7127442787,35.046598301,51.0361684669,-10.3100363966,-1.62567792385,-11.7127442787,-11.046598301,-27.0361684669
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass1_and_union_flag,RF Pass 1 rows LR or EBM flags,all,,,,,,23,,,0.304347826087,,,,,,,,,,,,,,,,,,,7,2.06173900209,3.79397987584,2.21670630386,3.82867599528,1.47240235662,4.93826099791,3.20602012416,4.78329369614,3.17132400472,5.52759764338
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass1_and_union_flag,RF Pass 1 rows LR or EBM flags,0,,,,,,15,,,0.133333333333,,,,,,,,,,,,,,,,,,,2,1.63645661593,1.83267377161,1.79904097042,1.65113426538,0.876466004755,0.363543384071,0.167326228394,0.20095902958,0.348865734616,1.12353399524
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass1_and_union_flag,RF Pass 1 rows LR or EBM flags,1,,,,,,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass1_and_union_flag,RF Pass 1 rows LR or EBM flags,2,,,,,,3,,,0.333333333333,,,,,,,,,,,,,,,,,,,1,0.15729690406,1.17109402274,0.158148029247,0.948406676783,0.192513368984,0.84270309594,-0.171094022739,0.841851970753,0.051593323217,0.807486631016
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass1_and_union_flag,RF Pass 1 rows LR or EBM flags,3,,,,,,5,,,0.8,,,,,,,,,,,,,,,,,,,4,0.267985482097,0.790212081496,0.259517304189,1.22913505311,0.403422982885,3.7320145179,3.2097879185,3.74048269581,2.77086494689,3.59657701711
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass1_and_union_flag,RF Pass 1 rows LR or EBM flags,4,,,,,,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_lr,GLASS Pass 2 rows LR does not flag,all,,,,,,1348,,,0.0823442136499,,,,,,,,,,,,,,,,,,,111,108.068755377,106.689281186,110.702556365,109.070396098,218.770510751,2.9312446234,4.31071881388,0.297443635463,1.92960390162,-107.770510751
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_lr,GLASS Pass 2 rows LR does not flag,0,,,,,,296,,,0.0675675675676,,,,,,,,,,,,,,,,,,,20,23.1398931377,26.9409030548,21.9310523532,26.2903055,58.012414743,-3.13989313766,-6.94090305482,-1.93105235321,-6.29030549999,-38.012414743
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_lr,GLASS Pass 2 rows LR does not flag,1,,,,,,209,,,0.11961722488,,,,,,,,,,,,,,,,,,,25,14.1654857346,12.0937728857,15.587263469,12.3682184302,19.777607681,10.8345142654,12.9062271143,9.41273653103,12.6317815698,5.22239231896
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_lr,GLASS Pass 2 rows LR does not flag,2,,,,,,252,,,0.0873015873016,,,,,,,,,,,,,,,,,,,22,21.6198509824,22.094033256,25.4579119917,20.2419118495,46.5104496557,0.380149017613,-0.0940332560357,-3.45791199174,1.75808815051,-24.5104496557
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_lr,GLASS Pass 2 rows LR does not flag,3,,,,,,269,,,0.0631970260223,,,,,,,,,,,,,,,,,,,17,21.7418629697,21.1255324512,22.4496109241,21.7776554234,43.2257298308,-4.74186296972,-4.12553245115,-5.44961092414,-4.77765542339,-26.2257298308
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_lr,GLASS Pass 2 rows LR does not flag,4,,,,,,322,,,0.083850931677,,,,,,,,,,,,,,,,,,,27,27.4016625523,24.4350395384,25.2767176265,28.3923048954,51.2443088404,-0.401662552274,2.56496046157,1.72328237352,-1.39230489535,-24.2443088404
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_lr,RF Pass 2 rows LR does not flag,all,,,,,,1132,,,0.0812720848057,,,,,,,,,,,,,,,,,,,92,84.8308151991,103.487845671,95.7846297319,103.197278561,209.618380544,7.16918480093,-11.4878456707,-3.78462973195,-11.1972785611,-117.618380544
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_lr,RF Pass 2 rows LR does not flag,0,,,,,,237,,,0.101265822785,,,,,,,,,,,,,,,,,,,24,18.7363479185,24.3204561301,17.8729708967,23.9720091847,52.8368812916,5.2636520815,-0.32045613012,6.12702910327,0.0279908153492,-28.8368812916
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_lr,RF Pass 2 rows LR does not flag,1,,,,,,204,,,0.112745098039,,,,,,,,,,,,,,,,,,,23,15.3242177587,20.4890009977,18.1997333702,19.9023516502,31.8910341297,7.67578224127,2.51099900233,4.80026662977,3.09764834978,-8.89103412969
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_lr,RF Pass 2 rows LR does not flag,2,,,,,,212,,,0.0707547169811,,,,,,,,,,,,,,,,,,,15,15.0110249992,20.2162017308,20.561726765,17.8027961304,34.7916517258,-0.0110249992039,-5.21620173082,-5.56172676496,-2.80279613035,-19.7916517258
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_lr,RF Pass 2 rows LR does not flag,3,,,,,,247,,,0.0445344129555,,,,,,,,,,,,,,,,,,,11,18.6676043256,19.2526140436,21.7163016233,19.3147338004,48.0755719715,-7.6676043256,-8.25261404363,-10.7163016233,-8.31473380041,-37.0755719715
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_lr,RF Pass 2 rows LR does not flag,4,,,,,,232,,,0.0818965517241,,,,,,,,,,,,,,,,,,,19,17.091620197,19.2095727685,17.4338970767,22.2053877955,42.0232414257,1.90837980295,-0.209572768482,1.56610292326,-3.20538779551,-23.0232414257
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_union,GLASS Pass 2 rows neither flags,all,,,,,,1226,,,0.0701468189233,,,,,,,,,,,,,,,,,,,86,97.8776713076,79.3901194697,100.630540323,81.3404269855,186.175264788,-11.8776713076,6.60988053031,-14.6305403228,4.65957301451,-100.175264788
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_union,GLASS Pass 2 rows neither flags,0,,,,,,264,,,0.0492424242424,,,,,,,,,,,,,,,,,,,13,20.7144871536,18.2796022587,19.5370010981,19.2250551206,49.7348177064,-7.71448715358,-5.27960225871,-6.53700109814,-6.22505512062,-36.7348177064
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_union,GLASS Pass 2 rows neither flags,1,,,,,,208,,,0.120192307692,,,,,,,,,,,,,,,,,,,25,14.0738327067,11.8685476605,15.4925131489,12.1360484757,19.4978262603,10.9261672933,13.1314523395,9.50748685113,12.8639515243,5.50217373972
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_union,GLASS Pass 2 rows neither flags,2,,,,,,233,,,0.0772532188841,,,,,,,,,,,,,,,,,,,18,20.1394105669,16.284234983,23.6169803147,15.4255233821,41.7866519837,-2.13941056686,1.71576501698,-5.61698031472,2.57447661788,-23.7866519837
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_union,GLASS Pass 2 rows neither flags,3,,,,,,241,,,0.045643153527,,,,,,,,,,,,,,,,,,,11,19.3785562682,15.4873136527,20.0321598756,15.5444738351,35.3940659393,-8.37855626816,-4.48731365265,-9.03215987556,-4.54447383512,-24.3940659393
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_union,GLASS Pass 2 rows neither flags,4,,,,,,280,,,0.0678571428571,,,,,,,,,,,,,,,,,,,19,23.5713846123,17.4704209149,21.9518858855,19.009326172,39.761902898,-4.57138461226,1.52957908514,-2.95188588547,-0.00932617195007,-20.761902898
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_union,RF Pass 2 rows neither flags,all,,,,,,999,,,0.0600600600601,,,,,,,,,,,,,,,,,,,60,74.9740755964,67.6722564922,85.3183547607,69.8071062801,177.278548202,-14.9740755964,-7.67225649219,-25.3183547607,-9.80710628011,-117.278548202
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_union,RF Pass 2 rows neither flags,0,,,,,,206,,,0.0679611650485,,,,,,,,,,,,,,,,,,,14,16.3300386699,15.5135937256,15.5568899387,16.8050896095,44.8383146948,-2.33003866989,-1.51359372563,-1.5568899387,-2.80508960954,-30.8383146948
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_union,RF Pass 2 rows neither flags,1,,,,,,175,,,0.0971428571429,,,,,,,,,,,,,,,,,,,17,13.219691168,11.1473768548,15.85215398,11.9023516502,25.6823266953,3.78030883202,5.85262314522,1.14784602001,5.09764834978,-8.68232669532
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_union,RF Pass 2 rows neither flags,2,,,,,,192,,,0.0625,,,,,,,,,,,,,,,,,,,12,13.549037453,12.7987074848,18.7570062681,11.9378492411,30.4417512228,-1.54903745304,-0.798707484799,-6.75700626807,0.0621507588721,-18.4417512228
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_union,RF Pass 2 rows neither flags,3,,,,,,233,,,0.0343347639485,,,,,,,,,,,,,,,,,,,8,17.6242196244,15.6356231664,20.5325670498,16.1981430063,44.2629343811,-9.62421962435,-7.63562316638,-12.5325670498,-8.19814300627,-36.2629343811
+complementarity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_union,RF Pass 2 rows neither flags,4,,,,,,193,,,0.0466321243523,,,,,,,,,,,,,,,,,,,9,14.2510886812,12.5769552606,14.6197375242,12.9636727729,32.0532212077,-5.25108868118,-3.57695526059,-5.61973752416,-3.96367277295,-23.0532212077
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_pass2,"GLASS Pass 1, RF Pass 2 (opposite)",all,,,,,,601,,,0.168053244592,,,,,,,,,,,,,,,,,,,101,101.471187517,86.7455146983,102.696906761,96.1760660136,143.173063885,-0.471187516931,14.2544853017,-1.6969067606,4.82393398635,-42.1730638846
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_pass2,"GLASS Pass 1, RF Pass 2 (opposite)",0,,,,,,120,,,0.166666666667,,,,,,,,,,,,,,,,,,,20,20.2917824413,17.1223213081,20.1457700111,16.8354214947,29.7567919823,-0.291782441256,2.87767869193,-0.145770011135,3.16457850526,-9.7567919823
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_pass2,"GLASS Pass 1, RF Pass 2 (opposite)",1,,,,,,105,,,0.247619047619,,,,,,,,,,,,,,,,,,,26,23.9160785842,25.1400374922,22.3340217962,24.6174736745,22.6510183942,2.08392141578,0.859962507782,3.66597820384,1.38252632547,3.34898160582
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_pass2,"GLASS Pass 1, RF Pass 2 (opposite)",2,,,,,,38,,,0.184210526316,,,,,,,,,,,,,,,,,,,7,6.70698183763,4.77520924333,6.27456517491,4.95582262473,7.2987925933,0.293018162375,2.22479075667,0.725434825093,2.04417737527,-0.298792593304
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_pass2,"GLASS Pass 1, RF Pass 2 (opposite)",3,,,,,,156,,,0.166666666667,,,,,,,,,,,,,,,,,,,26,25.6296347287,17.2474763759,28.2006103537,20.1046395247,39.0926609426,0.370365271297,8.75252362406,-2.20061035374,5.89536047525,-13.0926609426
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_pass2,"GLASS Pass 1, RF Pass 2 (opposite)",4,,,,,,182,,,0.120879120879,,,,,,,,,,,,,,,,,,,22,24.9267099251,22.4604702787,25.7419394247,29.6627086949,44.3737999722,-2.92670992513,-0.460470278702,-3.74193942466,-7.66270869489,-22.3737999722
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_pass1,"GLASS Pass 2, RF Pass 1 (opposite)",all,,,,,,3,,,0,,,,,,,,,,,,,,,,,,,0,0.192817900917,0.0930010644272,0.232452502271,0.0728376327769,0.117480744857,-0.192817900917,-0.0930010644272,-0.232452502271,-0.0728376327769,-0.117480744857
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_pass1,"GLASS Pass 2, RF Pass 1 (opposite)",0,,,,,,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_pass1,"GLASS Pass 2, RF Pass 1 (opposite)",1,,,,,,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_pass1,"GLASS Pass 2, RF Pass 1 (opposite)",2,,,,,,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_pass1,"GLASS Pass 2, RF Pass 1 (opposite)",3,,,,,,3,,,0,,,,,,,,,,,,,,,,,,,0,0.192817900917,0.0930010644272,0.232452502271,0.0728376327769,0.117480744857,-0.192817900917,-0.0930010644272,-0.232452502271,-0.0728376327769,-0.117480744857
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_pass1,"GLASS Pass 2, RF Pass 1 (opposite)",4,,,,,,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_abstain,"GLASS Pass 1, RF abstains",all,,,,,,3200,,,0.055,,,,,,,,,,,,,,,,,,,176,214.523894835,187.13779736,228.455260118,192.618083464,295.716208378,-38.5238948352,-11.1377973601,-52.455260118,-16.6180834641,-119.716208378
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_abstain,"GLASS Pass 1, RF abstains",0,,,,,,392,,,0.0688775510204,,,,,,,,,,,,,,,,,,,27,26.2496742488,22.9569827885,27.5194534128,23.2163048308,44.6737775428,0.750325751242,4.04301721154,-0.519453412828,3.78369516922,-17.6737775428
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_abstain,"GLASS Pass 1, RF abstains",1,,,,,,680,,,0.0308823529412,,,,,,,,,,,,,,,,,,,21,41.0967657498,39.3958335657,43.6187509004,38.8565624326,62.2237785434,-20.0967657498,-18.3958335657,-22.6187509004,-17.8565624326,-41.2237785434
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_abstain,"GLASS Pass 1, RF abstains",2,,,,,,775,,,0.0593548387097,,,,,,,,,,,,,,,,,,,46,59.0564905401,47.0266982686,63.0039932315,47.9856127729,86.7665104866,-13.0564905401,-1.02669826864,-17.0039932315,-1.98561277292,-40.7665104866
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_abstain,"GLASS Pass 1, RF abstains",3,,,,,,535,,,0.0654205607477,,,,,,,,,,,,,,,,,,,35,31.206940532,32.3892862231,33.9723863256,33.6133041374,34.6596878509,3.79305946798,2.61071377687,1.02761367436,1.3866958626,0.340312149081
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_abstain,"GLASS Pass 1, RF abstains",4,,,,,,818,,,0.0574572127139,,,,,,,,,,,,,,,,,,,47,56.9140237646,45.3689965141,60.3406762476,48.9462992904,67.3924539547,-9.9140237646,1.63100348586,-13.3406762476,-1.94629929042,-20.3924539547
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass1,"GLASS abstains, RF Pass 1",all,,,,,,5981,,,0.0494900518308,,,,,,,,,,,,,,,,,,,296,313.757579747,278.76369734,320.546259469,287.95522301,294.899868902,-17.7575797472,17.2363026599,-24.5462594694,8.04477698982,1.10013109811
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass1,"GLASS abstains, RF Pass 1",0,,,,,,1414,,,0.0473833097595,,,,,,,,,,,,,,,,,,,67,76.7986268325,66.5224546461,74.5737835495,68.0645346813,76.3647367441,-9.79862683249,0.477545353873,-7.57378354948,-1.0645346813,-9.36473674413
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass1,"GLASS abstains, RF Pass 1",1,,,,,,1169,,,0.0530367835757,,,,,,,,,,,,,,,,,,,62,59.8184148306,55.4456068317,61.0429890349,57.3232542014,54.7506311599,2.18158516938,6.55439316831,0.957010965143,4.67674579857,7.24936884009
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass1,"GLASS abstains, RF Pass 1",2,,,,,,1063,,,0.038570084666,,,,,,,,,,,,,,,,,,,41,56.8205510311,50.1933680937,55.7308055973,50.2708809013,51.2864193231,-15.8205510311,-9.19336809373,-14.7308055973,-9.2708809013,-10.2864193231
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass1,"GLASS abstains, RF Pass 1",3,,,,,,820,,,0.059756097561,,,,,,,,,,,,,,,,,,,49,42.4256916777,35.8493224367,44.4303366672,36.5503952751,37.1481188918,6.57430832234,13.1506775633,4.56966333276,12.4496047249,11.8518811082
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass1,"GLASS abstains, RF Pass 1",4,,,,,,1515,,,0.0508250825083,,,,,,,,,,,,,,,,,,,77,77.8942953753,70.7529453319,84.7683446205,75.746157951,75.3499627829,-0.894295375308,6.24705466806,-7.76834462052,1.253842049,1.6500372171
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_abstain,"GLASS Pass 2, RF abstains",all,,,,,,1166,,,0.0814751286449,,,,,,,,,,,,,,,,,,,95,107.93397862,85.9001680351,107.637164101,95.4678383617,196.246932979,-12.9339786196,9.09983196488,-12.6371641009,-0.467838361662,-101.246932979
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_abstain,"GLASS Pass 2, RF abstains",0,,,,,,138,,,0.0289855072464,,,,,,,,,,,,,,,,,,,4,14.7589551858,8.93455922748,14.3221748348,8.49640007642,20.6221728434,-10.7589551858,-4.93455922748,-10.3221748348,-4.49640007642,-16.6221728434
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_abstain,"GLASS Pass 2, RF abstains",1,,,,,,275,,,0.0909090909091,,,,,,,,,,,,,,,,,,,25,25.4844529626,19.298090603,26.5868714767,24.1236686386,40.8336593293,-0.484452962594,5.70190939695,-1.58687147673,0.87633136136,-15.8336593293
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_abstain,"GLASS Pass 2, RF abstains",2,,,,,,193,,,0.108808290155,,,,,,,,,,,,,,,,,,,21,17.3779096918,14.0935504693,19.4455517433,13.7475861884,35.8189587032,3.62209030818,6.90644953067,1.55444825671,7.25241381161,-14.8189587032
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_abstain,"GLASS Pass 2, RF abstains",3,,,,,,276,,,0.0760869565217,,,,,,,,,,,,,,,,,,,21,24.6625574173,20.9229563225,23.858002838,22.788205703,49.3287153944,-3.66255741731,0.0770436774753,-2.85800283796,-1.78820570297,-28.3287153944
+complementarity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_abstain,"GLASS Pass 2, RF abstains",4,,,,,,284,,,0.0845070422535,,,,,,,,,,,,,,,,,,,24,25.650103362,22.6510114127,23.4245632081,26.3119777552,49.6434267091,-1.65010336202,1.34898858727,0.575436791929,-2.31197775524,-25.6434267091
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass2,"GLASS abstains, RF Pass 2",all,,,,,,2174,,,0.188132474701,,,,,,,,,,,,,,,,,,,409,387.191076551,392.381373575,400.782328777,437.908633221,554.606838774,21.8089234488,16.6186264246,8.21767122287,-28.908633221,-145.606838774
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass2,"GLASS abstains, RF Pass 2",0,,,,,,129,,,0.271317829457,,,,,,,,,,,,,,,,,,,35,24.2887053198,34.9694142135,24.6466835321,36.3184485216,35.5988091597,10.7112946802,0.0305857864937,10.3533164679,-1.31844852164,-0.598809159748
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass2,"GLASS abstains, RF Pass 2",1,,,,,,462,,,0.201298701299,,,,,,,,,,,,,,,,,,,93,65.2729718231,80.0726969185,67.9880392096,82.396864718,106.926293889,27.7270281769,12.9273030815,25.0119607904,10.603135282,-13.9262938886
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass2,"GLASS abstains, RF Pass 2",2,,,,,,640,,,0.1796875,,,,,,,,,,,,,,,,,,,115,131.217446985,123.375755124,128.447387946,135.991968441,160.165118404,-16.2174469846,-8.37575512397,-13.4473879455,-20.9919684412,-45.1651184036
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass2,"GLASS abstains, RF Pass 2",3,,,,,,469,,,0.162046908316,,,,,,,,,,,,,,,,,,,76,80.6189706495,73.9294484478,84.077297301,92.1282883864,125.680636036,-4.61897064952,2.07055155217,-8.07729730096,-16.1282883864,-49.6806360357
+complementarity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass2,"GLASS abstains, RF Pass 2",4,,,,,,474,,,0.189873417722,,,,,,,,,,,,,,,,,,,90,85.7929817743,80.0340588716,95.6229207889,91.0730631539,126.235981286,4.20701822571,9.96594112841,-5.62292078893,-1.07306315387,-36.2359812861
+complementarity_v1,diagnostics/observed_expected,,,,both_abstain,both routers abstain,all,,,,,,6473,,,0.0641124671713,,,,,,,,,,,,,,,,,,,415,374.98358266,411.327466019,383.62156296,416.407141718,441.321304379,40.0164173403,3.6725339812,31.3784370397,-1.40714171804,-26.3213043787
+complementarity_v1,diagnostics/observed_expected,,,,both_abstain,both routers abstain,0,,,,,,1350,,,0.0666666666667,,,,,,,,,,,,,,,,,,,90,80.6154302593,84.5009386948,81.5291177502,87.0296090381,88.8608169057,9.3845697407,5.49906130519,8.47088224981,2.97039096194,1.13918309426
+complementarity_v1,diagnostics/observed_expected,,,,both_abstain,both routers abstain,1,,,,,,1458,,,0.0692729766804,,,,,,,,,,,,,,,,,,,101,85.8652265414,93.4117744399,87.5342665906,94.3813312055,113.475871704,15.1347734586,7.58822556013,13.4657334094,6.61866879448,-12.4758717037
+complementarity_v1,diagnostics/observed_expected,,,,both_abstain,both routers abstain,2,,,,,,1178,,,0.0636672325976,,,,,,,,,,,,,,,,,,,75,64.0284483032,79.1680160519,61.9040507812,76.8201876289,74.8946175438,10.9715516968,-4.16801605191,13.0959492188,-1.82018762886,0.105382456239
+complementarity_v1,diagnostics/observed_expected,,,,both_abstain,both routers abstain,3,,,,,,1477,,,0.0555179417739,,,,,,,,,,,,,,,,,,,82,87.0521122308,88.1459426691,88.4108928512,88.878357571,92.5229307009,-5.05211223079,-6.14594266907,-6.41089285119,-6.87835757103,-10.5229307009
+complementarity_v1,diagnostics/observed_expected,,,,both_abstain,both routers abstain,4,,,,,,1010,,,0.0663366336634,,,,,,,,,,,,,,,,,,,67,57.4223653249,66.1007941631,64.2432349871,69.2976562746,71.5670675247,9.57763467509,0.899205836853,2.75676501288,-2.29765627457,-4.56706752467
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1,GLASS Pass 1,all,,,,,,11659,,,0.0465734625611,,,,,,,,,,,,,,,,,,,543,605.039393719,549.843787227,632.322410373,573.589418301,728.590976079,-62.0393937194,-6.8437872265,-89.3224103733,-30.5894183008,-185.590976079
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1,GLASS Pass 1,0,,,,,,2169,,,0.0525587828492,,,,,,,,,,,,,,,,,,,114,107.497743483,97.7625962442,120.604455302,112.619262385,146.127823781,6.50225651745,16.2374037558,-6.60445530209,1.38073761493,-32.1278237814
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1,GLASS Pass 1,1,,,,,,2133,,,0.037037037037,,,,,,,,,,,,,,,,,,,79,111.600773342,110.887417083,114.98881847,105.486325375,129.997692606,-32.6007733422,-31.8874170834,-35.9888184697,-26.4863253751,-50.9976926064
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1,GLASS Pass 1,2,,,,,,2559,,,0.0472840953497,,,,,,,,,,,,,,,,,,,121,132.10117893,112.348035048,134.520950906,117.01217331,155.941838044,-11.1011789304,8.65196495212,-13.5209509056,3.98782668972,-34.9418380444
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1,GLASS Pass 1,3,,,,,,2446,,,0.0502861815209,,,,,,,,,,,,,,,,,,,123,123.444495395,114.981703407,130.269032141,115.194512348,139.057493643,-0.44449539539,8.01829659253,-7.26903214052,7.80548765207,-16.0574936429
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1,GLASS Pass 1,4,,,,,,2352,,,0.0450680272109,,,,,,,,,,,,,,,,,,,106,130.395202569,113.864035444,131.939153555,123.277144882,157.466128004,-24.3952025688,-7.86403544354,-25.9391535554,-17.2771448824,-51.4661280044
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass1,RF Pass 1,all,,,,,,13842,,,0.0406010692097,,,,,,,,,,,,,,,,,,,562,602.994709015,554.817173573,621.948955466,572.823329466,584.719053463,-40.9947090153,7.18282642729,-59.9489554665,-10.823329466,-22.7190534632
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass1,RF Pass 1,0,,,,,,3071,,,0.0436339954412,,,,,,,,,,,,,,,,,,,134,137.754913625,124.205746794,147.513015428,140.632070741,148.061991,-3.75491362503,9.7942532062,-13.5130154276,-6.63207074085,-14.0619910004
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass1,RF Pass 1,1,,,,,,2517,,,0.0373460468812,,,,,,,,,,,,,,,,,,,94,106.406343839,101.797152857,110.079034808,99.3355434694,99.8735268287,-12.4063438388,-7.79715285714,-16.079034808,-5.33554346943,-5.87352682871
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass1,RF Pass 1,2,,,,,,2809,,,0.0388038447846,,,,,,,,,,,,,,,,,,,109,123.158257584,110.73949563,120.973198097,114.341618814,113.162954288,-14.1582575838,-1.73949562965,-11.9731980966,-5.34161881393,-4.16295428762
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass1,RF Pass 1,3,,,,,,2578,,,0.0430566330489,,,,,,,,,,,,,,,,,,,111,109.226429713,101.287264309,112.758824631,98.0998015937,102.570744486,1.77357028676,9.71273569051,-1.75882463066,12.9001984063,8.42925551394
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass1,RF Pass 1,4,,,,,,2867,,,0.0397628182769,,,,,,,,,,,,,,,,,,,114,126.448764254,116.787513983,130.624882504,120.414294848,121.04983686,-12.4487642544,-2.78751398263,-16.6248825036,-6.41429484806,-7.04983686039
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2,GLASS Pass 2,all,,,,,,5422,,,0.339358170417,,,,,,,,,,,,,,,,,,,1840,1778.16716369,1867.5991707,1735.84048531,1763.68945108,1398.15272353,61.8328363145,-27.5991707029,104.159514688,76.3105489238,441.847276468
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2,GLASS Pass 2,0,,,,,,985,,,0.340101522843,,,,,,,,,,,,,,,,,,,335,325.992856782,349.262456517,320.104233891,337.311612404,253.299091681,9.0071432179,-14.2624565165,14.8957661087,-2.31161240421,81.7009083188
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2,GLASS Pass 2,1,,,,,,1039,,,0.354186717998,,,,,,,,,,,,,,,,,,,368,362.65172845,371.686278081,349.231934661,345.99865751,265.131690069,5.34827154971,-3.68627808106,18.7680653389,22.0013424903,102.868309931
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2,GLASS Pass 2,2,,,,,,1148,,,0.337979094077,,,,,,,,,,,,,,,,,,,388,364.642700106,385.713040295,360.861090485,361.024668322,299.364630293,23.3572998937,2.2869597055,27.1389095154,26.9753316777,88.6353697068
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2,GLASS Pass 2,3,,,,,,1316,,,0.303951367781,,,,,,,,,,,,,,,,,,,400,389.490342194,415.14930682,378.696460569,392.491139364,332.701443915,10.5096578065,-15.1493068199,21.3035394307,7.50886063591,67.2985560849
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2,GLASS Pass 2,4,,,,,,934,,,0.373661670236,,,,,,,,,,,,,,,,,,,349,335.389536153,345.788088991,326.946765706,326.863373476,247.655867574,13.6104638467,3.211911009,22.053234294,22.1366265242,101.344132426
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2,RF Pass 2,all,,,,,,8269,,,0.297980408756,,,,,,,,,,,,,,,,,,,2464,2407.86561893,2483.01527435,2370.33705735,2434.68360699,2193.9965008,56.1343810718,-19.0152743536,93.6629426456,29.3163930098,270.0034992
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2,RF Pass 2,0,,,,,,1639,,,0.297132397804,,,,,,,,,,,,,,,,,,,487,474.096095133,495.585219028,471.116238575,482.625615314,439.781241708,12.9039048673,-8.58521902801,15.8837614254,4.37438468612,47.2187582924
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2,RF Pass 2,1,,,,,,1660,,,0.301807228916,,,,,,,,,,,,,,,,,,,501,498.197279858,505.634747594,474.181076224,485.302894254,425.593163595,2.80272014211,-4.63474759434,26.8189237757,15.6971057462,75.4068364051
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2,RF Pass 2,2,,,,,,1635,,,0.300305810398,,,,,,,,,,,,,,,,,,,491,485.707143711,500.795647476,476.673206147,489.104994596,431.356958979,5.29285628891,-9.7956474759,14.3267938526,1.89500540409,59.6430410212
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2,RF Pass 2,3,,,,,,1724,,,0.286542923434,,,,,,,,,,,,,,,,,,,494,489.436806098,502.119539653,483.999893355,499.620330995,463.917921568,4.56319390187,-8.11953965287,10.0001066454,-5.62033099489,30.0820784322
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2,RF Pass 2,4,,,,,,1611,,,0.304779639975,,,,,,,,,,,,,,,,,,,491,460.428294128,478.880120602,464.366643054,478.029771832,433.347214951,30.5717058716,12.1198793976,26.6333569464,12.9702281683,57.6527850488
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain,GLASS abstain,all,,,,,,15869,,,0.0837481882916,,,,,,,,,,,,,,,,,,,1329,1325.09522665,1304.75492141,1343.83710431,1374.72113062,1585.25630039,3.90477334688,24.2450785891,-14.8371043144,-45.7211306231,-256.256300388
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain,GLASS abstain,0,,,,,,3436,,,0.0852735739232,,,,,,,,,,,,,,,,,,,293,299.984468187,289.158393772,301.291310807,292.069125211,342.573084537,-6.98446818697,3.84160622816,-8.29131080657,0.930874789284,-49.5730845374
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain,GLASS abstain,1,,,,,,3418,,,0.0863077823288,,,,,,,,,,,,,,,,,,,295,282.797567158,276.963903896,277.779246869,290.515017115,346.870617325,12.202432842,18.0360961043,17.2207531308,4.48498288483,-51.8706173251
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain,GLASS abstain,2,,,,,,2883,,,0.0808185917447,,,,,,,,,,,,,,,,,,,233,252.584370793,253.762332553,246.61795861,263.963158367,286.693531662,-19.5843707933,-20.762332553,-13.6179586098,-30.9631583674,-53.6935316624
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain,GLASS abstain,3,,,,,,2828,,,0.0777934936351,,,,,,,,,,,,,,,,,,,220,228.650008403,214.73397895,234.03450729,235.314348288,271.241062442,-8.65000840257,5.26602105025,-14.0345072902,-15.314348288,-51.2410624421
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain,GLASS abstain,4,,,,,,3304,,,0.0871670702179,,,,,,,,,,,,,,,,,,,288,261.078812112,270.136312241,284.114080739,292.859481642,337.878004421,26.9211878878,17.8636877595,3.88591926136,-4.85948164181,-49.8780044214
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_abstain,RF abstain,all,,,,,,10839,,,0.0632899713996,,,,,,,,,,,,,,,,,,,686,697.441456114,684.365431414,719.713987179,704.493063544,933.284445737,-11.4414561144,1.63456858598,-33.7139871792,-18.4930635438,-247.284445737
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_abstain,RF abstain,0,,,,,,1880,,,0.0643617021277,,,,,,,,,,,,,,,,,,,121,121.624059694,116.392480711,123.370745998,118.742313945,154.156767292,-0.624059693903,4.60751928925,-2.37074599782,2.25768605473,-33.156767292
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_abstain,RF abstain,1,,,,,,2413,,,0.0609200165769,,,,,,,,,,,,,,,,,,,147,152.446445254,152.105698609,157.739888968,157.361562277,216.533309576,-5.4464452538,-5.10569860865,-10.7398889677,-10.3615622768,-69.5333095764
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_abstain,RF abstain,2,,,,,,2146,,,0.0661696178938,,,,,,,,,,,,,,,,,,,142,140.462848535,140.28826479,144.353595756,138.55338659,197.480086734,1.5371514649,1.71173521012,-2.35359575602,3.44661340984,-55.4800867335
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_abstain,RF abstain,3,,,,,,2288,,,0.0603146853147,,,,,,,,,,,,,,,,,,,138,142.92161018,141.458185215,146.241282015,145.279867411,176.511333946,-4.92161018012,-3.45818521472,-8.24128201479,-7.2798674114,-38.5113339461
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_abstain,RF abstain,4,,,,,,2112,,,0.0653409090909,,,,,,,,,,,,,,,,,,,138,139.986492452,134.12080209,148.008474443,144.55593332,188.602948188,-1.98649245152,3.87919790998,-10.0084744428,-6.55593332022,-50.6029481884
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_lr_flag,GLASS Pass 1 rows LR flags (intercepted),all,,,,,,640,,,0.15,,,,,,,,,,,,,,,,,,,96,122.803233548,85.7626680648,123.587620628,95.3555343482,149.640350449,-26.8032335485,10.2373319352,-27.5876206278,0.644465651762,-53.6403504493
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_lr_flag,GLASS Pass 1 rows LR flags (intercepted),0,,,,,,121,,,0.165289256198,,,,,,,,,,,,,,,,,,,20,21.5710055282,16.9584433822,21.4132983588,16.5157115057,29.0131679744,-1.57100552817,3.04155661784,-1.4132983588,3.48428849425,-9.01316797435
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_lr_flag,GLASS Pass 1 rows LR flags (intercepted),1,,,,,,98,,,0.214285714286,,,,,,,,,,,,,,,,,,,21,24.3668747632,20.5513503958,22.7799836545,20.8209502397,20.8119861261,-3.36687476324,0.448649604215,-1.77998365452,0.179049760279,0.188013873856
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_lr_flag,GLASS Pass 1 rows LR flags (intercepted),2,,,,,,145,,,0.0965517241379,,,,,,,,,,,,,,,,,,,14,23.5759382439,13.8408488736,23.0224646744,14.716864444,32.5060952967,-9.57593824386,0.159151126359,-9.02246467444,-0.716864444007,-18.5060952967
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_lr_flag,GLASS Pass 1 rows LR flags (intercepted),3,,,,,,90,,,0.233333333333,,,,,,,,,,,,,,,,,,,21,21.2580663453,12.6849062775,22.9758821171,15.404346028,24.4368961927,-0.258066345283,8.3150937225,-1.97588211708,5.59565397205,-3.43689619269
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_lr_flag,GLASS Pass 1 rows LR flags (intercepted),4,,,,,,186,,,0.10752688172,,,,,,,,,,,,,,,,,,,20,32.0313486679,21.7271191357,33.395991823,27.8976621308,42.8722048593,-12.0313486679,-1.72711913574,-13.395991823,-7.89766213081,-22.8722048593
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_ebm_flag,GLASS Pass 1 rows EBM flags (intercepted),all,,,,,,279,,,0.250896057348,,,,,,,,,,,,,,,,,,,70,60.1152674687,63.4705917693,60.6766242581,74.6198347241,73.173995991,9.88473253134,6.52940823069,9.3233757419,-4.61983472409,-3.17399599104
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_ebm_flag,GLASS Pass 1 rows EBM flags (intercepted),0,,,,,,19,,,0.526315789474,,,,,,,,,,,,,,,,,,,10,6.61085539078,7.73871721086,6.87511108263,7.17298937785,5.301578354,3.38914460922,2.26128278914,3.12488891737,2.82701062215,4.698421646
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_ebm_flag,GLASS Pass 1 rows EBM flags (intercepted),1,,,,,,57,,,0.438596491228,,,,,,,,,,,,,,,,,,,25,16.3473866774,21.4836199414,15.1163573331,19.5690440061,14.2542487456,8.65261332262,3.5163800586,9.8836426669,5.43095599393,10.7457512544
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_ebm_flag,GLASS Pass 1 rows EBM flags (intercepted),2,,,,,,15,,,0.266666666667,,,,,,,,,,,,,,,,,,,4,3.89522282788,3.60318945191,3.27179631408,4.19271623672,4.24807903403,0.104777172119,0.396810548088,0.728203685923,-0.192716236722,-0.248079034029
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_ebm_flag,GLASS Pass 1 rows EBM flags (intercepted),3,,,,,,75,,,0.226666666667,,,,,,,,,,,,,,,,,,,17,14.4478708037,12.2082392948,15.4590638271,16.3246079919,17.8155012499,2.55212919627,4.79176070519,1.5409361729,0.675392008093,-0.815501249858
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_ebm_flag,GLASS Pass 1 rows EBM flags (intercepted),4,,,,,,113,,,0.12389380531,,,,,,,,,,,,,,,,,,,14,18.8139317689,18.4368258703,19.9542957012,27.3604771115,31.5545886076,-4.81393176889,-4.43682587033,-5.9542957012,-13.3604771115,-17.5545886076
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_union_flag,GLASS Pass 1 rows LR or EBM flags,all,,,,,,704,,,0.149147727273,,,,,,,,,,,,,,,,,,,105,127.048742286,96.7203044443,128.128093643,110.174172086,161.494868221,-22.048742286,8.27969555573,-23.1280936429,-5.17417208648,-56.4948682208
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_union_flag,GLASS Pass 1 rows LR or EBM flags,0,,,,,,121,,,0.165289256198,,,,,,,,,,,,,,,,,,,20,21.5710055282,16.9584433822,21.4132983588,16.5157115057,29.0131679744,-1.57100552817,3.04155661784,-1.4132983588,3.48428849425,-9.01316797435
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_union_flag,GLASS Pass 1 rows LR or EBM flags,1,,,,,,110,,,0.227272727273,,,,,,,,,,,,,,,,,,,25,25.1390568149,25.4360717794,23.5943450886,24.8740610136,22.4760709373,-0.139056814873,-0.436071779439,1.40565491137,0.125938986379,2.52392906273
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_union_flag,GLASS Pass 1 rows LR or EBM flags,2,,,,,,145,,,0.0965517241379,,,,,,,,,,,,,,,,,,,14,23.5759382439,13.8408488736,23.0224646744,14.716864444,32.5060952967,-9.57593824386,0.159151126359,-9.02246467444,-0.716864444007,-18.5060952967
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_union_flag,GLASS Pass 1 rows LR or EBM flags,3,,,,,,110,,,0.2,,,,,,,,,,,,,,,,,,,22,22.4527053025,14.8592624852,24.3852412423,19.0209368221,26.4633655455,-0.452705302518,7.14073751481,-2.38524124227,2.97906317791,-4.46336554551
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_union_flag,GLASS Pass 1 rows LR or EBM flags,4,,,,,,218,,,0.110091743119,,,,,,,,,,,,,,,,,,,24,34.3100363966,25.6256779238,35.7127442787,35.046598301,51.0361684669,-10.3100363966,-1.62567792385,-11.7127442787,-11.046598301,-27.0361684669
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass1_and_union_flag,RF Pass 1 rows LR or EBM flags,all,,,,,,23,,,0.304347826087,,,,,,,,,,,,,,,,,,,7,2.06173900209,3.79397987584,2.21670630386,3.82867599528,1.47240235662,4.93826099791,3.20602012416,4.78329369614,3.17132400472,5.52759764338
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass1_and_union_flag,RF Pass 1 rows LR or EBM flags,0,,,,,,15,,,0.133333333333,,,,,,,,,,,,,,,,,,,2,1.63645661593,1.83267377161,1.79904097042,1.65113426538,0.876466004755,0.363543384071,0.167326228394,0.20095902958,0.348865734616,1.12353399524
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass1_and_union_flag,RF Pass 1 rows LR or EBM flags,1,,,,,,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass1_and_union_flag,RF Pass 1 rows LR or EBM flags,2,,,,,,3,,,0.333333333333,,,,,,,,,,,,,,,,,,,1,0.15729690406,1.17109402274,0.158148029247,0.948406676783,0.192513368984,0.84270309594,-0.171094022739,0.841851970753,0.051593323217,0.807486631016
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass1_and_union_flag,RF Pass 1 rows LR or EBM flags,3,,,,,,5,,,0.8,,,,,,,,,,,,,,,,,,,4,0.267985482097,0.790212081496,0.259517304189,1.22913505311,0.403422982885,3.7320145179,3.2097879185,3.74048269581,2.77086494689,3.59657701711
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass1_and_union_flag,RF Pass 1 rows LR or EBM flags,4,,,,,,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_lr,GLASS Pass 2 rows LR does not flag,all,,,,,,989,,,0.0738119312437,,,,,,,,,,,,,,,,,,,73,83.4337568896,79.6876064623,85.4485575038,79.6053901366,160.69879643,-10.4337568896,-6.6876064623,-12.4485575038,-6.60539013661,-87.6987964299
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_lr,GLASS Pass 2 rows LR does not flag,0,,,,,,205,,,0.0731707317073,,,,,,,,,,,,,,,,,,,15,18.1985270239,19.6698588636,15.1403223361,19.6395125457,38.4605321929,-3.19852702389,-4.6698588636,-0.140322336121,-4.6395125457,-23.4605321929
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_lr,GLASS Pass 2 rows LR does not flag,1,,,,,,155,,,0.0709677419355,,,,,,,,,,,,,,,,,,,11,12.5258923391,9.7727574683,13.7488393232,10.2293100135,18.2545868439,-1.5258923391,1.2272425317,-2.74883932324,0.770689986517,-7.25458684386
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_lr,GLASS Pass 2 rows LR does not flag,2,,,,,,251,,,0.0836653386454,,,,,,,,,,,,,,,,,,,21,21.557916728,21.7110545326,25.4004585756,19.7426705748,46.4462785327,-0.55791672798,-0.711054532631,-4.40045857559,1.25732942517,-25.4462785327
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_lr,GLASS Pass 2 rows LR does not flag,3,,,,,,262,,,0.0610687022901,,,,,,,,,,,,,,,,,,,16,21.2664099304,20.5908781994,21.8806256573,21.2966235569,42.6588177618,-5.26640993037,-4.59087819938,-5.88062565732,-5.29662355692,-26.6588177618
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_lr,GLASS Pass 2 rows LR does not flag,4,,,,,,116,,,0.0862068965517,,,,,,,,,,,,,,,,,,,10,9.88501086821,7.9430573984,9.27831161154,8.69727344568,14.8785810986,0.114989131786,2.0569426016,0.721688388462,1.30272655432,-4.87858109863
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_lr,RF Pass 2 rows LR does not flag,all,,,,,,1132,,,0.0812720848057,,,,,,,,,,,,,,,,,,,92,84.8308151991,103.487845671,95.7846297319,103.197278561,209.618380544,7.16918480093,-11.4878456707,-3.78462973195,-11.1972785611,-117.618380544
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_lr,RF Pass 2 rows LR does not flag,0,,,,,,237,,,0.101265822785,,,,,,,,,,,,,,,,,,,24,18.7363479185,24.3204561301,17.8729708967,23.9720091847,52.8368812916,5.2636520815,-0.32045613012,6.12702910327,0.0279908153492,-28.8368812916
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_lr,RF Pass 2 rows LR does not flag,1,,,,,,204,,,0.112745098039,,,,,,,,,,,,,,,,,,,23,15.3242177587,20.4890009977,18.1997333702,19.9023516502,31.8910341297,7.67578224127,2.51099900233,4.80026662977,3.09764834978,-8.89103412969
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_lr,RF Pass 2 rows LR does not flag,2,,,,,,212,,,0.0707547169811,,,,,,,,,,,,,,,,,,,15,15.0110249992,20.2162017308,20.561726765,17.8027961304,34.7916517258,-0.0110249992039,-5.21620173082,-5.56172676496,-2.80279613035,-19.7916517258
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_lr,RF Pass 2 rows LR does not flag,3,,,,,,247,,,0.0445344129555,,,,,,,,,,,,,,,,,,,11,18.6676043256,19.2526140436,21.7163016233,19.3147338004,48.0755719715,-7.6676043256,-8.25261404363,-10.7163016233,-8.31473380041,-37.0755719715
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_lr,RF Pass 2 rows LR does not flag,4,,,,,,232,,,0.0818965517241,,,,,,,,,,,,,,,,,,,19,17.091620197,19.2095727685,17.4338970767,22.2053877955,42.0232414257,1.90837980295,-0.209572768482,1.56610292326,-3.20538779551,-23.0232414257
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_union,GLASS Pass 2 rows neither flags,all,,,,,,911,,,0.0603732162459,,,,,,,,,,,,,,,,,,,55,76.9883603521,59.9083512031,78.762774096,61.8045044189,139.886234354,-21.9883603521,-4.90835120307,-23.762774096,-6.80450441894,-84.8862343538
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_union,GLASS Pass 2 rows neither flags,0,,,,,,181,,,0.0497237569061,,,,,,,,,,,,,,,,,,,9,16.2987835773,12.9297412114,13.356302989,14.1888296929,32.4151786739,-7.29878357733,-3.9297412114,-4.35630298896,-5.18882969289,-23.4151786739
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_union,GLASS Pass 2 rows neither flags,1,,,,,,151,,,0.0662251655629,,,,,,,,,,,,,,,,,,,10,12.1650078081,8.78134997174,13.3698380428,9.30063019558,17.1354611608,-2.16500780812,1.21865002826,-3.36983804283,0.699369804423,-7.1354611608
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_union,GLASS Pass 2 rows neither flags,2,,,,,,233,,,0.0772532188841,,,,,,,,,,,,,,,,,,,18,20.1394105669,16.284234983,23.6169803147,15.4255233821,41.7866519837,-2.13941056686,1.71576501698,-5.61698031472,2.57447661788,-23.7866519837
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_union,GLASS Pass 2 rows neither flags,3,,,,,,235,,,0.0425531914894,,,,,,,,,,,,,,,,,,,10,18.9753316723,15.2217176968,19.5512972141,15.3092689793,35.1142271775,-8.97533167225,-5.22171769685,-9.55129721411,-5.30926897928,-25.1142271775
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_unique_vs_union,GLASS Pass 2 rows neither flags,4,,,,,,111,,,0.0720720720721,,,,,,,,,,,,,,,,,,,8,9.40982672752,6.69130734008,8.8683555354,7.58025216908,13.4347153579,-1.40982672752,1.30869265992,-0.868355535403,0.41974783092,-5.43471535789
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_union,RF Pass 2 rows neither flags,all,,,,,,999,,,0.0600600600601,,,,,,,,,,,,,,,,,,,60,74.9740755964,67.6722564922,85.3183547607,69.8071062801,177.278548202,-14.9740755964,-7.67225649219,-25.3183547607,-9.80710628011,-117.278548202
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_union,RF Pass 2 rows neither flags,0,,,,,,206,,,0.0679611650485,,,,,,,,,,,,,,,,,,,14,16.3300386699,15.5135937256,15.5568899387,16.8050896095,44.8383146948,-2.33003866989,-1.51359372563,-1.5568899387,-2.80508960954,-30.8383146948
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_union,RF Pass 2 rows neither flags,1,,,,,,175,,,0.0971428571429,,,,,,,,,,,,,,,,,,,17,13.219691168,11.1473768548,15.85215398,11.9023516502,25.6823266953,3.78030883202,5.85262314522,1.14784602001,5.09764834978,-8.68232669532
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_union,RF Pass 2 rows neither flags,2,,,,,,192,,,0.0625,,,,,,,,,,,,,,,,,,,12,13.549037453,12.7987074848,18.7570062681,11.9378492411,30.4417512228,-1.54903745304,-0.798707484799,-6.75700626807,0.0621507588721,-18.4417512228
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_union,RF Pass 2 rows neither flags,3,,,,,,233,,,0.0343347639485,,,,,,,,,,,,,,,,,,,8,17.6242196244,15.6356231664,20.5325670498,16.1981430063,44.2629343811,-9.62421962435,-7.63562316638,-12.5325670498,-8.19814300627,-36.2629343811
+s1_sensitivity_v1,diagnostics/observed_expected,,,,rf_pass2_unique_vs_union,RF Pass 2 rows neither flags,4,,,,,,193,,,0.0466321243523,,,,,,,,,,,,,,,,,,,9,14.2510886812,12.5769552606,14.6197375242,12.9636727729,32.0532212077,-5.25108868118,-3.57695526059,-5.61973752416,-3.96367277295,-23.0532212077
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_pass2,"GLASS Pass 1, RF Pass 2 (opposite)",all,,,,,,601,,,0.168053244592,,,,,,,,,,,,,,,,,,,101,101.471187517,86.7455146983,102.696906761,96.1760660136,143.173063885,-0.471187516931,14.2544853017,-1.6969067606,4.82393398635,-42.1730638846
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_pass2,"GLASS Pass 1, RF Pass 2 (opposite)",0,,,,,,120,,,0.166666666667,,,,,,,,,,,,,,,,,,,20,20.2917824413,17.1223213081,20.1457700111,16.8354214947,29.7567919823,-0.291782441256,2.87767869193,-0.145770011135,3.16457850526,-9.7567919823
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_pass2,"GLASS Pass 1, RF Pass 2 (opposite)",1,,,,,,105,,,0.247619047619,,,,,,,,,,,,,,,,,,,26,23.9160785842,25.1400374922,22.3340217962,24.6174736745,22.6510183942,2.08392141578,0.859962507782,3.66597820384,1.38252632547,3.34898160582
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_pass2,"GLASS Pass 1, RF Pass 2 (opposite)",2,,,,,,38,,,0.184210526316,,,,,,,,,,,,,,,,,,,7,6.70698183763,4.77520924333,6.27456517491,4.95582262473,7.2987925933,0.293018162375,2.22479075667,0.725434825093,2.04417737527,-0.298792593304
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_pass2,"GLASS Pass 1, RF Pass 2 (opposite)",3,,,,,,156,,,0.166666666667,,,,,,,,,,,,,,,,,,,26,25.6296347287,17.2474763759,28.2006103537,20.1046395247,39.0926609426,0.370365271297,8.75252362406,-2.20061035374,5.89536047525,-13.0926609426
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_pass2,"GLASS Pass 1, RF Pass 2 (opposite)",4,,,,,,182,,,0.120879120879,,,,,,,,,,,,,,,,,,,22,24.9267099251,22.4604702787,25.7419394247,29.6627086949,44.3737999722,-2.92670992513,-0.460470278702,-3.74193942466,-7.66270869489,-22.3737999722
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_pass1,"GLASS Pass 2, RF Pass 1 (opposite)",all,,,,,,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_pass1,"GLASS Pass 2, RF Pass 1 (opposite)",0,,,,,,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_pass1,"GLASS Pass 2, RF Pass 1 (opposite)",1,,,,,,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_pass1,"GLASS Pass 2, RF Pass 1 (opposite)",2,,,,,,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_pass1,"GLASS Pass 2, RF Pass 1 (opposite)",3,,,,,,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_pass1,"GLASS Pass 2, RF Pass 1 (opposite)",4,,,,,,0,,,,,,,,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_abstain,"GLASS Pass 1, RF abstains",all,,,,,,3200,,,0.055,,,,,,,,,,,,,,,,,,,176,214.523894835,187.13779736,228.455260118,192.618083464,295.716208378,-38.5238948352,-11.1377973601,-52.455260118,-16.6180834641,-119.716208378
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_abstain,"GLASS Pass 1, RF abstains",0,,,,,,392,,,0.0688775510204,,,,,,,,,,,,,,,,,,,27,26.2496742488,22.9569827885,27.5194534128,23.2163048308,44.6737775428,0.750325751242,4.04301721154,-0.519453412828,3.78369516922,-17.6737775428
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_abstain,"GLASS Pass 1, RF abstains",1,,,,,,680,,,0.0308823529412,,,,,,,,,,,,,,,,,,,21,41.0967657498,39.3958335657,43.6187509004,38.8565624326,62.2237785434,-20.0967657498,-18.3958335657,-22.6187509004,-17.8565624326,-41.2237785434
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_abstain,"GLASS Pass 1, RF abstains",2,,,,,,775,,,0.0593548387097,,,,,,,,,,,,,,,,,,,46,59.0564905401,47.0266982686,63.0039932315,47.9856127729,86.7665104866,-13.0564905401,-1.02669826864,-17.0039932315,-1.98561277292,-40.7665104866
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_abstain,"GLASS Pass 1, RF abstains",3,,,,,,535,,,0.0654205607477,,,,,,,,,,,,,,,,,,,35,31.206940532,32.3892862231,33.9723863256,33.6133041374,34.6596878509,3.79305946798,2.61071377687,1.02761367436,1.3866958626,0.340312149081
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass1_and_rf_abstain,"GLASS Pass 1, RF abstains",4,,,,,,818,,,0.0574572127139,,,,,,,,,,,,,,,,,,,47,56.9140237646,45.3689965141,60.3406762476,48.9462992904,67.3924539547,-9.9140237646,1.63100348586,-13.3406762476,-1.94629929042,-20.3924539547
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass1,"GLASS abstains, RF Pass 1",all,,,,,,5984,,,0.0494652406417,,,,,,,,,,,,,,,,,,,296,313.950397648,278.856698405,320.778711972,288.028060643,295.017349647,-17.9503976481,17.1433015954,-24.7787119717,7.97193935704,0.98265035325
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass1,"GLASS abstains, RF Pass 1",0,,,,,,1414,,,0.0473833097595,,,,,,,,,,,,,,,,,,,67,76.7986268325,66.5224546461,74.5737835495,68.0645346813,76.3647367441,-9.79862683249,0.477545353873,-7.57378354948,-1.0645346813,-9.36473674413
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass1,"GLASS abstains, RF Pass 1",1,,,,,,1169,,,0.0530367835757,,,,,,,,,,,,,,,,,,,62,59.8184148306,55.4456068317,61.0429890349,57.3232542014,54.7506311599,2.18158516938,6.55439316831,0.957010965143,4.67674579857,7.24936884009
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass1,"GLASS abstains, RF Pass 1",2,,,,,,1063,,,0.038570084666,,,,,,,,,,,,,,,,,,,41,56.8205510311,50.1933680937,55.7308055973,50.2708809013,51.2864193231,-15.8205510311,-9.19336809373,-14.7308055973,-9.2708809013,-10.2864193231
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass1,"GLASS abstains, RF Pass 1",3,,,,,,823,,,0.0595382746051,,,,,,,,,,,,,,,,,,,49,42.6185095786,35.9423235011,44.6627891695,36.6232329079,37.2655996367,6.38149042143,13.0576764989,4.33721083048,12.3767670921,11.7344003633
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass1,"GLASS abstains, RF Pass 1",4,,,,,,1515,,,0.0508250825083,,,,,,,,,,,,,,,,,,,77,77.8942953753,70.7529453319,84.7683446205,75.746157951,75.3499627829,-0.894295375308,6.24705466806,-7.76834462052,1.253842049,1.6500372171
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_abstain,"GLASS Pass 2, RF abstains",all,,,,,,810,,,0.083950617284,,,,,,,,,,,,,,,,,,,68,77.115326813,59.791777899,76.9788944571,63.3807343024,137.714153138,-9.11532681301,8.20822210097,-8.97889445714,4.61926569755,-69.7141531384
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_abstain,"GLASS Pass 2, RF abstains",0,,,,,,110,,,0.0545454545455,,,,,,,,,,,,,,,,,,,6,12.8243871542,6.50055295804,11.6139202479,6.36996936167,16.289691774,-6.82438715419,-0.50055295804,-5.61392024794,-0.369969361669,-10.289691774
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_abstain,"GLASS Pass 2, RF abstains",1,,,,,,150,,,0.0733333333333,,,,,,,,,,,,,,,,,,,11,13.9457761933,10.8263897113,14.5965839072,12.8336691236,22.0887948614,-2.94577619329,0.173610288663,-3.59658390718,-1.83366912363,-11.0887948614
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_abstain,"GLASS Pass 2, RF abstains",2,,,,,,193,,,0.108808290155,,,,,,,,,,,,,,,,,,,21,17.3779096918,14.0935504693,19.4455517433,13.7475861884,35.8189587032,3.62209030818,6.90644953067,1.55444825671,7.25241381161,-14.8189587032
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_abstain,"GLASS Pass 2, RF abstains",3,,,,,,273,,,0.0732600732601,,,,,,,,,,,,,,,,,,,20,24.3863371101,20.7423192911,23.4913199353,22.6166346111,49.1663573775,-4.38633711014,-0.742319291111,-3.49131993531,-2.6166346111,-29.1663573775
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_pass2_and_rf_abstain,"GLASS Pass 2, RF abstains",4,,,,,,84,,,0.119047619048,,,,,,,,,,,,,,,,,,,10,8.58091666357,7.62896546921,7.83151862342,7.81287501766,14.3503504223,1.41908333643,2.37103453079,2.16848137658,2.18712498234,-4.3503504223
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass2,"GLASS abstains, RF Pass 2",all,,,,,,3056,,,0.193390052356,,,,,,,,,,,,,,,,,,,591,605.342594539,588.462366851,608.778559739,638.198824203,790.384866522,-14.3425945388,2.5376331486,-17.7785597386,-47.1988242028,-199.384866522
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass2,"GLASS abstains, RF Pass 2",0,,,,,,644,,,0.214285714286,,,,,,,,,,,,,,,,,,,138,140.635843064,135.700994161,142.48015492,134.848550777,173.015049818,-2.63584306352,2.29900583853,-4.48015492003,3.15144922341,-35.0150498181
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass2,"GLASS abstains, RF Pass 2",1,,,,,,666,,,0.177177177177,,,,,,,,,,,,,,,,,,,118,125.575249017,119.634821732,117.211703674,127.520432193,159.899249994,-7.57524901667,-1.6348217324,0.788296325822,-9.52043219321,-41.8992499936
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass2,"GLASS abstains, RF Pass 2",2,,,,,,642,,,0.182242990654,,,,,,,,,,,,,,,,,,,117,131.735371459,124.400948407,128.983102231,136.872089837,160.512494796,-14.735371459,-7.4009484074,-11.9831022312,-19.8720898372,-43.5124947955
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass2,"GLASS abstains, RF Pass 2",3,,,,,,525,,,0.167619047619,,,,,,,,,,,,,,,,,,,88,98.703166286,90.4650757482,100.594142367,109.641186717,141.290174088,-10.703166286,-2.46507574819,-12.5941423668,-21.6411867172,-53.2901740876
+s1_sensitivity_v1,diagnostics/observed_expected,,,,glass_abstain_and_rf_pass2,"GLASS abstains, RF Pass 2",4,,,,,,579,,,0.224525043178,,,,,,,,,,,,,,,,,,,130,108.692964714,118.260526802,119.509456546,129.316564679,155.667897827,21.3070352864,11.7394731981,10.4905434536,0.683435321338,-25.6678978271
+s1_sensitivity_v1,diagnostics/observed_expected,,,,both_abstain,both routers abstain,all,,,,,,6829,,,0.0647239712989,,,,,,,,,,,,,,,,,,,442,405.802234466,437.435856155,414.279832604,448.494245777,499.85408422,36.1977655338,4.56414384512,27.7201673959,-6.49424577725,-57.8540842197
+s1_sensitivity_v1,diagnostics/observed_expected,,,,both_abstain,both routers abstain,0,,,,,,1378,,,0.0638606676343,,,,,,,,,,,,,,,,,,,88,82.549998291,86.9349449642,84.2373723371,89.1560397528,93.1932979751,5.45000170904,1.06505503575,3.76262766294,-1.15603975282,-5.19329797512
+s1_sensitivity_v1,diagnostics/observed_expected,,,,both_abstain,both routers abstain,1,,,,,,1583,,,0.0726468730259,,,,,,,,,,,,,,,,,,,115,97.4039033107,101.883475332,99.5245541601,105.671330721,132.220736172,17.5960966893,13.1165246684,15.4754458399,9.32866927947,-17.2207361716
+s1_sensitivity_v1,diagnostics/observed_expected,,,,both_abstain,both routers abstain,2,,,,,,1178,,,0.0636672325976,,,,,,,,,,,,,,,,,,,75,64.0284483032,79.1680160519,61.9040507812,76.8201876289,74.8946175438,10.9715516968,-4.16801605191,13.0959492188,-1.82018762886,0.105382456239
+s1_sensitivity_v1,diagnostics/observed_expected,,,,both_abstain,both routers abstain,3,,,,,,1480,,,0.0560810810811,,,,,,,,,,,,,,,,,,,83,87.328332538,88.3265797005,88.7775757538,89.0499286629,92.6852887177,-4.32833253796,-5.32657970048,-5.77757575384,-6.04992866291,-9.68528871774
+s1_sensitivity_v1,diagnostics/observed_expected,,,,both_abstain,both routers abstain,4,,,,,,1210,,,0.0669421487603,,,,,,,,,,,,,,,,,,,81,74.4915520234,81.1228401067,79.8362795718,87.7967590121,106.860143811,6.50844797664,-0.122840106667,1.16372042823,-6.79675901214,-25.8601438114

@@ -1,0 +1,69 @@
+{
+  "arms": {
+    "blackbox": {
+      "bit_identical": false,
+      "evidence": {
+        "bit_identical": false,
+        "differences": [],
+        "identical_within_tolerance": true,
+        "max_float_difference": 5.551115123125783e-17,
+        "n_differences": 0,
+        "tolerance": 1e-12
+      },
+      "held_out": {
+        "bit_identical": true,
+        "decisions_differing": 0,
+        "decisions_identical": true,
+        "max_confidence_difference": 0.0,
+        "max_score_difference": 0.0,
+        "passed": true,
+        "rows": 6590
+      },
+      "passed": true,
+      "wall_seconds": 78.3
+    },
+    "glass": {
+      "bit_identical": true,
+      "evidence": {
+        "bit_identical": true,
+        "differences": [],
+        "identical_within_tolerance": true,
+        "max_float_difference": 0.0,
+        "n_differences": 0,
+        "tolerance": 1e-12
+      },
+      "held_out": {
+        "bit_identical": true,
+        "decisions_differing": 0,
+        "decisions_identical": true,
+        "max_confidence_difference": 0.0,
+        "max_score_difference": 0.0,
+        "passed": true,
+        "rows": 6590
+      },
+      "passed": true,
+      "wall_seconds": 1029.0
+    }
+  },
+  "bit_identical": false,
+  "candidate_manifest_sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88",
+  "feature_pathway": {
+    "pathway": "fold_label_excluded",
+    "record": [
+      "stage2-inner-fold-feature-isolation",
+      "1.0.0",
+      "0d4953ef34d1d3dc"
+    ]
+  },
+  "fold": 0,
+  "format": "pr38.stage2.g7_reproduction/1",
+  "ignored_keys": [
+    "wall_seconds"
+  ],
+  "note": "identity only: decisions, confidences and scores of the held-out rows are compared with the candidate's; no label is read and no metric computed",
+  "passed": true,
+  "pre_declared_fold": true,
+  "role": "primary",
+  "run_id": "c3_20261112_153333",
+  "tolerance": 1e-12
+}

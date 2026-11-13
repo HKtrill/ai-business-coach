@@ -1,0 +1,1142 @@
+{
+  "arms": {
+    "blackbox": {
+      "arm": "blackbox",
+      "counts": {
+        "eligibility_t1[0]": {
+          "population_positives": 2376,
+          "population_rows": 21088,
+          "routed_positives": 349,
+          "routed_rows": 8900
+        },
+        "eligibility_t1[1]": {
+          "population_positives": 2376,
+          "population_rows": 21088,
+          "routed_positives": 356,
+          "routed_rows": 9176
+        },
+        "eligibility_t1[2]": {
+          "population_positives": 2376,
+          "population_rows": 21088,
+          "routed_positives": 342,
+          "routed_rows": 8761
+        },
+        "eligibility_t1[3]": {
+          "population_positives": 2376,
+          "population_rows": 21088,
+          "routed_positives": 351,
+          "routed_rows": 9213
+        },
+        "eligibility_t1[4]": {
+          "population_positives": 2376,
+          "population_rows": 21088,
+          "routed_positives": 352,
+          "routed_rows": 9026
+        },
+        "pass1": {
+          "population_positives": 2970,
+          "population_rows": 26360,
+          "routed_positives": 435,
+          "routed_rows": 11289
+        },
+        "pass2": {
+          "population_positives": 2529,
+          "population_rows": 14996,
+          "routed_positives": 1995,
+          "routed_rows": 6637
+        }
+      },
+      "eligibility": {
+        "config_eligibility_folds": 5,
+        "fold_counts": [
+          {
+            "band_positives": 349,
+            "band_rows": 8900,
+            "population_positives": 2376,
+            "population_rows": 21088
+          },
+          {
+            "band_positives": 356,
+            "band_rows": 9176,
+            "population_positives": 2376,
+            "population_rows": 21088
+          },
+          {
+            "band_positives": 342,
+            "band_rows": 8761,
+            "population_positives": 2376,
+            "population_rows": 21088
+          },
+          {
+            "band_positives": 351,
+            "band_rows": 9213,
+            "population_positives": 2376,
+            "population_rows": 21088
+          },
+          {
+            "band_positives": 352,
+            "band_rows": 9026,
+            "population_positives": 2376,
+            "population_rows": 21088
+          }
+        ],
+        "fold_ids": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "fold_t1": [
+          0.3103388303426754,
+          0.3060805977730934,
+          0.3074984201607006,
+          0.3088505090705203,
+          0.3036562153519861
+        ],
+        "report_rule": "nested_t1",
+        "rule": "nested_t1",
+        "source": "OOF pass1 probabilities >= fold-nested t1 (router-level: no row's own label in its cut; features engineered on the outer-training partition)"
+      },
+      "fit_status": {
+        "accepted": true,
+        "by_key": {
+          "eligibility_t1[0]": "valid_optimal",
+          "eligibility_t1[1]": "valid_optimal",
+          "eligibility_t1[2]": "valid_optimal",
+          "eligibility_t1[3]": "valid_optimal",
+          "eligibility_t1[4]": "valid_optimal",
+          "pass1": "valid_optimal",
+          "pass2": "valid_optimal"
+        },
+        "problems": [],
+        "status": "valid_optimal",
+        "status_only": false
+      },
+      "fold": 0,
+      "format": "pr38.stage2.fold_evidence/1",
+      "inner_feature_pathway": {
+        "base_bins_fingerprint": "5ae45f6844a4b15d",
+        "fit_label_fingerprint": "85c06667c5ec",
+        "fit_positives": 2970,
+        "fit_rows": 26360,
+        "inner_folds": [
+          {
+            "bins_fingerprint": "5ee68908463b9681",
+            "fold": 0,
+            "kde_reference_rows_kept": 3994,
+            "labels_excluded": 5272
+          },
+          {
+            "bins_fingerprint": "0904a4d93ff0d2d1",
+            "fold": 1,
+            "kde_reference_rows_kept": 4016,
+            "labels_excluded": 5272
+          },
+          {
+            "bins_fingerprint": "43fe073f449d7ba6",
+            "fold": 2,
+            "kde_reference_rows_kept": 3956,
+            "labels_excluded": 5272
+          },
+          {
+            "bins_fingerprint": "cb1b3414d0e08e16",
+            "fold": 3,
+            "kde_reference_rows_kept": 4003,
+            "labels_excluded": 5272
+          },
+          {
+            "bins_fingerprint": "5a3caec889333e03",
+            "fold": 4,
+            "kde_reference_rows_kept": 4031,
+            "labels_excluded": 5272
+          }
+        ],
+        "kde_reference_rows": 5000,
+        "pathway": "fold_label_excluded",
+        "plan_fingerprint": "413b8241fbe25e9a",
+        "record": [
+          "stage2-inner-fold-feature-isolation",
+          "1.0.0",
+          "0d4953ef34d1d3dc"
+        ]
+      },
+      "isolation": {
+        "eligibility_solves_exclude_their_fold": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "held_out_rows_in_fit": 0,
+        "inner_features_match_the_fit": true,
+        "remainder_held_out_rows": 0
+      },
+      "n_train": 26360,
+      "r1_bands": {
+        "pass1_confidence": 0.9614669146957215,
+        "pass1_support": 11289,
+        "pass1_support_floor": 125,
+        "pass2_confidence": 0.3005876148862438,
+        "pass2_support": 6637,
+        "pass2_support_floor": 75,
+        "supports_at_or_above_floors": true
+      },
+      "r2_strips": {
+        "band_rows": 6637,
+        "definition": "strip A: t1_j <= p1_oof < t1; strip B: t1 <= p1_oof < t1_j; band: the fold router's inner-OOF Pass 2 band p2_oof > t2 on its training remainder (F31 R2)",
+        "interpretation": "provisional: the fold router's inner-OOF Pass 2 band; the frozen protocol's outer-OOF wording is unresolved until the owner approves pr38-stage2-evaluation-f31-r2-clarification 1.0.0",
+        "per_inner_fold": [
+          {
+            "inner_fold": 0,
+            "strip_a": {
+              "positives": 0,
+              "prevalence": null,
+              "rows": 0
+            },
+            "strip_b": {
+              "positives": 13,
+              "prevalence": 0.06103286384976526,
+              "rows": 213
+            }
+          },
+          {
+            "inner_fold": 1,
+            "strip_a": {
+              "positives": 8,
+              "prevalence": 0.05673758865248227,
+              "rows": 141
+            },
+            "strip_b": {
+              "positives": 0,
+              "prevalence": null,
+              "rows": 0
+            }
+          },
+          {
+            "inner_fold": 2,
+            "strip_a": {
+              "positives": 0,
+              "prevalence": null,
+              "rows": 0
+            },
+            "strip_b": {
+              "positives": 0,
+              "prevalence": null,
+              "rows": 0
+            }
+          },
+          {
+            "inner_fold": 3,
+            "strip_a": {
+              "positives": 0,
+              "prevalence": null,
+              "rows": 0
+            },
+            "strip_b": {
+              "positives": 1,
+              "prevalence": 0.1111111111111111,
+              "rows": 9
+            }
+          },
+          {
+            "inner_fold": 4,
+            "strip_a": {
+              "positives": 0,
+              "prevalence": 0.0,
+              "rows": 6
+            },
+            "strip_b": {
+              "positives": 0,
+              "prevalence": null,
+              "rows": 0
+            }
+          }
+        ],
+        "strip_a": {
+          "positives": 8,
+          "prevalence": 0.05442176870748299,
+          "rows": 147
+        },
+        "strip_a_in_band": {
+          "positives": 0,
+          "rows": 0
+        },
+        "strip_a_share_of_band": 0.0,
+        "strip_b": {
+          "positives": 14,
+          "prevalence": 0.06306306306306306,
+          "rows": 222
+        },
+        "strip_b_in_band": 0
+      },
+      "remainder": {
+        "positives": 2529,
+        "prevalence": 0.16864497199253134,
+        "rows": 14996
+      },
+      "thresholds": {
+        "t1": 0.307308922764668,
+        "t2": 0.3251111452265395
+      },
+      "train_label_fingerprint": "85c06667c5ec",
+      "train_positives": 2970,
+      "wall_seconds": 69.6
+    },
+    "glass": {
+      "arm": "glass",
+      "counts": {
+        "inner_pass1[0]": {
+          "population_positives": 2376,
+          "population_rows": 21088,
+          "routed_positives": 343,
+          "routed_rows": 8127
+        },
+        "inner_pass1[1]": {
+          "population_positives": 2376,
+          "population_rows": 21088,
+          "routed_positives": 304,
+          "routed_rows": 7022
+        },
+        "inner_pass1[2]": {
+          "population_positives": 2376,
+          "population_rows": 21088,
+          "routed_positives": 285,
+          "routed_rows": 6959
+        },
+        "inner_pass1[3]": {
+          "population_positives": 2376,
+          "population_rows": 21088,
+          "routed_positives": 327,
+          "routed_rows": 7876
+        },
+        "inner_pass1[4]": {
+          "population_positives": 2376,
+          "population_rows": 21088,
+          "routed_positives": 284,
+          "routed_rows": 6960
+        },
+        "pass1": {
+          "population_positives": 2970,
+          "population_rows": 26360,
+          "routed_positives": 400,
+          "routed_rows": 8789
+        },
+        "pass2": {
+          "population_positives": 2577,
+          "population_rows": 17142,
+          "routed_positives": 1835,
+          "routed_rows": 6112
+        }
+      },
+      "fit_status": {
+        "accepted": true,
+        "by_key": {
+          "inner_pass1[0]": "valid_optimal",
+          "inner_pass1[1]": "valid_optimal",
+          "inner_pass1[2]": "valid_optimal",
+          "inner_pass1[3]": "valid_optimal",
+          "inner_pass1[4]": "valid_optimal",
+          "pass1": "valid_optimal",
+          "pass2": "valid_unproven_documented"
+        },
+        "problems": [],
+        "status": "valid_unproven_documented",
+        "status_only": false
+      },
+      "fold": 0,
+      "format": "pr38.stage2.fold_evidence/1",
+      "inner_feature_pathway": {
+        "base_bins_fingerprint": "5ae45f6844a4b15d",
+        "fit_label_fingerprint": "85c06667c5ec",
+        "fit_positives": 2970,
+        "fit_rows": 26360,
+        "inner_folds": [
+          {
+            "bins_fingerprint": "5ee68908463b9681",
+            "fold": 0,
+            "kde_reference_rows_kept": 3994,
+            "labels_excluded": 5272
+          },
+          {
+            "bins_fingerprint": "0904a4d93ff0d2d1",
+            "fold": 1,
+            "kde_reference_rows_kept": 4016,
+            "labels_excluded": 5272
+          },
+          {
+            "bins_fingerprint": "43fe073f449d7ba6",
+            "fold": 2,
+            "kde_reference_rows_kept": 3956,
+            "labels_excluded": 5272
+          },
+          {
+            "bins_fingerprint": "cb1b3414d0e08e16",
+            "fold": 3,
+            "kde_reference_rows_kept": 4003,
+            "labels_excluded": 5272
+          },
+          {
+            "bins_fingerprint": "5a3caec889333e03",
+            "fold": 4,
+            "kde_reference_rows_kept": 4031,
+            "labels_excluded": 5272
+          }
+        ],
+        "kde_reference_rows": 5000,
+        "pathway": "fold_label_excluded",
+        "plan_fingerprint": "413b8241fbe25e9a",
+        "record": [
+          "stage2-inner-fold-feature-isolation",
+          "1.0.0",
+          "0d4953ef34d1d3dc"
+        ]
+      },
+      "inner_fold_rows": [
+        5272,
+        5272,
+        5272,
+        5272,
+        5272
+      ],
+      "inner_ranker_provenance": [
+        {
+          "estimator": "RandomForestClassifier",
+          "feature_order_fingerprint": "bb0e95a96e6ed06f",
+          "fold": 0,
+          "n_train": 21088,
+          "random_state": 42,
+          "train_label_fingerprint": "c99d68d2dec2"
+        },
+        {
+          "estimator": "RandomForestClassifier",
+          "feature_order_fingerprint": "b48e9c5d33c65bed",
+          "fold": 1,
+          "n_train": 21088,
+          "random_state": 42,
+          "train_label_fingerprint": "481dd3f2ac34"
+        },
+        {
+          "estimator": "RandomForestClassifier",
+          "feature_order_fingerprint": "92da66a69d93d231",
+          "fold": 2,
+          "n_train": 21088,
+          "random_state": 42,
+          "train_label_fingerprint": "b57eeea4c461"
+        },
+        {
+          "estimator": "RandomForestClassifier",
+          "feature_order_fingerprint": "d9c3db89b6667bc9",
+          "fold": 3,
+          "n_train": 21088,
+          "random_state": 42,
+          "train_label_fingerprint": "874c4cb83d9c"
+        },
+        {
+          "estimator": "RandomForestClassifier",
+          "feature_order_fingerprint": "2f57447c29a5b227",
+          "fold": 4,
+          "n_train": 21088,
+          "random_state": 42,
+          "train_label_fingerprint": "159982a47fa0"
+        }
+      ],
+      "isolation": {
+        "held_out_rows_in_fit": 0,
+        "inner_features_match_the_fit": true,
+        "inner_rankers_fitted_on_their_inner_train_rows": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "remainder_held_out_rows": 0
+      },
+      "m3_reproduction": {
+        "error": null,
+        "format": "pr38.stage2.m3_reproduction/1",
+        "method": "the identical fit repeated once (same rows, configuration and seed)",
+        "selections": {
+          "pass2": {
+            "rerun": {
+              "lexicographic_guarantee": "UNPROVEN",
+              "selected_rule_ids": [
+                6247,
+                6080
+              ],
+              "source": "ilp",
+              "union_coverage": 6112,
+              "union_good": 1835,
+              "union_rows": 6112
+            }
+          }
+        }
+      },
+      "m6_inner_oof_pass1": {
+        "leakage_share": 0.13232323232323231,
+        "npv": 0.9573660229984813,
+        "population_positives": 2970,
+        "population_rows": 26360,
+        "routed_positives": 393,
+        "routed_rows": 9218
+      },
+      "n_train": 26360,
+      "pass1_rules": [
+        {
+          "precision": 0.9684880992289642,
+          "predicted_class": 0,
+          "rule_id": 5888,
+          "segment": [
+            [
+              "dow_cold",
+              0
+            ],
+            [
+              "eci_warm",
+              1
+            ],
+            [
+              "nsd_cold",
+              1
+            ]
+          ]
+        },
+        {
+          "precision": 0.9634608755601517,
+          "predicted_class": 0,
+          "rule_id": 5804,
+          "segment": [
+            [
+              "cci_hot1",
+              0
+            ],
+            [
+              "dow_cold",
+              1
+            ],
+            [
+              "nsd_elevated",
+              0
+            ]
+          ]
+        },
+        {
+          "precision": 0.9496201519392243,
+          "predicted_class": 0,
+          "rule_id": 5821,
+          "segment": [
+            [
+              "cci_hot2",
+              0
+            ],
+            [
+              "dow_cold",
+              1
+            ],
+            [
+              "nsd_warm",
+              0
+            ]
+          ]
+        },
+        {
+          "precision": 0.9492320819112628,
+          "predicted_class": 0,
+          "rule_id": 5817,
+          "segment": [
+            [
+              "cpi_cellular",
+              0
+            ],
+            [
+              "dow_hot",
+              0
+            ],
+            [
+              "jed_transition",
+              1
+            ]
+          ]
+        }
+      ],
+      "pass2_population": "oof_remainder",
+      "remainder": {
+        "positives": 2577,
+        "prevalence": 0.1503325166258313,
+        "rows": 17142
+      },
+      "rule_ids": {
+        "pass1": [
+          5888,
+          5804,
+          5821,
+          5817
+        ],
+        "pass2": [
+          6247,
+          6080
+        ]
+      },
+      "selection_reports": {
+        "inner_pass1": [
+          {
+            "base_reuse_limit": 40,
+            "candidates_after_gates": 100,
+            "candidates_after_merge": 53,
+            "lexicographic_guarantee": "proven",
+            "max_rules": 8,
+            "min_rules": 2,
+            "n_selected": 4,
+            "novelty_floor": [
+              0.2,
+              1
+            ],
+            "phase1": {
+              "problems": [],
+              "sol_status": 1,
+              "solver_log": {
+                "bound": 8127.0,
+                "bound_basis": "proven_optimal",
+                "gap_abs": 0.0,
+                "gap_rel": 0.0,
+                "objective": 8127.0,
+                "result": "Optimal solution found",
+                "source": "cbc_log"
+              },
+              "state": "proven_optimal",
+              "status": "Optimal"
+            },
+            "phase2": {
+              "problems": [],
+              "sol_status": 1,
+              "solver_log": {
+                "bound": -352.0945819979997,
+                "bound_basis": "proven_optimal",
+                "gap_abs": 0.0,
+                "gap_rel": 0.0,
+                "objective": -352.0945819979997,
+                "result": "Optimal solution found",
+                "source": "cbc_log"
+              },
+              "state": "proven_optimal",
+              "status": "Optimal"
+            },
+            "scoring_mode": "precision_first",
+            "selected_rule_ids": [
+              5799,
+              5873,
+              5803,
+              5686
+            ],
+            "source": "ilp",
+            "union_coverage": 8127,
+            "union_good": 7784,
+            "union_indicators": 32,
+            "union_leakage_cap": 356,
+            "union_objective": "rows",
+            "union_positives": 343,
+            "union_ratio": "NPV",
+            "union_ratio_floor": "19/20",
+            "union_rows": 8127,
+            "union_support_floor": 125,
+            "union_weight": "rows"
+          },
+          {
+            "base_reuse_limit": 40,
+            "candidates_after_gates": 100,
+            "candidates_after_merge": 73,
+            "lexicographic_guarantee": "proven",
+            "max_rules": 8,
+            "min_rules": 2,
+            "n_selected": 3,
+            "novelty_floor": [
+              0.2,
+              1
+            ],
+            "phase1": {
+              "problems": [],
+              "sol_status": 1,
+              "solver_log": {
+                "bound": 7022.0,
+                "bound_basis": "proven_optimal",
+                "gap_abs": 0.0,
+                "gap_rel": 0.0,
+                "objective": 7022.0,
+                "result": "Optimal solution found",
+                "source": "cbc_log"
+              },
+              "state": "proven_optimal",
+              "status": "Optimal"
+            },
+            "phase2": {
+              "problems": [],
+              "sol_status": 1,
+              "solver_log": {
+                "bound": -0.0682124359991576,
+                "bound_basis": "proven_optimal",
+                "gap_abs": 0.0,
+                "gap_rel": 0.0,
+                "objective": -0.0682124359991576,
+                "result": "Optimal solution found",
+                "source": "cbc_log"
+              },
+              "state": "proven_optimal",
+              "status": "Optimal"
+            },
+            "scoring_mode": "precision_first",
+            "selected_rule_ids": [
+              5781,
+              5853,
+              5787
+            ],
+            "source": "ilp",
+            "union_coverage": 7022,
+            "union_good": 6718,
+            "union_indicators": 35,
+            "union_leakage_cap": 356,
+            "union_objective": "rows",
+            "union_positives": 304,
+            "union_ratio": "NPV",
+            "union_ratio_floor": "19/20",
+            "union_rows": 7022,
+            "union_support_floor": 125,
+            "union_weight": "rows"
+          },
+          {
+            "base_reuse_limit": 40,
+            "candidates_after_gates": 100,
+            "candidates_after_merge": 58,
+            "lexicographic_guarantee": "proven",
+            "max_rules": 8,
+            "min_rules": 2,
+            "n_selected": 3,
+            "novelty_floor": [
+              0.2,
+              1
+            ],
+            "phase1": {
+              "problems": [],
+              "sol_status": 1,
+              "solver_log": {
+                "bound": 6959.0,
+                "bound_basis": "proven_optimal",
+                "gap_abs": 0.0,
+                "gap_rel": 0.0,
+                "objective": 6959.0,
+                "result": "Optimal solution found",
+                "source": "cbc_log"
+              },
+              "state": "proven_optimal",
+              "status": "Optimal"
+            },
+            "phase2": {
+              "problems": [],
+              "sol_status": 1,
+              "solver_log": {
+                "bound": -1553.038061665,
+                "bound_basis": "proven_optimal",
+                "gap_abs": 0.0,
+                "gap_rel": 0.0,
+                "objective": -1553.038061665,
+                "result": "Optimal solution found",
+                "source": "cbc_log"
+              },
+              "state": "proven_optimal",
+              "status": "Optimal"
+            },
+            "scoring_mode": "precision_first",
+            "selected_rule_ids": [
+              5908,
+              5738,
+              5689
+            ],
+            "source": "ilp",
+            "union_coverage": 6959,
+            "union_good": 6674,
+            "union_indicators": 23,
+            "union_leakage_cap": 356,
+            "union_objective": "rows",
+            "union_positives": 285,
+            "union_ratio": "NPV",
+            "union_ratio_floor": "19/20",
+            "union_rows": 6959,
+            "union_support_floor": 125,
+            "union_weight": "rows"
+          },
+          {
+            "base_reuse_limit": 40,
+            "candidates_after_gates": 100,
+            "candidates_after_merge": 54,
+            "lexicographic_guarantee": "proven",
+            "max_rules": 8,
+            "min_rules": 2,
+            "n_selected": 4,
+            "novelty_floor": [
+              0.2,
+              1
+            ],
+            "phase1": {
+              "problems": [],
+              "sol_status": 1,
+              "solver_log": {
+                "bound": 7876.0,
+                "bound_basis": "proven_optimal",
+                "gap_abs": 0.0,
+                "gap_rel": 0.0,
+                "objective": 7876.0,
+                "result": "Optimal solution found",
+                "source": "cbc_log"
+              },
+              "state": "proven_optimal",
+              "status": "Optimal"
+            },
+            "phase2": {
+              "problems": [],
+              "sol_status": 1,
+              "solver_log": {
+                "bound": -326.0995379039996,
+                "bound_basis": "proven_optimal",
+                "gap_abs": 0.0,
+                "gap_rel": 0.0,
+                "objective": -326.0995379039996,
+                "result": "Optimal solution found",
+                "source": "cbc_log"
+              },
+              "state": "proven_optimal",
+              "status": "Optimal"
+            },
+            "scoring_mode": "precision_first",
+            "selected_rule_ids": [
+              5698,
+              5872,
+              5800,
+              5684
+            ],
+            "source": "ilp",
+            "union_coverage": 7876,
+            "union_good": 7549,
+            "union_indicators": 33,
+            "union_leakage_cap": 356,
+            "union_objective": "rows",
+            "union_positives": 327,
+            "union_ratio": "NPV",
+            "union_ratio_floor": "19/20",
+            "union_rows": 7876,
+            "union_support_floor": 125,
+            "union_weight": "rows"
+          },
+          {
+            "base_reuse_limit": 40,
+            "candidates_after_gates": 100,
+            "candidates_after_merge": 53,
+            "lexicographic_guarantee": "proven",
+            "max_rules": 8,
+            "min_rules": 2,
+            "n_selected": 3,
+            "novelty_floor": [
+              0.2,
+              1
+            ],
+            "phase1": {
+              "problems": [],
+              "sol_status": 1,
+              "solver_log": {
+                "bound": 6960.0,
+                "bound_basis": "proven_optimal",
+                "gap_abs": 0.0,
+                "gap_rel": 0.0,
+                "objective": 6960.0,
+                "result": "Optimal solution found",
+                "source": "cbc_log"
+              },
+              "state": "proven_optimal",
+              "status": "Optimal"
+            },
+            "phase2": {
+              "problems": [],
+              "sol_status": 1,
+              "solver_log": {
+                "bound": -0.06346538900108101,
+                "bound_basis": "proven_optimal",
+                "gap_abs": 0.0,
+                "gap_rel": 0.0,
+                "objective": -0.06346538900108101,
+                "result": "Optimal solution found",
+                "source": "cbc_log"
+              },
+              "state": "proven_optimal",
+              "status": "Optimal"
+            },
+            "scoring_mode": "precision_first",
+            "selected_rule_ids": [
+              5800,
+              5919,
+              5690
+            ],
+            "source": "ilp",
+            "union_coverage": 6960,
+            "union_good": 6676,
+            "union_indicators": 26,
+            "union_leakage_cap": 356,
+            "union_objective": "rows",
+            "union_positives": 284,
+            "union_ratio": "NPV",
+            "union_ratio_floor": "19/20",
+            "union_rows": 6960,
+            "union_support_floor": 125,
+            "union_weight": "rows"
+          }
+        ],
+        "pass1": {
+          "base_reuse_limit": 40,
+          "candidates_after_gates": 100,
+          "candidates_after_merge": 58,
+          "lexicographic_guarantee": "proven",
+          "max_rules": 8,
+          "min_rules": 2,
+          "n_selected": 4,
+          "novelty_floor": [
+            0.2,
+            1
+          ],
+          "phase1": {
+            "problems": [],
+            "sol_status": 1,
+            "solver_log": {
+              "bound": 8789.0,
+              "bound_basis": "proven_optimal",
+              "gap_abs": 0.0,
+              "gap_rel": 0.0,
+              "objective": 8789.0,
+              "result": "Optimal solution found",
+              "source": "cbc_log"
+            },
+            "state": "proven_optimal",
+            "status": "Optimal"
+          },
+          "phase2": {
+            "problems": [],
+            "sol_status": 1,
+            "solver_log": {
+              "bound": -1940.094563728,
+              "bound_basis": "proven_optimal",
+              "gap_abs": 0.0,
+              "gap_rel": 0.0,
+              "objective": -1940.094563728,
+              "result": "Optimal solution found",
+              "source": "cbc_log"
+            },
+            "state": "proven_optimal",
+            "status": "Optimal"
+          },
+          "scoring_mode": "precision_first",
+          "selected_rule_ids": [
+            5888,
+            5804,
+            5821,
+            5817
+          ],
+          "source": "ilp",
+          "union_coverage": 8789,
+          "union_good": 8389,
+          "union_indicators": 45,
+          "union_leakage_cap": 445,
+          "union_objective": "rows",
+          "union_positives": 400,
+          "union_ratio": "NPV",
+          "union_ratio_floor": "19/20",
+          "union_rows": 8789,
+          "union_support_floor": 125,
+          "union_weight": "rows"
+        },
+        "pass2": {
+          "base_reuse_limit": 40,
+          "candidates_after_gates": 100,
+          "candidates_after_merge": 99,
+          "lexicographic_guarantee": "UNPROVEN",
+          "max_rules": 8,
+          "min_rules": 2,
+          "n_selected": 2,
+          "novelty_floor": [
+            0.25,
+            1
+          ],
+          "phase1": {
+            "problems": [],
+            "sol_status": 2,
+            "solver_log": {
+              "bound": 8285.6039,
+              "bound_basis": "search",
+              "gap_abs": 2173.6039,
+              "gap_rel": 0.35562891034031413,
+              "objective": 6112.0,
+              "result": "Stopped on time limit",
+              "source": "cbc_log"
+            },
+            "state": "feasible_unproven",
+            "status": "Optimal"
+          },
+          "phase2": {
+            "problems": [],
+            "sol_status": 1,
+            "solver_log": {
+              "bound": -0.06245914300052391,
+              "bound_basis": "proven_optimal",
+              "gap_abs": 0.0,
+              "gap_rel": 0.0,
+              "objective": -0.06245914300052391,
+              "result": "Optimal solution found",
+              "source": "cbc_log"
+            },
+            "state": "proven_optimal",
+            "status": "Optimal"
+          },
+          "scoring_mode": "recall_first",
+          "selected_rule_ids": [
+            6247,
+            6080
+          ],
+          "source": "ilp",
+          "union_coverage": 6112,
+          "union_good": 1835,
+          "union_indicators": 259,
+          "union_leakage_cap": null,
+          "union_objective": "rows",
+          "union_positives": 1835,
+          "union_ratio": "precision",
+          "union_ratio_floor": "3/10",
+          "union_rows": 6112,
+          "union_support_floor": 75,
+          "union_weight": "rows"
+        }
+      },
+      "train_label_fingerprint": "85c06667c5ec",
+      "train_positives": 2970,
+      "wall_seconds": 1000.1
+    }
+  },
+  "feature_pathway": {
+    "pathway": "fold_label_excluded",
+    "record": [
+      "stage2-inner-fold-feature-isolation",
+      "1.0.0",
+      "0d4953ef34d1d3dc"
+    ]
+  },
+  "fold": 0,
+  "format": "pr38.stage2.g3_preflight/3",
+  "g3": {
+    "arms": {
+      "blackbox": {
+        "checks": {
+          "every_selection_recorded": true,
+          "f31_strip_review": {
+            "basis": "provisional: the fold router's inner-OOF Pass 2 band; the frozen protocol's outer-OOF wording is unresolved until the owner approves pr38-stage2-evaluation-f31-r2-clarification 1.0.0",
+            "share": 0.0,
+            "status": "below_trigger"
+          },
+          "fit_status": "valid_optimal",
+          "fit_status_accepted": true,
+          "isolation_clean": true,
+          "no_stop": true,
+          "r1_supports_at_or_above_floors": true,
+          "r2_strips_recorded": true,
+          "remainder_at_least_min_with_both_classes": true
+        },
+        "feasible": true,
+        "feature_pathway": "fold_label_excluded",
+        "fit_status_accepted": true,
+        "note": null,
+        "passed": true,
+        "reviews_required": []
+      },
+      "glass": {
+        "checks": {
+          "every_selection_recorded": true,
+          "fit_status": "valid_unproven_documented",
+          "fit_status_accepted": true,
+          "isolation_clean": true,
+          "no_stop": true,
+          "remainder_at_least_min_with_both_classes": true
+        },
+        "feasible": true,
+        "feature_pathway": "fold_label_excluded",
+        "fit_status_accepted": true,
+        "note": null,
+        "passed": true,
+        "reviews_required": []
+      }
+    },
+    "authorizable": true,
+    "feasible": true,
+    "passed": true,
+    "reviews_required": []
+  },
+  "population": {
+    "checks": {
+      "fold_fingerprint": {
+        "got": "8aea082fcaf371b7",
+        "passed": true,
+        "pinned": "8aea082fcaf371b7"
+      },
+      "fold_positives": {
+        "got": [
+          742,
+          742,
+          742,
+          743,
+          743
+        ],
+        "passed": true,
+        "pinned": [
+          742,
+          742,
+          742,
+          743,
+          743
+        ]
+      },
+      "fold_rows": {
+        "got": [
+          6590,
+          6590,
+          6590,
+          6590,
+          6590
+        ],
+        "passed": true,
+        "pinned": [
+          6590,
+          6590,
+          6590,
+          6590,
+          6590
+        ]
+      },
+      "positives": {
+        "got": 3712,
+        "passed": true,
+        "pinned": 3712
+      },
+      "router_split_fingerprint": {
+        "got": "fc3e73a5ef91aea4",
+        "passed": true,
+        "pinned": "fc3e73a5ef91aea4"
+      },
+      "rows": {
+        "got": 32950,
+        "passed": true,
+        "pinned": 32950
+      },
+      "train_label_fingerprint": {
+        "got": "b984d2a50527",
+        "passed": true,
+        "pinned": "b984d2a50527"
+      }
+    },
+    "passed": true
+  },
+  "run_id": "c3_20261112_153333"
+}

@@ -1,0 +1,61 @@
+package,table,reference,arm,model,score_space,set,fold,operating_point,threshold,selection,fold_plan,flags,tp,fp,flag_rate,precision,precision_status,target_count,selected_rows,cut_value,exact,tie_block,strict_count,inclusive_count,tie_broken_rows,n,positives,positive_rate,positive_rate_status,overlap_with_router,jaccard_with_router,score,label
+complementarity_v1,diagnostics/reference_flags,lr,,,calibrated_probability,,,lr.in_stage_f2_cv,0.1,"global: one value selected using the labels of ALL training rows, then applied back to those rows' out-of-fold scores (selection-dependent; disclose)","10 folds, not the routers' 5; router-fold values group this reference's out-of-fold flags by the routers' partition",7727,2421,5306,0.234506828528,0.313316940598,defined,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/reference_flags,ebm,,,raw_model_score,,,ebm.nested_f2,,fold-nested: each fold's threshold selected on inner out-of-fold scores of that fold's training rows; the fold's own labels never reach it,same as the routers' outer folds,6113,2307,3806,0.185523520486,0.377392442336,defined,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/reference_flags,union,,,,,,(lr.in_stage_f2_cv or ebm.nested_f2),,"global: one value selected using the labels of ALL training rows, then applied back to those rows' out-of-fold scores (selection-dependent; disclose); fold-nested: each fold's threshold selected on inner out-of-fold scores of that fold's training rows; the fold's own labels never reach it","combination of lr.in_stage_f2_cv, ebm.nested_f2 (see the component fold plans)",8001,2477,5524,0.24282245827,0.309586301712,defined,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/reference_flags,intersection,,,,,,(lr.in_stage_f2_cv and ebm.nested_f2),,"global: one value selected using the labels of ALL training rows, then applied back to those rows' out-of-fold scores (selection-dependent; disclose); fold-nested: each fold's threshold selected on inner out-of-fold scores of that fold's training rows; the fold's own labels never reach it","combination of lr.in_stage_f2_cv, ebm.nested_f2 (see the component fold plans)",5839,2251,3588,0.177207890744,0.385511217674,defined,,,,,,,,,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,lr_matched,glass,lr,calibrated_probability,,0,,,,,,,,,,,1528,1528,0.0959367945824,false,78,1465,1543,63,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,lr_matched,glass,lr,calibrated_probability,,1,,,,,,,,,,,1368,1368,0.141126158232,false,144,1318,1462,50,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,lr_matched,glass,lr,calibrated_probability,,2,,,,,,,,,,,1150,1150,0.202040816327,false,148,1045,1193,105,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,lr_matched,glass,lr,calibrated_probability,,3,,,,,,,,,,,1375,1375,0.136090727151,false,157,1300,1457,75,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,lr_matched,glass,lr,calibrated_probability,,4,,,,,,,,,,,1239,1239,0.140972222222,false,94,1147,1241,92,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,ebm_matched,glass,ebm,raw_model_score,,0,,,,,,,,,,,1528,1528,0.42545347489,true,1,1528,1528,0,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,ebm_matched,glass,ebm,raw_model_score,,1,,,,,,,,,,,1368,1368,0.469767966681,true,2,1368,1368,0,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,ebm_matched,glass,ebm,raw_model_score,,2,,,,,,,,,,,1150,1150,0.550069742754,true,1,1150,1150,0,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,ebm_matched,glass,ebm,raw_model_score,,3,,,,,,,,,,,1375,1375,0.457516448833,true,1,1375,1375,0,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,ebm_matched,glass,ebm,raw_model_score,,4,,,,,,,,,,,1239,1239,0.479625909654,true,1,1239,1239,0,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,lr_matched,blackbox,lr,calibrated_probability,,0,,,,,,,,,,,1519,1519,0.0959367945824,false,78,1465,1543,54,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,lr_matched,blackbox,lr,calibrated_probability,,1,,,,,,,,,,,1555,1555,0.0916530278232,false,140,1462,1602,93,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,lr_matched,blackbox,lr,calibrated_probability,,2,,,,,,,,,,,1597,1597,0.0735502121641,false,85,1589,1674,8,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,lr_matched,blackbox,lr,calibrated_probability,,3,,,,,,,,,,,1568,1568,0.0919540229885,false,132,1540,1672,28,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,lr_matched,blackbox,lr,calibrated_probability,,4,,,,,,,,,,,1429,1429,0.0948012232416,false,112,1392,1504,37,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,ebm_matched,blackbox,ebm,raw_model_score,,0,,,,,,,,,,,1519,1519,0.427508039384,true,1,1519,1519,0,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,ebm_matched,blackbox,ebm,raw_model_score,,1,,,,,,,,,,,1555,1555,0.427728254286,true,2,1555,1555,0,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,ebm_matched,blackbox,ebm,raw_model_score,,2,,,,,,,,,,,1597,1597,0.417426789841,false,2,1596,1598,1,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,ebm_matched,blackbox,ebm,raw_model_score,,3,,,,,,,,,,,1568,1568,0.417867042129,true,1,1568,1568,0,,,,,,,,
+complementarity_v1,diagnostics/matched_selection,ebm_matched,blackbox,ebm,raw_model_score,,4,,,,,,,,,,,1429,1429,0.425181230958,true,1,1429,1429,0,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,lr_matched,glass,lr,calibrated_probability,,0,,,,,,,,,,,985,985,0.201365187713,false,164,847,1011,138,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,lr_matched,glass,lr,calibrated_probability,,1,,,,,,,,,,,1039,1039,0.208044382802,false,158,883,1041,156,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,lr_matched,glass,lr,calibrated_probability,,2,,,,,,,,,,,1148,1148,0.202040816327,false,148,1045,1193,103,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,lr_matched,glass,lr,calibrated_probability,,3,,,,,,,,,,,1316,1316,0.136090727151,false,157,1300,1457,16,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,lr_matched,glass,lr,calibrated_probability,,4,,,,,,,,,,,934,934,0.207586206897,false,146,834,980,100,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,ebm_matched,glass,ebm,raw_model_score,,0,,,,,,,,,,,985,985,0.638147610072,true,1,985,985,0,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,ebm_matched,glass,ebm,raw_model_score,,1,,,,,,,,,,,1039,1039,0.58255431421,true,1,1039,1039,0,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,ebm_matched,glass,ebm,raw_model_score,,2,,,,,,,,,,,1148,1148,0.550548740753,true,1,1148,1148,0,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,ebm_matched,glass,ebm,raw_model_score,,3,,,,,,,,,,,1316,1316,0.479025407748,true,1,1316,1316,0,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,ebm_matched,glass,ebm,raw_model_score,,4,,,,,,,,,,,934,934,0.6280404321,true,1,934,934,0,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,lr_matched,blackbox,lr,calibrated_probability,,0,,,,,,,,,,,1519,1519,0.0959367945824,false,78,1465,1543,54,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,lr_matched,blackbox,lr,calibrated_probability,,1,,,,,,,,,,,1555,1555,0.0916530278232,false,140,1462,1602,93,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,lr_matched,blackbox,lr,calibrated_probability,,2,,,,,,,,,,,1597,1597,0.0735502121641,false,85,1589,1674,8,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,lr_matched,blackbox,lr,calibrated_probability,,3,,,,,,,,,,,1568,1568,0.0919540229885,false,132,1540,1672,28,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,lr_matched,blackbox,lr,calibrated_probability,,4,,,,,,,,,,,1429,1429,0.0948012232416,false,112,1392,1504,37,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,ebm_matched,blackbox,ebm,raw_model_score,,0,,,,,,,,,,,1519,1519,0.427508039384,true,1,1519,1519,0,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,ebm_matched,blackbox,ebm,raw_model_score,,1,,,,,,,,,,,1555,1555,0.427728254286,true,2,1555,1555,0,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,ebm_matched,blackbox,ebm,raw_model_score,,2,,,,,,,,,,,1597,1597,0.417426789841,false,2,1596,1598,1,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,ebm_matched,blackbox,ebm,raw_model_score,,3,,,,,,,,,,,1568,1568,0.417867042129,true,1,1568,1568,0,,,,,,,,
+s1_sensitivity_v1,diagnostics/matched_selection,ebm_matched,blackbox,ebm,raw_model_score,,4,,,,,,,,,,,1429,1429,0.425181230958,true,1,1429,1429,0,,,,,,,,
+complementarity_v1,pass1_matched_lr,,glass,,,router,all,,,,,,,,,,,,,,,,,,,11659,543,0.0465734625611,defined,1,1,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,glass,,,cut_strict,all,,,,,,,,,,,,,,,,,,,8081,296,0.0366291300582,defined,0.804603390669,0.491161806919,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,glass,,,cut_inclusive,all,,,,,,,,,,,,,,,,,,,12716,561,0.0441176470588,defined,0.594841145014,0.449943489382,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,glass,,,cut_bounds,0,,,,,,,,,,,2169,,0.0536796536797,false,810,1438,2248,,,,,,,,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,glass,,,cut_bounds,1,,,,,,,,,,,2133,,0.0512183468705,false,1154,1305,2459,,,,,,,,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,glass,,,cut_bounds,2,,,,,,,,,,,2559,,0.0519750519751,false,1381,1242,2623,,,,,,,,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,glass,,,cut_bounds,3,,,,,,,,,,,2446,,0.0538922155689,false,314,2410,2724,,,,,,,,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,glass,,,cut_bounds,4,,,,,,,,,,,2352,,0.0518681828731,false,976,1686,2662,,,,,,,,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,blackbox,,,router,all,,,,,,,,,,,,,,,,,,,13842,562,0.0406010692097,defined,1,1,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,blackbox,,,cut_strict,all,,,,,,,,,,,,,,,,,,,12479,545,0.0436733712637,defined,0.736357079894,0.536364697642,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,blackbox,,,cut_inclusive,all,,,,,,,,,,,,,,,,,,,16461,746,0.0453192394144,defined,0.683251321305,0.590207808564,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,blackbox,,,cut_bounds,0,,,,,,,,,,,3071,,0.0537557485948,false,1205,2248,3453,,,,,,,,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,blackbox,,,cut_bounds,1,,,,,,,,,,,2517,,0.0517482517483,false,118,2459,2577,,,,,,,,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,blackbox,,,cut_bounds,2,,,,,,,,,,,2809,,0.0533468001102,false,1220,2625,3845,,,,,,,,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,blackbox,,,cut_bounds,3,,,,,,,,,,,2578,,0.0538922155689,false,314,2410,2724,,,,,,,,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"
+complementarity_v1,pass1_matched_lr,,blackbox,,,cut_bounds,4,,,,,,,,,,,2867,,0.0541679205537,false,1125,2737,3862,,,,,,,,lr.calibrated_probability,"descriptive matched-budget comparison, not a deployable threshold"

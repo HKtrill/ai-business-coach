@@ -1,0 +1,1214 @@
+{
+  "format": "pr38.stage2.complementarity/1",
+  "package": "complementarity_v1",
+  "scope": "PR 38 Commit 3 Step 3B: comparative analysis of the accepted corrected primary's training-side outer-OOF routes (protocol sections 3-12)",
+  "identities": {
+    "run": {
+      "run_id": "c3_20261112_153333",
+      "role": "primary",
+      "feature_pathway": {
+        "pathway": "fold_label_excluded",
+        "record": [
+          "stage2-inner-fold-feature-isolation",
+          "1.0.0",
+          "0d4953ef34d1d3dc"
+        ]
+      }
+    },
+    "structural_acceptance": {
+      "file": "structural_acceptance.json",
+      "sha256": "91612167dd2582788abcb37d04885bd5507a93844514b4989cc929556821aa1a",
+      "record_digest": "e101fb6214d4776dccaaec5821199f93ad0183be6d5995dd9dc1189cb3ab682c",
+      "accepted": true,
+      "official": true,
+      "re_verified_by": "stage2_crossfit.acceptance.require_accepted"
+    },
+    "candidate": {
+      "manifest_sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88",
+      "artifacts": {
+        "glass": {
+          "path": "glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+          "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+        },
+        "blackbox": {
+          "path": "rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+          "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+        }
+      }
+    },
+    "protocol": {
+      "id": "pr38-stage2-evaluation",
+      "version": "1.0.0",
+      "fingerprint": "245a1a68fb68cf4e",
+      "pinned_frozen": true
+    },
+    "contract": {
+      "id": "pr37-stage2-primary",
+      "fingerprint": "0817825b9eecbd11"
+    },
+    "population": {
+      "checks": 10,
+      "passed": true,
+      "complete": true,
+      "rows": 32950,
+      "positives": 3712
+    },
+    "upstream": {
+      "lr": {
+        "role": "stage1.lr",
+        "path": "models/lr/lr_calibrated_20261023_003319.joblib",
+        "sha256": "61a6b144b625e7a5028a151860d55ff86c08c3a0c9ef68ab1be73c0fbc995759"
+      },
+      "ebm": {
+        "role": "stage3.ebm",
+        "path": "models/ebm/ebm_stage3_20261023_070053_780762.joblib",
+        "sha256": "cfdac6d206d737909f3b3ba2efc3eec48de7ae2b98f42f7c478b3e01da77f55b"
+      },
+      "combination": "or",
+      "reference": "(lr.in_stage_f2_cv or ebm.nested_f2)",
+      "reference_fingerprint": "6bdb80c0a0f647e5",
+      "identity_checks": 22,
+      "identity_complete": true
+    },
+    "baseline": {
+      "id": "pr37_stage2_pre_correction_v1",
+      "manifest_sha256": "905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b",
+      "rebuild": "identical",
+      "code_changes": [],
+      "historical_artifacts": {
+        "glass": {
+          "role": "stage2.glass_router",
+          "path": "models/glass_router/glass_router_20261023_025611.joblib",
+          "sha256": "2c70879bfe04f2adb320d55a3d735a1b1d08cd0e4821621a7a5075ad89fa2fa8"
+        },
+        "blackbox": {
+          "role": "stage2.rf_router",
+          "path": "models/rf_router/rf_router_two_pass.joblib",
+          "sha256": "5204a2d6732352ab06b2518e0285cd099643ea91d03c79810d784c3f38d75fb2"
+        }
+      },
+      "snapshot": {
+        "label": "pr36_regen_2026-10-23/SHA256SUMS.txt",
+        "sha256": "e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a",
+        "entries": 37
+      }
+    },
+    "evidence_tiers": {
+      "pr38_corrected_outer_oof": "tier2",
+      "pr37_stage2_pre_correction_v1": "tier1"
+    }
+  },
+  "inputs": [
+    "corrected_outer_oof_routes",
+    "training_labels",
+    "outer_fold_ids",
+    "frozen_upstream_oof_flags",
+    "frozen_upstream_oof_scores",
+    "pre_correction_outer_oof_routes",
+    "fit_time_selection_records",
+    "fit_time_fold_evidence",
+    "pre_correction_baseline_tables"
+  ],
+  "bootstrap": {
+    "cross_arm": {
+      "digest": "79d1f5d1fed2efef087c8eb699d29bec7db5f6e41ea219440397c92859ba3697",
+      "verified": true,
+      "provenance": {
+        "procedure_id": "pr38.stage2.stratified_paired_bootstrap/1",
+        "replicates": 2000,
+        "seed": 42,
+        "level": 0.95,
+        "strata": [
+          "outer_fold",
+          "label"
+        ],
+        "interval": "percentile",
+        "quantile_method": "linear",
+        "protocol_id": "pr38-stage2-evaluation",
+        "protocol_version": "1.0.0",
+        "protocol_fingerprint": "245a1a68fb68cf4e",
+        "kind": "cross_arm",
+        "names": [
+          "glass",
+          "blackbox"
+        ],
+        "rows": 32950,
+        "metrics": [
+          "pass1_rate",
+          "pass2_rate",
+          "pass1_npv",
+          "pass1_leakage_share",
+          "pass2_precision",
+          "unique_tp",
+          "unique_fp",
+          "pass1_fp_suppression",
+          "pass1_tp_cost",
+          "coverage",
+          "abstain_rate"
+        ],
+        "reference": "(lr.in_stage_f2_cv or ebm.nested_f2)",
+        "reference_fingerprint": "6bdb80c0a0f647e5",
+        "data_digest": "e1d3f4eba61e478f61b1ca545376112c9c62bd183fe4c4860d3a7c1c193488d6"
+      }
+    },
+    "pre_post_glass": {
+      "digest": "a9a372571a26b531d96bb5d2749ef5419837695e32388e694eb6c2d121f74f6a",
+      "verified": true,
+      "provenance": {
+        "procedure_id": "pr38.stage2.stratified_paired_bootstrap/1",
+        "replicates": 2000,
+        "seed": 42,
+        "level": 0.95,
+        "strata": [
+          "outer_fold",
+          "label"
+        ],
+        "interval": "percentile",
+        "quantile_method": "linear",
+        "protocol_id": "pr38-stage2-evaluation",
+        "protocol_version": "1.0.0",
+        "protocol_fingerprint": "245a1a68fb68cf4e",
+        "kind": "pre_post",
+        "names": [
+          "pre",
+          "post"
+        ],
+        "rows": 32950,
+        "metrics": [
+          "pass1_rate",
+          "pass2_rate",
+          "coverage",
+          "abstain_rate",
+          "pass1_npv",
+          "pass1_leakage_share",
+          "pass2_precision",
+          "pass2_recall",
+          "pass2_recall_eligible",
+          "unique_tp",
+          "pass1_fp_suppression"
+        ],
+        "reference": "(lr.in_stage_f2_cv or ebm.nested_f2)",
+        "reference_fingerprint": "6bdb80c0a0f647e5",
+        "data_digest": "8f7912be2f4252297babf41388da414535ffd5c4954f1571fec4d5b531a8c291"
+      }
+    },
+    "pre_post_blackbox": {
+      "digest": "031abb281ded075e8c06e75fdd2ca5ea97ef1c007ac5b56a990779f6bb02cc3e",
+      "verified": true,
+      "provenance": {
+        "procedure_id": "pr38.stage2.stratified_paired_bootstrap/1",
+        "replicates": 2000,
+        "seed": 42,
+        "level": 0.95,
+        "strata": [
+          "outer_fold",
+          "label"
+        ],
+        "interval": "percentile",
+        "quantile_method": "linear",
+        "protocol_id": "pr38-stage2-evaluation",
+        "protocol_version": "1.0.0",
+        "protocol_fingerprint": "245a1a68fb68cf4e",
+        "kind": "pre_post",
+        "names": [
+          "pre",
+          "post"
+        ],
+        "rows": 32950,
+        "metrics": [
+          "pass1_rate",
+          "pass2_rate",
+          "coverage",
+          "abstain_rate",
+          "pass1_npv",
+          "pass1_leakage_share",
+          "pass2_precision",
+          "pass2_recall",
+          "pass2_recall_eligible",
+          "unique_tp",
+          "pass1_fp_suppression"
+        ],
+        "reference": "(lr.in_stage_f2_cv or ebm.nested_f2)",
+        "reference_fingerprint": "6bdb80c0a0f647e5",
+        "data_digest": "bf2eee5480f8e2f9e3e511dca41b6aceed1a95b2b915e49dbb180881634089f9"
+      }
+    }
+  },
+  "layers": {
+    "1_implementation_correctness": {
+      "trace_checks": {
+        "total": 39,
+        "passed": 39
+      },
+      "accounting_all_exclusive_exhaustive_reconciled": true,
+      "alignment_checks_passed": 23,
+      "policy_audit_status": {
+        "blackbox": {
+          "declared": 1,
+          "not_verifiable": 6,
+          "verified_from_artifacts": 1
+        },
+        "glass": {
+          "code_level_only": 3,
+          "declared": 1,
+          "not_verifiable": 3,
+          "verified_from_artifacts": 1
+        }
+      },
+      "tables": [
+        "trace_checks",
+        "accounting",
+        "alignment",
+        "diagnostics/policy_audit",
+        "diagnostics/signal_availability"
+      ]
+    },
+    "2_fit_time_feasibility_and_acceptance": {
+      "structural_acceptance": {
+        "file": "structural_acceptance.json",
+        "sha256": "91612167dd2582788abcb37d04885bd5507a93844514b4989cc929556821aa1a",
+        "record_digest": "e101fb6214d4776dccaaec5821199f93ad0183be6d5995dd9dc1189cb3ab682c",
+        "accepted": true,
+        "official": true,
+        "re_verified_by": "stage2_crossfit.acceptance.require_accepted"
+      },
+      "accepted_folds": {
+        "glass": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "blackbox": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "fit_time_obligations_satisfied": true,
+      "tables": [
+        "fold_ledger",
+        "fold_ledger_summary",
+        "fit_time_obligations",
+        "solver_outcomes",
+        "f31_r2_strips"
+      ]
+    },
+    "3_observed_outer_oof_compliance": {
+      "blackbox/per_fold": {
+        "observed_status": {
+          "satisfied": 11,
+          "violated": 4
+        },
+        "material": 1,
+        "low_support": 0
+      },
+      "blackbox/pooled": {
+        "observed_status": {
+          "satisfied": 1,
+          "violated": 2
+        },
+        "material": 0,
+        "low_support": 0
+      },
+      "glass/per_fold": {
+        "observed_status": {
+          "satisfied": 7,
+          "violated": 8
+        },
+        "material": 0,
+        "low_support": 0
+      },
+      "glass/pooled": {
+        "observed_status": {
+          "satisfied": 3
+        },
+        "material": 0,
+        "low_support": 0
+      },
+      "tables": [
+        "shortfalls"
+      ]
+    },
+    "4_empirical_performance_and_complementarity": {
+      "statement_rule": "Per primary outcome, in the order O1, O2, O3, O4: report GLASS, RF and the paired difference GLASS - RF, pooled and per fold. Call a difference higher or lower only when its 95% stratified paired bootstrap interval excludes 0; otherwise report it as not resolved at this sample. No weighted or aggregate score and no overall winner. O2 is read with O1, and O3 qualifies O1 and O2.",
+      "overall_verdict": "none: no weighted score and no overall winner (D-C1)",
+      "tables": [
+        "primary_outcomes",
+        "primary_outcomes_by_fold",
+        "metric_table",
+        "fold_dispersion",
+        "class_conditional",
+        "pass1_matched_lr",
+        "pre_post_transitions",
+        "pre_post_metrics",
+        "pre_post_uncertainty",
+        "pre_post_by_fold",
+        "pre_post_states",
+        "pre_post_ratios",
+        "f31_r3_optimism",
+        "m6_inner_oof_pass1"
+      ]
+    }
+  },
+  "comparative_sections": {
+    "primary_outcomes": [
+      "tables/primary_outcomes.csv",
+      "tables/primary_outcomes_by_fold.csv"
+    ],
+    "secondary_diagnostics": [
+      "tables/metric_table.csv",
+      "tables/class_conditional.csv",
+      "tables/pass1_matched_lr.csv",
+      "tables/diagnostics/states.csv",
+      "tables/diagnostics/ratios.csv",
+      "tables/diagnostics/reference_flags.csv",
+      "tables/diagnostics/common_population.csv",
+      "tables/diagnostics/contingency.csv",
+      "tables/diagnostics/crosstab.csv",
+      "tables/diagnostics/pass2_cross_router.csv",
+      "tables/diagnostics/score_conditional.csv",
+      "tables/diagnostics/stratum_contrasts.csv",
+      "tables/diagnostics/observed_expected.csv",
+      "tables/diagnostics/model_disagreement.csv",
+      "tables/m6_inner_oof_pass1.csv"
+    ],
+    "fold_variation": [
+      "tables/fold_dispersion.csv",
+      "tables/primary_outcomes_by_fold.csv"
+    ],
+    "shortfalls": [
+      "tables/shortfalls.csv"
+    ],
+    "unique_contribution": [
+      "tables/primary_outcomes.csv",
+      "tables/diagnostics/ratios.csv",
+      "tables/diagnostics/pass2_breakdown.csv",
+      "tables/diagnostics/chance_baselines.csv"
+    ],
+    "matched_budget": [
+      "tables/diagnostics/matched_selection.csv",
+      "tables/diagnostics/ratios.csv",
+      "tables/pass1_matched_lr.csv"
+    ],
+    "pre_post": [
+      "tables/pre_post_transitions.csv",
+      "tables/pre_post_metrics.csv",
+      "tables/pre_post_uncertainty.csv",
+      "tables/pre_post_by_fold.csv",
+      "tables/pre_post_states.csv",
+      "tables/pre_post_ratios.csv"
+    ],
+    "uncertainty": [
+      "tables/primary_outcomes.csv",
+      "tables/pre_post_uncertainty.csv"
+    ],
+    "fold_ledger": [
+      "tables/fold_ledger.csv",
+      "tables/fold_ledger_summary.csv"
+    ],
+    "solver_outcomes": [
+      "tables/solver_outcomes.csv",
+      "tables/fit_time_obligations.csv"
+    ]
+  },
+  "comparative_section_gaps": {
+    "declared_sensitivities": "pending: Step 3C (S1, F17 sensitivity); not run"
+  },
+  "not_recomputed": {
+    "diagnostics/validation": "needs the historical source records"
+  },
+  "disclosures": [
+    "Evidence tier 2 (pr38_corrected_outer_oof); the pre-correction baseline is tier 1. The Bank Marketing held-out test split was exposed in PRs 33-36: no test label, test prediction or test-derived threshold is read here.",
+    "Pre/post differences are a COMBINED correction (GLASS selector, shared contract, F17 populations, nested rankers); no single component is attributed (protocol section 8). Only S1 (Step 3C) isolates the GLASS population policy.",
+    "Known asymmetries: pre GLASS fitted Pass 2 on 'full'; pre RF used match_glass_oof constraints and global_t1; the common eligible population changes when either Pass 1 changes, so matched-budget populations differ before and after; the historical GLASS confidence is in-sample rule precision.",
+    "Pre/post differences are pre - post (the registered procedure's order); cross-arm differences are GLASS - RF.",
+    "Intervals: stratified paired bootstrap (fold x label), conditional on the fitted routers and the frozen upstream flags; evaluation-row sampling only. No multiplicity adjustment is pre-registered. No interval establishes contract compliance.",
+    "The five outer folds are not independent replications: per-fold values, minimum, maximum and range only.",
+    "Matched-budget results are descriptive, not a deployable threshold; each arm is matched at its own budget, so cross-arm budget equality is not achieved by this family.",
+    "RF Router confidence is a heuristic blend (F31 Disposition A), not a calibrated probability. R2 strips use the fold router's inner-OOF band (the provisional basis of the F31 R2 clarification); R3 optimism gaps are reported, never used to tune.",
+    "Routing-policy claims keep their evidence status: GLASS Pass 1 precedence and Pass 2 eligibility are code_level_only; the corrected RF decision-time claims are not_verifiable because no outer Pass 1 score or GLASS-arm RF result is persisted.",
+    "Statements follow D-C1 only: higher / lower when the 95% paired interval excludes 0, otherwise not resolved at this sample. No weighted score and no overall winner.",
+    "Outer-OOF observations never revise the contract, re-estimate bands or relabel a violation (protocol section 11); fit status and observation are separate columns."
+  ],
+  "outputs": {
+    "tables/accounting.csv": {
+      "sha256": "edc56d163ca4ca9a3599d25a981aac3f6083dd1f890040e815220d6de491a297",
+      "bytes": 1950,
+      "rows": 24,
+      "columns": [
+        "routing",
+        "fold",
+        "rows",
+        "positives",
+        "pass1_rows",
+        "pass1_positives",
+        "pass2_rows",
+        "pass2_positives",
+        "abstain_rows",
+        "abstain_positives",
+        "overlapping_rows",
+        "unassigned_rows",
+        "exclusive",
+        "exhaustive",
+        "reconciles_with_routing_counts"
+      ]
+    },
+    "tables/alignment.csv": {
+      "sha256": "91e8e9f7422999128fde5bdc24fee1458baaf7a44096c61d5327a7a6195d80ef",
+      "bytes": 2369,
+      "rows": 23,
+      "columns": [
+        "check",
+        "arm",
+        "fold",
+        "passed",
+        "detail"
+      ]
+    },
+    "tables/class_conditional.csv": {
+      "sha256": "5294c47da034fd7940eff25f5649d3b48d8df51f1f4beb0e8f7500300b5649bc",
+      "bytes": 3197,
+      "rows": 36,
+      "columns": [
+        "state",
+        "rows",
+        "positives",
+        "negatives",
+        "share_of_positives",
+        "share_of_positives_status",
+        "share_of_negatives",
+        "share_of_negatives_status",
+        "routing",
+        "fold"
+      ]
+    },
+    "tables/diagnostics/chance_baselines.csv": {
+      "sha256": "46644b92cb4661684134c368333746ed186a17fe90e2101cc1d412b38c5c5e81",
+      "bytes": 8986,
+      "rows": 96,
+      "columns": [
+        "setting",
+        "arm",
+        "reference",
+        "fold",
+        "flags",
+        "pool_rows",
+        "pool_positives",
+        "pool_rate",
+        "expected_positives",
+        "observed_positives",
+        "excess_positives"
+      ]
+    },
+    "tables/diagnostics/common_population.csv": {
+      "sha256": "9cd388bea9f69d2dc4a25b518d199ea89ce2552cfd35ad86172864a0d469570d",
+      "bytes": 463,
+      "rows": 6,
+      "columns": [
+        "fold",
+        "rows",
+        "positives",
+        "glass_remainder_rows",
+        "rf_remainder_rows",
+        "common_rows",
+        "common_positives",
+        "glass_pass2_in_common",
+        "rf_pass2_in_common",
+        "glass_pass2_outside_common",
+        "rf_pass2_outside_common"
+      ]
+    },
+    "tables/diagnostics/contingency.csv": {
+      "sha256": "3e08853287c05cc932a331e3a251960c09201404549021ed48a360f33cf03345",
+      "bytes": 14174,
+      "rows": 288,
+      "columns": [
+        "arm",
+        "reference",
+        "fold",
+        "state",
+        "reference_flag",
+        "n",
+        "positives",
+        "negatives"
+      ]
+    },
+    "tables/diagnostics/crosstab.csv": {
+      "sha256": "08d800665234561859ac7390243790a9c534bcfdf448f91ebe90185230dca54c",
+      "bytes": 5838,
+      "rows": 54,
+      "columns": [
+        "fold",
+        "glass_state",
+        "rf_state",
+        "n",
+        "positives",
+        "negatives",
+        "positive_rate",
+        "positive_rate_status",
+        "share",
+        "lr_flags",
+        "lr_flagged_positives",
+        "ebm_flags",
+        "ebm_flagged_positives",
+        "union_flags",
+        "union_flagged_positives",
+        "intersection_flags",
+        "intersection_flagged_positives"
+      ]
+    },
+    "tables/diagnostics/matched_selection.csv": {
+      "sha256": "cfa079c878f9ef549c7f622ecd410a3ceafbb9501ff09df4ab2d79a9d10a704d",
+      "bytes": 1937,
+      "rows": 20,
+      "columns": [
+        "arm",
+        "reference",
+        "model",
+        "score_space",
+        "fold",
+        "target_count",
+        "selected_rows",
+        "cut_value",
+        "exact",
+        "tie_block",
+        "strict_count",
+        "inclusive_count",
+        "tie_broken_rows"
+      ]
+    },
+    "tables/diagnostics/model_disagreement.csv": {
+      "sha256": "32b60c463dbedd5099ca806571b70b4573b57cfc0d114ae5d1db78df71645ed1",
+      "bytes": 1321,
+      "rows": 18,
+      "columns": [
+        "setting",
+        "arm",
+        "fold",
+        "k",
+        "lr_flags",
+        "ebm_flags",
+        "lr_only_tp",
+        "ebm_only_tp",
+        "lr_only_fp",
+        "ebm_only_fp",
+        "ebm_minus_lr_tp",
+        "ebm_only_tp_expected_from_pool",
+        "router_unique_tp_vs_lr",
+        "router_unique_tp_vs_ebm"
+      ]
+    },
+    "tables/diagnostics/observed_expected.csv": {
+      "sha256": "bef44761c9339c63f3f8924d5d9bdbb71c1d541cbcecc27be3e0e431741d0007",
+      "bytes": 26533,
+      "rows": 126,
+      "columns": [
+        "group",
+        "description",
+        "fold",
+        "n",
+        "observed",
+        "positive_rate",
+        "expected_lr_calibrated",
+        "expected_ebm_calibrated",
+        "expected_stratified_lr",
+        "expected_stratified_ebm_raw",
+        "expected_stratified_lr_x_ebm",
+        "o_minus_e_lr_calibrated",
+        "o_minus_e_ebm_calibrated",
+        "o_minus_e_stratified_lr",
+        "o_minus_e_stratified_ebm_raw",
+        "o_minus_e_stratified_lr_x_ebm"
+      ]
+    },
+    "tables/diagnostics/pass2_breakdown.csv": {
+      "sha256": "4cf695e16d99cb4310fac7f229c606b26374f6bdfcc58aa0c2ef1fcf35a83862",
+      "bytes": 664,
+      "rows": 12,
+      "columns": [
+        "arm",
+        "fold",
+        "pass2_tp",
+        "pass2_fp",
+        "tp_both",
+        "fp_both",
+        "tp_lr_only",
+        "fp_lr_only",
+        "tp_ebm_only",
+        "fp_ebm_only",
+        "tp_neither",
+        "fp_neither"
+      ]
+    },
+    "tables/diagnostics/pass2_cross_router.csv": {
+      "sha256": "95ee19decfc2fa36b8fd8dda98a3ca5e055d7ab7e1c58e65097830ea802e9d49",
+      "bytes": 3142,
+      "rows": 30,
+      "columns": [
+        "reference",
+        "fold",
+        "glass_unique_tp",
+        "rf_unique_tp",
+        "shared_tp",
+        "glass_only_tp",
+        "rf_only_tp",
+        "glass_unique_fp",
+        "rf_unique_fp",
+        "shared_fp",
+        "glass_only_fp",
+        "rf_only_fp",
+        "glass_only_tp_in_rf_pass1",
+        "glass_only_tp_in_rf_abstain",
+        "rf_only_tp_in_glass_pass1",
+        "rf_only_tp_in_glass_abstain",
+        "tp_jaccard",
+        "tp_jaccard_status",
+        "pool_positives",
+        "expected_shared_tp_if_unrelated"
+      ]
+    },
+    "tables/diagnostics/policy_audit.csv": {
+      "sha256": "56f28759fdb71fea68a3ff87c01cbf346e4e45bb084cfaf51e79f5be45a46a73",
+      "bytes": 6108,
+      "rows": 16,
+      "columns": [
+        "arm",
+        "router",
+        "claim",
+        "description",
+        "status",
+        "basis",
+        "violations",
+        "evidence"
+      ]
+    },
+    "tables/diagnostics/ratios.csv": {
+      "sha256": "cb5295a6db1a3199778405334da604cf6c7391d08e8155bc7a79b1a83d60c08e",
+      "bytes": 826896,
+      "rows": 6159,
+      "columns": [
+        "section",
+        "arm",
+        "reference",
+        "population",
+        "group",
+        "score",
+        "fold",
+        "metric",
+        "label",
+        "numerator",
+        "denominator",
+        "value",
+        "status"
+      ]
+    },
+    "tables/diagnostics/reference_flags.csv": {
+      "sha256": "ee1c37bae3a931053ac3e963d594cb2e69d8de6bd91c36dca0218125907b1b44",
+      "bytes": 1697,
+      "rows": 4,
+      "columns": [
+        "reference",
+        "operating_point",
+        "score_space",
+        "threshold",
+        "selection",
+        "fold_plan",
+        "flags",
+        "tp",
+        "fp",
+        "flag_rate",
+        "precision",
+        "precision_status"
+      ]
+    },
+    "tables/diagnostics/score_conditional.csv": {
+      "sha256": "b2d546b25b336e61fa396b8c36100f160b7989a2b93c58e567dc6afbf2f7d3d5",
+      "bytes": 113903,
+      "rows": 1002,
+      "columns": [
+        "arm",
+        "stratifier",
+        "fold",
+        "stratum",
+        "state",
+        "stratum_rows",
+        "stratum_positives",
+        "n",
+        "positives",
+        "negatives",
+        "positive_rate",
+        "positive_rate_status",
+        "expected_lr_calibrated",
+        "expected_ebm_calibrated",
+        "low_support",
+        "lr_flags",
+        "ebm_flags",
+        "union_flags",
+        "intersection_flags"
+      ]
+    },
+    "tables/diagnostics/signal_availability.csv": {
+      "sha256": "3c7e06f7ced169ef0bcb19db6b92dd16654741678bd597cad95422f5583aa775",
+      "bytes": 3068,
+      "rows": 18,
+      "columns": [
+        "arm",
+        "signal",
+        "status",
+        "basis",
+        "rows",
+        "detail"
+      ]
+    },
+    "tables/diagnostics/states.csv": {
+      "sha256": "ed4a1c92ce9012e6106fa47d036dcd001f8dd803fcbfafd993077345e37a13d9",
+      "bytes": 4229,
+      "rows": 36,
+      "columns": [
+        "arm",
+        "fold",
+        "state",
+        "rows",
+        "n",
+        "positives",
+        "negatives",
+        "share",
+        "share_status",
+        "positive_rate",
+        "positive_rate_status",
+        "negative_rate",
+        "negative_rate_status"
+      ]
+    },
+    "tables/diagnostics/stratum_contrasts.csv": {
+      "sha256": "c61546142ec5eabdc2c995cc7dbbcbf3a7a4730105980b5a08877d22e944d321",
+      "bytes": 58375,
+      "rows": 1002,
+      "columns": [
+        "arm",
+        "stratifier",
+        "fold",
+        "stratum",
+        "contrast",
+        "n_a",
+        "n_b",
+        "difference_pp",
+        "status"
+      ]
+    },
+    "tables/f31_r2_strips.csv": {
+      "sha256": "f89663979ae51a5b1225a43d53f716383a3c1357475676f4c5f636420e2a9160",
+      "bytes": 1136,
+      "rows": 5,
+      "columns": [
+        "fold",
+        "strip_a_in_band",
+        "band_rows",
+        "share",
+        "status",
+        "review_required",
+        "basis"
+      ]
+    },
+    "tables/f31_r3_optimism.csv": {
+      "sha256": "cc2e9c8ddf1e1e07be9e72d9415dca93415be6f5f3645b2878e3e472902f3e36",
+      "bytes": 2709,
+      "rows": 12,
+      "columns": [
+        "fold",
+        "metric",
+        "band_numerator",
+        "band_denominator",
+        "band_value",
+        "r1_recorded_confidence",
+        "r1_matches_band",
+        "realised_numerator",
+        "realised_denominator",
+        "realised_value",
+        "optimism_gap",
+        "band_basis",
+        "use"
+      ]
+    },
+    "tables/fit_time_obligations.csv": {
+      "sha256": "f15516db4e49216eafedcefbde419054b774ae1202a0a7b63a6ae174131c2196",
+      "bytes": 26287,
+      "rows": 200,
+      "columns": [
+        "arm",
+        "fold",
+        "selection",
+        "population_rows",
+        "population_positives",
+        "population_status",
+        "obligation",
+        "metric",
+        "numerator",
+        "denominator",
+        "value",
+        "limit",
+        "comparison",
+        "status",
+        "shortfall",
+        "shortfall_float"
+      ]
+    },
+    "tables/fold_dispersion.csv": {
+      "sha256": "3f912c9c1634cf32ccd74236962951c28b687bd96a87bae820428be5d3d7c6ab",
+      "bytes": 2579,
+      "rows": 28,
+      "columns": [
+        "routing",
+        "metric",
+        "folds_defined",
+        "folds_undefined",
+        "min",
+        "max",
+        "range",
+        "pooled"
+      ]
+    },
+    "tables/fold_ledger.csv": {
+      "sha256": "3f4d2e59b31ac280c394d6dfb5d7686bfa10735fac492352d79c610a8a9adf67",
+      "bytes": 1071,
+      "rows": 10,
+      "columns": [
+        "arm",
+        "fold",
+        "status",
+        "accepted",
+        "status_only",
+        "n_train",
+        "train_positives",
+        "remainder_rows",
+        "remainder_positives",
+        "remainder_prevalence",
+        "outer_rows",
+        "outer_positives",
+        "wall_seconds",
+        "problems"
+      ]
+    },
+    "tables/fold_ledger_summary.csv": {
+      "sha256": "975e7cc9eb0dfaee6977b80c865b90e014a29c0f26d6f0226f1f20d399a9b3a8",
+      "bytes": 128,
+      "rows": 2,
+      "columns": [
+        "arm",
+        "attempted",
+        "reported",
+        "fit_completed",
+        "accepted",
+        "missing",
+        "status_only",
+        "not_accepted"
+      ]
+    },
+    "tables/m6_inner_oof_pass1.csv": {
+      "sha256": "5bca894c8daca810b7d27ec34af71bb32cc084ad98b376c00cd2ec6c4ccbc48b",
+      "bytes": 345,
+      "rows": 5,
+      "columns": [
+        "fold",
+        "population_rows",
+        "population_positives",
+        "routed_rows",
+        "routed_positives",
+        "npv",
+        "leakage_share"
+      ]
+    },
+    "tables/metric_table.csv": {
+      "sha256": "2f7ac7bcc87b2884fedec0e5bab5b5dc5d4f4ae772033869defbd02b7d97fac0",
+      "bytes": 10080,
+      "rows": 168,
+      "columns": [
+        "routing",
+        "fold",
+        "metric",
+        "numerator",
+        "denominator",
+        "value",
+        "status"
+      ]
+    },
+    "tables/pass1_matched_lr.csv": {
+      "sha256": "3196d3335fa57758ce00a5232c90681334974794d0e80835893fcdb28a1973a4",
+      "bytes": 2864,
+      "rows": 16,
+      "columns": [
+        "arm",
+        "fold",
+        "set",
+        "n",
+        "positives",
+        "positive_rate",
+        "positive_rate_status",
+        "overlap_with_router",
+        "jaccard_with_router",
+        "target_count",
+        "exact",
+        "tie_block",
+        "strict_count",
+        "inclusive_count",
+        "cut_value",
+        "score",
+        "label"
+      ]
+    },
+    "tables/pre_post_by_fold.csv": {
+      "sha256": "e3a1daa2576bbbdbe66339694b5618f0212061f683cf2e191ddecce36d2a8263",
+      "bytes": 7164,
+      "rows": 110,
+      "columns": [
+        "arm",
+        "metric",
+        "fold",
+        "pre",
+        "post",
+        "pre_minus_post"
+      ]
+    },
+    "tables/pre_post_metrics.csv": {
+      "sha256": "f2c1c789cfa8f43aac2e1481201a9757a98dc429bc88fc0f4f9e3f9cd07cb512",
+      "bytes": 21595,
+      "rows": 336,
+      "columns": [
+        "routing",
+        "fold",
+        "metric",
+        "numerator",
+        "denominator",
+        "value",
+        "status",
+        "arm"
+      ]
+    },
+    "tables/pre_post_ratios.csv": {
+      "sha256": "49376ff9aa89d36d0487d5bdc348dc9eec27cd4698ce603f634463479336470e",
+      "bytes": 1350605,
+      "rows": 6159,
+      "columns": [
+        "section",
+        "arm",
+        "reference",
+        "population",
+        "group",
+        "score",
+        "fold",
+        "metric",
+        "label_pre",
+        "numerator_pre",
+        "denominator_pre",
+        "value_pre",
+        "status_pre",
+        "label_post",
+        "numerator_post",
+        "denominator_post",
+        "value_post",
+        "status_post",
+        "presence",
+        "numerator_pre_minus_post",
+        "value_pre_minus_post"
+      ]
+    },
+    "tables/pre_post_states.csv": {
+      "sha256": "7c6481b9b1f1ff535244eabcfd7b56d01ef500aa039462cd2456c21e34ba32ea",
+      "bytes": 6305,
+      "rows": 36,
+      "columns": [
+        "arm",
+        "fold",
+        "state",
+        "rows_pre",
+        "n_pre",
+        "positives_pre",
+        "negatives_pre",
+        "share_pre",
+        "positive_rate_pre",
+        "rows_post",
+        "n_post",
+        "positives_post",
+        "negatives_post",
+        "share_post",
+        "positive_rate_post",
+        "presence",
+        "n_pre_minus_post",
+        "positives_pre_minus_post",
+        "share_pre_minus_post",
+        "positive_rate_pre_minus_post"
+      ]
+    },
+    "tables/pre_post_transitions.csv": {
+      "sha256": "364c37b5fd41d615737a165bf73cdd20407874c7289540ec526dd77cfb04fd9a",
+      "bytes": 6538,
+      "rows": 108,
+      "columns": [
+        "pre_state",
+        "post_state",
+        "rows",
+        "positives",
+        "negatives",
+        "changed",
+        "arm",
+        "fold",
+        "changed_rows"
+      ]
+    },
+    "tables/pre_post_uncertainty.csv": {
+      "sha256": "8df1cdd966b2abb38e231ee6200f4669a493e7ba3f3a645c4229b0d3d6c0fd43",
+      "bytes": 4335,
+      "rows": 22,
+      "columns": [
+        "metric",
+        "kind",
+        "pre",
+        "post",
+        "difference",
+        "undefined_replicates",
+        "replicates",
+        "level",
+        "pre_low",
+        "pre_high",
+        "post_low",
+        "post_high",
+        "difference_low",
+        "difference_high",
+        "interval_status",
+        "arm",
+        "difference_definition"
+      ]
+    },
+    "tables/primary_outcomes.csv": {
+      "sha256": "0d3a95acf8f28254a0f5ac374018bcff8d5dc605fe89e8066a88fdcd52a1ae3e",
+      "bytes": 2515,
+      "rows": 11,
+      "columns": [
+        "outcome",
+        "metric",
+        "kind",
+        "glass",
+        "blackbox",
+        "difference",
+        "undefined_replicates",
+        "replicates",
+        "level",
+        "glass_low",
+        "glass_high",
+        "blackbox_low",
+        "blackbox_high",
+        "difference_low",
+        "difference_high",
+        "interval_status",
+        "statement",
+        "difference_definition"
+      ]
+    },
+    "tables/primary_outcomes_by_fold.csv": {
+      "sha256": "e8687cbdac555983496128e23123133f9caeb3bdd028943f7d0eb500011383c0",
+      "bytes": 3366,
+      "rows": 55,
+      "columns": [
+        "outcome",
+        "metric",
+        "fold",
+        "glass",
+        "blackbox",
+        "difference"
+      ]
+    },
+    "tables/shortfalls.csv": {
+      "sha256": "086ee3c08c100545b71dd68106fa458a85329a9fbf80fa46405fa62ba21fd4eb",
+      "bytes": 8325,
+      "rows": 36,
+      "columns": [
+        "arm",
+        "fold",
+        "pool",
+        "obligation",
+        "metric",
+        "limit",
+        "fit_status",
+        "fit_time_numerator",
+        "fit_time_denominator",
+        "fit_time_value",
+        "fit_time_status",
+        "observed_numerator",
+        "observed_denominator",
+        "observed_value",
+        "observed_status",
+        "shortfall",
+        "classification",
+        "low_support",
+        "tolerance",
+        "material",
+        "materiality_rule_status"
+      ]
+    },
+    "tables/solver_outcomes.csv": {
+      "sha256": "5b516aa58bc8cc8028621c8eeb5bc969b4f3548b69af2f11768f86f7b00ad59c",
+      "bytes": 10125,
+      "rows": 70,
+      "columns": [
+        "arm",
+        "fold",
+        "selection",
+        "outcome",
+        "fit_status",
+        "disposition",
+        "reason",
+        "method",
+        "solver_status",
+        "gap",
+        "gap_source",
+        "lexicographic_guarantee",
+        "reproduced",
+        "selected_rules"
+      ]
+    },
+    "tables/trace_checks.csv": {
+      "sha256": "dd301d0846326602021189491c8f859defa21272f4ac4deb15039e37c69716c4",
+      "bytes": 4046,
+      "rows": 39,
+      "columns": [
+        "section",
+        "stage",
+        "check",
+        "passed",
+        "detail",
+        "error"
+      ]
+    }
+  },
+  "code": {
+    "method": "sha256 of the UTF-8 file with CRLF normalised to LF",
+    "files": {
+      "stage2_crossfit/complementarity.py": "bd5ed75b512432cf0b6bd4b337ffe645738dac6fb6b58210f22414525c7c3bce",
+      "stage2_crossfit/acceptance.py": "4bbe1b4b0e6dc241dd81a2498cb10381c018cb945d1a047e67e52583b2e05c44",
+      "stage2_crossfit/evidence.py": "5fb7f19c9b711123f3fffe39c86fc1c8788673f23cbef6421fd379a93cd7dd0d",
+      "stage2_crossfit/runner.py": "35c7a0c0e63de5d06f11c42c817ef0a31c45210de01545b5167aab7b14792030",
+      "shared/stage2/evaluation_protocol.py": "722c34c0623c055eeb6a4521702d91a1706324b9cdf9255e6a12cd0a60c48df6",
+      "shared/stage2/obligations.py": "7630f02fc725637bff96b76f91a799715223a112f61353a32bd3afb307d49a0e",
+      "tests/support/archived_artifacts.py": "1763e22431063ff423e747607c32bf16f9cfe22c44bdf8988022263566b51e06",
+      "shared/stage2/diagnostics/__init__.py": "65466cb1815d7e53090e00086eb94cf3839644f671fda825b6a460d7a99b41ba",
+      "shared/stage2/diagnostics/schema.py": "f8d5ecad8cbf5566648754e6c890d1fca50630a327f7cbfc0ea949978d9fe4e2",
+      "shared/stage2/diagnostics/boundary.py": "0c653b69924b810e731cb3d212adb79fb12d9f13d17039d06f0f437b2448c724",
+      "shared/stage2/diagnostics/operating_points.py": "c9a9370b7371813ff4485234a133142764176a8d43d2208e33712202277bc81d",
+      "shared/stage2/diagnostics/metrics.py": "d8d76ff90f0fe18a5b3a84ce62c414e2769aad1fdceb607bcfd16a6d9d016f04",
+      "shared/stage2/diagnostics/equivalence.py": "a142c0fbf71d7fb034137e252836c642f0f8deb7a2e1da80ce80a764546db420",
+      "shared/stage2/diagnostics/trace.py": "c730d0c30c9aeb933f14c15e7564ac0dd517d1c4af7385b894d6e5e9c5137612",
+      "shared/stage2/diagnostics/suppression.py": "a86e71a77abad241cdb1d04304cdfded8bcde69fe2c722fd58d0539915453d64",
+      "shared/stage2/diagnostics/contribution.py": "0cb20e2d2477d4646a2366689a6e14b52e1462a199997234462953048c5bb2f5",
+      "shared/stage2/diagnostics/overlap.py": "d18fc93b91c950b11456c41a8fb8ef369d4924bdb03b04175c63ebd706a03332",
+      "shared/stage2/diagnostics/baseline.py": "d22c170fdc4fa861ecb5e87f60897b88ba03c61d0b94bf51ee93233b19fee023",
+      "shared/stage_io.py": "61df4a75e4a86d44acac7632af8342a96eb287e13cf907f4d1d3625467a1da88",
+      "tests/support/router_artifacts.py": "f91c209b3b39a5005ea9e2f1f3d095ebf22d22f9d90ca93f8bdf72e0641c640a",
+      "tests/support/artifact_audit.py": "015a6305af72a16d493138b3a5214d829956419f1dac8532b2c4de0e65538b0e",
+      "research_logs/baselines/stage2_baseline.py": "709132e78be698d86affed1111a51cf7d177db4057f6e7ce3b4fc50d74974987"
+    }
+  }
+}

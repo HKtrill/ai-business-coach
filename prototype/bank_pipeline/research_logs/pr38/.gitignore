@@ -1,0 +1,10 @@
+# The v1 packages (complementarity_v1/, s1_sensitivity_v1/) are the working sources of
+# a run's report: `report` migrates every table into report_v1/, which keeps a
+# byte-exact copy of each package manifest. After the migration they are optional
+# (`report --check` does not read them) and they stay local.
+*/complementarity_v1/
+*/s1_sensitivity_v1/
+# Failed or stopped attempts are never read by code and stay local.
+*/*_failed_*.json
+*/*_population_failure.json
+*/*_fit_stopped.json

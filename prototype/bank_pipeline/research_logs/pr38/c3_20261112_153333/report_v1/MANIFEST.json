@@ -1,0 +1,1682 @@
+{
+  "format": "pr38.stage2.research_report/1",
+  "report": "report_v1",
+  "run_id": "c3_20261112_153333",
+  "scope": "PR 38 Commit 4: the consolidated research report of an accepted run, migrated read-only from its v1 packages; no model, artifact or label is read",
+  "historical_v1_sources": {
+    "note": "SHA-256 of each v1 package table as written by its generator (historical). The tables need not exist after the migration: report --check reproduces every one from this report (and the frozen baseline) and compares it with these checksums. The packages' own --check (complementarity, s1-report) needs their tables and runs only while they exist.",
+    "complementarity_v1": {
+      "format": "pr38.stage2.complementarity/1",
+      "manifest_sha256": "ab06a060c395bcd6c5574b7f96535f2b07a4b3c32ef87279cbbbc3aba7221d23",
+      "manifest_copy": "source_manifest_complementarity_v1.json",
+      "tables": {
+        "accounting": {
+          "sha256": "edc56d163ca4ca9a3599d25a981aac3f6083dd1f890040e815220d6de491a297",
+          "disposition": "10_solver_and_validation.csv"
+        },
+        "alignment": {
+          "sha256": "91e8e9f7422999128fde5bdc24fee1458baaf7a44096c61d5327a7a6195d80ef",
+          "disposition": "10_solver_and_validation.csv"
+        },
+        "class_conditional": {
+          "sha256": "5294c47da034fd7940eff25f5649d3b48d8df51f1f4beb0e8f7500300b5649bc",
+          "disposition": "03_routing_states.csv"
+        },
+        "diagnostics/chance_baselines": {
+          "sha256": "46644b92cb4661684134c368333746ed186a17fe90e2101cc1d412b38c5c5e81",
+          "disposition": "04_unique_contribution.csv"
+        },
+        "diagnostics/common_population": {
+          "sha256": "9cd388bea9f69d2dc4a25b518d199ea89ce2552cfd35ad86172864a0d469570d",
+          "disposition": "04_unique_contribution.csv"
+        },
+        "diagnostics/contingency": {
+          "sha256": "3e08853287c05cc932a331e3a251960c09201404549021ed48a360f33cf03345",
+          "disposition": "06_agreement_diagnostics.csv"
+        },
+        "diagnostics/crosstab": {
+          "sha256": "08d800665234561859ac7390243790a9c534bcfdf448f91ebe90185230dca54c",
+          "disposition": "06_agreement_diagnostics.csv"
+        },
+        "diagnostics/matched_selection": {
+          "sha256": "cfa079c878f9ef549c7f622ecd410a3ceafbb9501ff09df4ab2d79a9d10a704d",
+          "disposition": "05_matched_budget.csv"
+        },
+        "diagnostics/model_disagreement": {
+          "sha256": "32b60c463dbedd5099ca806571b70b4573b57cfc0d114ae5d1db78df71645ed1",
+          "disposition": "06_agreement_diagnostics.csv"
+        },
+        "diagnostics/observed_expected": {
+          "sha256": "bef44761c9339c63f3f8924d5d9bdbb71c1d541cbcecc27be3e0e431741d0007",
+          "disposition": "06_agreement_diagnostics.csv"
+        },
+        "diagnostics/pass2_breakdown": {
+          "sha256": "4cf695e16d99cb4310fac7f229c606b26374f6bdfcc58aa0c2ef1fcf35a83862",
+          "disposition": "04_unique_contribution.csv"
+        },
+        "diagnostics/pass2_cross_router": {
+          "sha256": "95ee19decfc2fa36b8fd8dda98a3ca5e055d7ab7e1c58e65097830ea802e9d49",
+          "disposition": "04_unique_contribution.csv"
+        },
+        "diagnostics/policy_audit": {
+          "sha256": "56f28759fdb71fea68a3ff87c01cbf346e4e45bb084cfaf51e79f5be45a46a73",
+          "disposition": "10_solver_and_validation.csv"
+        },
+        "diagnostics/ratios": {
+          "sha256": "cb5295a6db1a3199778405334da604cf6c7391d08e8155bc7a79b1a83d60c08e",
+          "disposition": "08_diagnostic_ratios.csv"
+        },
+        "diagnostics/reference_flags": {
+          "sha256": "ee1c37bae3a931053ac3e963d594cb2e69d8de6bd91c36dca0218125907b1b44",
+          "disposition": "05_matched_budget.csv"
+        },
+        "diagnostics/score_conditional": {
+          "sha256": "b2d546b25b336e61fa396b8c36100f160b7989a2b93c58e567dc6afbf2f7d3d5",
+          "disposition": "07_score_strata.csv"
+        },
+        "diagnostics/signal_availability": {
+          "sha256": "3c7e06f7ced169ef0bcb19db6b92dd16654741678bd597cad95422f5583aa775",
+          "disposition": "10_solver_and_validation.csv"
+        },
+        "diagnostics/states": {
+          "sha256": "ed4a1c92ce9012e6106fa47d036dcd001f8dd803fcbfafd993077345e37a13d9",
+          "disposition": "03_routing_states.csv"
+        },
+        "diagnostics/stratum_contrasts": {
+          "sha256": "c61546142ec5eabdc2c995cc7dbbcbf3a7a4730105980b5a08877d22e944d321",
+          "disposition": "07_score_strata.csv"
+        },
+        "f31_r2_strips": {
+          "sha256": "f89663979ae51a5b1225a43d53f716383a3c1357475676f4c5f636420e2a9160",
+          "disposition": "09_contract_compliance.csv"
+        },
+        "f31_r3_optimism": {
+          "sha256": "cc2e9c8ddf1e1e07be9e72d9415dca93415be6f5f3645b2878e3e472902f3e36",
+          "disposition": "09_contract_compliance.csv"
+        },
+        "fit_time_obligations": {
+          "sha256": "f15516db4e49216eafedcefbde419054b774ae1202a0a7b63a6ae174131c2196",
+          "disposition": "09_contract_compliance.csv"
+        },
+        "fold_dispersion": {
+          "sha256": "3f912c9c1634cf32ccd74236962951c28b687bd96a87bae820428be5d3d7c6ab",
+          "disposition": "02_router_metrics.csv"
+        },
+        "fold_ledger": {
+          "sha256": "3f4d2e59b31ac280c394d6dfb5d7686bfa10735fac492352d79c610a8a9adf67",
+          "disposition": "10_solver_and_validation.csv"
+        },
+        "fold_ledger_summary": {
+          "sha256": "975e7cc9eb0dfaee6977b80c865b90e014a29c0f26d6f0226f1f20d399a9b3a8",
+          "disposition": "10_solver_and_validation.csv"
+        },
+        "m6_inner_oof_pass1": {
+          "sha256": "5bca894c8daca810b7d27ec34af71bb32cc084ad98b376c00cd2ec6c4ccbc48b",
+          "disposition": "09_contract_compliance.csv"
+        },
+        "metric_table": {
+          "sha256": "2f7ac7bcc87b2884fedec0e5bab5b5dc5d4f4ae772033869defbd02b7d97fac0",
+          "disposition": "02_router_metrics.csv"
+        },
+        "pass1_matched_lr": {
+          "sha256": "3196d3335fa57758ce00a5232c90681334974794d0e80835893fcdb28a1973a4",
+          "disposition": "05_matched_budget.csv"
+        },
+        "pre_post_by_fold": {
+          "sha256": "e3a1daa2576bbbdbe66339694b5618f0212061f683cf2e191ddecce36d2a8263",
+          "disposition": "01_registered_outcomes.csv"
+        },
+        "pre_post_metrics": {
+          "sha256": "f2c1c789cfa8f43aac2e1481201a9757a98dc429bc88fc0f4f9e3f9cd07cb512",
+          "disposition": "02_router_metrics.csv"
+        },
+        "pre_post_ratios": {
+          "sha256": "49376ff9aa89d36d0487d5bdc348dc9eec27cd4698ce603f634463479336470e",
+          "disposition": "derived",
+          "from": "outer join of the frozen pr37_stage2_pre_correction_v1 ratios with complementarity_v1/diagnostics/ratios (08_diagnostic_ratios.csv); pre - post"
+        },
+        "pre_post_states": {
+          "sha256": "7c6481b9b1f1ff535244eabcfd7b56d01ef500aa039462cd2456c21e34ba32ea",
+          "disposition": "derived",
+          "from": "outer join of the frozen pr37_stage2_pre_correction_v1 states with complementarity_v1/diagnostics/states (03_routing_states.csv); pre - post"
+        },
+        "pre_post_transitions": {
+          "sha256": "364c37b5fd41d615737a165bf73cdd20407874c7289540ec526dd77cfb04fd9a",
+          "disposition": "03_routing_states.csv"
+        },
+        "pre_post_uncertainty": {
+          "sha256": "8df1cdd966b2abb38e231ee6200f4669a493e7ba3f3a645c4229b0d3d6c0fd43",
+          "disposition": "01_registered_outcomes.csv"
+        },
+        "primary_outcomes": {
+          "sha256": "0d3a95acf8f28254a0f5ac374018bcff8d5dc605fe89e8066a88fdcd52a1ae3e",
+          "disposition": "01_registered_outcomes.csv"
+        },
+        "primary_outcomes_by_fold": {
+          "sha256": "e8687cbdac555983496128e23123133f9caeb3bdd028943f7d0eb500011383c0",
+          "disposition": "01_registered_outcomes.csv"
+        },
+        "shortfalls": {
+          "sha256": "086ee3c08c100545b71dd68106fa458a85329a9fbf80fa46405fa62ba21fd4eb",
+          "disposition": "09_contract_compliance.csv"
+        },
+        "solver_outcomes": {
+          "sha256": "5b516aa58bc8cc8028621c8eeb5bc969b4f3548b69af2f11768f86f7b00ad59c",
+          "disposition": "10_solver_and_validation.csv"
+        },
+        "trace_checks": {
+          "sha256": "dd301d0846326602021189491c8f859defa21272f4ac4deb15039e37c69716c4",
+          "disposition": "10_solver_and_validation.csv"
+        }
+      }
+    },
+    "s1_sensitivity_v1": {
+      "format": "pr38.stage2.s1_sensitivity/1",
+      "manifest_sha256": "fe8d48314398922d7ab24ac7f8da97a943988cb03112a99922386bddec2ce4ab",
+      "manifest_copy": "source_manifest_s1_sensitivity_v1.json",
+      "tables": {
+        "baseline_comparison": {
+          "sha256": "8535c1a23247993626f4c9fe0205e3dcc3b3d73203c687f2c0321d5ab60ee2d7",
+          "disposition": "derived",
+          "from": "outer join of the GLASS rows of the frozen pr37_stage2_pre_correction_v1 ratios and of both packages' diagnostics/ratios (08_diagnostic_ratios.csv)"
+        },
+        "configuration": {
+          "sha256": "d1dd8b58775c71edccdb4764c678351330dacac32e26c31564358bfffb1df1a5",
+          "disposition": "11_s1_sensitivity.csv"
+        },
+        "diagnostics/chance_baselines": {
+          "sha256": "ad5f060cab43634360a8f06ba989b3d7a9cd9a58ce0d39f0118535bf774f87f9",
+          "disposition": "04_unique_contribution.csv"
+        },
+        "diagnostics/common_population": {
+          "sha256": "ee543d272f33fd0df1915daa048dfc6a645a84cf75ec0aaf9619b246dab53c32",
+          "disposition": "04_unique_contribution.csv"
+        },
+        "diagnostics/contingency": {
+          "sha256": "c9a7e6fead61aea48fd3d383a5a6a0f6af55d69732a2d767cc26f588c448860c",
+          "disposition": "06_agreement_diagnostics.csv"
+        },
+        "diagnostics/crosstab": {
+          "sha256": "f6397cf181e10e16421a34b72051a5647bcb78b47b592c0380f56abff675944a",
+          "disposition": "06_agreement_diagnostics.csv"
+        },
+        "diagnostics/matched_selection": {
+          "sha256": "2608490e09829d0098734b82fab0529132909d6d6b524d2f55c3e1ec50a34e2b",
+          "disposition": "05_matched_budget.csv"
+        },
+        "diagnostics/model_disagreement": {
+          "sha256": "ce6e38260581e1ad360aef6b38b4d76ca3f791df0c8ff43fbc9f27e95799b239",
+          "disposition": "06_agreement_diagnostics.csv"
+        },
+        "diagnostics/observed_expected": {
+          "sha256": "f85ac7b78af21d2ddd45c5e430b5817c404fb436657cdd4e18ae640ea5af21ec",
+          "disposition": "06_agreement_diagnostics.csv"
+        },
+        "diagnostics/pass2_breakdown": {
+          "sha256": "089e75aba2e6936f169d39950c6faa855e20fdc60776a09846c43006c5a1a30a",
+          "disposition": "04_unique_contribution.csv"
+        },
+        "diagnostics/pass2_cross_router": {
+          "sha256": "51ec206ae917a62dd3f78fc6cc46a6758492d20b554d985a587b9b70ab486930",
+          "disposition": "04_unique_contribution.csv"
+        },
+        "diagnostics/policy_audit": {
+          "sha256": "0fd3cbbcc9eedc20873d9b77d3728016030aa8941ed1b337668f154ed6c0e078",
+          "disposition": "10_solver_and_validation.csv"
+        },
+        "diagnostics/ratios": {
+          "sha256": "db59702c443b3f0518b244854fa0052814e26a822d1bfe7359300fae69a1c652",
+          "disposition": "08_diagnostic_ratios.csv"
+        },
+        "diagnostics/reference_flags": {
+          "sha256": "ee1c37bae3a931053ac3e963d594cb2e69d8de6bd91c36dca0218125907b1b44",
+          "disposition": "duplicate",
+          "from": "complementarity_v1/diagnostics/reference_flags (05_matched_budget.csv)"
+        },
+        "diagnostics/score_conditional": {
+          "sha256": "c38707572477d4e46b034c6819439e5f27f61ad9e7f69fc1a837a673622f3bba",
+          "disposition": "07_score_strata.csv"
+        },
+        "diagnostics/signal_availability": {
+          "sha256": "beed4c8c3a48a253cb25ada431fdd9e18f4492ba6ce15c184fb50988a7653a2b",
+          "disposition": "10_solver_and_validation.csv"
+        },
+        "diagnostics/states": {
+          "sha256": "89b90c68f2fcb53ae4f5d3e3e052de001cba1a95534bbeea0a20af412146bb93",
+          "disposition": "03_routing_states.csv"
+        },
+        "diagnostics/stratum_contrasts": {
+          "sha256": "a04d7ac2d850b63a14caeb60b4205735196e842ac7338a3a0842848aab823ee0",
+          "disposition": "07_score_strata.csv"
+        },
+        "fold_feasibility": {
+          "sha256": "3329cb76bf42f2deb2f81dfbbbb9df0425f84710c222960daa43b11799c1c472",
+          "disposition": "11_s1_sensitivity.csv"
+        },
+        "g6_pass1_invariance": {
+          "sha256": "b21625dc5d42169348fee3be448d641a19b5858e3e232aadae2e81a6e25480c5",
+          "disposition": "11_s1_sensitivity.csv"
+        },
+        "pass2_fitting_population": {
+          "sha256": "e108668836921dc18ca101f8acbff2bd3b32a8e03cf8190b45ce71d335a2c4ce",
+          "disposition": "11_s1_sensitivity.csv"
+        },
+        "ratios_comparison": {
+          "sha256": "06e2493dd7903aea89d40f20a3c43770c443cf34d8822ee472d56f98ee1781b5",
+          "disposition": "derived",
+          "from": "outer join of diagnostics/ratios of both packages (08_diagnostic_ratios.csv); full - oof_remainder"
+        },
+        "routing_transitions": {
+          "sha256": "02dbd84336d18975ca9a1ee68ffa17419d92f4fff3ff3ceb3f76c9ea0b73853c",
+          "disposition": "03_routing_states.csv"
+        },
+        "s1_acceptance_checks": {
+          "sha256": "ab38290ab18203278a22bd590908ed509d2f87c33deb71e6f9909c7d557ab050",
+          "disposition": "restated",
+          "from": "s1_acceptance.json (every gate's checks)"
+        },
+        "states_comparison": {
+          "sha256": "b619bb58512294231ccb38ca92147cec27697b2167419c9a941b519c177b39b2",
+          "disposition": "derived",
+          "from": "outer join of diagnostics/states of both packages (03_routing_states.csv); full - oof_remainder"
+        }
+      }
+    }
+  },
+  "baseline": {
+    "id": "pr37_stage2_pre_correction_v1",
+    "manifest_sha256": "905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b",
+    "tables": {
+      "states": "1a62b6646b888f4af722d8e52ee20f70bf4fbbfb82ef0d71b17705c11bacaa01",
+      "ratios": "08c94d1487d78d73920eff4f73084635f7f072c2f68d11ead9ad8040b016821b"
+    }
+  },
+  "records": {
+    "acceptance_dispositions.json": {
+      "sha256": "00926cbb5d2c9be229c52e546ec765a266ed1d3ef92ab9f21219fa9a4329ef4c",
+      "bytes": 860
+    },
+    "authorization.json": {
+      "sha256": "daff742e10d435b9018e9cbfac76ef19fcb275ab77c4d42dd5e020548c4655f8",
+      "bytes": 3284
+    },
+    "authorization_review.json": {
+      "sha256": "9c015112cef541b02df920c84dd0801d637a4c1433d8b461e93370ca9427f851",
+      "bytes": 3422
+    },
+    "configs.json": {
+      "sha256": "7b7f803155dae6bf245b49c1fa18eb60249b4878eaac685767b9d6012f932127",
+      "bytes": 13284
+    },
+    "g13_fold0_fold_label_excluded.json": {
+      "sha256": "64ddd85b83cd73fa22346e741d7511a671b569e892da0905ce31dd703ac31404",
+      "bytes": 313908
+    },
+    "g3_preflight_fold0.json": {
+      "sha256": "41f80a0b402b0ac9e5502bfa9695d744b1cf240751525ff2ba6dd0265e9281bc",
+      "bytes": 33780
+    },
+    "g7_reproduction_fold0.json": {
+      "sha256": "dbc01ad890cd785179bf59c621f07241a7d66d71f59d367309ef9b52c859a4a9",
+      "bytes": 1951
+    },
+    "phase0.json": {
+      "sha256": "02d4f0a953208e9b0d7afae289d5b070e8cb06196888f35e7766c5f4ab64eaa0",
+      "bytes": 10043
+    },
+    "primary_attempt.json": {
+      "sha256": "6e99c34111d86c407d811227da10d51854f1b08265f650b24cad63b888e46049",
+      "bytes": 2437
+    },
+    "primary_MANIFEST.json": {
+      "sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88",
+      "bytes": 3163
+    },
+    "pytest_fast.xml": {
+      "sha256": "dd0599a78d3e6c1032f610a25e229dc589d3b2444188560abd60149f49a111f0",
+      "bytes": 42162
+    },
+    "s1_acceptance.json": {
+      "sha256": "442e63fcd857f68b613970301a85ef7e412038ee74c2802ddde91b6d43316e08",
+      "bytes": 19698
+    },
+    "s1_attempt.json": {
+      "sha256": "4b82fbb59d9ed923ec28c8a08558eebd054d2e864558fd94ea2b42199424b7eb",
+      "bytes": 1313
+    },
+    "s1_MANIFEST.json": {
+      "sha256": "0b67661437b6972ff3fd4a2dfcdf4e13cd0141bd54ec26b96c309ebdd7ca62f1",
+      "bytes": 1842
+    },
+    "structural_acceptance.json": {
+      "sha256": "91612167dd2582788abcb37d04885bd5507a93844514b4989cc929556821aa1a",
+      "bytes": 46508
+    }
+  },
+  "verification": {
+    "package_tables": 64,
+    "consolidated": 57,
+    "derived": 5,
+    "duplicate": 1,
+    "restated": 1,
+    "report_tables": 11,
+    "method": "every v1 package table reproduced byte for byte from the report (kept tables) or by its rebuild (excluded tables)"
+  },
+  "outputs": {
+    "01_registered_outcomes.csv": {
+      "sha256": "e4891e5c5dcf7307298d5342667754b582e0b72f1a60fdc5be832caead6e3011",
+      "bytes": 28638,
+      "rows": 198,
+      "columns": [
+        "package",
+        "table",
+        "outcome",
+        "arm",
+        "metric",
+        "kind",
+        "fold",
+        "glass",
+        "blackbox",
+        "difference",
+        "undefined_replicates",
+        "replicates",
+        "level",
+        "glass_low",
+        "glass_high",
+        "blackbox_low",
+        "blackbox_high",
+        "difference_low",
+        "difference_high",
+        "interval_status",
+        "statement",
+        "difference_definition",
+        "pre",
+        "post",
+        "pre_low",
+        "pre_high",
+        "post_low",
+        "post_high",
+        "pre_minus_post"
+      ],
+      "title": "Registered outcomes with 95% paired bootstrap intervals, pooled and per fold: GLASS vs RF (D-C1 statements) and pre vs post correction per arm",
+      "sources": {
+        "complementarity_v1/primary_outcomes": [
+          "outcome",
+          "metric",
+          "kind",
+          "glass",
+          "blackbox",
+          "difference",
+          "undefined_replicates",
+          "replicates",
+          "level",
+          "glass_low",
+          "glass_high",
+          "blackbox_low",
+          "blackbox_high",
+          "difference_low",
+          "difference_high",
+          "interval_status",
+          "statement",
+          "difference_definition"
+        ],
+        "complementarity_v1/primary_outcomes_by_fold": [
+          "outcome",
+          "metric",
+          "fold",
+          "glass",
+          "blackbox",
+          "difference"
+        ],
+        "complementarity_v1/pre_post_uncertainty": [
+          "metric",
+          "kind",
+          "pre",
+          "post",
+          "difference",
+          "undefined_replicates",
+          "replicates",
+          "level",
+          "pre_low",
+          "pre_high",
+          "post_low",
+          "post_high",
+          "difference_low",
+          "difference_high",
+          "interval_status",
+          "arm",
+          "difference_definition"
+        ],
+        "complementarity_v1/pre_post_by_fold": [
+          "arm",
+          "metric",
+          "fold",
+          "pre",
+          "post",
+          "pre_minus_post"
+        ]
+      }
+    },
+    "02_router_metrics.csv": {
+      "sha256": "d18ba2b982a46cfa455ae71399d1e6378b043b04c45c4dc5d67b1ed8aac047a0",
+      "bytes": 56013,
+      "rows": 532,
+      "columns": [
+        "package",
+        "table",
+        "arm",
+        "correction",
+        "fold",
+        "metric",
+        "numerator",
+        "denominator",
+        "value",
+        "status",
+        "folds_defined",
+        "folds_undefined",
+        "min",
+        "max",
+        "range",
+        "pooled"
+      ],
+      "title": "Router metric tables (numerator, denominator, value, status) per fold and pooled, corrected and pre/post correction, and their fold dispersion",
+      "sources": {
+        "complementarity_v1/metric_table": [
+          "arm",
+          "fold",
+          "metric",
+          "numerator",
+          "denominator",
+          "value",
+          "status"
+        ],
+        "complementarity_v1/pre_post_metrics": [
+          "correction",
+          "fold",
+          "metric",
+          "numerator",
+          "denominator",
+          "value",
+          "status",
+          "arm"
+        ],
+        "complementarity_v1/fold_dispersion": [
+          "arm",
+          "metric",
+          "folds_defined",
+          "folds_undefined",
+          "min",
+          "max",
+          "range",
+          "pooled"
+        ]
+      }
+    },
+    "03_routing_states.csv": {
+      "sha256": "c5996b117bd51fe9054fba4e69e22c385348b403fd5ac232a0789b810029d570",
+      "bytes": 35023,
+      "rows": 270,
+      "columns": [
+        "package",
+        "table",
+        "arm",
+        "fold",
+        "state",
+        "pre_state",
+        "post_state",
+        "state_oof_remainder",
+        "state_full",
+        "rows",
+        "n",
+        "positives",
+        "negatives",
+        "share",
+        "share_status",
+        "positive_rate",
+        "positive_rate_status",
+        "negative_rate",
+        "negative_rate_status",
+        "share_of_positives",
+        "share_of_positives_status",
+        "share_of_negatives",
+        "share_of_negatives_status",
+        "changed",
+        "changed_rows",
+        "changed_rows_in_scope"
+      ],
+      "title": "Three-state routing: counts, shares and class composition, and state transitions (pre to post correction; S1 oof_remainder to full)",
+      "sources": {
+        "complementarity_v1/diagnostics/states": [
+          "arm",
+          "fold",
+          "state",
+          "rows",
+          "n",
+          "positives",
+          "negatives",
+          "share",
+          "share_status",
+          "positive_rate",
+          "positive_rate_status",
+          "negative_rate",
+          "negative_rate_status"
+        ],
+        "s1_sensitivity_v1/diagnostics/states": [
+          "arm",
+          "fold",
+          "state",
+          "rows",
+          "n",
+          "positives",
+          "negatives",
+          "share",
+          "share_status",
+          "positive_rate",
+          "positive_rate_status",
+          "negative_rate",
+          "negative_rate_status"
+        ],
+        "complementarity_v1/class_conditional": [
+          "state",
+          "rows",
+          "positives",
+          "negatives",
+          "share_of_positives",
+          "share_of_positives_status",
+          "share_of_negatives",
+          "share_of_negatives_status",
+          "arm",
+          "fold"
+        ],
+        "complementarity_v1/pre_post_transitions": [
+          "pre_state",
+          "post_state",
+          "rows",
+          "positives",
+          "negatives",
+          "changed",
+          "arm",
+          "fold",
+          "changed_rows"
+        ],
+        "s1_sensitivity_v1/routing_transitions": [
+          "fold",
+          "state_oof_remainder",
+          "state_full",
+          "rows",
+          "positives",
+          "negatives",
+          "changed",
+          "changed_rows_in_scope"
+        ]
+      }
+    },
+    "04_unique_contribution.csv": {
+      "sha256": "f4baa7e5b9a2a9e7c440be935f0d59e5b1cbb5f4312c3922486dd10814c39a6a",
+      "bytes": 49551,
+      "rows": 288,
+      "columns": [
+        "package",
+        "table",
+        "setting",
+        "arm",
+        "reference",
+        "fold",
+        "pass2_tp",
+        "pass2_fp",
+        "tp_both",
+        "fp_both",
+        "tp_lr_only",
+        "fp_lr_only",
+        "tp_ebm_only",
+        "fp_ebm_only",
+        "tp_neither",
+        "fp_neither",
+        "glass_unique_tp",
+        "rf_unique_tp",
+        "shared_tp",
+        "glass_only_tp",
+        "rf_only_tp",
+        "glass_unique_fp",
+        "rf_unique_fp",
+        "shared_fp",
+        "glass_only_fp",
+        "rf_only_fp",
+        "glass_only_tp_in_rf_pass1",
+        "glass_only_tp_in_rf_abstain",
+        "rf_only_tp_in_glass_pass1",
+        "rf_only_tp_in_glass_abstain",
+        "tp_jaccard",
+        "tp_jaccard_status",
+        "pool_positives",
+        "expected_shared_tp_if_unrelated",
+        "rows",
+        "positives",
+        "glass_remainder_rows",
+        "rf_remainder_rows",
+        "common_rows",
+        "common_positives",
+        "glass_pass2_in_common",
+        "rf_pass2_in_common",
+        "glass_pass2_outside_common",
+        "rf_pass2_outside_common",
+        "flags",
+        "pool_rows",
+        "pool_rate",
+        "expected_positives",
+        "observed_positives",
+        "excess_positives"
+      ],
+      "title": "Pass 2 discovery against the frozen LR/EBM references, cross-router overlap, the common eligible population and chance baselines",
+      "sources": {
+        "complementarity_v1/diagnostics/pass2_breakdown": [
+          "arm",
+          "fold",
+          "pass2_tp",
+          "pass2_fp",
+          "tp_both",
+          "fp_both",
+          "tp_lr_only",
+          "fp_lr_only",
+          "tp_ebm_only",
+          "fp_ebm_only",
+          "tp_neither",
+          "fp_neither"
+        ],
+        "s1_sensitivity_v1/diagnostics/pass2_breakdown": [
+          "arm",
+          "fold",
+          "pass2_tp",
+          "pass2_fp",
+          "tp_both",
+          "fp_both",
+          "tp_lr_only",
+          "fp_lr_only",
+          "tp_ebm_only",
+          "fp_ebm_only",
+          "tp_neither",
+          "fp_neither"
+        ],
+        "complementarity_v1/diagnostics/pass2_cross_router": [
+          "reference",
+          "fold",
+          "glass_unique_tp",
+          "rf_unique_tp",
+          "shared_tp",
+          "glass_only_tp",
+          "rf_only_tp",
+          "glass_unique_fp",
+          "rf_unique_fp",
+          "shared_fp",
+          "glass_only_fp",
+          "rf_only_fp",
+          "glass_only_tp_in_rf_pass1",
+          "glass_only_tp_in_rf_abstain",
+          "rf_only_tp_in_glass_pass1",
+          "rf_only_tp_in_glass_abstain",
+          "tp_jaccard",
+          "tp_jaccard_status",
+          "pool_positives",
+          "expected_shared_tp_if_unrelated"
+        ],
+        "s1_sensitivity_v1/diagnostics/pass2_cross_router": [
+          "reference",
+          "fold",
+          "glass_unique_tp",
+          "rf_unique_tp",
+          "shared_tp",
+          "glass_only_tp",
+          "rf_only_tp",
+          "glass_unique_fp",
+          "rf_unique_fp",
+          "shared_fp",
+          "glass_only_fp",
+          "rf_only_fp",
+          "glass_only_tp_in_rf_pass1",
+          "glass_only_tp_in_rf_abstain",
+          "rf_only_tp_in_glass_pass1",
+          "rf_only_tp_in_glass_abstain",
+          "tp_jaccard",
+          "tp_jaccard_status",
+          "pool_positives",
+          "expected_shared_tp_if_unrelated"
+        ],
+        "complementarity_v1/diagnostics/common_population": [
+          "fold",
+          "rows",
+          "positives",
+          "glass_remainder_rows",
+          "rf_remainder_rows",
+          "common_rows",
+          "common_positives",
+          "glass_pass2_in_common",
+          "rf_pass2_in_common",
+          "glass_pass2_outside_common",
+          "rf_pass2_outside_common"
+        ],
+        "s1_sensitivity_v1/diagnostics/common_population": [
+          "fold",
+          "rows",
+          "positives",
+          "glass_remainder_rows",
+          "rf_remainder_rows",
+          "common_rows",
+          "common_positives",
+          "glass_pass2_in_common",
+          "rf_pass2_in_common",
+          "glass_pass2_outside_common",
+          "rf_pass2_outside_common"
+        ],
+        "complementarity_v1/diagnostics/chance_baselines": [
+          "setting",
+          "arm",
+          "reference",
+          "fold",
+          "flags",
+          "pool_rows",
+          "pool_positives",
+          "pool_rate",
+          "expected_positives",
+          "observed_positives",
+          "excess_positives"
+        ],
+        "s1_sensitivity_v1/diagnostics/chance_baselines": [
+          "setting",
+          "arm",
+          "reference",
+          "fold",
+          "flags",
+          "pool_rows",
+          "pool_positives",
+          "pool_rate",
+          "expected_positives",
+          "observed_positives",
+          "excess_positives"
+        ]
+      }
+    },
+    "05_matched_budget.csv": {
+      "sha256": "de4f962c2a6da96edc393f19a5c34f7ffc6d74b23a62cdd8f1b19863aab07c8b",
+      "bytes": 11985,
+      "rows": 60,
+      "columns": [
+        "package",
+        "table",
+        "reference",
+        "arm",
+        "model",
+        "score_space",
+        "set",
+        "fold",
+        "operating_point",
+        "threshold",
+        "selection",
+        "fold_plan",
+        "flags",
+        "tp",
+        "fp",
+        "flag_rate",
+        "precision",
+        "precision_status",
+        "target_count",
+        "selected_rows",
+        "cut_value",
+        "exact",
+        "tie_block",
+        "strict_count",
+        "inclusive_count",
+        "tie_broken_rows",
+        "n",
+        "positives",
+        "positive_rate",
+        "positive_rate_status",
+        "overlap_with_router",
+        "jaccard_with_router",
+        "score",
+        "label"
+      ],
+      "title": "The frozen LR/EBM reference flags, label-free rate-matched selections and each router's Pass 1 set against the matched LR set",
+      "sources": {
+        "complementarity_v1/diagnostics/reference_flags": [
+          "reference",
+          "operating_point",
+          "score_space",
+          "threshold",
+          "selection",
+          "fold_plan",
+          "flags",
+          "tp",
+          "fp",
+          "flag_rate",
+          "precision",
+          "precision_status"
+        ],
+        "complementarity_v1/diagnostics/matched_selection": [
+          "arm",
+          "reference",
+          "model",
+          "score_space",
+          "fold",
+          "target_count",
+          "selected_rows",
+          "cut_value",
+          "exact",
+          "tie_block",
+          "strict_count",
+          "inclusive_count",
+          "tie_broken_rows"
+        ],
+        "s1_sensitivity_v1/diagnostics/matched_selection": [
+          "arm",
+          "reference",
+          "model",
+          "score_space",
+          "fold",
+          "target_count",
+          "selected_rows",
+          "cut_value",
+          "exact",
+          "tie_block",
+          "strict_count",
+          "inclusive_count",
+          "tie_broken_rows"
+        ],
+        "complementarity_v1/pass1_matched_lr": [
+          "arm",
+          "fold",
+          "set",
+          "n",
+          "positives",
+          "positive_rate",
+          "positive_rate_status",
+          "overlap_with_router",
+          "jaccard_with_router",
+          "target_count",
+          "exact",
+          "tie_block",
+          "strict_count",
+          "inclusive_count",
+          "cut_value",
+          "score",
+          "label"
+        ]
+      }
+    },
+    "06_agreement_diagnostics.csv": {
+      "sha256": "2a9525f9c4a71997ce7bc9a7831825d27a6eb4584493787be8ffa97c3c5f166e",
+      "bytes": 169151,
+      "rows": 972,
+      "columns": [
+        "package",
+        "table",
+        "setting",
+        "arm",
+        "reference",
+        "group",
+        "description",
+        "fold",
+        "k",
+        "state",
+        "reference_flag",
+        "glass_state",
+        "rf_state",
+        "n",
+        "positives",
+        "negatives",
+        "positive_rate",
+        "positive_rate_status",
+        "share",
+        "lr_flags",
+        "lr_flagged_positives",
+        "ebm_flags",
+        "ebm_flagged_positives",
+        "union_flags",
+        "union_flagged_positives",
+        "intersection_flags",
+        "intersection_flagged_positives",
+        "lr_only_tp",
+        "ebm_only_tp",
+        "lr_only_fp",
+        "ebm_only_fp",
+        "ebm_minus_lr_tp",
+        "ebm_only_tp_expected_from_pool",
+        "router_unique_tp_vs_lr",
+        "router_unique_tp_vs_ebm",
+        "observed",
+        "expected_lr_calibrated",
+        "expected_ebm_calibrated",
+        "expected_stratified_lr",
+        "expected_stratified_ebm_raw",
+        "expected_stratified_lr_x_ebm",
+        "o_minus_e_lr_calibrated",
+        "o_minus_e_ebm_calibrated",
+        "o_minus_e_stratified_lr",
+        "o_minus_e_stratified_ebm_raw",
+        "o_minus_e_stratified_lr_x_ebm"
+      ],
+      "title": "Router-reference contingency, cross-router crosstab, LR/EBM disagreement and observed-versus-expected",
+      "sources": {
+        "complementarity_v1/diagnostics/contingency": [
+          "arm",
+          "reference",
+          "fold",
+          "state",
+          "reference_flag",
+          "n",
+          "positives",
+          "negatives"
+        ],
+        "s1_sensitivity_v1/diagnostics/contingency": [
+          "arm",
+          "reference",
+          "fold",
+          "state",
+          "reference_flag",
+          "n",
+          "positives",
+          "negatives"
+        ],
+        "complementarity_v1/diagnostics/crosstab": [
+          "fold",
+          "glass_state",
+          "rf_state",
+          "n",
+          "positives",
+          "negatives",
+          "positive_rate",
+          "positive_rate_status",
+          "share",
+          "lr_flags",
+          "lr_flagged_positives",
+          "ebm_flags",
+          "ebm_flagged_positives",
+          "union_flags",
+          "union_flagged_positives",
+          "intersection_flags",
+          "intersection_flagged_positives"
+        ],
+        "s1_sensitivity_v1/diagnostics/crosstab": [
+          "fold",
+          "glass_state",
+          "rf_state",
+          "n",
+          "positives",
+          "negatives",
+          "positive_rate",
+          "positive_rate_status",
+          "share",
+          "lr_flags",
+          "lr_flagged_positives",
+          "ebm_flags",
+          "ebm_flagged_positives",
+          "union_flags",
+          "union_flagged_positives",
+          "intersection_flags",
+          "intersection_flagged_positives"
+        ],
+        "complementarity_v1/diagnostics/model_disagreement": [
+          "setting",
+          "arm",
+          "fold",
+          "k",
+          "lr_flags",
+          "ebm_flags",
+          "lr_only_tp",
+          "ebm_only_tp",
+          "lr_only_fp",
+          "ebm_only_fp",
+          "ebm_minus_lr_tp",
+          "ebm_only_tp_expected_from_pool",
+          "router_unique_tp_vs_lr",
+          "router_unique_tp_vs_ebm"
+        ],
+        "s1_sensitivity_v1/diagnostics/model_disagreement": [
+          "setting",
+          "arm",
+          "fold",
+          "k",
+          "lr_flags",
+          "ebm_flags",
+          "lr_only_tp",
+          "ebm_only_tp",
+          "lr_only_fp",
+          "ebm_only_fp",
+          "ebm_minus_lr_tp",
+          "ebm_only_tp_expected_from_pool",
+          "router_unique_tp_vs_lr",
+          "router_unique_tp_vs_ebm"
+        ],
+        "complementarity_v1/diagnostics/observed_expected": [
+          "group",
+          "description",
+          "fold",
+          "n",
+          "observed",
+          "positive_rate",
+          "expected_lr_calibrated",
+          "expected_ebm_calibrated",
+          "expected_stratified_lr",
+          "expected_stratified_ebm_raw",
+          "expected_stratified_lr_x_ebm",
+          "o_minus_e_lr_calibrated",
+          "o_minus_e_ebm_calibrated",
+          "o_minus_e_stratified_lr",
+          "o_minus_e_stratified_ebm_raw",
+          "o_minus_e_stratified_lr_x_ebm"
+        ],
+        "s1_sensitivity_v1/diagnostics/observed_expected": [
+          "group",
+          "description",
+          "fold",
+          "n",
+          "observed",
+          "positive_rate",
+          "expected_lr_calibrated",
+          "expected_ebm_calibrated",
+          "expected_stratified_lr",
+          "expected_stratified_ebm_raw",
+          "expected_stratified_lr_x_ebm",
+          "o_minus_e_lr_calibrated",
+          "o_minus_e_ebm_calibrated",
+          "o_minus_e_stratified_lr",
+          "o_minus_e_stratified_ebm_raw",
+          "o_minus_e_stratified_lr_x_ebm"
+        ]
+      }
+    },
+    "07_score_strata.csv": {
+      "sha256": "bf1c296a59b0b131c7bbfdfadd61d976a1a07b052ed8d4c08b249b448df53265",
+      "bytes": 578198,
+      "rows": 4008,
+      "columns": [
+        "package",
+        "table",
+        "arm",
+        "stratifier",
+        "fold",
+        "stratum",
+        "state",
+        "contrast",
+        "stratum_rows",
+        "stratum_positives",
+        "n",
+        "positives",
+        "negatives",
+        "positive_rate",
+        "positive_rate_status",
+        "expected_lr_calibrated",
+        "expected_ebm_calibrated",
+        "low_support",
+        "lr_flags",
+        "ebm_flags",
+        "union_flags",
+        "intersection_flags",
+        "n_a",
+        "n_b",
+        "difference_pp",
+        "status"
+      ],
+      "title": "Routing by score stratum, and stratum contrasts",
+      "sources": {
+        "complementarity_v1/diagnostics/score_conditional": [
+          "arm",
+          "stratifier",
+          "fold",
+          "stratum",
+          "state",
+          "stratum_rows",
+          "stratum_positives",
+          "n",
+          "positives",
+          "negatives",
+          "positive_rate",
+          "positive_rate_status",
+          "expected_lr_calibrated",
+          "expected_ebm_calibrated",
+          "low_support",
+          "lr_flags",
+          "ebm_flags",
+          "union_flags",
+          "intersection_flags"
+        ],
+        "s1_sensitivity_v1/diagnostics/score_conditional": [
+          "arm",
+          "stratifier",
+          "fold",
+          "stratum",
+          "state",
+          "stratum_rows",
+          "stratum_positives",
+          "n",
+          "positives",
+          "negatives",
+          "positive_rate",
+          "positive_rate_status",
+          "expected_lr_calibrated",
+          "expected_ebm_calibrated",
+          "low_support",
+          "lr_flags",
+          "ebm_flags",
+          "union_flags",
+          "intersection_flags"
+        ],
+        "complementarity_v1/diagnostics/stratum_contrasts": [
+          "arm",
+          "stratifier",
+          "fold",
+          "stratum",
+          "contrast",
+          "n_a",
+          "n_b",
+          "difference_pp",
+          "status"
+        ],
+        "s1_sensitivity_v1/diagnostics/stratum_contrasts": [
+          "arm",
+          "stratifier",
+          "fold",
+          "stratum",
+          "contrast",
+          "n_a",
+          "n_b",
+          "difference_pp",
+          "status"
+        ]
+      }
+    },
+    "08_diagnostic_ratios.csv": {
+      "sha256": "93ffb24a521ff3c63a2c87428a6b2dd76f6a329690e4f9e2ad9666966a78f5e6",
+      "bytes": 2112830,
+      "rows": 12303,
+      "columns": [
+        "package",
+        "table",
+        "section",
+        "arm",
+        "reference",
+        "population",
+        "group",
+        "score",
+        "fold",
+        "metric",
+        "label",
+        "numerator",
+        "denominator",
+        "value",
+        "status"
+      ],
+      "title": "Every Step 2A-2D count and ratio (numerator, denominator, value, status)",
+      "sources": {
+        "complementarity_v1/diagnostics/ratios": [
+          "section",
+          "arm",
+          "reference",
+          "population",
+          "group",
+          "score",
+          "fold",
+          "metric",
+          "label",
+          "numerator",
+          "denominator",
+          "value",
+          "status"
+        ],
+        "s1_sensitivity_v1/diagnostics/ratios": [
+          "section",
+          "arm",
+          "reference",
+          "population",
+          "group",
+          "score",
+          "fold",
+          "metric",
+          "label",
+          "numerator",
+          "denominator",
+          "value",
+          "status"
+        ]
+      }
+    },
+    "09_contract_compliance.csv": {
+      "sha256": "21e31c1458554ec126ca39cb3aa5be3fa88ac5286f6bf536e6497b42333043f7",
+      "bytes": 57538,
+      "rows": 258,
+      "columns": [
+        "package",
+        "table",
+        "arm",
+        "fold",
+        "pool",
+        "selection",
+        "obligation",
+        "metric",
+        "limit",
+        "fit_status",
+        "fit_time_numerator",
+        "fit_time_denominator",
+        "fit_time_value",
+        "fit_time_status",
+        "observed_numerator",
+        "observed_denominator",
+        "observed_value",
+        "observed_status",
+        "shortfall",
+        "classification",
+        "low_support",
+        "tolerance",
+        "material",
+        "materiality_rule_status",
+        "population_rows",
+        "population_positives",
+        "population_status",
+        "numerator",
+        "denominator",
+        "value",
+        "comparison",
+        "status",
+        "shortfall_float",
+        "strip_a_in_band",
+        "band_rows",
+        "share",
+        "review_required",
+        "basis",
+        "band_numerator",
+        "band_denominator",
+        "band_value",
+        "r1_recorded_confidence",
+        "r1_matches_band",
+        "realised_numerator",
+        "realised_denominator",
+        "realised_value",
+        "optimism_gap",
+        "band_basis",
+        "use",
+        "routed_rows",
+        "routed_positives",
+        "npv",
+        "leakage_share"
+      ],
+      "title": "Fit-time obligations and observed outer-OOF shortfalls (kept apart), F31 R2 strips, R3 optimism and M6 inner-OOF Pass 1",
+      "sources": {
+        "complementarity_v1/shortfalls": [
+          "arm",
+          "fold",
+          "pool",
+          "obligation",
+          "metric",
+          "limit",
+          "fit_status",
+          "fit_time_numerator",
+          "fit_time_denominator",
+          "fit_time_value",
+          "fit_time_status",
+          "observed_numerator",
+          "observed_denominator",
+          "observed_value",
+          "observed_status",
+          "shortfall",
+          "classification",
+          "low_support",
+          "tolerance",
+          "material",
+          "materiality_rule_status"
+        ],
+        "complementarity_v1/fit_time_obligations": [
+          "arm",
+          "fold",
+          "selection",
+          "population_rows",
+          "population_positives",
+          "population_status",
+          "obligation",
+          "metric",
+          "numerator",
+          "denominator",
+          "value",
+          "limit",
+          "comparison",
+          "status",
+          "shortfall",
+          "shortfall_float"
+        ],
+        "complementarity_v1/f31_r2_strips": [
+          "fold",
+          "strip_a_in_band",
+          "band_rows",
+          "share",
+          "status",
+          "review_required",
+          "basis"
+        ],
+        "complementarity_v1/f31_r3_optimism": [
+          "fold",
+          "metric",
+          "band_numerator",
+          "band_denominator",
+          "band_value",
+          "r1_recorded_confidence",
+          "r1_matches_band",
+          "realised_numerator",
+          "realised_denominator",
+          "realised_value",
+          "optimism_gap",
+          "band_basis",
+          "use"
+        ],
+        "complementarity_v1/m6_inner_oof_pass1": [
+          "fold",
+          "population_rows",
+          "population_positives",
+          "routed_rows",
+          "routed_positives",
+          "npv",
+          "leakage_share"
+        ]
+      }
+    },
+    "10_solver_and_validation.csv": {
+      "sha256": "bc860177550c6255b8c451fdb9f7f9f9060e174e3338ccf7fc9d94e95c402966",
+      "bytes": 57942,
+      "rows": 236,
+      "columns": [
+        "package",
+        "table",
+        "arm",
+        "router",
+        "routing",
+        "fold",
+        "selection",
+        "section",
+        "stage",
+        "check",
+        "claim",
+        "signal",
+        "status",
+        "accepted",
+        "status_only",
+        "n_train",
+        "train_positives",
+        "remainder_rows",
+        "remainder_positives",
+        "remainder_prevalence",
+        "outer_rows",
+        "outer_positives",
+        "wall_seconds",
+        "problems",
+        "attempted",
+        "reported",
+        "fit_completed",
+        "missing",
+        "not_accepted",
+        "outcome",
+        "fit_status",
+        "disposition",
+        "reason",
+        "method",
+        "solver_status",
+        "gap",
+        "gap_source",
+        "lexicographic_guarantee",
+        "reproduced",
+        "selected_rules",
+        "rows",
+        "positives",
+        "pass1_rows",
+        "pass1_positives",
+        "pass2_rows",
+        "pass2_positives",
+        "abstain_rows",
+        "abstain_positives",
+        "overlapping_rows",
+        "unassigned_rows",
+        "exclusive",
+        "exhaustive",
+        "reconciles_with_routing_counts",
+        "passed",
+        "detail",
+        "error",
+        "description",
+        "basis",
+        "violations",
+        "evidence"
+      ],
+      "title": "Fold ledger, solver outcomes, three-state accounting, trace and alignment checks, routing-policy audit and signal availability",
+      "sources": {
+        "complementarity_v1/fold_ledger": [
+          "arm",
+          "fold",
+          "status",
+          "accepted",
+          "status_only",
+          "n_train",
+          "train_positives",
+          "remainder_rows",
+          "remainder_positives",
+          "remainder_prevalence",
+          "outer_rows",
+          "outer_positives",
+          "wall_seconds",
+          "problems"
+        ],
+        "complementarity_v1/fold_ledger_summary": [
+          "arm",
+          "attempted",
+          "reported",
+          "fit_completed",
+          "accepted",
+          "missing",
+          "status_only",
+          "not_accepted"
+        ],
+        "complementarity_v1/solver_outcomes": [
+          "arm",
+          "fold",
+          "selection",
+          "outcome",
+          "fit_status",
+          "disposition",
+          "reason",
+          "method",
+          "solver_status",
+          "gap",
+          "gap_source",
+          "lexicographic_guarantee",
+          "reproduced",
+          "selected_rules"
+        ],
+        "complementarity_v1/accounting": [
+          "routing",
+          "fold",
+          "rows",
+          "positives",
+          "pass1_rows",
+          "pass1_positives",
+          "pass2_rows",
+          "pass2_positives",
+          "abstain_rows",
+          "abstain_positives",
+          "overlapping_rows",
+          "unassigned_rows",
+          "exclusive",
+          "exhaustive",
+          "reconciles_with_routing_counts"
+        ],
+        "complementarity_v1/trace_checks": [
+          "section",
+          "stage",
+          "check",
+          "passed",
+          "detail",
+          "error"
+        ],
+        "complementarity_v1/alignment": [
+          "check",
+          "arm",
+          "fold",
+          "passed",
+          "detail"
+        ],
+        "complementarity_v1/diagnostics/policy_audit": [
+          "arm",
+          "router",
+          "claim",
+          "description",
+          "status",
+          "basis",
+          "violations",
+          "evidence"
+        ],
+        "s1_sensitivity_v1/diagnostics/policy_audit": [
+          "arm",
+          "router",
+          "claim",
+          "description",
+          "status",
+          "basis",
+          "violations",
+          "evidence"
+        ],
+        "complementarity_v1/diagnostics/signal_availability": [
+          "arm",
+          "signal",
+          "status",
+          "basis",
+          "rows",
+          "detail"
+        ],
+        "s1_sensitivity_v1/diagnostics/signal_availability": [
+          "arm",
+          "signal",
+          "status",
+          "basis",
+          "rows",
+          "detail"
+        ]
+      }
+    },
+    "11_s1_sensitivity.csv": {
+      "sha256": "32ab0d4ebf9ad2c4a8cb8be4111ed481507710c9b2003c5c006442e14af816b5",
+      "bytes": 12660,
+      "rows": 72,
+      "columns": [
+        "package",
+        "table",
+        "config",
+        "setting",
+        "fold",
+        "oof_remainder",
+        "full",
+        "differs",
+        "n_train",
+        "train_positives",
+        "pass2_population_rows",
+        "pass2_population_positives",
+        "pass2_population_prevalence",
+        "pass2_population_share_of_fold",
+        "fit_pass2_routed_rows",
+        "fit_pass2_routed_positives",
+        "fit_pass2_precision",
+        "fit_pass1_routed_rows",
+        "fit_pass1_routed_positives",
+        "status",
+        "accepted",
+        "by_key",
+        "pass1_source",
+        "pass1_lexicographic_guarantee",
+        "pass2_source",
+        "pass2_lexicographic_guarantee",
+        "inner_pass1_selections",
+        "wall_seconds",
+        "pass1_rules",
+        "pass1_rules_digest_oof_remainder",
+        "pass1_rules_digest_full",
+        "fit_pass1_routed_rows_oof_remainder",
+        "fit_pass1_routed_rows_full",
+        "outer_pass1_rows_oof_remainder",
+        "outer_pass1_rows_full"
+      ],
+      "title": "S1 (GLASS pass2_population full vs oof_remainder): configuration, Pass 2 fitting populations, fold feasibility and G6 Pass 1 invariance",
+      "sources": {
+        "s1_sensitivity_v1/configuration": [
+          "setting",
+          "oof_remainder",
+          "full",
+          "differs"
+        ],
+        "s1_sensitivity_v1/pass2_fitting_population": [
+          "config",
+          "fold",
+          "n_train",
+          "train_positives",
+          "pass2_population_rows",
+          "pass2_population_positives",
+          "pass2_population_prevalence",
+          "pass2_population_share_of_fold",
+          "fit_pass2_routed_rows",
+          "fit_pass2_routed_positives",
+          "fit_pass2_precision",
+          "fit_pass1_routed_rows",
+          "fit_pass1_routed_positives"
+        ],
+        "s1_sensitivity_v1/fold_feasibility": [
+          "config",
+          "fold",
+          "status",
+          "accepted",
+          "by_key",
+          "pass1_source",
+          "pass1_lexicographic_guarantee",
+          "pass2_source",
+          "pass2_lexicographic_guarantee",
+          "inner_pass1_selections",
+          "wall_seconds"
+        ],
+        "s1_sensitivity_v1/g6_pass1_invariance": [
+          "fold",
+          "pass1_rules",
+          "pass1_rules_digest_oof_remainder",
+          "pass1_rules_digest_full",
+          "fit_pass1_routed_rows_oof_remainder",
+          "fit_pass1_routed_rows_full",
+          "outer_pass1_rows_oof_remainder",
+          "outer_pass1_rows_full"
+        ]
+      }
+    },
+    "README.md": {
+      "sha256": "13d7bc34f4d7b7674bfdfac50c5890ad84316e62d3b1c955c5a251a6c4f86380",
+      "bytes": 12261
+    },
+    "complementarity_summary.json": {
+      "sha256": "14044bbc977f9a2b3ac9aff38a8e13f85d9bc4b1e4b609a5cecea1bec776e8f3",
+      "bytes": 29208
+    },
+    "run_summary.json": {
+      "sha256": "038b128e016f4431cef4b594584a1b93c9f342e07ce8a719aaaa79f2615eb732",
+      "bytes": 10020
+    },
+    "s1_summary.json": {
+      "sha256": "85faf7ba3640486c32d7c5917811a5dad57b95b882aa19b955fa43e6e5f8ead2",
+      "bytes": 12302
+    },
+    "source_manifest_complementarity_v1.json": {
+      "sha256": "ab06a060c395bcd6c5574b7f96535f2b07a4b3c32ef87279cbbbc3aba7221d23",
+      "bytes": 36271
+    },
+    "source_manifest_s1_sensitivity_v1.json": {
+      "sha256": "fe8d48314398922d7ab24ac7f8da97a943988cb03112a99922386bddec2ce4ab",
+      "bytes": 20842
+    }
+  },
+  "code": {
+    "method": "sha256 of the UTF-8 file with CRLF normalised to LF",
+    "files": {
+      "stage2_crossfit/reporting.py": "51772ab12c96dceba02316804f9a8ab2d45961488e6675f06fd6a2f909698f45",
+      "stage2_crossfit/complementarity.py": "bd5ed75b512432cf0b6bd4b337ffe645738dac6fb6b58210f22414525c7c3bce",
+      "stage2_crossfit/sensitivity.py": "37c47f079bc8ad6db9a2d7f8d301f31a960ff5cdb6c1ee8992255b0cde054120",
+      "shared/stage2/diagnostics/baseline.py": "d22c170fdc4fa861ecb5e87f60897b88ba03c61d0b94bf51ee93233b19fee023"
+    }
+  }
+}

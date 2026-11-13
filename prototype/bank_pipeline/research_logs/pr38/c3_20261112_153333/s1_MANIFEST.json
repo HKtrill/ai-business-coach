@@ -1,0 +1,61 @@
+{
+  "acceptance": {
+    "accepted": false,
+    "fold_ledger_complete": true,
+    "pending": "structural acceptance V1-V8 (Commit 3A)",
+    "structural_acceptance": null
+  },
+  "extra_identity": {
+    "primary_acceptance_digest": "e101fb6214d4776dccaaec5821199f93ad0183be6d5995dd9dc1189cb3ab682c",
+    "primary_acceptance_sha256": "91612167dd2582788abcb37d04885bd5507a93844514b4989cc929556821aa1a",
+    "primary_manifest_sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88"
+  },
+  "feature_pathway": {
+    "pathway": "fold_label_excluded",
+    "record": [
+      "stage2-inner-fold-feature-isolation",
+      "1.0.0",
+      "0d4953ef34d1d3dc"
+    ]
+  },
+  "files": {
+    "evidence.json": {
+      "bytes": 48332,
+      "sha256": "0ae74f8b88a145d3f64b0be69faaccc8bb2060fa4a83d0dd31e50529f4cf218c"
+    },
+    "glass_router/glass_router_pr38_s1_full_c3_20261112_153333.joblib": {
+      "bytes": 2095644,
+      "sha256": "2f2e1ae406944a43e924a01558f66a0160cdd673be150f9c124da10622831fbc"
+    }
+  },
+  "format": "pr38.stage2.run/1",
+  "identities": {
+    "contract": [
+      "pr37-stage2-primary",
+      "1.0.0",
+      "0817825b9eecbd11"
+    ],
+    "glass_profile": {
+      "fingerprint": "198731d5cdf263f4",
+      "profile_id": "pr37-glass-router-primary",
+      "profile_version": "1.0.0"
+    },
+    "protocol": [
+      "pr38-stage2-evaluation",
+      "1.0.0",
+      "245a1a68fb68cf4e"
+    ],
+    "rf_profile": {
+      "fingerprint": "4e3f9c07e6ecc8ad",
+      "profile_id": "pr37-rf-router-primary",
+      "profile_version": "1.0.0"
+    }
+  },
+  "population": {
+    "fold_fingerprint": "8aea082fcaf371b7",
+    "router_split_fingerprint": "fc3e73a5ef91aea4",
+    "train_label_fingerprint": "b984d2a50527"
+  },
+  "role": "s1_full",
+  "run_id": "c3_20261112_153333"
+}

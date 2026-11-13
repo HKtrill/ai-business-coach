@@ -1,0 +1,1391 @@
+{
+  "accepted": true,
+  "artifacts": {
+    "blackbox": "rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+    "glass": "glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib"
+  },
+  "at_utc": "2026-11-13T04:50:35+00:00",
+  "candidate_manifest_sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88",
+  "f31_strip_review": [
+    {
+      "band_rows": 6637,
+      "fold": 0,
+      "review_required": false,
+      "share": 0.0,
+      "status": "below_trigger",
+      "strip_a_in_band": 0
+    },
+    {
+      "band_rows": 6583,
+      "fold": 1,
+      "review_required": false,
+      "share": 0.0,
+      "status": "below_trigger",
+      "strip_a_in_band": 0
+    },
+    {
+      "band_rows": 6507,
+      "fold": 2,
+      "review_required": false,
+      "share": 0.0,
+      "status": "below_trigger",
+      "strip_a_in_band": 0
+    },
+    {
+      "band_rows": 6494,
+      "fold": 3,
+      "review_required": false,
+      "share": 0.0,
+      "status": "below_trigger",
+      "strip_a_in_band": 0
+    },
+    {
+      "band_rows": 6591,
+      "fold": 4,
+      "review_required": false,
+      "share": 0.0,
+      "status": "below_trigger",
+      "strip_a_in_band": 0
+    }
+  ],
+  "feature_pathway": {
+    "pathway": "fold_label_excluded",
+    "record": [
+      "stage2-inner-fold-feature-isolation",
+      "1.0.0",
+      "0d4953ef34d1d3dc"
+    ]
+  },
+  "fit_status_by_fold": {
+    "blackbox": {
+      "0": "valid_optimal",
+      "1": "valid_optimal",
+      "2": "valid_optimal",
+      "3": "valid_optimal",
+      "4": "valid_optimal"
+    },
+    "glass": {
+      "0": "valid_unproven_documented",
+      "1": "valid_unproven_documented",
+      "2": "valid_unproven_documented",
+      "3": "valid_unproven_documented",
+      "4": "valid_unproven_documented"
+    }
+  },
+  "fold_ledger": [
+    {
+      "accepted": 5,
+      "arm": "glass",
+      "attempted": 5,
+      "fit_completed": 5,
+      "missing": [],
+      "not_accepted": {},
+      "reported": 5,
+      "status_only": []
+    },
+    {
+      "accepted": 5,
+      "arm": "blackbox",
+      "attempted": 5,
+      "fit_completed": 5,
+      "missing": [],
+      "not_accepted": {},
+      "reported": 5,
+      "status_only": []
+    }
+  ],
+  "format": "pr38.stage2.structural_acceptance/1",
+  "gates": {
+    "V1": {
+      "checks": [
+        {
+          "check": "the train side is the frozen protocol's population (rows, labels, fold plan)",
+          "detail": "{'rows': 32950, 'positives': 3712, 'fold_rows': [6590, 6590, 6590, 6590, 6590], 'fold_positives': [742, 742, 742, 743, 743], 'router_split_fingerprint': 'fc3e73a5ef91aea4', 'train_label_fingerprint': 'b984d2a50527', 'fold_fingerprint': '8aea082fcaf371b7'}",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] train_outputs_oof is True",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] row index = GLOBAL_SPLIT X_train index (same order)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] decisions are exactly 'pass1' / 'pass2' / 'uncertain'",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] train_pred = 0 / 1 / -1 for pass1 / pass2 / uncertain",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] confidence finite in [0, 1]",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] confidence exactly 0.0 on abstained rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] router score finite in [0, 1]",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] fold ids: one per training row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] fold ids: partition 0..k-1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] fold ids: declared n_folds = fold ids",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] fold ids: reproduce shared.stage_io.fold_assignment at the declared seed",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] fold ids: fold fingerprint matches",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] router score = route transform with fold base rates (|diff| <= 1e-12)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] router split fingerprint = recomputed (row indices only)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] cross-fit label fingerprint = training rows and labels",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] full-train label fingerprint = training rows and labels",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] training_base_rate = training positive rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] features = shared.stage2 RF_FEATURES_BINARY",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] Pass 2 population declared for the cross-fit and the full-train fit, equal and known",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [glass] config_full Pass 2 population = fit_report",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] train_outputs_oof is True",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] row index = GLOBAL_SPLIT X_train index (same order)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] decisions are exactly 'pass1' / 'pass2' / 'uncertain'",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] train_pred = 0 / 1 / -1 for pass1 / pass2 / uncertain",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] confidence finite in [0, 1]",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] confidence exactly 0.0 on abstained rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] router score finite in [0, 1]",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] fold ids: one per training row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] fold ids: partition 0..k-1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] fold ids: declared n_folds = fold ids",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] fold ids: reproduce shared.stage_io.fold_assignment at the declared seed",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] fold ids: fold fingerprint matches",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] router score = route transform with fold base rates (|diff| <= 1e-12)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] router split fingerprint = recomputed (row indices only)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] oof_protocol split fingerprint = artifact split fingerprint",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] cross-fit label fingerprint = training rows and labels",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] full-train label fingerprint = training rows and labels",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] training_base_rate = training positive rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] features = shared.stage2 RF_FEATURES_BINARY",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] RF Router mode is 'two_pass'",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] Pass 2 population is the OOF Pass 1 remainder (exact declaration)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "boundary [blackbox] oof_fold_summary: one finite t1 / t2 per outer fold",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [reference] T1 reference is a TrainReference (build_train_reference)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T1 input is a RouterOOFView (extract_router_view)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T1 arm is 'glass' and model family is 'glass_router'",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T2 row index = training index (same rows, same order)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T2 row index is unique",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T2 every per-row field has one entry per training row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T3 labels = training labels",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T3 labels are binary 0 / 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T4 every state is one of ROUTER_STATES",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T4 exactly one of Pass 1 / Pass 2 / Abstain per row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T5 decision tokens are exactly 'pass1' / 'pass2' / 'uncertain'",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T5 state = SOURCE_DECISIONS[token] on every row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T5 source_pred = SOURCE_DECISIONS[token] pred on every row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T6 fold ids are integers 0..4, every fold non-empty",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T7 pooled state counts sum to the training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T7 pooled state positives sum to the training positives",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T7 per-fold state counts, positives and negatives sum to the pooled values",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T7 each fold's Pass 1 + Pass 2 + Abstain = the fold's rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T1 input is a RouterOOFView (extract_router_view)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T1 arm is 'blackbox' and model family is 'rf_router'",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T2 row index = training index (same rows, same order)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T2 row index is unique",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T2 every per-row field has one entry per training row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T3 labels = training labels",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T3 labels are binary 0 / 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T4 every state is one of ROUTER_STATES",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T4 exactly one of Pass 1 / Pass 2 / Abstain per row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T5 decision tokens are exactly 'pass1' / 'pass2' / 'uncertain'",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T5 state = SOURCE_DECISIONS[token] on every row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T5 source_pred = SOURCE_DECISIONS[token] pred on every row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T6 fold ids are integers 0..4, every fold non-empty",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T7 pooled state counts sum to the training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T7 pooled state positives sum to the training positives",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T7 per-fold state counts, positives and negatives sum to the pooled values",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T7 each fold's Pass 1 + Pass 2 + Abstain = the fold's rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass x blackbox] T2 both arms cover the same training rows in the same order",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass x blackbox] T3 both arms carry the same labels",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass x blackbox] T6 both arms use the same outer fold ids (shared five-fold plan)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass x blackbox] T6 both arms declare the same fold fingerprint",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace coverage [reference] T1 all evaluated",
+          "detail": "['T1']",
+          "passed": true
+        },
+        {
+          "check": "trace coverage [glass] T1/T2/T3/T4/T5/T6/T7 all evaluated",
+          "detail": "['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']",
+          "passed": true
+        },
+        {
+          "check": "trace coverage [blackbox] T1/T2/T3/T4/T5/T6/T7 all evaluated",
+          "detail": "['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']",
+          "passed": true
+        },
+        {
+          "check": "trace coverage [glass x blackbox] T2/T3/T6 all evaluated",
+          "detail": "['T2', 'T3', 'T6']",
+          "passed": true
+        },
+        {
+          "check": "check_population_identity, complete",
+          "detail": "every check passed",
+          "passed": true
+        },
+        {
+          "check": "check_upstream_identity, complete (D-C10 fingerprints included)",
+          "detail": "every check passed",
+          "passed": true
+        }
+      ],
+      "evidence": "88/88 checks passed",
+      "gate": "V1",
+      "not_run": null,
+      "passed": true,
+      "status": "pass"
+    },
+    "V2": {
+      "checks": [
+        {
+          "check": "the run's settings are the frozen primary (role, frozen identities)",
+          "detail": "{'contract': ['pr37-stage2-primary', '1.0.0', '0817825b9eecbd11'], 'protocol': ['pr38-stage2-evaluation', '1.0.0', '245a1a68fb68cf4e'], 'glass_profile': {'profile_id': 'pr37-glass-router-primary', 'profile_version': '1.0.0', 'fingerprint': '198731d5cdf263f4'}, 'rf_profile': {'profile_id': 'pr37-rf-router-primary', 'profile_version': '1.0.0', 'fingerprint': '4e3f9c07e6ecc8ad'}}",
+          "passed": true
+        },
+        {
+          "check": "the Step 2B authorization re-verified for this run and pathway",
+          "detail": "fold_label_excluded",
+          "passed": true
+        },
+        {
+          "check": "the manifest's identities are the settings' identities",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "both artifacts record the settings built now",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "the GLASS bundle's config_full is the primary GLASS config",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "the RF Router's config is the primary RF config",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "RF constraints follow the bound contract (constraint_source shared_contract)",
+          "detail": "0817825b9eecbd11",
+          "passed": true
+        }
+      ],
+      "evidence": "7/7 checks passed",
+      "gate": "V2",
+      "not_run": null,
+      "passed": true,
+      "status": "pass"
+    },
+    "V3": {
+      "checks": [
+        {
+          "check": "glass: every attempted fold has a record",
+          "detail": "[0, 1, 2, 3, 4]",
+          "passed": true
+        },
+        {
+          "check": "glass: each fold re-classifies from its evidence to its recorded status",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox: every attempted fold has a record",
+          "detail": "[0, 1, 2, 3, 4]",
+          "passed": true
+        },
+        {
+          "check": "blackbox: each fold re-classifies from its evidence to its recorded status",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "FoldLedger: every attempted fold accepted in both arms (D-C6)",
+          "detail": "{'glass': {0: 'valid_unproven_documented', 1: 'valid_unproven_documented', 2: 'valid_unproven_documented', 3: 'valid_unproven_documented', 4: 'valid_unproven_documented'}, 'blackbox': {0: 'valid_optimal', 1: 'valid_optimal', 2: 'valid_optimal', 3: 'valid_optimal', 4: 'valid_optimal'}}",
+          "passed": true
+        },
+        {
+          "check": "glass: the full-train fit's status is accepted on re-classification",
+          "detail": "valid_unproven_documented",
+          "passed": true
+        },
+        {
+          "check": "blackbox: the full-train fit's status is accepted on re-classification",
+          "detail": "valid_optimal",
+          "passed": true
+        },
+        {
+          "check": "the artifacts embed exactly the evidence.json fold records",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "8/8 checks passed",
+      "gate": "V3",
+      "not_run": null,
+      "passed": true,
+      "status": "pass"
+    },
+    "V4": {
+      "checks": [
+        {
+          "check": "glass fold 0: fitted on exactly its outer-training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 0: isolation clean (no held-out row in any fit)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 0: remainder rows inside the fold's training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 0: inner rankers fitted on their inner train rows (every inner fold)",
+          "detail": "[True, True, True, True, True]",
+          "passed": true
+        },
+        {
+          "check": "glass fold 0: inner bins are the fold-label-excluded ones (G13)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 1: fitted on exactly its outer-training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 1: isolation clean (no held-out row in any fit)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 1: remainder rows inside the fold's training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 1: inner rankers fitted on their inner train rows (every inner fold)",
+          "detail": "[True, True, True, True, True]",
+          "passed": true
+        },
+        {
+          "check": "glass fold 1: inner bins are the fold-label-excluded ones (G13)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 2: fitted on exactly its outer-training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 2: isolation clean (no held-out row in any fit)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 2: remainder rows inside the fold's training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 2: inner rankers fitted on their inner train rows (every inner fold)",
+          "detail": "[True, True, True, True, True]",
+          "passed": true
+        },
+        {
+          "check": "glass fold 2: inner bins are the fold-label-excluded ones (G13)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 3: fitted on exactly its outer-training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 3: isolation clean (no held-out row in any fit)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 3: remainder rows inside the fold's training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 3: inner rankers fitted on their inner train rows (every inner fold)",
+          "detail": "[True, True, True, True, True]",
+          "passed": true
+        },
+        {
+          "check": "glass fold 3: inner bins are the fold-label-excluded ones (G13)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 4: fitted on exactly its outer-training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 4: isolation clean (no held-out row in any fit)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 4: remainder rows inside the fold's training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass fold 4: inner rankers fitted on their inner train rows (every inner fold)",
+          "detail": "[True, True, True, True, True]",
+          "passed": true
+        },
+        {
+          "check": "glass fold 4: inner bins are the fold-label-excluded ones (G13)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 0: fitted on exactly its outer-training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 0: isolation clean (no held-out row in any fit)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 0: remainder rows inside the fold's training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 0: eligibility solves exclude their fold (every inner fold)",
+          "detail": "[True, True, True, True, True]",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 0: inner bins are the fold-label-excluded ones (G13)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 1: fitted on exactly its outer-training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 1: isolation clean (no held-out row in any fit)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 1: remainder rows inside the fold's training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 1: eligibility solves exclude their fold (every inner fold)",
+          "detail": "[True, True, True, True, True]",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 1: inner bins are the fold-label-excluded ones (G13)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 2: fitted on exactly its outer-training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 2: isolation clean (no held-out row in any fit)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 2: remainder rows inside the fold's training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 2: eligibility solves exclude their fold (every inner fold)",
+          "detail": "[True, True, True, True, True]",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 2: inner bins are the fold-label-excluded ones (G13)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 3: fitted on exactly its outer-training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 3: isolation clean (no held-out row in any fit)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 3: remainder rows inside the fold's training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 3: eligibility solves exclude their fold (every inner fold)",
+          "detail": "[True, True, True, True, True]",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 3: inner bins are the fold-label-excluded ones (G13)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 4: fitted on exactly its outer-training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 4: isolation clean (no held-out row in any fit)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 4: remainder rows inside the fold's training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 4: eligibility solves exclude their fold (every inner fold)",
+          "detail": "[True, True, True, True, True]",
+          "passed": true
+        },
+        {
+          "check": "blackbox fold 4: inner bins are the fold-label-excluded ones (G13)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "G13: every fit ran on the adopted feature pathway",
+          "detail": "fold_label_excluded",
+          "passed": true
+        },
+        {
+          "check": "no test label or test metric is stored",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "52/52 checks passed",
+      "gate": "V4",
+      "not_run": null,
+      "passed": true,
+      "status": "pass"
+    },
+    "V5": {
+      "checks": [
+        {
+          "check": "glass: every fold persists ['selection_reports', 'counts', 'remainder', 'm6_inner_oof_pass1', 'inner_ranker_provenance', 'isolation', 'fit_status', 'inner_feature_pathway']",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass: union counts recorded for every required selection, records complete",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox: every fold persists ['counts', 'remainder', 'r1_bands', 'r2_strips', 'eligibility', 'isolation', 'fit_status', 'inner_feature_pathway']",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox: union counts recorded for every required selection, records complete",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R1: each fold router's bands and supports, at or above their floors",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R1: the full-train router's bands",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R2: strip records for every fold router, computed inside the cross-fit",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R5: nested_t1 in the config, the fit report (per-fold t1_j) and oof_protocol",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "8/8 checks passed",
+      "gate": "V5",
+      "not_run": null,
+      "passed": true,
+      "status": "pass"
+    },
+    "V6": {
+      "checks": [
+        {
+          "check": "G7: the pre-declared fold's reproduction (fold 0) passed for this candidate, run, role and pathway in both arms",
+          "detail": "{'bit_identical': False}",
+          "passed": true
+        },
+        {
+          "check": "G7: no reproduction of another fold is on the record",
+          "detail": "[]",
+          "passed": true
+        }
+      ],
+      "evidence": "2/2 checks passed",
+      "gate": "V6",
+      "not_run": null,
+      "passed": true,
+      "status": "pass"
+    },
+    "V7": {
+      "checks": [
+        {
+          "check": "candidate integrity (manifest, SHA-256, attempt, no unlisted file)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "both artifacts load",
+          "detail": "loaded",
+          "passed": true
+        },
+        {
+          "check": "new versioned location, outside every newest-file folder (G10)",
+          "detail": "models/pr38/c3_20261112_153333/primary",
+          "passed": true
+        },
+        {
+          "check": "both artifacts reload in a fresh interpreter as written",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "G2: GLASS oof_remainder with fold_nested_rf, declared by the cross-fit and the fit",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: consumed train proba \u2260 in-sample diagnostic",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: oof_protocol fold fingerprint = train_fold_id",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: oof_protocol n_folds = fold ids",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: train_pred agrees with train_decisions",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: fold ids carried (the artifact holds no labels; its fold plan is partial label evidence)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: cross-fit and full-train router share one Pass 2 population",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: training_base_rate = GLOBAL_SPLIT training positive rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: Pass 1 is the NOT_SUBSCRIBE route (train pos-rate < base rate)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: Pass 2 is the SUBSCRIBE route (train pos-rate > base rate)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: proba oriented as P(subscribe) (covered-row OOF AUC > 0.5)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [glass] glass: GLASS Router bundle with training_base_rate (F25 router evidence)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [glass] glass: training_base_rate = GLOBAL_SPLIT training positive rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [glass] glass: train probabilities = rule blends at fold base rates",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [glass] glass: test probabilities = rule blends at the training base rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: index = GLOBAL_SPLIT X_train",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: index = GLOBAL_SPLIT X_test",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: consumed train proba \u2260 in-sample diagnostic",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: oof_protocol fold fingerprint = train_fold_id",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: oof_protocol n_folds = fold ids",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: train_pred agrees with train_decisions",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: fold ids carried (the artifact holds no labels; its fold plan is partial label evidence)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: the split fingerprints the artifact records agree",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: cross-fit and full-train router share one Pass 2 population",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: cross-fit and full-train router share one Pass 2 eligibility rule",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: training_base_rate = GLOBAL_SPLIT training positive rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: Pass 1 is the NOT_SUBSCRIBE route (train pos-rate < base rate)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: Pass 2 is the SUBSCRIBE route (train pos-rate > base rate)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: proba oriented as P(subscribe) (covered-row OOF AUC > 0.5)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [blackbox] glass: RF Router artifact with training_base_rate (F25 router evidence)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [blackbox] glass: training_base_rate = GLOBAL_SPLIT training positive rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [blackbox] glass: train probabilities = band blends at fold base rates",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [blackbox] glass: test probabilities = band blends at the training base rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: index = GLOBAL_SPLIT X_train",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: index = GLOBAL_SPLIT X_test",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R5 at Stage 4: pass2_eligibility nested_t1 on both sides of the RF Router",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "G11: snapshot re-verified after the run",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "G11: baseline re-verified after the run",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "G11: artifact_manifest re-verified after the run",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "G11: the baseline MANIFEST.json is the one the protocol pins",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "G11: the pinned artifact manifest is the one this run's Phase 0 checked",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "owner disposition G10:artifact_audit_pins (F17 G10: the GLASS 'full' pins, updated or scoped by an approved versioned clarification)",
+          "detail": "decision 'clarification_approved'",
+          "passed": true
+        }
+      ],
+      "evidence": "62/62 checks passed",
+      "gate": "V7",
+      "not_run": null,
+      "passed": true,
+      "status": "pass"
+    },
+    "V8": {
+      "checks": [
+        {
+          "check": "F31 A: the RF confidence construction is unchanged (flat bands; router transform, not calibrated)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R7: the Cell 21 predict_train_oof agreement is replaced by R2 in this pathway",
+          "detail": "the PR 38 runner never calls predict_train_oof; the notebook is not run",
+          "passed": true
+        },
+        {
+          "check": "R8: bands come from fits on the adopted G13 pathway (fold and full-train routers)",
+          "detail": "fold_label_excluded",
+          "passed": true
+        },
+        {
+          "check": "the R2 clarification the strips use is the approved record",
+          "detail": "['pr38-stage2-evaluation-f31-r2-clarification', '1.0.0', 'd55e285570ce47d4']",
+          "passed": true
+        },
+        {
+          "check": "owner disposition F31:condition2 (F31 section 7, condition 2: the adopted G13 correction)",
+          "detail": "decision 'disposition_a_retained'",
+          "passed": true
+        }
+      ],
+      "evidence": "5/5 checks passed",
+      "gate": "V8",
+      "not_run": null,
+      "passed": true,
+      "status": "pass"
+    }
+  },
+  "inputs": {
+    "artifact_manifest_sha256": "4061aa29d64e330061478e7891fee727aeb43459bc994bafce363b7c5662608d",
+    "authorization": {
+      "name": "authorization.json",
+      "sha256": "daff742e10d435b9018e9cbfac76ef19fcb275ab77c4d42dd5e020548c4655f8"
+    },
+    "dispositions": {
+      "name": "acceptance_dispositions.json",
+      "sha256": "00926cbb5d2c9be229c52e546ec765a266ed1d3ef92ab9f21219fa9a4329ef4c"
+    },
+    "g7": {
+      "name": "g7_reproduction_fold0.json",
+      "sha256": "dbc01ad890cd785179bf59c621f07241a7d66d71f59d367309ef9b52c859a4a9"
+    },
+    "phase0": {
+      "name": "phase0.json",
+      "sha256": "02d4f0a953208e9b0d7afae289d5b070e8cb06196888f35e7766c5f4ab64eaa0"
+    },
+    "primary_attempt": {
+      "name": "primary_attempt.json",
+      "sha256": "6e99c34111d86c407d811227da10d51854f1b08265f650b24cad63b888e46049"
+    },
+    "primary_manifest": {
+      "name": "primary_MANIFEST.json",
+      "sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88"
+    },
+    "sums_sha256": "e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a"
+  },
+  "no_performance": "no outer-OOF routing count, rate or metric was computed for this record beyond pass / fail of the registered checks",
+  "protocol": [
+    "pr38-stage2-evaluation",
+    "1.0.0",
+    "245a1a68fb68cf4e"
+  ],
+  "record_digest": "e101fb6214d4776dccaaec5821199f93ad0183be6d5995dd9dc1189cb3ab682c",
+  "required_dispositions": [
+    "G10:artifact_audit_pins",
+    "F31:condition2"
+  ],
+  "role": "primary",
+  "run_id": "c3_20261112_153333",
+  "structural_acceptance": {
+    "accepted": true,
+    "failed": [],
+    "missing": [],
+    "not_run": [],
+    "note": "Structural validity only: it is not evidence of better predictive performance, and a weak result does not make an artifact invalid.",
+    "official": true,
+    "passed": [
+      "V1",
+      "V2",
+      "V3",
+      "V4",
+      "V5",
+      "V6",
+      "V7",
+      "V8"
+    ]
+  }
+}

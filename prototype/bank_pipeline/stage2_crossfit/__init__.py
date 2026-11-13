@@ -27,6 +27,10 @@ sensitivity
     Commit 3, Step 3C: the G12 sensitivity S1 (GLASS ``full``) for an accepted
     primary, its mandatory G6 Pass 1 invariance (S1 is accepted only if it
     passes), and the S1 package, reported apart from the primary comparison.
+reporting
+    Commit 4: the consolidated research report of a run (``report_v1/``),
+    migrated read-only from its packages (every package table reproduced
+    byte for byte first) and verified afterwards without them.
 phase0
     Read-only historical integrity checks and the PR 38 output root (Phase 0).
 g13

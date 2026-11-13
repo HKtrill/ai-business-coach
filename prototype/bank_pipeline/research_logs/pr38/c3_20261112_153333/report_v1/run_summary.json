@@ -1,0 +1,286 @@
+{
+  "format": "pr38.stage2.research_report/1#run_summary",
+  "run_id": "c3_20261112_153333",
+  "identities": {
+    "run": {
+      "run_id": "c3_20261112_153333",
+      "role": "primary",
+      "feature_pathway": {
+        "pathway": "fold_label_excluded",
+        "record": [
+          "stage2-inner-fold-feature-isolation",
+          "1.0.0",
+          "0d4953ef34d1d3dc"
+        ]
+      }
+    },
+    "structural_acceptance": {
+      "file": "structural_acceptance.json",
+      "sha256": "91612167dd2582788abcb37d04885bd5507a93844514b4989cc929556821aa1a",
+      "record_digest": "e101fb6214d4776dccaaec5821199f93ad0183be6d5995dd9dc1189cb3ab682c",
+      "accepted": true,
+      "official": true,
+      "re_verified_by": "stage2_crossfit.acceptance.require_accepted"
+    },
+    "candidate": {
+      "manifest_sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88",
+      "artifacts": {
+        "glass": {
+          "path": "glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+          "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+        },
+        "blackbox": {
+          "path": "rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+          "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+        }
+      }
+    },
+    "protocol": {
+      "id": "pr38-stage2-evaluation",
+      "version": "1.0.0",
+      "fingerprint": "245a1a68fb68cf4e",
+      "pinned_frozen": true
+    },
+    "contract": {
+      "id": "pr37-stage2-primary",
+      "fingerprint": "0817825b9eecbd11"
+    },
+    "population": {
+      "checks": 10,
+      "passed": true,
+      "complete": true,
+      "rows": 32950,
+      "positives": 3712
+    },
+    "upstream": {
+      "lr": {
+        "role": "stage1.lr",
+        "path": "models/lr/lr_calibrated_20261023_003319.joblib",
+        "sha256": "61a6b144b625e7a5028a151860d55ff86c08c3a0c9ef68ab1be73c0fbc995759"
+      },
+      "ebm": {
+        "role": "stage3.ebm",
+        "path": "models/ebm/ebm_stage3_20261023_070053_780762.joblib",
+        "sha256": "cfdac6d206d737909f3b3ba2efc3eec48de7ae2b98f42f7c478b3e01da77f55b"
+      },
+      "combination": "or",
+      "reference": "(lr.in_stage_f2_cv or ebm.nested_f2)",
+      "reference_fingerprint": "6bdb80c0a0f647e5",
+      "identity_checks": 22,
+      "identity_complete": true
+    },
+    "baseline": {
+      "id": "pr37_stage2_pre_correction_v1",
+      "manifest_sha256": "905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b",
+      "rebuild": "identical",
+      "code_changes": [],
+      "historical_artifacts": {
+        "glass": {
+          "role": "stage2.glass_router",
+          "path": "models/glass_router/glass_router_20261023_025611.joblib",
+          "sha256": "2c70879bfe04f2adb320d55a3d735a1b1d08cd0e4821621a7a5075ad89fa2fa8"
+        },
+        "blackbox": {
+          "role": "stage2.rf_router",
+          "path": "models/rf_router/rf_router_two_pass.joblib",
+          "sha256": "5204a2d6732352ab06b2518e0285cd099643ea91d03c79810d784c3f38d75fb2"
+        }
+      },
+      "snapshot": {
+        "label": "pr36_regen_2026-10-23/SHA256SUMS.txt",
+        "sha256": "e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a",
+        "entries": 37
+      }
+    },
+    "evidence_tiers": {
+      "pr38_corrected_outer_oof": "tier2",
+      "pr37_stage2_pre_correction_v1": "tier1"
+    }
+  },
+  "acceptance": {
+    "structural_acceptance": {
+      "file": "structural_acceptance.json",
+      "sha256": "91612167dd2582788abcb37d04885bd5507a93844514b4989cc929556821aa1a",
+      "accepted": true,
+      "verdict": {
+        "accepted": true,
+        "failed": [],
+        "missing": [],
+        "not_run": [],
+        "note": "Structural validity only: it is not evidence of better predictive performance, and a weak result does not make an artifact invalid.",
+        "official": true,
+        "passed": [
+          "V1",
+          "V2",
+          "V3",
+          "V4",
+          "V5",
+          "V6",
+          "V7",
+          "V8"
+        ]
+      },
+      "record_digest": "e101fb6214d4776dccaaec5821199f93ad0183be6d5995dd9dc1189cb3ab682c",
+      "feature_pathway": {
+        "pathway": "fold_label_excluded",
+        "record": [
+          "stage2-inner-fold-feature-isolation",
+          "1.0.0",
+          "0d4953ef34d1d3dc"
+        ]
+      },
+      "fit_status_by_fold": {
+        "blackbox": {
+          "0": "valid_optimal",
+          "1": "valid_optimal",
+          "2": "valid_optimal",
+          "3": "valid_optimal",
+          "4": "valid_optimal"
+        },
+        "glass": {
+          "0": "valid_unproven_documented",
+          "1": "valid_unproven_documented",
+          "2": "valid_unproven_documented",
+          "3": "valid_unproven_documented",
+          "4": "valid_unproven_documented"
+        }
+      }
+    },
+    "g7": {
+      "file": "g7_reproduction_fold0.json",
+      "passed": true,
+      "fold": 0
+    },
+    "dispositions": {
+      "G10:artifact_audit_pins": {
+        "decision": "clarification_approved",
+        "reviewer": "Phillip Harris",
+        "rationale": "PR 38 candidate artifacts are isolated and versioned. Historical notebook pins remain unchanged until downstream regeneration.",
+        "date": "2026-11-12",
+        "record": [
+          "pr38-stage2-f17-g10-pin-scope-clarification",
+          "1.0.0",
+          "11ecf7c53546c6fe"
+        ]
+      },
+      "F31:condition2": {
+        "decision": "disposition_a_retained",
+        "reviewer": "Phillip Harris",
+        "rationale": "Retain existing RF heuristic bands and document the corrected inner-OOF score versus deployed-bin distinction. No router configuration change.",
+        "date": "2026-11-12"
+      }
+    },
+    "authorization": {
+      "file": "authorization.json",
+      "gates": {
+        "G1": "pass",
+        "G2": "pass",
+        "G3": "pass",
+        "G5": "pass",
+        "G8": "pass",
+        "G9": "pass",
+        "G13": "pass"
+      },
+      "approved_on": "2026-11-12",
+      "g13_decision": {
+        "decision": "adopt_correction",
+        "materiality": "material",
+        "adopted_pathway": "fold_label_excluded",
+        "adopted_record": [
+          "stage2-inner-fold-feature-isolation",
+          "1.0.0",
+          "0d4953ef34d1d3dc"
+        ],
+        "reviewer": "Phillip Harris",
+        "rationale": "G13 identified material inner-fold label dependency. Adopt fold_label_excluded to preserve training isolation. GLASS's frozen configuration, routing constraints, selection objectives, and abstention mechanism remain unchanged. No predictive-performance improvement is assumed.",
+        "date": "2026-11-12"
+      },
+      "g13_record_run_id": "s2a_20261111_155321"
+    },
+    "s1": {
+      "file": "s1_acceptance.json",
+      "sha256": "442e63fcd857f68b613970301a85ef7e412038ee74c2802ddde91b6d43316e08",
+      "accepted": true,
+      "g6_passed": true,
+      "statement": "S1 accepted as a descriptive sensitivity: G6 passed"
+    }
+  },
+  "records": {
+    "acceptance_dispositions.json": {
+      "sha256": "00926cbb5d2c9be229c52e546ec765a266ed1d3ef92ab9f21219fa9a4329ef4c",
+      "bytes": 860
+    },
+    "authorization.json": {
+      "sha256": "daff742e10d435b9018e9cbfac76ef19fcb275ab77c4d42dd5e020548c4655f8",
+      "bytes": 3284
+    },
+    "authorization_review.json": {
+      "sha256": "9c015112cef541b02df920c84dd0801d637a4c1433d8b461e93370ca9427f851",
+      "bytes": 3422
+    },
+    "configs.json": {
+      "sha256": "7b7f803155dae6bf245b49c1fa18eb60249b4878eaac685767b9d6012f932127",
+      "bytes": 13284
+    },
+    "g13_fold0_fold_label_excluded.json": {
+      "sha256": "64ddd85b83cd73fa22346e741d7511a671b569e892da0905ce31dd703ac31404",
+      "bytes": 313908
+    },
+    "g3_preflight_fold0.json": {
+      "sha256": "41f80a0b402b0ac9e5502bfa9695d744b1cf240751525ff2ba6dd0265e9281bc",
+      "bytes": 33780
+    },
+    "g7_reproduction_fold0.json": {
+      "sha256": "dbc01ad890cd785179bf59c621f07241a7d66d71f59d367309ef9b52c859a4a9",
+      "bytes": 1951
+    },
+    "phase0.json": {
+      "sha256": "02d4f0a953208e9b0d7afae289d5b070e8cb06196888f35e7766c5f4ab64eaa0",
+      "bytes": 10043
+    },
+    "primary_attempt.json": {
+      "sha256": "6e99c34111d86c407d811227da10d51854f1b08265f650b24cad63b888e46049",
+      "bytes": 2437
+    },
+    "primary_MANIFEST.json": {
+      "sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88",
+      "bytes": 3163
+    },
+    "pytest_fast.xml": {
+      "sha256": "dd0599a78d3e6c1032f610a25e229dc589d3b2444188560abd60149f49a111f0",
+      "bytes": 42162
+    },
+    "s1_acceptance.json": {
+      "sha256": "442e63fcd857f68b613970301a85ef7e412038ee74c2802ddde91b6d43316e08",
+      "bytes": 19698
+    },
+    "s1_attempt.json": {
+      "sha256": "4b82fbb59d9ed923ec28c8a08558eebd054d2e864558fd94ea2b42199424b7eb",
+      "bytes": 1313
+    },
+    "s1_MANIFEST.json": {
+      "sha256": "0b67661437b6972ff3fd4a2dfcdf4e13cd0141bd54ec26b96c309ebdd7ca62f1",
+      "bytes": 1842
+    },
+    "structural_acceptance.json": {
+      "sha256": "91612167dd2582788abcb37d04885bd5507a93844514b4989cc929556821aa1a",
+      "bytes": 46508
+    }
+  },
+  "historical_v1_packages": {
+    "complementarity_v1": {
+      "format": "pr38.stage2.complementarity/1",
+      "manifest_sha256": "ab06a060c395bcd6c5574b7f96535f2b07a4b3c32ef87279cbbbc3aba7221d23",
+      "manifest_copy": "source_manifest_complementarity_v1.json",
+      "scope": "PR 38 Commit 3 Step 3B: comparative analysis of the accepted corrected primary's training-side outer-OOF routes (protocol sections 3-12)",
+      "tables": 39
+    },
+    "s1_sensitivity_v1": {
+      "format": "pr38.stage2.s1_sensitivity/1",
+      "manifest_sha256": "fe8d48314398922d7ab24ac7f8da97a943988cb03112a99922386bddec2ce4ab",
+      "manifest_copy": "source_manifest_s1_sensitivity_v1.json",
+      "scope": "PR 38 Commit 3 Step 3C: G12 sensitivity S1 (GLASS pass2_population full vs oof_remainder), descriptive, reported apart from the primary comparison",
+      "tables": 25
+    }
+  }
+}

@@ -1,0 +1,635 @@
+{
+  "format": "pr38.stage2.s1_sensitivity/1",
+  "package": "s1_sensitivity_v1",
+  "scope": "PR 38 Commit 3 Step 3C: G12 sensitivity S1 (GLASS pass2_population full vs oof_remainder), descriptive, reported apart from the primary comparison",
+  "identities": {
+    "run": {
+      "run_id": "c3_20261112_153333",
+      "role": "s1_full",
+      "feature_pathway": {
+        "pathway": "fold_label_excluded",
+        "record": [
+          "stage2-inner-fold-feature-isolation",
+          "1.0.0",
+          "0d4953ef34d1d3dc"
+        ]
+      }
+    },
+    "primary": {
+      "structural_acceptance_sha256": "91612167dd2582788abcb37d04885bd5507a93844514b4989cc929556821aa1a",
+      "structural_acceptance_digest": "e101fb6214d4776dccaaec5821199f93ad0183be6d5995dd9dc1189cb3ab682c",
+      "manifest_sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88",
+      "glass": {
+        "path": "glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+        "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+      },
+      "rf": {
+        "path": "rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+        "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+      }
+    },
+    "s1": {
+      "acceptance_sha256": "442e63fcd857f68b613970301a85ef7e412038ee74c2802ddde91b6d43316e08",
+      "acceptance_digest": "2246cf014770a8e69688d436cc6e6a93d6081ee19ea4c2738a1b36acdcd62c63",
+      "manifest_sha256": "0b67661437b6972ff3fd4a2dfcdf4e13cd0141bd54ec26b96c309ebdd7ca62f1",
+      "glass": {
+        "path": "glass_router/glass_router_pr38_s1_full_c3_20261112_153333.joblib",
+        "sha256": "2f2e1ae406944a43e924a01558f66a0160cdd673be150f9c124da10622831fbc"
+      }
+    },
+    "protocol": {
+      "id": "pr38-stage2-evaluation",
+      "version": "1.0.0",
+      "fingerprint": "245a1a68fb68cf4e"
+    },
+    "contract": {
+      "id": "pr37-stage2-primary",
+      "fingerprint": "0817825b9eecbd11"
+    },
+    "upstream": {
+      "lr": {
+        "role": "stage1.lr",
+        "path": "models/lr/lr_calibrated_20261023_003319.joblib",
+        "sha256": "61a6b144b625e7a5028a151860d55ff86c08c3a0c9ef68ab1be73c0fbc995759"
+      },
+      "ebm": {
+        "role": "stage3.ebm",
+        "path": "models/ebm/ebm_stage3_20261023_070053_780762.joblib",
+        "sha256": "cfdac6d206d737909f3b3ba2efc3eec48de7ae2b98f42f7c478b3e01da77f55b"
+      },
+      "reference": "(lr.in_stage_f2_cv or ebm.nested_f2)",
+      "reference_fingerprint": "6bdb80c0a0f647e5",
+      "identity_complete": true
+    },
+    "baseline": {
+      "id": "pr37_stage2_pre_correction_v1",
+      "manifest_sha256": "905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b"
+    },
+    "evidence_tier": {
+      "pr38_corrected_outer_oof": "tier2"
+    }
+  },
+  "s1_acceptance": {
+    "g6_passed": true,
+    "statement": "S1 accepted as a descriptive sensitivity: G6 passed"
+  },
+  "comparative_sections": {
+    "declared_sensitivities": [
+      "tables/baseline_comparison.csv",
+      "tables/configuration.csv",
+      "tables/diagnostics/chance_baselines.csv",
+      "tables/diagnostics/common_population.csv",
+      "tables/diagnostics/contingency.csv",
+      "tables/diagnostics/crosstab.csv",
+      "tables/diagnostics/matched_selection.csv",
+      "tables/diagnostics/model_disagreement.csv",
+      "tables/diagnostics/observed_expected.csv",
+      "tables/diagnostics/pass2_breakdown.csv",
+      "tables/diagnostics/pass2_cross_router.csv",
+      "tables/diagnostics/policy_audit.csv",
+      "tables/diagnostics/ratios.csv",
+      "tables/diagnostics/reference_flags.csv",
+      "tables/diagnostics/score_conditional.csv",
+      "tables/diagnostics/signal_availability.csv",
+      "tables/diagnostics/states.csv",
+      "tables/diagnostics/stratum_contrasts.csv",
+      "tables/fold_feasibility.csv",
+      "tables/g6_pass1_invariance.csv",
+      "tables/pass2_fitting_population.csv",
+      "tables/ratios_comparison.csv",
+      "tables/routing_transitions.csv",
+      "tables/s1_acceptance_checks.csv",
+      "tables/states_comparison.csv"
+    ]
+  },
+  "disclosures": [
+    "S1 is descriptive (F17 section 6): it quantifies what the Pass 2 population policy does to GLASS. The primary policy (oof_remainder) was fixed before S1 ran; S1 never chooses, replaces or alters the primary and is reported whatever its direction.",
+    "Single factor: only pass2_population differs (configuration.csv). Both traces use the accepted primary's RF Router, so RF rows are unchanged; no RF counterpart is run.",
+    "Within-S1 differences are full - oof_remainder, paired by fold. No significance claim is made and no interval is computed: no test is pre-specified for S1.",
+    "Differences against pr37_stage2_pre_correction_v1 are confounded by the selector correction and the contract change; only the within-S1 difference is attributed to the population policy.",
+    "G6 passed (s1_acceptance.json): Pass 1 is identical in both runs, so differences arise in Pass 2 and abstention only.",
+    "Precision-estimation asymmetry (F17 L2): each Pass 2 rule's precision is in-sample on the population it was selected on (all fold rows under full, the remainder under oof_remainder).",
+    "Evidence tier 2 (training-side outer OOF); no test label is read. Matched-budget (2C) results are descriptive, not deployable thresholds."
+  ],
+  "outputs": {
+    "tables/baseline_comparison.csv": {
+      "sha256": "8535c1a23247993626f4c9fe0205e3dcc3b3d73203c687f2c0321d5ab60ee2d7",
+      "bytes": 659200,
+      "rows": 2400,
+      "columns": [
+        "section",
+        "arm",
+        "reference",
+        "population",
+        "group",
+        "score",
+        "fold",
+        "metric",
+        "numerator_baseline",
+        "denominator_baseline",
+        "value_baseline",
+        "in_baseline",
+        "numerator_oof_remainder",
+        "denominator_oof_remainder",
+        "value_oof_remainder",
+        "in_oof_remainder",
+        "numerator_full",
+        "denominator_full",
+        "value_full",
+        "in_full",
+        "value_full_minus_oof_remainder",
+        "value_oof_remainder_minus_baseline",
+        "value_full_minus_baseline",
+        "attribution"
+      ]
+    },
+    "tables/configuration.csv": {
+      "sha256": "d1dd8b58775c71edccdb4764c678351330dacac32e26c31564358bfffb1df1a5",
+      "bytes": 3315,
+      "rows": 42,
+      "columns": [
+        "setting",
+        "oof_remainder",
+        "full",
+        "differs"
+      ]
+    },
+    "tables/diagnostics/chance_baselines.csv": {
+      "sha256": "ad5f060cab43634360a8f06ba989b3d7a9cd9a58ce0d39f0118535bf774f87f9",
+      "bytes": 8985,
+      "rows": 96,
+      "columns": [
+        "setting",
+        "arm",
+        "reference",
+        "fold",
+        "flags",
+        "pool_rows",
+        "pool_positives",
+        "pool_rate",
+        "expected_positives",
+        "observed_positives",
+        "excess_positives"
+      ]
+    },
+    "tables/diagnostics/common_population.csv": {
+      "sha256": "ee543d272f33fd0df1915daa048dfc6a645a84cf75ec0aaf9619b246dab53c32",
+      "bytes": 461,
+      "rows": 6,
+      "columns": [
+        "fold",
+        "rows",
+        "positives",
+        "glass_remainder_rows",
+        "rf_remainder_rows",
+        "common_rows",
+        "common_positives",
+        "glass_pass2_in_common",
+        "rf_pass2_in_common",
+        "glass_pass2_outside_common",
+        "rf_pass2_outside_common"
+      ]
+    },
+    "tables/diagnostics/contingency.csv": {
+      "sha256": "c9a7e6fead61aea48fd3d383a5a6a0f6af55d69732a2d767cc26f588c448860c",
+      "bytes": 14178,
+      "rows": 288,
+      "columns": [
+        "arm",
+        "reference",
+        "fold",
+        "state",
+        "reference_flag",
+        "n",
+        "positives",
+        "negatives"
+      ]
+    },
+    "tables/diagnostics/crosstab.csv": {
+      "sha256": "f6397cf181e10e16421a34b72051a5647bcb78b47b592c0380f56abff675944a",
+      "bytes": 5838,
+      "rows": 54,
+      "columns": [
+        "fold",
+        "glass_state",
+        "rf_state",
+        "n",
+        "positives",
+        "negatives",
+        "positive_rate",
+        "positive_rate_status",
+        "share",
+        "lr_flags",
+        "lr_flagged_positives",
+        "ebm_flags",
+        "ebm_flagged_positives",
+        "union_flags",
+        "union_flagged_positives",
+        "intersection_flags",
+        "intersection_flagged_positives"
+      ]
+    },
+    "tables/diagnostics/matched_selection.csv": {
+      "sha256": "2608490e09829d0098734b82fab0529132909d6d6b524d2f55c3e1ec50a34e2b",
+      "bytes": 1923,
+      "rows": 20,
+      "columns": [
+        "arm",
+        "reference",
+        "model",
+        "score_space",
+        "fold",
+        "target_count",
+        "selected_rows",
+        "cut_value",
+        "exact",
+        "tie_block",
+        "strict_count",
+        "inclusive_count",
+        "tie_broken_rows"
+      ]
+    },
+    "tables/diagnostics/model_disagreement.csv": {
+      "sha256": "ce6e38260581e1ad360aef6b38b4d76ca3f791df0c8ff43fbc9f27e95799b239",
+      "bytes": 1317,
+      "rows": 18,
+      "columns": [
+        "setting",
+        "arm",
+        "fold",
+        "k",
+        "lr_flags",
+        "ebm_flags",
+        "lr_only_tp",
+        "ebm_only_tp",
+        "lr_only_fp",
+        "ebm_only_fp",
+        "ebm_minus_lr_tp",
+        "ebm_only_tp_expected_from_pool",
+        "router_unique_tp_vs_lr",
+        "router_unique_tp_vs_ebm"
+      ]
+    },
+    "tables/diagnostics/observed_expected.csv": {
+      "sha256": "f85ac7b78af21d2ddd45c5e430b5817c404fb436657cdd4e18ae640ea5af21ec",
+      "bytes": 26260,
+      "rows": 126,
+      "columns": [
+        "group",
+        "description",
+        "fold",
+        "n",
+        "observed",
+        "positive_rate",
+        "expected_lr_calibrated",
+        "expected_ebm_calibrated",
+        "expected_stratified_lr",
+        "expected_stratified_ebm_raw",
+        "expected_stratified_lr_x_ebm",
+        "o_minus_e_lr_calibrated",
+        "o_minus_e_ebm_calibrated",
+        "o_minus_e_stratified_lr",
+        "o_minus_e_stratified_ebm_raw",
+        "o_minus_e_stratified_lr_x_ebm"
+      ]
+    },
+    "tables/diagnostics/pass2_breakdown.csv": {
+      "sha256": "089e75aba2e6936f169d39950c6faa855e20fdc60776a09846c43006c5a1a30a",
+      "bytes": 655,
+      "rows": 12,
+      "columns": [
+        "arm",
+        "fold",
+        "pass2_tp",
+        "pass2_fp",
+        "tp_both",
+        "fp_both",
+        "tp_lr_only",
+        "fp_lr_only",
+        "tp_ebm_only",
+        "fp_ebm_only",
+        "tp_neither",
+        "fp_neither"
+      ]
+    },
+    "tables/diagnostics/pass2_cross_router.csv": {
+      "sha256": "51ec206ae917a62dd3f78fc6cc46a6758492d20b554d985a587b9b70ab486930",
+      "bytes": 3086,
+      "rows": 30,
+      "columns": [
+        "reference",
+        "fold",
+        "glass_unique_tp",
+        "rf_unique_tp",
+        "shared_tp",
+        "glass_only_tp",
+        "rf_only_tp",
+        "glass_unique_fp",
+        "rf_unique_fp",
+        "shared_fp",
+        "glass_only_fp",
+        "rf_only_fp",
+        "glass_only_tp_in_rf_pass1",
+        "glass_only_tp_in_rf_abstain",
+        "rf_only_tp_in_glass_pass1",
+        "rf_only_tp_in_glass_abstain",
+        "tp_jaccard",
+        "tp_jaccard_status",
+        "pool_positives",
+        "expected_shared_tp_if_unrelated"
+      ]
+    },
+    "tables/diagnostics/policy_audit.csv": {
+      "sha256": "0fd3cbbcc9eedc20873d9b77d3728016030aa8941ed1b337668f154ed6c0e078",
+      "bytes": 6147,
+      "rows": 16,
+      "columns": [
+        "arm",
+        "router",
+        "claim",
+        "description",
+        "status",
+        "basis",
+        "violations",
+        "evidence"
+      ]
+    },
+    "tables/diagnostics/ratios.csv": {
+      "sha256": "db59702c443b3f0518b244854fa0052814e26a822d1bfe7359300fae69a1c652",
+      "bytes": 824648,
+      "rows": 6144,
+      "columns": [
+        "section",
+        "arm",
+        "reference",
+        "population",
+        "group",
+        "score",
+        "fold",
+        "metric",
+        "label",
+        "numerator",
+        "denominator",
+        "value",
+        "status"
+      ]
+    },
+    "tables/diagnostics/reference_flags.csv": {
+      "sha256": "ee1c37bae3a931053ac3e963d594cb2e69d8de6bd91c36dca0218125907b1b44",
+      "bytes": 1697,
+      "rows": 4,
+      "columns": [
+        "reference",
+        "operating_point",
+        "score_space",
+        "threshold",
+        "selection",
+        "fold_plan",
+        "flags",
+        "tp",
+        "fp",
+        "flag_rate",
+        "precision",
+        "precision_status"
+      ]
+    },
+    "tables/diagnostics/score_conditional.csv": {
+      "sha256": "c38707572477d4e46b034c6819439e5f27f61ad9e7f69fc1a837a673622f3bba",
+      "bytes": 113606,
+      "rows": 1002,
+      "columns": [
+        "arm",
+        "stratifier",
+        "fold",
+        "stratum",
+        "state",
+        "stratum_rows",
+        "stratum_positives",
+        "n",
+        "positives",
+        "negatives",
+        "positive_rate",
+        "positive_rate_status",
+        "expected_lr_calibrated",
+        "expected_ebm_calibrated",
+        "low_support",
+        "lr_flags",
+        "ebm_flags",
+        "union_flags",
+        "intersection_flags"
+      ]
+    },
+    "tables/diagnostics/signal_availability.csv": {
+      "sha256": "beed4c8c3a48a253cb25ada431fdd9e18f4492ba6ce15c184fb50988a7653a2b",
+      "bytes": 3068,
+      "rows": 18,
+      "columns": [
+        "arm",
+        "signal",
+        "status",
+        "basis",
+        "rows",
+        "detail"
+      ]
+    },
+    "tables/diagnostics/states.csv": {
+      "sha256": "89b90c68f2fcb53ae4f5d3e3e052de001cba1a95534bbeea0a20af412146bb93",
+      "bytes": 4229,
+      "rows": 36,
+      "columns": [
+        "arm",
+        "fold",
+        "state",
+        "rows",
+        "n",
+        "positives",
+        "negatives",
+        "share",
+        "share_status",
+        "positive_rate",
+        "positive_rate_status",
+        "negative_rate",
+        "negative_rate_status"
+      ]
+    },
+    "tables/diagnostics/stratum_contrasts.csv": {
+      "sha256": "a04d7ac2d850b63a14caeb60b4205735196e842ac7338a3a0842848aab823ee0",
+      "bytes": 58157,
+      "rows": 1002,
+      "columns": [
+        "arm",
+        "stratifier",
+        "fold",
+        "stratum",
+        "contrast",
+        "n_a",
+        "n_b",
+        "difference_pp",
+        "status"
+      ]
+    },
+    "tables/fold_feasibility.csv": {
+      "sha256": "3329cb76bf42f2deb2f81dfbbbb9df0425f84710c222960daa43b11799c1c472",
+      "bytes": 3053,
+      "rows": 12,
+      "columns": [
+        "config",
+        "fold",
+        "status",
+        "accepted",
+        "by_key",
+        "pass1_source",
+        "pass1_lexicographic_guarantee",
+        "pass2_source",
+        "pass2_lexicographic_guarantee",
+        "inner_pass1_selections",
+        "wall_seconds"
+      ]
+    },
+    "tables/g6_pass1_invariance.csv": {
+      "sha256": "b21625dc5d42169348fee3be448d641a19b5858e3e232aadae2e81a6e25480c5",
+      "bytes": 543,
+      "rows": 6,
+      "columns": [
+        "fold",
+        "pass1_rules",
+        "pass1_rules_digest_oof_remainder",
+        "pass1_rules_digest_full",
+        "fit_pass1_routed_rows_oof_remainder",
+        "fit_pass1_routed_rows_full",
+        "outer_pass1_rows_oof_remainder",
+        "outer_pass1_rows_full"
+      ]
+    },
+    "tables/pass2_fitting_population.csv": {
+      "sha256": "e108668836921dc18ca101f8acbff2bd3b32a8e03cf8190b45ce71d335a2c4ce",
+      "bytes": 1372,
+      "rows": 12,
+      "columns": [
+        "config",
+        "fold",
+        "n_train",
+        "train_positives",
+        "pass2_population_rows",
+        "pass2_population_positives",
+        "pass2_population_prevalence",
+        "pass2_population_share_of_fold",
+        "fit_pass2_routed_rows",
+        "fit_pass2_routed_positives",
+        "fit_pass2_precision",
+        "fit_pass1_routed_rows",
+        "fit_pass1_routed_positives"
+      ]
+    },
+    "tables/ratios_comparison.csv": {
+      "sha256": "06e2493dd7903aea89d40f20a3c43770c443cf34d8822ee472d56f98ee1781b5",
+      "bytes": 1364271,
+      "rows": 6159,
+      "columns": [
+        "section",
+        "arm",
+        "reference",
+        "population",
+        "group",
+        "score",
+        "fold",
+        "metric",
+        "label_oof_remainder",
+        "numerator_oof_remainder",
+        "denominator_oof_remainder",
+        "value_oof_remainder",
+        "status_oof_remainder",
+        "in_oof_remainder",
+        "label_full",
+        "numerator_full",
+        "denominator_full",
+        "value_full",
+        "status_full",
+        "in_full",
+        "numerator_full_minus_oof_remainder",
+        "denominator_full_minus_oof_remainder",
+        "value_full_minus_oof_remainder"
+      ]
+    },
+    "tables/routing_transitions.csv": {
+      "sha256": "02dbd84336d18975ca9a1ee68ffa17419d92f4fff3ff3ceb3f76c9ea0b73853c",
+      "bytes": 2879,
+      "rows": 54,
+      "columns": [
+        "fold",
+        "state_oof_remainder",
+        "state_full",
+        "rows",
+        "positives",
+        "negatives",
+        "changed",
+        "changed_rows_in_scope"
+      ]
+    },
+    "tables/s1_acceptance_checks.csv": {
+      "sha256": "ab38290ab18203278a22bd590908ed509d2f87c33deb71e6f9909c7d557ab050",
+      "bytes": 8979,
+      "rows": 108,
+      "columns": [
+        "group",
+        "check",
+        "passed",
+        "detail"
+      ]
+    },
+    "tables/states_comparison.csv": {
+      "sha256": "b619bb58512294231ccb38ca92147cec27697b2167419c9a941b519c177b39b2",
+      "bytes": 5488,
+      "rows": 36,
+      "columns": [
+        "arm",
+        "fold",
+        "state",
+        "n_oof_remainder",
+        "positives_oof_remainder",
+        "negatives_oof_remainder",
+        "share_oof_remainder",
+        "positive_rate_oof_remainder",
+        "in_oof_remainder",
+        "n_full",
+        "positives_full",
+        "negatives_full",
+        "share_full",
+        "positive_rate_full",
+        "in_full",
+        "n_full_minus_oof_remainder",
+        "positives_full_minus_oof_remainder",
+        "share_full_minus_oof_remainder",
+        "positive_rate_full_minus_oof_remainder"
+      ]
+    }
+  },
+  "code": {
+    "method": "sha256 of the UTF-8 file with CRLF normalised to LF",
+    "files": {
+      "stage2_crossfit/sensitivity.py": "37c47f079bc8ad6db9a2d7f8d301f31a960ff5cdb6c1ee8992255b0cde054120",
+      "stage2_crossfit/complementarity.py": "bd5ed75b512432cf0b6bd4b337ffe645738dac6fb6b58210f22414525c7c3bce",
+      "stage2_crossfit/acceptance.py": "4bbe1b4b0e6dc241dd81a2498cb10381c018cb945d1a047e67e52583b2e05c44",
+      "stage2_crossfit/evidence.py": "5fb7f19c9b711123f3fffe39c86fc1c8788673f23cbef6421fd379a93cd7dd0d",
+      "stage2_crossfit/runner.py": "35c7a0c0e63de5d06f11c42c817ef0a31c45210de01545b5167aab7b14792030",
+      "shared/stage2/evaluation_protocol.py": "722c34c0623c055eeb6a4521702d91a1706324b9cdf9255e6a12cd0a60c48df6",
+      "shared/stage2/obligations.py": "7630f02fc725637bff96b76f91a799715223a112f61353a32bd3afb307d49a0e",
+      "tests/support/archived_artifacts.py": "1763e22431063ff423e747607c32bf16f9cfe22c44bdf8988022263566b51e06",
+      "shared/stage2/diagnostics/__init__.py": "65466cb1815d7e53090e00086eb94cf3839644f671fda825b6a460d7a99b41ba",
+      "shared/stage2/diagnostics/schema.py": "f8d5ecad8cbf5566648754e6c890d1fca50630a327f7cbfc0ea949978d9fe4e2",
+      "shared/stage2/diagnostics/boundary.py": "0c653b69924b810e731cb3d212adb79fb12d9f13d17039d06f0f437b2448c724",
+      "shared/stage2/diagnostics/operating_points.py": "c9a9370b7371813ff4485234a133142764176a8d43d2208e33712202277bc81d",
+      "shared/stage2/diagnostics/metrics.py": "d8d76ff90f0fe18a5b3a84ce62c414e2769aad1fdceb607bcfd16a6d9d016f04",
+      "shared/stage2/diagnostics/equivalence.py": "a142c0fbf71d7fb034137e252836c642f0f8deb7a2e1da80ce80a764546db420",
+      "shared/stage2/diagnostics/trace.py": "c730d0c30c9aeb933f14c15e7564ac0dd517d1c4af7385b894d6e5e9c5137612",
+      "shared/stage2/diagnostics/suppression.py": "a86e71a77abad241cdb1d04304cdfded8bcde69fe2c722fd58d0539915453d64",
+      "shared/stage2/diagnostics/contribution.py": "0cb20e2d2477d4646a2366689a6e14b52e1462a199997234462953048c5bb2f5",
+      "shared/stage2/diagnostics/overlap.py": "d18fc93b91c950b11456c41a8fb8ef369d4924bdb03b04175c63ebd706a03332",
+      "shared/stage2/diagnostics/baseline.py": "d22c170fdc4fa861ecb5e87f60897b88ba03c61d0b94bf51ee93233b19fee023",
+      "shared/stage_io.py": "61df4a75e4a86d44acac7632af8342a96eb287e13cf907f4d1d3625467a1da88",
+      "tests/support/router_artifacts.py": "f91c209b3b39a5005ea9e2f1f3d095ebf22d22f9d90ca93f8bdf72e0641c640a",
+      "tests/support/artifact_audit.py": "015a6305af72a16d493138b3a5214d829956419f1dac8532b2c4de0e65538b0e",
+      "research_logs/baselines/stage2_baseline.py": "709132e78be698d86affed1111a51cf7d177db4057f6e7ce3b4fc50d74974987"
+    }
+  }
+}

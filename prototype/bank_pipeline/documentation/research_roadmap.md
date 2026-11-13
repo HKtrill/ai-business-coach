@@ -40,13 +40,13 @@
 
 - [x] Before any real-data fit (including the G13 audit), complete handoff Phase 0:
 
-  - Verify the archived snapshot and historical baseline (`--verify`, archive `--check`).
+  - Verify the archived snapshot and historical baseline (`--verify`, archive `--check`).
 
-  - Pin `$BANK_ARTIFACT_MANIFEST`.
+  - Pin `$BANK_ARTIFACT_MANIFEST`.
 
-  - Inventory historical router artifacts.
+  - Inventory historical router artifacts.
 
-  - Establish a separate versioned PR 38 output location.
+  - Establish a separate versioned PR 38 output location.
 
 - [x] Validate G1: frozen primary configuration, including required `nested_t1` and `fold_nested_rf` safeguards.
 
@@ -60,7 +60,7 @@
 
 - [x] Complete G13: audit label-derived feature engineering for own-label and cross-fold leakage, including density, curvature, and day × month encoders.
 
-  - [x] Correct and validate any confirmed material own-label dependency, and decide whether the primary adopts the correction, before any five-fold primary run.
+  - [x] Correct and validate any confirmed material own-label dependency, and decide whether the primary adopts the correction, before any five-fold primary run.
 
 - [x] Add or update targeted regression tests for any implementation changes.
 
@@ -91,68 +91,114 @@
 #### Step 3A — Corrected Five-Fold Primary Reruns
 
 - [x] Run corrected GLASS Router under the frozen Stage 2 operating contract.
+
 - [x] Run corrected RF Router under the identical shared contract.
+
 - [x] Complete the full five-fold Stage 2 outer cross-fit for both arms.
+
 - [x] Verify G4: fold isolation, training-population boundaries, and OOF provenance.
+
 - [x] Verify G7: deterministic reproducibility and fold identities.
+
 - [X] Verify G10: versioned artifacts, configuration identities, and provenance pins.
+
 - [x] Verify G11: preservation of historical baselines and previously frozen evidence.
+
 - [x] Record mandatory F31 requirements R1–R5, R7, and R8; R6 band-level spread remains optional.
+
 - [x] Verify routing semantics, Pass 1 precedence, Pass 2 remainder eligibility, and abstention accounting.
+
 - [x] Record every fold's fit status, including infeasible fits, solver nonoptimality, greedy fallbacks, and unsuccessful fits.
+
 - [x] Require all five folds accepted in both arms before any outer-OOF performance result is examined, without relaxing the contract.
+
 - [x] Regenerate corrected Stage 2 OOF and required model artifacts.
+
 - [x] Validate artifact serialization, fingerprints, metadata, and interface compatibility.
+
 - [x] Pass structural acceptance V1–V8, including population and upstream identity verification, before any comparative analysis.
 
 #### Step 3B — Corrected-Router Complementarity Analysis
 
 - [x] Re-run the three-state router trace:
-  - `PASS_1_NOT_SUBSCRIBE`
-  - `PASS_2_SUBSCRIBE`
-  - `ABSTAIN`
+
+  - `PASS_1_NOT_SUBSCRIBE`
+
+  - `PASS_2_SUBSCRIBE`
+
+  - `ABSTAIN`
+
 - [x] Re-measure Pass 2 unique-positive discovery at matched flag rates.
+
 - [x] Re-measure Pass 1 false-positive suppression against frozen LR/EBM operating points.
+
 - [x] Measure GLASS/RF routing coverage, precision, NPV, leakage, abstention, and class-conditional behavior.
+
 - [x] Report observed outer-OOF constraint compliance and shortfalls under protocol section 11, separately from fit-time status.
+
 - [x] Compare pre-correction versus post-correction redundancy and routed-row identities.
+
 - [x] Measure GLASS Router versus LR/EBM decision overlap, score-conditional routing, and disagreement using the existing Step 2 diagnostic definitions.
+
 - [x] Evaluate comparative results using the pre-registered metrics, paired comparisons, and uncertainty procedures.
+
 - [x] Distinguish implementation correctness, contract feasibility, and empirical predictive performance.
 
 #### Step 3C — F17 Sensitivity and Final Validation
 
 - [x] Execute G12 sensitivity analysis S1: GLASS `full` versus `oof_remainder`, descriptive only, after the applicable primary-run gates pass.
+
 - [x] Verify G6 Pass 1 invariance during S1; reject S1 if its required invariance fails.
+
 - [x] Report S1 separately from the corrected primary comparison.
+
 - [x] Complete regression, provenance, reproducibility, and artifact-integrity verification.
+
 - [x] Document corrected primary results, sensitivity findings, remaining limitations, and implications for complementarity-aware selection.
 
 **Deliverable:** Corrected and structurally accepted GLASS/RF five-fold cross-fitted artifacts, completed complementarity and sensitivity analyses, passing regression and validation tests, verified provenance, and documented findings ready for Commit 4.
 
 ---
 
-### Commit 4 — Housekeeping Research Records and Report Organization
+### Commit 4 — Research Report Consolidation and Housekeeping
 
-**Objective:** Organize PR 38 experimental records, JSON files, and validation reports into a consistent, easily navigable structure without changing pipeline functionality.
+**Objective:** Reduce PR 38's excessive generated CSV/JSON reports into a compact, navigable research reporting structure. Preserve the scientific information, independently required acceptance/provenance evidence, and reproducibility—not every redundant file. Complete the work with one implementation patch, or at most two if compatibility fixes genuinely require a follow-up. No retraining or changes to modeling behavior.
 
-- [ ] Establish clear locations for versioned methodology records, generated execution evidence, test reports, and final research outputs.
-- [ ] Organize records consistently by PR, run ID, and purpose.
-- [ ] Ensure important research evidence is version-controlled and accessible for read-only review on GitHub.
-- [ ] Keep temporary logs, redundant generated outputs, and large model artifacts out of Git where appropriate.
-- [ ] Preserve existing records, provenance, fingerprints, and write-once safeguards.
-- [ ] Update file paths and references only where necessary, without modifying algorithms, tests, validation criteria, or experimental behavior.
-- [ ] Verify affected record-storage and retrieval operations with focused checks only.
+#### Step 4A — Inventory and Owner Decisions (read-only; no patch)
 
-**Deliverable:** Evidence-based complementarity-ablation decision, selected Stage 2 implementation and artifacts validated and frozen, and PR 39 regeneration requirements documented.
+- [x] Inventory both local PR 38 research-log runs, including the accepted c3_20261112_153333 and historical c3_20261112_134824 directories. Include file counts, relative paths, sizes, purpose, and references/dependencies.
+
+- [x] Identify which CSV/JSON outputs duplicate information, can be consolidated, are temporary, or must remain independent for acceptance, checksum verification, or reproducibility.
+
+- [x] Propose a concise per-group disposition: consolidate / retain on GitHub / retain locally / discard. Review consequential decisions with the owner before deleting or changing any evidence.
+
+- [x] Choose compact report groupings. Aim for approximately 10 or fewer primary CSV tables and 5–8 primary JSON reports where practical; independent validation/provenance files are exempt. These are our optimistic targets, as opposed to acceptance gates.
+
+#### Step 4B — Consolidation, Cleanup, and Focused Verification (1–2 patches total)
+
+- [x] Patch 1 — Main consolidation: Produce consolidated, clearly named research tables and JSON reports from existing validated outputs; reduce overlapping reporting; curate GitHub-facing results; include a short index identifying the authoritative run, report contents, and where supporting evidence lives.
+
+- [x] Where feasible within scope, adjust the reporting/writer paths so future runs do not recreate unnecessary fragmentation. Retain detailed internal evidence only where technically or scientifically necessary. Do not rewrite immutable accepted records or break checksum/provenance chains.
+
+- [x] Carry out the owner-approved cleanup. Discard truly redundant or temporary files once their lack of required dependencies is established; retain locally only what is necessary for verification or worthwhile historical evidence. Do not create an automatic permanent archive of every original file.
+
+- [x] Keep necessary acceptance, G7/G13, G10/F31, S1, authorization, manifest, and checksum evidence independently verifiable where required; preserve run IDs, fingerprints, frozen configurations, and write-once safeguards. Large model binaries stay Git-ignored.
+
+- [x] Patch 2 — Only if necessary: Apply narrowly scoped path/reader/verification compatibility changes that cannot reasonably be included in Patch 1. Otherwise finish in one patch.
+
+- [x] Run focused record-generation/retrieval tests and relevant existing integrity checks only. No primary cross-fit, complementarity rerun, S1 rerun, new modeling experiments, or broad test campaign.
+
+- [x] Commit and push the approved consolidated reporting and necessary supporting evidence as one housekeeping commit. Keep Commit 5's selector/ablation decisions out of this commit.
+
+**Deliverable:** A substantially smaller, coherent set of GitHub-accessible PR 38 research reports; essential evidence remains verifiable, redundant files are removed where approved, and any affected reporting/storage paths pass focused checks. Maximum two implementation patches; one Commit 4 Git commit.
 
 ---
 
 ### Commit 5 — Complementarity Ablation and Final Stage 2 Freeze
 
-**Objective:** Prepare and validate the optional complementarity-aware selection experiment and final-selector workflow.
+**Objective:** Decide whether the pre-registered complementarity ablation is warranted, execute it only if justified, and freeze the final Stage 2 selector and artifacts for PR 39.
 
-**Execution scheduling:** Implement and test the conditional experiment and freeze workflow in Commit 4. Complete evidence-dependent evaluation and selector decisions.
+**Execution scheduling:** All ablation decisions, any justified experimental implementation, and the final selector freeze belong to Commit 5—not Commit 4.
 
 #### **Step 5A — Complementarity-Aware Selection Experiment**
 
@@ -162,9 +208,9 @@
 
 - [ ] Evaluate rule objectives favoring:
 
-  - [ ] Positive cases missed by Stage 1 LR.
+  - [ ] Positive cases missed by Stage 1 LR.
 
-  - [ ] Rows where LR and EBM disagree.
+  - [ ] Rows where LR and EBM disagree.
 
 - [ ] Compare standard union-coverage selection against complementarity-aware selection.
 
@@ -202,7 +248,7 @@
 
 - [ ] Confirm all PR 38 acceptance criteria and reconcile the roadmap.
 
-**Deliverable:** Tested optional ablation and selector-freeze implementation, ready for an evidence-based decision in Commit 5.
+**Deliverable:** Evidence-based complementarity-ablation decision; any justified ablation completed and evaluated; final Stage 2 selector, accepted artifact identities, and PR 39 regeneration/handoff requirements documented and frozen.
 
 ---
 
@@ -214,7 +260,7 @@
 
 - [x] **Commit 3 complete:** Corrected five-fold GLASS/RF cross-fitting, complementarity analysis, and sensitivity experiments executed, validated, and structurally accepted.
 
-- [ ] **Commit 4 complete:** Research records, JSON evidence, and validation reports reorganized into a consistent, structured storage system; relevant evidence version-controlled, with provenance, reproducibility, and existing pipeline functionality preserved.
+- [x] **Commit 4 complete:** Redundant research reporting consolidated into a compact GitHub-facing record set; owner-approved cleanup completed, required provenance preserved, and reporting compatibility verified in one or two patches.
 
 - [ ] **Commit 5 complete:** Optional complementarity ablation evaluated against pre-registered criteria, final Stage 2 selector selected and frozen, and PR 39 handoff requirements documented.
 

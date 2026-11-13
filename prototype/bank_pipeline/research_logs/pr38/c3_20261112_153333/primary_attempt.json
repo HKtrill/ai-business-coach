@@ -1,0 +1,105 @@
+{
+  "authorization": {
+    "name": "authorization.json",
+    "sha256": "daff742e10d435b9018e9cbfac76ef19fcb275ab77c4d42dd5e020548c4655f8"
+  },
+  "feature_pathway": {
+    "pathway": "fold_label_excluded",
+    "record": [
+      "stage2-inner-fold-feature-isolation",
+      "1.0.0",
+      "0d4953ef34d1d3dc"
+    ]
+  },
+  "format": "pr38.stage2.primary_attempt/1",
+  "identities": {
+    "contract": [
+      "pr37-stage2-primary",
+      "1.0.0",
+      "0817825b9eecbd11"
+    ],
+    "glass_profile": {
+      "fingerprint": "198731d5cdf263f4",
+      "profile_id": "pr37-glass-router-primary",
+      "profile_version": "1.0.0"
+    },
+    "protocol": [
+      "pr38-stage2-evaluation",
+      "1.0.0",
+      "245a1a68fb68cf4e"
+    ],
+    "rf_profile": {
+      "fingerprint": "4e3f9c07e6ecc8ad",
+      "profile_id": "pr37-rf-router-primary",
+      "profile_version": "1.0.0"
+    }
+  },
+  "note": "written before the first fit; an attempt with neither primary_MANIFEST.json nor primary_stopped.json was interrupted and is investigated, never rerun",
+  "population": {
+    "checks": {
+      "fold_fingerprint": {
+        "got": "8aea082fcaf371b7",
+        "passed": true,
+        "pinned": "8aea082fcaf371b7"
+      },
+      "fold_positives": {
+        "got": [
+          742,
+          742,
+          742,
+          743,
+          743
+        ],
+        "passed": true,
+        "pinned": [
+          742,
+          742,
+          742,
+          743,
+          743
+        ]
+      },
+      "fold_rows": {
+        "got": [
+          6590,
+          6590,
+          6590,
+          6590,
+          6590
+        ],
+        "passed": true,
+        "pinned": [
+          6590,
+          6590,
+          6590,
+          6590,
+          6590
+        ]
+      },
+      "positives": {
+        "got": 3712,
+        "passed": true,
+        "pinned": 3712
+      },
+      "router_split_fingerprint": {
+        "got": "fc3e73a5ef91aea4",
+        "passed": true,
+        "pinned": "fc3e73a5ef91aea4"
+      },
+      "rows": {
+        "got": 32950,
+        "passed": true,
+        "pinned": 32950
+      },
+      "train_label_fingerprint": {
+        "got": "b984d2a50527",
+        "passed": true,
+        "pinned": "b984d2a50527"
+      }
+    },
+    "passed": true
+  },
+  "role": "primary",
+  "run_id": "c3_20261112_153333",
+  "started_utc": "2026-11-13T01:53:28Z"
+}

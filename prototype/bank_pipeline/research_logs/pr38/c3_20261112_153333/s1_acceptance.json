@@ -1,0 +1,618 @@
+{
+  "accepted": true,
+  "feature_pathway": {
+    "pathway": "fold_label_excluded",
+    "record": [
+      "stage2-inner-fold-feature-isolation",
+      "1.0.0",
+      "0d4953ef34d1d3dc"
+    ]
+  },
+  "format": "pr38.stage2.s1_acceptance/1",
+  "g6_passed": true,
+  "gates": {
+    "G6": {
+      "checks": [
+        {
+          "check": "fold 0: both runs fitted on the same rows (rows, positives, label fingerprint)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 0: deployed Pass 1 rules recorded in both runs",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 0: deployed Pass 1 rules identical (segments, class, precision, order)",
+          "detail": "4 vs 4 rules",
+          "passed": true
+        },
+        {
+          "check": "fold 0: fit-time Pass 1 counts identical",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 0: outer-OOF Pass 1 decisions identical row by row",
+          "detail": "2169 vs 2169 rows",
+          "passed": true
+        },
+        {
+          "check": "fold 0: outer-OOF Pass 1 confidences identical row by row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 1: both runs fitted on the same rows (rows, positives, label fingerprint)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 1: deployed Pass 1 rules recorded in both runs",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 1: deployed Pass 1 rules identical (segments, class, precision, order)",
+          "detail": "4 vs 4 rules",
+          "passed": true
+        },
+        {
+          "check": "fold 1: fit-time Pass 1 counts identical",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 1: outer-OOF Pass 1 decisions identical row by row",
+          "detail": "2133 vs 2133 rows",
+          "passed": true
+        },
+        {
+          "check": "fold 1: outer-OOF Pass 1 confidences identical row by row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 2: both runs fitted on the same rows (rows, positives, label fingerprint)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 2: deployed Pass 1 rules recorded in both runs",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 2: deployed Pass 1 rules identical (segments, class, precision, order)",
+          "detail": "4 vs 4 rules",
+          "passed": true
+        },
+        {
+          "check": "fold 2: fit-time Pass 1 counts identical",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 2: outer-OOF Pass 1 decisions identical row by row",
+          "detail": "2559 vs 2559 rows",
+          "passed": true
+        },
+        {
+          "check": "fold 2: outer-OOF Pass 1 confidences identical row by row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 3: both runs fitted on the same rows (rows, positives, label fingerprint)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 3: deployed Pass 1 rules recorded in both runs",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 3: deployed Pass 1 rules identical (segments, class, precision, order)",
+          "detail": "4 vs 4 rules",
+          "passed": true
+        },
+        {
+          "check": "fold 3: fit-time Pass 1 counts identical",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 3: outer-OOF Pass 1 decisions identical row by row",
+          "detail": "2446 vs 2446 rows",
+          "passed": true
+        },
+        {
+          "check": "fold 3: outer-OOF Pass 1 confidences identical row by row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 4: both runs fitted on the same rows (rows, positives, label fingerprint)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 4: deployed Pass 1 rules recorded in both runs",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 4: deployed Pass 1 rules identical (segments, class, precision, order)",
+          "detail": "4 vs 4 rules",
+          "passed": true
+        },
+        {
+          "check": "fold 4: fit-time Pass 1 counts identical",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 4: outer-OOF Pass 1 decisions identical row by row",
+          "detail": "2352 vs 2352 rows",
+          "passed": true
+        },
+        {
+          "check": "fold 4: outer-OOF Pass 1 confidences identical row by row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold full_train: both runs fitted on the same rows (rows, positives, label fingerprint)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold full_train: deployed Pass 1 rules recorded in both runs",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold full_train: deployed Pass 1 rules identical (segments, class, precision, order)",
+          "detail": "4 vs 4 rules",
+          "passed": true
+        },
+        {
+          "check": "fold full_train: fit-time Pass 1 counts identical",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "34/34 checks passed",
+      "gate": "G6",
+      "not_run": null,
+      "passed": true,
+      "status": "pass"
+    },
+    "S1.configuration": {
+      "checks": [
+        {
+          "check": "S1 is the accepted primary with pass2_population alone changed (oof_remainder -> full)",
+          "detail": "single factor",
+          "passed": true
+        },
+        {
+          "check": "the S1 bundle records the S1 settings built for the primary's pathway",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "S1 manifest identities and feature pathway are the primary's",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "S1 was run for this accepted primary (acceptance and manifest SHA-256)",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "4/4 checks passed",
+      "gate": "S1.configuration",
+      "not_run": null,
+      "passed": true,
+      "status": "pass"
+    },
+    "S1.fit_time": {
+      "checks": [
+        {
+          "check": "S1 fits are exactly the attempted folds and the full-train fit",
+          "detail": "[0, 1, 2, 3, 4, 'full_train']",
+          "passed": true
+        },
+        {
+          "check": "fold 0: S1 fit status re-classified (E.s1_fold_status) and accepted",
+          "detail": "valid_unproven_documented",
+          "passed": true
+        },
+        {
+          "check": "fold 0: isolation clean",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 1: S1 fit status re-classified (E.s1_fold_status) and accepted",
+          "detail": "valid_optimal",
+          "passed": true
+        },
+        {
+          "check": "fold 1: isolation clean",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 2: S1 fit status re-classified (E.s1_fold_status) and accepted",
+          "detail": "valid_unproven_documented",
+          "passed": true
+        },
+        {
+          "check": "fold 2: isolation clean",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 3: S1 fit status re-classified (E.s1_fold_status) and accepted",
+          "detail": "valid_unproven_documented",
+          "passed": true
+        },
+        {
+          "check": "fold 3: isolation clean",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold 4: S1 fit status re-classified (E.s1_fold_status) and accepted",
+          "detail": "valid_unproven_documented",
+          "passed": true
+        },
+        {
+          "check": "fold 4: isolation clean",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "fold full_train: S1 fit status re-classified (E.s1_fold_status) and accepted",
+          "detail": "valid_unproven_documented",
+          "passed": true
+        },
+        {
+          "check": "fold full_train: isolation clean",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "13/13 checks passed",
+      "gate": "S1.fit_time",
+      "not_run": null,
+      "passed": true,
+      "status": "pass"
+    },
+    "S1.integrity": {
+      "checks": [
+        {
+          "check": "MANIFEST.json.sha256 is the SHA-256 of MANIFEST.json",
+          "detail": "0b67661437b6972ff3fd4a2dfcdf4e13cd0141bd54ec26b96c309ebdd7ca62f1",
+          "passed": true
+        },
+        {
+          "check": "the version-controlled copy s1_MANIFEST.json is byte-identical",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "manifest format, run and role",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "one durable S1 attempt for this run",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "the attempt ended in this candidate, not in a stop",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "every listed file is present with its SHA-256 and size",
+          "detail": "2 files; differing []",
+          "passed": true
+        },
+        {
+          "check": "no unlisted file in the candidate directory",
+          "detail": "[]",
+          "passed": true
+        },
+        {
+          "check": "one GLASS bundle named for the run, and no RF Router (F17: no RF counterpart)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "evidence.json is the run's",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "9/9 checks passed",
+      "gate": "S1.integrity",
+      "not_run": null,
+      "passed": true,
+      "status": "pass"
+    },
+    "S1.population": {
+      "checks": [
+        {
+          "check": "both GLASS outer-OOF blocks extract (boundary extractor, manifest SHA-256)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "S1 manifest population (router split, training labels, fold plan) is the primary's",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "outer-OOF rows, labels and folds are identical",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "outer-OOF blocks declare oof_remainder (primary) and full (S1)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [reference] T1 reference is a TrainReference (build_train_reference)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T1 input is a RouterOOFView (extract_router_view)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T1 arm is 'glass' and model family is 'glass_router'",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T2 row index = training index (same rows, same order)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T2 row index is unique",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T2 every per-row field has one entry per training row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T3 labels = training labels",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T3 labels are binary 0 / 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T4 every state is one of ROUTER_STATES",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T4 exactly one of Pass 1 / Pass 2 / Abstain per row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T5 decision tokens are exactly 'pass1' / 'pass2' / 'uncertain'",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T5 state = SOURCE_DECISIONS[token] on every row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T5 source_pred = SOURCE_DECISIONS[token] pred on every row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T6 fold ids are integers 0..4, every fold non-empty",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T7 pooled state counts sum to the training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T7 pooled state positives sum to the training positives",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T7 per-fold state counts, positives and negatives sum to the pooled values",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass] T7 each fold's Pass 1 + Pass 2 + Abstain = the fold's rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T1 input is a RouterOOFView (extract_router_view)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T1 arm is 'blackbox' and model family is 'rf_router'",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T2 row index = training index (same rows, same order)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T2 row index is unique",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T2 every per-row field has one entry per training row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T3 labels = training labels",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T3 labels are binary 0 / 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T4 every state is one of ROUTER_STATES",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T4 exactly one of Pass 1 / Pass 2 / Abstain per row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T5 decision tokens are exactly 'pass1' / 'pass2' / 'uncertain'",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T5 state = SOURCE_DECISIONS[token] on every row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T5 source_pred = SOURCE_DECISIONS[token] pred on every row",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T6 fold ids are integers 0..4, every fold non-empty",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T7 pooled state counts sum to the training rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T7 pooled state positives sum to the training positives",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T7 per-fold state counts, positives and negatives sum to the pooled values",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [blackbox] T7 each fold's Pass 1 + Pass 2 + Abstain = the fold's rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass x blackbox] T2 both arms cover the same training rows in the same order",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass x blackbox] T3 both arms carry the same labels",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass x blackbox] T6 both arms use the same outer fold ids (shared five-fold plan)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace [glass x blackbox] T6 both arms declare the same fold fingerprint",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trace coverage [reference] T1 all evaluated",
+          "detail": "['T1']",
+          "passed": true
+        },
+        {
+          "check": "trace coverage [glass] T1/T2/T3/T4/T5/T6/T7 all evaluated",
+          "detail": "['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']",
+          "passed": true
+        },
+        {
+          "check": "trace coverage [blackbox] T1/T2/T3/T4/T5/T6/T7 all evaluated",
+          "detail": "['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']",
+          "passed": true
+        },
+        {
+          "check": "trace coverage [glass x blackbox] T2/T3/T6 all evaluated",
+          "detail": "['T2', 'T3', 'T6']",
+          "passed": true
+        },
+        {
+          "check": "check_population_identity of the S1 trace, complete",
+          "detail": "every check passed",
+          "passed": true
+        }
+      ],
+      "evidence": "48/48 checks passed",
+      "gate": "S1.population",
+      "not_run": null,
+      "passed": true,
+      "status": "pass"
+    }
+  },
+  "primary": {
+    "acceptance_digest": "e101fb6214d4776dccaaec5821199f93ad0183be6d5995dd9dc1189cb3ab682c",
+    "acceptance_sha256": "91612167dd2582788abcb37d04885bd5507a93844514b4989cc929556821aa1a",
+    "manifest_sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88"
+  },
+  "protocol": [
+    "pr38-stage2-evaluation",
+    "1.0.0",
+    "245a1a68fb68cf4e"
+  ],
+  "record_digest": "2246cf014770a8e69688d436cc6e6a93d6081ee19ea4c2738a1b36acdcd62c63",
+  "role": "s1_full",
+  "run_id": "c3_20261112_153333",
+  "s1": {
+    "glass": "glass_router/glass_router_pr38_s1_full_c3_20261112_153333.joblib",
+    "manifest_sha256": "0b67661437b6972ff3fd4a2dfcdf4e13cd0141bd54ec26b96c309ebdd7ca62f1"
+  },
+  "statement": "S1 accepted as a descriptive sensitivity: G6 passed"
+}
