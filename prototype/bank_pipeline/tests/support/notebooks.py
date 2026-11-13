@@ -36,7 +36,8 @@ from typing import List, Optional
 
 BANK_ROOT = Path(__file__).resolve().parents[2]
 
-PROJECT_PACKAGES = ("shared", "data", "glass_pipeline", "blackbox_pipeline", "feature_research")
+PROJECT_PACKAGES = ("shared", "data", "glass_pipeline", "blackbox_pipeline", "feature_research",
+                    "stage2_crossfit")
 
 ACTIVE_NOTEBOOKS = (
     "glass_pipeline/glass_cascade.ipynb",

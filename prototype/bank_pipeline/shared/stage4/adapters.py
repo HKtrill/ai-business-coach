@@ -293,6 +293,39 @@ def _pass2_population_checks(art, f, proto, layout, stream, name) -> list:
              "the full-train router", lambda: False, detail)]
 
 
+#: RF Router Pass 2 eligibility rules (PR 37 F17; ``rf_router.oof.eligibility``).
+PASS2_ELIGIBILITY_RULES = ("global_t1", "nested_t1")
+
+
+def _pass2_eligibility_checks(art, f, proto, layout, stream, name) -> list:
+    """
+    PR 38 (F31 R5): which Pass 2 eligibility rule the RF Router's cross-fit
+    (``extra.oof_protocol.pass2_eligibility``) and its full-train router
+    (``config.eligibility``) used. Recorded in ``notes["pass2_eligibility"]``
+    beside ``pass2_population``. Metadata only.
+
+    Both declared: they must agree and be a known rule, or the train and test
+    outputs come from different eligibility rules and the artifact is refused.
+    One declared: refused (half a declaration certifies nothing). Neither
+    declared: an artifact written before either side recorded it (all of them
+    used the historical ``global_t1``); recorded as undeclared, not refused.
+    The GLASS Router has no eligibility rule: nothing is recorded or checked.
+    """
+    if layout != "extra":
+        return []
+    cross = proto.get("pass2_eligibility")
+    full = (art.get("config") or {}).get("eligibility") if isinstance(art.get("config"), dict) \
+        else None
+    stream.notes["pass2_eligibility"] = {"cross_fit": cross, "full_train": full}
+    if cross is None and full is None:
+        return []
+    return [(SEC_SEM, "stage2", f"{name}: cross-fit and full-train router share one Pass 2 "
+             "eligibility rule",
+             lambda: cross == full and cross in PASS2_ELIGIBILITY_RULES,
+             f"cross-fit {cross} (extra.oof_protocol.pass2_eligibility), full-train {full} "
+             f"(config.eligibility); known: {', '.join(PASS2_ELIGIBILITY_RULES)}")]
+
+
 def router_stream(obj_or_path, name: str, model: str, y_train: np.ndarray,
                   fold_fingerprint_fn=None):
     """Stage 2 (GLASS Router / RF Router)."""
@@ -408,6 +441,7 @@ def router_stream(obj_or_path, name: str, model: str, y_train: np.ndarray,
         checks.append((SEC_SPLIT, "stage2", f"{name}: the split fingerprints the artifact "
                        "records agree", lambda: len(set(recorded.values())) == 1, str(recorded)))
     checks += _pass2_population_checks(art, f, proto, layout, stream, name)
+    checks += _pass2_eligibility_checks(art, f, proto, layout, stream, name)
     rate = art.get("training_base_rate") if isinstance(art, dict) else None
     if rate is not None:
         checks.append((SEC_SEM, "stage2", f"{name}: training_base_rate = GLOBAL_SPLIT "

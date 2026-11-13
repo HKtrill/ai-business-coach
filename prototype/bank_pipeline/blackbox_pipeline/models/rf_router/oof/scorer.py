@@ -14,7 +14,7 @@ construction below and asserted per fold.
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Callable, Mapping, Optional
 
 import numpy as np
 import pandas as pd
@@ -60,6 +60,7 @@ class OOFScorer:
         y: pd.Series,
         subset_mask: Optional[np.ndarray] = None,
         label: str = "OOF",
+        fold_features: Optional[Callable[[np.ndarray], Mapping[int, pd.DataFrame]]] = None,
     ) -> OOFResult:
         """
         Out-of-fold ``P(y = 1 | x)``.
@@ -75,6 +76,11 @@ class OOFScorer:
             This is how the Pass 2 forest is trained on the Pass 1 remainder:
             the model for a fold sees remainder rows outside that fold and
             nothing else, so no scored row contributed to its own prediction.
+        fold_features
+            PR 38 (G13), opt-in. Called once with the fold plan (fold id per
+            row, -1 outside the subset); returns ``{k: frame}``, fold k's
+            features for every row (same rows and columns as ``X``). Fold k's
+            forest is then fitted and scored on ``frame``. None: ``X``.
         """
         X, y = check_aligned(X, y)
         n_total = len(X)
@@ -101,6 +107,16 @@ class OOFScorer:
         proba = np.full(n_total, np.nan, dtype=float)
         fold_id = np.full(n_total, -1, dtype=int)
         fit_sizes: list[int] = []
+        frames = None
+        if fold_features is not None:
+            plan = np.full(n_total, -1, dtype=int)
+            for k, (_, va_local) in enumerate(folds):
+                plan[sub_pos[va_local]] = k
+            frames = fold_features(plan)
+            for k in range(len(folds)):
+                f = frames[k]
+                if not (f.index.equals(X.index) and list(f.columns) == list(X.columns)):
+                    raise ValueError(f"{label}: fold {k}'s features do not match X's rows/columns")
 
         if self.verbose:
             print(f"   {label}: {len(sub_pos):,} rows, {n_folds} folds")
@@ -116,12 +132,13 @@ class OOFScorer:
                     f"{label} fold {k}: train and validation positions overlap"
                 )
 
+            X_k = X if frames is None else frames[k]
             pipe = self.trainer.fit(
-                X.iloc[tr_global],
+                X_k.iloc[tr_global],
                 pd.Series(y_arr[tr_global]),
             )
             proba[va_global] = ForestTrainer.positive_proba(
-                pipe, X.iloc[va_global]
+                pipe, X_k.iloc[va_global]
             )
             fold_id[va_global] = k
             fit_sizes.append(len(tr_global))

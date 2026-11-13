@@ -1,0 +1,50 @@
+{
+    "run_id":  "c3_20261112_153333",
+    "g13_record_run_id":  "s2a_20261111_155321",
+    "gates":  {
+                  "G1":  "pass",
+                  "G2":  "pass",
+                  "G3":  "pass",
+                  "G5":  "pass",
+                  "G8":  "pass",
+                  "G9":  "pass",
+                  "G13":  "pass"
+              },
+    "approved_by":  "Phillip Harris",
+    "approved_on":  "2026-11-12",
+    "reviews":  {
+
+                },
+    "g13_decision":  {
+                         "decision":  "adopt_correction",
+                         "materiality":  "material",
+                         "adopted_pathway":  "fold_label_excluded",
+                         "adopted_record":  [
+                                                "stage2-inner-fold-feature-isolation",
+                                                "1.0.0",
+                                                "0d4953ef34d1d3dc"
+                                            ],
+                         "reviewer":  "Phillip Harris",
+                         "rationale":  "G13 identified material inner-fold label dependency. Adopt fold_label_excluded to preserve training isolation. GLASS\u0027s frozen configuration, routing constraints, selection objectives, and abstention mechanism remain unchanged. No predictive-performance improvement is assumed.",
+                         "date":  "2026-11-12"
+                     },
+    "f31_r2_clarification":  {
+                                 "record":  [
+                                                "pr38-stage2-evaluation-f31-r2-clarification",
+                                                "1.0.0",
+                                                "d55e285570ce47d4"
+                                            ],
+                                 "approved_by":  "Phillip Harris",
+                                 "approved_on":  "2026-11-12"
+                             },
+    "g3_record":  "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\research_logs\\pr38\\c3_20261112_153333\\g3_preflight_fold0.json",
+    "g3_record_sha256":  "41f80a0b402b0ac9e5502bfa9695d744b1cf240751525ff2ba6dd0265e9281bc",
+    "configs_record":  "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\research_logs\\pr38\\c3_20261112_153333\\configs.json",
+    "configs_record_sha256":  "7b7f803155dae6bf245b49c1fa18eb60249b4878eaac685767b9d6012f932127",
+    "test_report":  "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\research_logs\\pr38\\c3_20261112_153333\\pytest_fast.xml",
+    "test_report_sha256":  "dd0599a78d3e6c1032f610a25e229dc589d3b2444188560abd60149f49a111f0",
+    "g13_record":  "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\research_logs\\pr38\\s2a_20261111_155321\\g13_fold0.json",
+    "g13_record_sha256":  "a67bff3ce3bf35fa6c0f592da6b08b8381df0649a6d5515f389d44f4a9a8541c",
+    "g13_corrected_record":  "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\research_logs\\pr38\\c3_20261112_153333\\g13_fold0_fold_label_excluded.json",
+    "g13_corrected_record_sha256":  "64ddd85b83cd73fa22346e741d7511a671b569e892da0905ce31dd703ac31404"
+}

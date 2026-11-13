@@ -60,7 +60,7 @@ same nested-CV mismatch is accepted by ``oof.nested_cascade_oof``.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Tuple
+from typing import Callable, Mapping, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -95,6 +95,13 @@ class NestedEligibility:
         Rows in each inner fold, and how many of them are eligible.
     n_folds, random_state, stratified
         The within-subset fold plan used to solve each ``t1_j``.
+    fold_ids
+        The inner fold each entry above belongs to (``fold_id`` values, sorted).
+    fold_counts
+        PR 38 (G5): per inner fold, the population ``t1_j`` was solved on (the
+        rows outside fold j) and its band ``p < t1_j``, recounted from the
+        scores independently of the solver: ``population_rows``,
+        ``population_positives``, ``band_rows``, ``band_positives``.
     """
 
     remainder: np.ndarray
@@ -104,6 +111,8 @@ class NestedEligibility:
     n_folds: int
     random_state: int
     stratified: bool
+    fold_ids: Tuple[int, ...] = ()
+    fold_counts: Tuple[dict, ...] = ()
 
     def to_report(self) -> dict:
         return {
@@ -113,6 +122,8 @@ class NestedEligibility:
             "eligibility_folds": int(self.n_folds),
             "eligibility_random_state": int(self.random_state),
             "eligibility_stratified": bool(self.stratified),
+            "eligibility_fold_ids": [int(j) for j in self.fold_ids],
+            "eligibility_fold_counts": [dict(c) for c in self.fold_counts],
         }
 
 
@@ -128,6 +139,7 @@ def nested_pass1_eligibility(
     random_state: int,
     stratify: bool = True,
     verbose: bool = False,
+    fold_features: Optional[Callable[[np.ndarray], Mapping[int, pd.DataFrame]]] = None,
 ) -> NestedEligibility:
     """
     Pass 2 eligibility in which no row's own label reaches its own cut through
@@ -148,6 +160,10 @@ def nested_pass1_eligibility(
         A ``ThresholdSolver`` holding the router's constraints.
     n_folds, random_state, stratify
         Fold plan for scoring the rows outside each inner fold.
+    fold_features
+        PR 38 (G13), opt-in: ``fold_features(fold_id)[j]`` are inner fold j's
+        features for every row, computed without fold j's labels. ``t1_j`` is
+        then solved from forests fitted and scored on them. None: ``X``.
 
     Raises
     ------
@@ -173,16 +189,30 @@ def nested_pass1_eligibility(
 
     scorer = OOFScorer(trainer, int(n_folds), int(random_state), bool(stratify), verbose=False)
     remainder = np.zeros(n, dtype=bool)
-    fold_t1, fold_rows, fold_rem = [], [], []
+    fold_t1, fold_rows, fold_rem, fold_counts = [], [], [], []
 
     for j in folds:
         in_j = fold == j
         outside = ~in_j
         # Scores for rows outside j, from forests fitted only on rows outside j.
-        sub = scorer.score(X, y, subset_mask=outside, label=f"eligibility[{int(j)}]")
+        X_j = X if fold_features is None else fold_features(fold)[int(j)]
+        sub = scorer.score(X_j, y, subset_mask=outside, label=f"eligibility[{int(j)}]")
         res = solver.solve_pass1(sub.scored_proba(), sub.scored_labels(y), keep_sweep=False)
         res.raise_if_infeasible(context=f"nested eligibility, inner fold {int(j)}")
         t1_j = float(res.threshold)
+        # PR 38 (G5): the band t1_j selects, recounted from the scores. The
+        # solver's own counts must agree, or its feasibility claim is unverified.
+        sub_p = np.asarray(sub.scored_proba(), dtype=float)
+        sub_y = np.asarray(sub.scored_labels(y)).astype(int)
+        band = sub_p < t1_j
+        counts = {"population_rows": int(len(sub_y)), "population_positives": int(sub_y.sum()),
+                  "band_rows": int(band.sum()), "band_positives": int(sub_y[band].sum())}
+        if (counts["band_rows"], counts["band_positives"]) != (int(res.band_size),
+                                                               int(res.positives_in_band)):
+            raise AssertionError(
+                f"nested eligibility, inner fold {int(j)}: recount {counts} disagrees with the "
+                f"solver (band {res.band_size}, positives {res.positives_in_band})")
+        fold_counts.append(counts)
         remainder[in_j] = p1[in_j] >= t1_j
         fold_t1.append(t1_j)
         fold_rows.append(int(in_j.sum()))
@@ -199,4 +229,6 @@ def nested_pass1_eligibility(
         n_folds=int(n_folds),
         random_state=int(random_state),
         stratified=bool(stratify),
+        fold_ids=tuple(int(j) for j in folds),
+        fold_counts=tuple(fold_counts),
     )

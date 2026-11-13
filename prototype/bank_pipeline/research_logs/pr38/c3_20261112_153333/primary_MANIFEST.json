@@ -1,0 +1,89 @@
+{
+  "acceptance": {
+    "accepted": false,
+    "fold_ledger_complete": true,
+    "pending": "structural acceptance V1-V8 (Commit 3A)",
+    "structural_acceptance": null
+  },
+  "extra_identity": {},
+  "feature_pathway": {
+    "pathway": "fold_label_excluded",
+    "record": [
+      "stage2-inner-fold-feature-isolation",
+      "1.0.0",
+      "0d4953ef34d1d3dc"
+    ]
+  },
+  "files": {
+    "evidence.json": {
+      "bytes": 4176994,
+      "sha256": "e30b17ca7ba1380646f1d7362df0af46b17fa98bc4a0d4a2c68299ad80a3af6a"
+    },
+    "glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib": {
+      "bytes": 2481389,
+      "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+    },
+    "rf_router/rf_router_pr38_primary_c3_20261112_153333.joblib": {
+      "bytes": 4158905,
+      "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+    },
+    "rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib": {
+      "bytes": 4158905,
+      "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+    },
+    "rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368_metadata.json": {
+      "bytes": 2118459,
+      "sha256": "e609f4931be74f7a2a418edb0ef0d85134ad9299945f8ac01b661b11b637acec"
+    },
+    "rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368_pass1_sweep.csv": {
+      "bytes": 159603,
+      "sha256": "8bf95a177cfbdf14ef13a1c946523f96ad802fd5b2535194fbb1fea85c3c1307"
+    },
+    "rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368_pass2_sweep.csv": {
+      "bytes": 133384,
+      "sha256": "53a2e028e456e04cad5115bef4cde0da36b1fef42082348afd4bb47a0a296a39"
+    },
+    "rf_router/rf_router_pr38_primary_c3_20261112_153333_metadata.json": {
+      "bytes": 2118872,
+      "sha256": "56d050e5dd164d98c07d5e455dc179824077a7e5aad8e06a11c7963a565e0626"
+    },
+    "rf_router/rf_router_pr38_primary_c3_20261112_153333_pass1_sweep.csv": {
+      "bytes": 159603,
+      "sha256": "8bf95a177cfbdf14ef13a1c946523f96ad802fd5b2535194fbb1fea85c3c1307"
+    },
+    "rf_router/rf_router_pr38_primary_c3_20261112_153333_pass2_sweep.csv": {
+      "bytes": 133384,
+      "sha256": "53a2e028e456e04cad5115bef4cde0da36b1fef42082348afd4bb47a0a296a39"
+    }
+  },
+  "format": "pr38.stage2.run/1",
+  "identities": {
+    "contract": [
+      "pr37-stage2-primary",
+      "1.0.0",
+      "0817825b9eecbd11"
+    ],
+    "glass_profile": {
+      "fingerprint": "198731d5cdf263f4",
+      "profile_id": "pr37-glass-router-primary",
+      "profile_version": "1.0.0"
+    },
+    "protocol": [
+      "pr38-stage2-evaluation",
+      "1.0.0",
+      "245a1a68fb68cf4e"
+    ],
+    "rf_profile": {
+      "fingerprint": "4e3f9c07e6ecc8ad",
+      "profile_id": "pr37-rf-router-primary",
+      "profile_version": "1.0.0"
+    }
+  },
+  "population": {
+    "fold_fingerprint": "8aea082fcaf371b7",
+    "router_split_fingerprint": "fc3e73a5ef91aea4",
+    "train_label_fingerprint": "b984d2a50527"
+  },
+  "role": "primary",
+  "run_id": "c3_20261112_153333"
+}

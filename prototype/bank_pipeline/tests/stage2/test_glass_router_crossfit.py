@@ -26,7 +26,7 @@ from shared.stage_io import fold_assignment
 from tests.stage2.conftest import TINY_RF, run_crossfit, stub_proba, stub_route
 from tests.support import mutations as mut
 from tests.support.checks import assert_never_fit_on, assert_oof_provenance
-from tests.support.synthetic import make_bank_frame, split_frame
+from tests.support.synthetic_bank import make_bank_frame, split_frame
 
 
 def _split():

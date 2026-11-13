@@ -40,7 +40,7 @@ from blackbox_pipeline.models.xgb import XGBEstimator
 from glass_pipeline.ebm.estimator import EBMFactory
 from glass_pipeline.lr.lr_stage_calibrated import CalibratedLRStage
 from tests.stage3.conftest import ARMS, EBM_TEST_PARAMS
-from tests.support.stage2_synthetic import SMALL_PARAMS
+from tests.support.synthetic_rf_router import SMALL_PARAMS
 
 
 class Arm(NamedTuple):

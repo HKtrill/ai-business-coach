@@ -50,7 +50,7 @@ from tests.stage2.conftest import new_router, run_crossfit
 from tests.support import mutations as mut
 from tests.support.rf_router_world import bank_world, quiet, router_config, save_world, serial_forests
 from tests.support.stage4_world import ROUTER_FP, build_world, make_router, make_stage1, make_stage3
-from tests.support.synthetic import make_bank_frame, split_frame
+from tests.support.synthetic_bank import make_bank_frame, split_frame
 
 ARMS = ("glass", "blackbox")
 ROUTER = {"glass": "glass", "blackbox": "rf_router"}

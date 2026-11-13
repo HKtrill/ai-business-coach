@@ -26,7 +26,7 @@ from feature_research.model_training.rf import (
 )
 from tests.support.checks import assert_oof_provenance
 from tests.support.recorders import CallLog, RecordingEstimator
-from tests.support.synthetic import TARGET, split_frame
+from tests.support.synthetic_bank import TARGET, split_frame
 
 N_FOLDS = 3
 EBM_PARAMS = {"learning_rate": 0.05, "max_rounds": 50, "max_bins": 32,

@@ -51,6 +51,7 @@ class ModelSaver:
         split_fingerprint: Optional[str] = None,
         oof=None,
         train_insample_proba: Optional[np.ndarray] = None,
+        extra_fields: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
         Save complete GLASS Router bundle.
@@ -76,7 +77,9 @@ class ModelSaver:
             train_insample_proba: optional in-sample train proba from the
                 full-train model. Stored for diagnostics only (optimism check);
                 Stage 4 must read train_proba, never this.
-            
+            extra_fields: optional additional top-level fields (PR 38 fit-time
+                evidence). Refused if one would replace an existing bundle field.
+
         Returns:
             Path to saved file
         """
@@ -168,6 +171,13 @@ class ModelSaver:
             "fit_report": getattr(self.glass, "fit_report_", None),
             "timestamp": timestamp,
         }
+        # PR 38: additional top-level fields (e.g. the run's fit-time evidence).
+        # They may add keys, never replace one the bundle already defines.
+        if extra_fields:
+            clash = sorted(set(extra_fields) & set(glass_bundle))
+            if clash:
+                raise ValueError(f"extra_fields would overwrite bundle fields: {clash}")
+            glass_bundle.update(extra_fields)
         
         # Save
         joblib.dump(glass_bundle, output_path)

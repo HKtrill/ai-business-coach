@@ -1,0 +1,32 @@
+{
+  "record_id": "stage2-inner-fold-feature-isolation",
+  "schema_version": "stage2-feature-pathway/1",
+  "record_version": "1.0.0",
+  "status": "specified",
+  "addresses": "PR 37 F17 decision record, limitation L1 and gate G13 (section 8): a cross-fitted correction that states the feature matrix each step uses",
+  "pathways": {
+    "outer_engineer": "historical, and the frozen PR 37 records' pathway: every step of an outer fold (or of the full-train fit) uses the bins of the engineer fitted with labels on all of that fit's rows",
+    "fold_label_excluded": "the correction: the inner-fold steps that decide inner-OOF Pass 1 eligibility use, for inner fold j, the bins of every row from that engineer with fold j's labels excluded"
+  },
+  "fold_label_excluded": {
+    "features_for_inner_fold_j": "stage2_crossfit.g13.label_excluded_engineer(engineer, X, y, keep = inner fold != j).transform(X), binned by the locked BINNING_STRATEGY thresholds: neighborhood_subscription_density without fold j's KDE reference rows, economic_curvature_intensity and dow_month_encoded rates recounted without fold j's labels, every label-free structure (scaler, KDE reference subsample, bandwidth, curvature edges, temporal categories) fixed from the fit",
+    "steps_on_inner_fold_j_features": {
+      "glass": ["inner fold j's fold-nested RF ranker (fitted on its training rows)", "inner fold j's Pass 1 rule generation, evaluation and ILP selection (its training rows)", "routing of fold j's own rows by those rules (eligibility)"],
+      "rf": ["inner fold j's Pass 1 OOF forest (fitted on its training rows, scoring fold j)", "under nested_t1, every forest t1_j is solved from (fitted and scored on rows outside j)", "t1_j and the eligibility of fold j's rows (p1_oof >= t1_j)"]
+    },
+    "steps_on_the_fit_engineers_features": {
+      "glass": ["the GLASS-owned ordering RF", "the full-population Pass 1 rules", "Pass 2 rules on the remainder", "held-out and test-side transformation"],
+      "rf": ["Pass 2 OOF scoring within the remainder and t2", "the refitted Pass 1 and Pass 2 forests", "held-out and test-side transformation"]
+    },
+    "rf_inner_oof_pass1_scores": "the router keeps one inner-OOF Pass 1 score vector: the corrected one. t1, the Pass 1 band confidences, the R1 bands and the R2 strips use it",
+    "unchanged": ["the three encoders' definitions", "the 29 bins and their BINNING_STRATEGY thresholds", "the frozen shared Stage 2 operating contract", "both frozen arm profiles", "the inner and outer fold plans", "outer-fold and full-train engineering and held-out/test transformation"],
+    "not_addressed": "Pass 2 inner-OOF scores (RF t2) and GLASS's in-sample Pass 2 estimates (F17 L2) are outside L1's eligibility scope and keep the fit engineer's features"
+  },
+  "binds": {
+    "contract": ["pr37-stage2-primary", "1.0.0", "0817825b9eecbd11"],
+    "protocol": ["pr38-stage2-evaluation", "1.0.0", "245a1a68fb68cf4e"],
+    "glass_profile": ["pr37-glass-router-primary", "1.0.0", "198731d5cdf263f4"],
+    "rf_profile": ["pr37-rf-router-primary", "1.0.0", "4e3f9c07e6ecc8ad"]
+  },
+  "adoption": "not part of this record: the owner's G13 decision in the Step 2B authorization names the adopted pathway by this record's identity, after the corrected G13 audit"
+}

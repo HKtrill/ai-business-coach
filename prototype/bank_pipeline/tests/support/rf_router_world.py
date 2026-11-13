@@ -51,8 +51,8 @@ from blackbox_pipeline.models.rf_router.forest import ForestTrainer
 from glass_pipeline.glass_router.pipeline import fold_fingerprint, make_folds
 from shared.stage2.feature_engineering import engineer_features
 from tests.support.recorders import Call, CallLog
-from tests.support.stage2_synthetic import SMALL_PARAMS
-from tests.support.synthetic import make_bank_frame, split_frame
+from tests.support.synthetic_rf_router import SMALL_PARAMS
+from tests.support.synthetic_bank import make_bank_frame, split_frame
 
 N_STAGE_FOLDS, RANDOM_STATE = 5, 42     # notebook values
 TEST_SIZE = 0.20                        # GlobalSplitManager(test_size=0.20)
@@ -145,7 +145,7 @@ def stage4_block(stage2, crossfit, fold_id, test_out) -> dict:
         "index_train": stage2["X_train"].index,
         "index_test": stage2["X_test"].index,
         "constraint_source": "test_fixture",
-        "rf_params_origin": "tests.support.stage2_synthetic.SMALL_PARAMS",
+        "rf_params_origin": "tests.support.synthetic_rf_router.SMALL_PARAMS",
         "glass_artifact": "none (test fixture)",
         "train_outputs_oof": True,
         "train_pred": crossfit.oof["pred"],

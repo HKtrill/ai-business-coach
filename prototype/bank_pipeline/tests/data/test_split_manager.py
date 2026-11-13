@@ -14,7 +14,7 @@ import pytest
 
 from data.global_splits.split_manager import GlobalSplitManager
 from shared.stage_io import fold_assignment
-from tests.support.synthetic import TARGET
+from tests.support.synthetic_bank import TARGET
 
 
 def _split(frame, test_size=0.25, seed=0, folds=5):

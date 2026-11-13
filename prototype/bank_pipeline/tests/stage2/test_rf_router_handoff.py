@@ -55,7 +55,7 @@ from tests.support.rf_router_world import (
 )
 from tests.support.stage4_world import build_world as build_glass_world
 from tests.support.stage4_world import make_router as make_glass_router
-from tests.support.synthetic import make_bank_frame, split_frame
+from tests.support.synthetic_bank import make_bank_frame, split_frame
 
 pytestmark = pytest.mark.filterwarnings(        # the MLP's tiny synthetic folds (see Stage 1 suite)
     "ignore:Got `batch_size` less than 1 or larger than sample size:UserWarning")

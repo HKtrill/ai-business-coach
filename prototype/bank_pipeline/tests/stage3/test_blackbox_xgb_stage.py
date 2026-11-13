@@ -59,7 +59,7 @@ from tests.support import mutations as mut
 from tests.support.checks import assert_never_fit_on, assert_oof_provenance
 from tests.support.notebooks import BANK_ROOT, project_imports
 from tests.support.recorders import CallLog, RecordingStage3Estimator
-from tests.support.synthetic import make_bank_frame, split_frame
+from tests.support.synthetic_bank import make_bank_frame, split_frame
 
 NOTEBOOK = BANK_ROOT / "blackbox_pipeline" / "blackbox_cascade.ipynb"
 PARAMS = dict(ARMS["xgboost"].params)

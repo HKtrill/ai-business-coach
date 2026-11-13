@@ -1,0 +1,234 @@
+{
+  "artifact_manifest": {
+    "arbiters": {
+      "meta_ebm": {
+        "attested": true,
+        "path": "models/meta_ebm/meta_ebm_20261023_070055_573687.joblib",
+        "sha256": "82a893e134e5a8ae0f10e8371c6d3398cb7cbd35df0440bdb9d744a365c86344"
+      },
+      "meta_ebm_on_blackbox": {
+        "attested": true,
+        "path": "blackbox_pipeline/models/stage4_crossover/arbiter_on_blackbox/meta_ebm_20261023_095719_949475.joblib",
+        "sha256": "b4b78c589ec27743b1645fddf430f20add657955fcd32eb86139fddd5ff0cf07"
+      },
+      "meta_xgb": {
+        "attested": true,
+        "path": "blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261023_095718_314639.joblib",
+        "sha256": "119c4fc9cdee21c35c081ce23558451d0c68a54aee9998b86ff5d22234b271a2"
+      },
+      "meta_xgb_on_glass": {
+        "attested": true,
+        "path": "blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261023_095932_414442.joblib",
+        "sha256": "26281c269ed8a62e2e7c0945c69ef7c40acffac9da3b7a66d87a836bff38f6d8"
+      }
+    },
+    "env": "set BANK_ARTIFACT_MANIFEST to this file for every real-data check",
+    "manifest": "C:\\Users\\phill\\pr38_manifests\\artifact_manifest_s2a_20261111_155321.json",
+    "manifest_sha256": "4061aa29d64e330061478e7891fee727aeb43459bc994bafce363b7c5662608d",
+    "passed": true,
+    "problems": []
+  },
+  "at_utc": "2026-11-12T23:33:46+00:00",
+  "baseline": {
+    "archive_check": {
+      "command": "python research_logs/baselines/stage2_baseline_archive.py --check --sums C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\SHA256SUMS.txt",
+      "exit_code": 0,
+      "output_tail": [
+        "[archive] sources: C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\bank_pipeline",
+        "[2E check] OK: pr37_stage2_pre_correction_v1 reproduced from the recorded sources (identical; 19 files)"
+      ],
+      "passed": true
+    },
+    "passed": true,
+    "verify": {
+      "command": "python research_logs/baselines/stage2_baseline.py --verify",
+      "exit_code": 0,
+      "output_tail": [
+        "[2E verify] OK: pr37_stage2_pre_correction_v1: 19 files match MANIFEST.json (manifest sha256 905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b)"
+      ],
+      "passed": true
+    }
+  },
+  "format": "pr38.stage2.phase0/1",
+  "inventory": {
+    "cites": {
+      "baseline_manifest_sha256": "905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b",
+      "identities": {
+        "data_files": [
+          {
+            "method": "sha256 of the file with CRLF normalised to LF",
+            "path": "data/raw/bank-additional-full.csv",
+            "role": "raw dataset (UCI bank-additional-full)",
+            "sha256": "233e260d5d1d506a2c10381da5b8c2f75f2c08d1b373ca7b825e39ebe1bd30df"
+          }
+        ],
+        "ebm_block_fingerprint": {
+          "detail": "recorded by the Stage 3 EBM artifact; not re-verifiable here",
+          "status": "recorded_only",
+          "value": "9cc10fa1f5cf8d858a9168a2169372758102d06283592bed024fb06e1040318c"
+        },
+        "feature_matrix_hash": {
+          "detail": "no feature-matrix hash is stored in the artifacts",
+          "status": "not_recorded",
+          "value": null
+        },
+        "fold_plan": {
+          "detail": "shared Stage 2-3 outer plan; both routers, LR grouping, EBM",
+          "fingerprint": "8aea082fcaf371b7",
+          "n_folds": 5,
+          "seed": 42,
+          "status": "validated"
+        },
+        "router_split_fingerprint": {
+          "detail": "16-hex; hashes row indices only (no labels)",
+          "status": "validated",
+          "value": "fc3e73a5ef91aea4"
+        },
+        "stage_io_split_fingerprint": {
+          "attestation": "PR 37 baseline snapshot PROVENANCE.json, identities.stage_io_split_fingerprint (recorded 2026-11-01; not recomputed)",
+          "detail": "never recomputed: its hash includes the test labels",
+          "status": "attested",
+          "value": "d6cddadc3439"
+        },
+        "train_label_fingerprint": {
+          "detail": "training rows and labels; both routers' cross-fit and full-train records match",
+          "status": "validated",
+          "value": "b984d2a50527"
+        }
+      },
+      "note": "configuration identities (GLASS config_full; RF rf_params, constraint source, eligibility), split, label and fold fingerprints are recorded in the cited MANIFEST.json",
+      "routers": [
+        "blackbox",
+        "glass"
+      ]
+    },
+    "passed": true,
+    "problems": [],
+    "sources": [
+      {
+        "archive_matches": true,
+        "archived": true,
+        "bytes": 2412318,
+        "live_matches": true,
+        "live_present": true,
+        "path": "models/meta_ebm/meta_ebm_20261023_070055_573687.joblib",
+        "recorded_sha256": "82a893e134e5a8ae0f10e8371c6d3398cb7cbd35df0440bdb9d744a365c86344",
+        "role": "stage4_arbiter.meta_ebm",
+        "sums_sha256": "82a893e134e5a8ae0f10e8371c6d3398cb7cbd35df0440bdb9d744a365c86344"
+      },
+      {
+        "archive_matches": true,
+        "archived": true,
+        "bytes": 2412670,
+        "live_matches": true,
+        "live_present": true,
+        "path": "blackbox_pipeline/models/stage4_crossover/arbiter_on_blackbox/meta_ebm_20261023_095719_949475.joblib",
+        "recorded_sha256": "b4b78c589ec27743b1645fddf430f20add657955fcd32eb86139fddd5ff0cf07",
+        "role": "stage4_arbiter.meta_ebm_on_blackbox",
+        "sums_sha256": "b4b78c589ec27743b1645fddf430f20add657955fcd32eb86139fddd5ff0cf07"
+      },
+      {
+        "archive_matches": true,
+        "archived": true,
+        "bytes": 851455,
+        "live_matches": true,
+        "live_present": true,
+        "path": "models/lr/lr_calibrated_20261023_003319.joblib",
+        "recorded_sha256": "61a6b144b625e7a5028a151860d55ff86c08c3a0c9ef68ab1be73c0fbc995759",
+        "role": "stage1.lr",
+        "sums_sha256": "61a6b144b625e7a5028a151860d55ff86c08c3a0c9ef68ab1be73c0fbc995759"
+      },
+      {
+        "archive_matches": true,
+        "archived": true,
+        "bytes": 2674722,
+        "live_matches": true,
+        "live_present": true,
+        "path": "models/glass_router/glass_router_20261023_025611.joblib",
+        "recorded_sha256": "2c70879bfe04f2adb320d55a3d735a1b1d08cd0e4821621a7a5075ad89fa2fa8",
+        "role": "stage2.glass_router",
+        "sums_sha256": "2c70879bfe04f2adb320d55a3d735a1b1d08cd0e4821621a7a5075ad89fa2fa8"
+      },
+      {
+        "archive_matches": true,
+        "archived": true,
+        "bytes": 8296795,
+        "live_matches": true,
+        "live_present": true,
+        "path": "models/ebm/ebm_stage3_20261023_070053_780762.joblib",
+        "recorded_sha256": "cfdac6d206d737909f3b3ba2efc3eec48de7ae2b98f42f7c478b3e01da77f55b",
+        "role": "stage3.ebm",
+        "sums_sha256": "cfdac6d206d737909f3b3ba2efc3eec48de7ae2b98f42f7c478b3e01da77f55b"
+      },
+      {
+        "archive_matches": true,
+        "archived": true,
+        "bytes": 3928078,
+        "live_matches": false,
+        "live_present": true,
+        "path": "models/rf_router/rf_router_two_pass.joblib",
+        "recorded_sha256": "5204a2d6732352ab06b2518e0285cd099643ea91d03c79810d784c3f38d75fb2",
+        "role": "stage2.rf_router",
+        "sums_sha256": "5204a2d6732352ab06b2518e0285cd099643ea91d03c79810d784c3f38d75fb2"
+      },
+      {
+        "archive_matches": true,
+        "archived": true,
+        "bytes": 8306761,
+        "live_matches": true,
+        "live_present": true,
+        "path": "models/rf/rf_result_20261023_025611.joblib",
+        "recorded_sha256": "76b198aa5eff376e663237333e36dec8adde26e870e2296d77c594a68719f412",
+        "role": "glass_arm.rf_result",
+        "sums_sha256": "76b198aa5eff376e663237333e36dec8adde26e870e2296d77c594a68719f412"
+      }
+    ]
+  },
+  "output_root": {
+    "created": true,
+    "path": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\models\\pr38\\c3_20261112_153333",
+    "relative": "models/pr38/c3_20261112_153333"
+  },
+  "passed": true,
+  "run_id": "c3_20261112_153333",
+  "snapshot": {
+    "checks": {
+      "archived_files": {
+        "passed": true,
+        "problems": []
+      },
+      "entries": {
+        "baseline": 37,
+        "got": 37,
+        "passed": true
+      },
+      "sums_file_sha256": {
+        "baseline": "e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a",
+        "got": "e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a",
+        "passed": true
+      }
+    },
+    "live_counterparts": {
+      "different": [
+        "bank_pipeline/blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib",
+        "bank_pipeline/models/ebm/ebm_stage3_latest.joblib",
+        "bank_pipeline/models/mlp/stage1_blackbox_output.joblib",
+        "bank_pipeline/models/mlp/stage1_mlp.joblib",
+        "bank_pipeline/models/mlp/stage1_mlp_metadata.json",
+        "bank_pipeline/models/rf_router/rf_router_single.joblib",
+        "bank_pipeline/models/rf_router/rf_router_single_metadata.json",
+        "bank_pipeline/models/rf_router/rf_router_single_pass1_sweep.csv",
+        "bank_pipeline/models/rf_router/rf_router_single_pass2_sweep.csv",
+        "bank_pipeline/models/rf_router/rf_router_two_pass.joblib",
+        "bank_pipeline/models/rf_router/rf_router_two_pass_metadata.json",
+        "bank_pipeline/models/rf_router/rf_router_two_pass_pass1_sweep.csv",
+        "bank_pipeline/models/rf_router/rf_router_two_pass_pass2_sweep.csv"
+      ],
+      "missing": [],
+      "note": "informational: since 2fc030e/e3e27f6 the live models/ folders hold regenerated files and mutable aliases; the archive is the historical reference",
+      "same": 24
+    },
+    "passed": true,
+    "sums_path": "C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\SHA256SUMS.txt"
+  }
+}

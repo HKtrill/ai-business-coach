@@ -37,7 +37,7 @@ from blackbox_pipeline.models.rf_router.tuning import (
     suggest_rf_params,
 )
 
-from tests.support.stage2_synthetic import (
+from tests.support.synthetic_rf_router import (
     CONSTRAINTS_DEGENERATE, CONSTRAINTS_OK, N_FOLDS, ROUTER_SEED, SMALL_PARAMS,
     make_data, router_config,
 )

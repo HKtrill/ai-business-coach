@@ -764,7 +764,7 @@ def test_a_real_fit_meets_every_union_obligation_on_its_training_rows():
     obligation, recomputed from the training rows."""
     from shared.stage2.feature_engineering import engineer_features
     from tests.stage2.conftest import legacy_config, new_router
-    from tests.support.synthetic import make_bank_frame, split_frame
+    from tests.support.synthetic_bank import make_bank_frame, split_frame
 
     n_rows = 1200
     split = split_frame(make_bank_frame(n=n_rows))

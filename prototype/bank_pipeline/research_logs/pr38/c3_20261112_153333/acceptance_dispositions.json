@@ -1,0 +1,23 @@
+{
+  "format": "pr38.stage2.acceptance_dispositions/1",
+  "run_id": "c3_20261112_153333",
+  "dispositions": {
+    "G10:artifact_audit_pins": {
+      "decision": "clarification_approved",
+      "reviewer": "Phillip Harris",
+      "rationale": "PR 38 candidate artifacts are isolated and versioned. Historical notebook pins remain unchanged until downstream regeneration.",
+      "date": "2026-11-12",
+      "record": [
+        "pr38-stage2-f17-g10-pin-scope-clarification",
+        "1.0.0",
+        "11ecf7c53546c6fe"
+      ]
+    },
+    "F31:condition2": {
+      "decision": "disposition_a_retained",
+      "reviewer": "Phillip Harris",
+      "rationale": "Retain existing RF heuristic bands and document the corrected inner-OOF score versus deployed-bin distinction. No router configuration change.",
+      "date": "2026-11-12"
+    }
+  }
+}

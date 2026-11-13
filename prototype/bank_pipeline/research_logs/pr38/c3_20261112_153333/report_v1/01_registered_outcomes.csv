@@ -1,0 +1,199 @@
+package,table,outcome,arm,metric,kind,fold,glass,blackbox,difference,undefined_replicates,replicates,level,glass_low,glass_high,blackbox_low,blackbox_high,difference_low,difference_high,interval_status,statement,difference_definition,pre,post,pre_low,pre_high,post_low,post_high,pre_minus_post
+complementarity_v1,primary_outcomes,O1,,pass1_rate,ratio,,0.353839150228,0.420091047041,-0.0662518968134,0,2000,0.95,0.348981790592,0.358816388467,0.414657814871,0.425341426404,-0.0720189681335,-0.0605455235205,defined,GLASS lower than RF,glass - blackbox,,,,,,,
+complementarity_v1,primary_outcomes,O2,,pass2_rate,ratio,,0.202215477997,0.25095599393,-0.0487405159332,0,2000,0.95,0.198209408194,0.206191957511,0.246613808801,0.25526707132,-0.0523216995448,-0.0451896813354,defined,GLASS lower than RF,glass - blackbox,,,,,,,
+complementarity_v1,primary_outcomes,O3a,,pass1_npv,ratio,,0.953426537439,0.95939893079,-0.00597239335146,0,2000,0.95,0.949986774775,0.956921656466,0.956305253303,0.962487899646,-0.00968915370922,-0.00229288004798,defined,GLASS lower than RF,glass - blackbox,,,,,,,
+complementarity_v1,primary_outcomes,O3b,,pass1_leakage_share,ratio,,0.146282327586,0.151400862069,-0.00511853448276,0,2000,0.95,0.134967672414,0.157327586207,0.139816810345,0.162991648707,-0.0177801724138,0.00728044181034,defined,not resolved at this sample,glass - blackbox,,,,,,,
+complementarity_v1,primary_outcomes,O3c,,pass2_precision,ratio,,0.307519135525,0.297980408756,0.00953872676895,0,2000,0.95,0.299341669088,0.316448397857,0.291270259384,0.304942700102,0.00306642019107,0.0160247862264,defined,GLASS higher than RF,glass - blackbox,,,,,,,
+complementarity_v1,primary_outcomes,O4a,,unique_tp,count,,86,60,26,0,2000,0.95,69,104,46,75.025,5.975,47,defined,GLASS higher than RF,glass - blackbox,,,,,,,
+complementarity_v1,primary_outcomes,O4b,,unique_fp,count,,1140,939,201,0,2000,0.95,1076,1203.025,880,997.025,124,273,defined,GLASS higher than RF,glass - blackbox,,,,,,,
+complementarity_v1,primary_outcomes,O4c,,pass1_fp_suppression,ratio,,0.108435916003,0.00289645184649,0.105539464156,0,2000,0.95,0.100222562323,0.116683639727,0.00162507682228,0.00451190245588,0.0971207173249,0.113958878361,defined,GLASS higher than RF,glass - blackbox,,,,,,,
+complementarity_v1,primary_outcomes,O4d,,pass1_tp_cost,ratio,,0.0423899878886,0.00282599919257,0.039563988696,0,2000,0.95,0.0342873283506,0.0502103990408,0.000815627474215,0.00522744459748,0.0312750601443,0.0474697040587,defined,GLASS higher than RF,glass - blackbox,,,,,,,
+complementarity_v1,primary_outcomes,descriptive_total,,coverage,ratio,,0.556054628225,0.671047040971,-0.114992412747,0,2000,0.95,0.550742792109,0.56124430956,0.666039453718,0.675964339909,-0.121426403642,-0.108496965099,defined,descriptive total (no statement rule),glass - blackbox,,,,,,,
+complementarity_v1,primary_outcomes,descriptive_total,,abstain_rate,ratio,,0.443945371775,0.328952959029,0.114992412747,0,2000,0.95,0.43875569044,0.449257207891,0.324035660091,0.333960546282,0.108496965099,0.121426403642,defined,descriptive total (no statement rule),glass - blackbox,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O1,,pass1_rate,,0,0.329135053111,0.466009104704,-0.136874051593,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O1,,pass1_rate,,1,0.323672230653,0.381942336874,-0.0582701062215,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O1,,pass1_rate,,2,0.388315629742,0.426251896813,-0.0379362670713,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O1,,pass1_rate,,3,0.371168437026,0.391198786039,-0.0200303490137,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O1,,pass1_rate,,4,0.356904400607,0.435053110774,-0.0781487101669,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O2,,pass2_rate,,0,0.23186646434,0.24871016692,-0.0168437025797,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O2,,pass2_rate,,1,0.207587253414,0.251896813354,-0.0443095599393,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O2,,pass2_rate,,2,0.174506828528,0.248103186646,-0.0735963581184,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O2,,pass2_rate,,3,0.209104704097,0.261608497724,-0.0525037936267,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O2,,pass2_rate,,4,0.188012139605,0.244461305008,-0.0564491654021,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3a,,pass1_npv,,0,0.947441217151,0.956366004559,-0.00892478740801,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3a,,pass1_npv,,1,0.962962962963,0.962653953119,0.000309009844171,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3a,,pass1_npv,,2,0.95271590465,0.961196155215,-0.00848025056513,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3a,,pass1_npv,,3,0.949713818479,0.956943366951,-0.00722954847198,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3a,,pass1_npv,,4,0.954931972789,0.960237181723,-0.00530520893394,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3b,,pass1_leakage_share,,0,0.153638814016,0.180592991914,-0.0269541778976,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3b,,pass1_leakage_share,,1,0.106469002695,0.126684636119,-0.0202156334232,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3b,,pass1_leakage_share,,2,0.16307277628,0.146900269542,0.0161725067385,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3b,,pass1_leakage_share,,3,0.165545087483,0.149394347241,0.0161507402423,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3b,,pass1_leakage_share,,4,0.14266487214,0.153432032301,-0.0107671601615,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3c,,pass2_precision,,0,0.285340314136,0.297132397804,-0.0117920836674,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3c,,pass2_precision,,1,0.297514619883,0.301807228916,-0.00429260903262,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3c,,pass2_precision,,2,0.339130434783,0.300305810398,0.0388246243851,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3c,,pass2_precision,,3,0.299709724238,0.286542923434,0.0131668008042,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O3c,,pass2_precision,,4,0.325262308313,0.304779639975,0.020482668338,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4a,,unique_tp,,0,13,14,-1,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4a,,unique_tp,,1,25,17,8,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4a,,unique_tp,,2,18,12,6,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4a,,unique_tp,,3,11,8,3,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4a,,unique_tp,,4,19,9,10,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4b,,unique_fp,,0,251,192,59,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4b,,unique_fp,,1,183,158,25,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4b,,unique_fp,,2,215,180,35,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4b,,unique_fp,,3,230,225,5,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4b,,unique_fp,,4,261,184,77,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4c,,pass1_fp_suppression,,0,0.0962821734986,0.0123927550048,0.0838894184938,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4c,,pass1_fp_suppression,,1,0.076714801444,0,0.076714801444,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4c,,pass1_fp_suppression,,2,0.120404411765,0.00183823529412,0.118566176471,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4c,,pass1_fp_suppression,,3,0.0746395250212,0.000848176420696,0.0737913486005,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4c,,pass1_fp_suppression,,4,0.176363636364,0,0.176363636364,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4d,,pass1_tp_cost,,0,0.0409836065574,0.00409836065574,0.0368852459016,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4d,,pass1_tp_cost,,1,0.0507099391481,0,0.0507099391481,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4d,,pass1_tp_cost,,2,0.0284552845528,0.0020325203252,0.0264227642276,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4d,,pass1_tp_cost,,3,0.043137254902,0.0078431372549,0.0352941176471,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,O4d,,pass1_tp_cost,,4,0.0485829959514,0,0.0485829959514,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,descriptive_total,,coverage,,0,0.561001517451,0.714719271624,-0.153717754173,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,descriptive_total,,coverage,,1,0.531259484067,0.633839150228,-0.102579666161,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,descriptive_total,,coverage,,2,0.56282245827,0.67435508346,-0.11153262519,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,descriptive_total,,coverage,,3,0.580273141123,0.652807283763,-0.0725341426404,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,descriptive_total,,coverage,,4,0.544916540212,0.679514415781,-0.134597875569,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,descriptive_total,,abstain_rate,,0,0.438998482549,0.285280728376,0.153717754173,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,descriptive_total,,abstain_rate,,1,0.468740515933,0.366160849772,0.102579666161,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,descriptive_total,,abstain_rate,,2,0.43717754173,0.32564491654,0.11153262519,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,descriptive_total,,abstain_rate,,3,0.419726858877,0.347192716237,0.0725341426404,,,,,,,,,,,,,,,,,,,
+complementarity_v1,primary_outcomes_by_fold,descriptive_total,,abstain_rate,,4,0.455083459788,0.320485584219,0.134597875569,,,,,,,,,,,,,,,,,,,
+complementarity_v1,pre_post_uncertainty,,glass,pass1_rate,ratio,,,,-0.0051593323217,0,2000,0.95,,,,,-0.0062526555387,-0.00403641881639,defined,,pre - post,0.348679817906,0.353839150228,0.343883915023,0.353597116844,0.348981790592,0.358816388467,
+complementarity_v1,pre_post_uncertainty,,glass,pass2_rate,ratio,,,,0.054779969651,0,2000,0.95,,,,,0.0517754172989,0.0577238239757,defined,,pre - post,0.256995447648,0.202215477997,0.252503793627,0.261185128983,0.198209408194,0.206191957511,
+complementarity_v1,pre_post_uncertainty,,glass,coverage,ratio,,,,0.0496206373293,0,2000,0.95,,,,,0.0465857359636,0.052686646434,defined,,pre - post,0.605675265554,0.556054628225,0.600484825493,0.61074430956,0.550742792109,0.56124430956,
+complementarity_v1,pre_post_uncertainty,,glass,abstain_rate,ratio,,,,-0.0496206373293,0,2000,0.95,,,,,-0.052686646434,-0.0465857359636,defined,,pre - post,0.394324734446,0.443945371775,0.38925569044,0.399515174507,0.43875569044,0.449257207891,
+complementarity_v1,pre_post_uncertainty,,glass,pass1_npv,ratio,,,,0.00192205686871,0,2000,0.95,,,,,0.000844040895237,0.00308967574583,defined,,pre - post,0.955348594308,0.953426537439,0.95190695292,0.958923444632,0.949986774775,0.956921656466,
+complementarity_v1,pre_post_uncertainty,,glass,pass1_leakage_share,ratio,,,,-0.00808189655172,0,2000,0.95,,,,,-0.0118534482759,-0.00457974137931,defined,,pre - post,0.138200431034,0.146282327586,0.126885775862,0.149245689655,0.134967672414,0.157327586207,
+complementarity_v1,pre_post_uncertainty,,glass,pass2_precision,ratio,,,,-0.0315389749199,0,2000,0.95,,,,,-0.0372123657548,-0.0260798453087,defined,,pre - post,0.275980160605,0.307519135525,0.269486837358,0.282657052314,0.299341669088,0.316448397857,
+complementarity_v1,pre_post_uncertainty,,glass,pass2_recall,ratio,,,,0.0775862068966,0,2000,0.95,,,,,0.0665409482759,0.0880926724138,defined,,pre - post,0.629579741379,0.551993534483,0.613415948276,0.644665948276,0.536637931034,0.568157327586,
+complementarity_v1,pre_post_uncertainty,,glass,pass2_recall_eligible,ratio,,,,0.0839645869928,0,2000,0.95,,,,,0.0710849103313,0.0961625705681,defined,,pre - post,0.730540793998,0.646576207005,0.715045615056,0.745236322404,0.630839209422,0.663854263859,
+complementarity_v1,pre_post_uncertainty,,glass,unique_tp,count,,,,45,0,2000,0.95,,,,,29,61,defined,,pre - post,131,86,109,152,69,104,
+complementarity_v1,pre_post_uncertainty,,glass,pass1_fp_suppression,ratio,,,,-0.006698044895,0,2000,0.95,,,,,-0.00973293346901,-0.00375244636161,defined,,pre - post,0.101737871108,0.108435916003,0.0939880558252,0.109672807417,0.100222562323,0.116683639727,
+complementarity_v1,pre_post_uncertainty,,blackbox,pass1_rate,ratio,,,,-0.0233080424886,0,2000,0.95,,,,,-0.0249172989378,-0.0217898330804,defined,,pre - post,0.396783004552,0.420091047041,0.391198027314,0.401942336874,0.414657814871,0.425341426404,
+complementarity_v1,pre_post_uncertainty,,blackbox,pass2_rate,ratio,,,,0.0351441578149,0,2000,0.95,,,,,0.0331107738998,0.0371176024279,defined,,pre - post,0.286100151745,0.25095599393,0.281487101669,0.290653262519,0.246613808801,0.25526707132,
+complementarity_v1,pre_post_uncertainty,,blackbox,coverage,ratio,,,,0.0118361153263,0,2000,0.95,,,,,0.00919423368741,0.0144461305008,defined,,pre - post,0.682883156297,0.671047040971,0.678056904401,0.687861153263,0.666039453718,0.675964339909,
+complementarity_v1,pre_post_uncertainty,,blackbox,abstain_rate,ratio,,,,-0.0118361153263,0,2000,0.95,,,,,-0.0144461305008,-0.00919423368741,defined,,pre - post,0.317116843703,0.328952959029,0.312138846737,0.321943095599,0.324035660091,0.333960546282,
+complementarity_v1,pre_post_uncertainty,,blackbox,pass1_npv,ratio,,,,0.000139083589337,0,2000,0.95,,,,,-0.000652494871892,0.00101038694726,defined,,pre - post,0.95953801438,0.95939893079,0.956384790733,0.962745764518,0.956305253303,0.962487899646,
+complementarity_v1,pre_post_uncertainty,,blackbox,pass1_leakage_share,ratio,,,,-0.0088900862069,0,2000,0.95,,,,,-0.0121228448276,-0.00592672413793,defined,,pre - post,0.142510775862,0.151400862069,0.130657327586,0.154094827586,0.139816810345,0.162991648707,
+complementarity_v1,pre_post_uncertainty,,blackbox,pass2_precision,ratio,,,,-0.0264199971718,0,2000,0.95,,,,,-0.0291969150556,-0.0238144635092,defined,,pre - post,0.271560411584,0.297980408756,0.26571009695,0.277625299149,0.291270259384,0.304942700102,
+complementarity_v1,pre_post_uncertainty,,blackbox,pass2_recall,ratio,,,,0.0258620689655,0,2000,0.95,,,,,0.0207435344828,0.0309806034483,defined,,pre - post,0.689655172414,0.663793103448,0.674568965517,0.704471982759,0.6484375,0.6796875,
+complementarity_v1,pre_post_uncertainty,,blackbox,pass2_recall_eligible,ratio,,,,0.0220504764897,0,2000,0.95,,,,,0.0155857208231,0.0289024862091,defined,,pre - post,0.804272698712,0.782222222222,0.79031039882,0.818381522757,0.767670128151,0.797174407732,
+complementarity_v1,pre_post_uncertainty,,blackbox,unique_tp,count,,,,57,0,2000,0.95,,,,,43,72,defined,,pre - post,117,60,97,138,46,75.025,
+complementarity_v1,pre_post_uncertainty,,blackbox,pass1_fp_suppression,ratio,,,,-0.00126719768284,0,2000,0.95,,,,,-0.00234367260177,-0.000533312034079,defined,,pre - post,0.00162925416365,0.00289645184649,0.000714620817511,0.00275396144059,0.00162507682228,0.00451190245588,
+complementarity_v1,pre_post_by_fold,,glass,pass1_rate,,0,,,,,,,,,,,,,,,,0.329135053111,0.329135053111,,,,,0
+complementarity_v1,pre_post_by_fold,,glass,pass1_rate,,1,,,,,,,,,,,,,,,,0.322003034901,0.323672230653,,,,,-0.00166919575114
+complementarity_v1,pre_post_by_fold,,glass,pass1_rate,,2,,,,,,,,,,,,,,,,0.375113808801,0.388315629742,,,,,-0.0132018209408
+complementarity_v1,pre_post_by_fold,,glass,pass1_rate,,3,,,,,,,,,,,,,,,,0.362367223065,0.371168437026,,,,,-0.00880121396055
+complementarity_v1,pre_post_by_fold,,glass,pass1_rate,,4,,,,,,,,,,,,,,,,0.354779969651,0.356904400607,,,,,-0.00212443095599
+complementarity_v1,pre_post_by_fold,,glass,pass2_rate,,0,,,,,,,,,,,,,,,,0.326403641882,0.23186646434,,,,,0.0945371775417
+complementarity_v1,pre_post_by_fold,,glass,pass2_rate,,1,,,,,,,,,,,,,,,,0.268437025797,0.207587253414,,,,,0.0608497723824
+complementarity_v1,pre_post_by_fold,,glass,pass2_rate,,2,,,,,,,,,,,,,,,,0.281942336874,0.174506828528,,,,,0.107435508346
+complementarity_v1,pre_post_by_fold,,glass,pass2_rate,,3,,,,,,,,,,,,,,,,0.185887708649,0.209104704097,,,,,-0.0232169954476
+complementarity_v1,pre_post_by_fold,,glass,pass2_rate,,4,,,,,,,,,,,,,,,,0.222306525038,0.188012139605,,,,,0.0342943854325
+complementarity_v1,pre_post_by_fold,,glass,coverage,,0,,,,,,,,,,,,,,,,0.655538694992,0.561001517451,,,,,0.0945371775417
+complementarity_v1,pre_post_by_fold,,glass,coverage,,1,,,,,,,,,,,,,,,,0.590440060698,0.531259484067,,,,,0.0591805766313
+complementarity_v1,pre_post_by_fold,,glass,coverage,,2,,,,,,,,,,,,,,,,0.657056145675,0.56282245827,,,,,0.0942336874052
+complementarity_v1,pre_post_by_fold,,glass,coverage,,3,,,,,,,,,,,,,,,,0.548254931715,0.580273141123,,,,,-0.0320182094082
+complementarity_v1,pre_post_by_fold,,glass,coverage,,4,,,,,,,,,,,,,,,,0.577086494689,0.544916540212,,,,,0.0321699544765
+complementarity_v1,pre_post_by_fold,,glass,abstain_rate,,0,,,,,,,,,,,,,,,,0.344461305008,0.438998482549,,,,,-0.0945371775417
+complementarity_v1,pre_post_by_fold,,glass,abstain_rate,,1,,,,,,,,,,,,,,,,0.409559939302,0.468740515933,,,,,-0.0591805766313
+complementarity_v1,pre_post_by_fold,,glass,abstain_rate,,2,,,,,,,,,,,,,,,,0.342943854325,0.43717754173,,,,,-0.0942336874052
+complementarity_v1,pre_post_by_fold,,glass,abstain_rate,,3,,,,,,,,,,,,,,,,0.451745068285,0.419726858877,,,,,0.0320182094082
+complementarity_v1,pre_post_by_fold,,glass,abstain_rate,,4,,,,,,,,,,,,,,,,0.422913505311,0.455083459788,,,,,-0.0321699544765
+complementarity_v1,pre_post_by_fold,,glass,pass1_npv,,0,,,,,,,,,,,,,,,,0.947441217151,0.947441217151,,,,,0
+complementarity_v1,pre_post_by_fold,,glass,pass1_npv,,1,,,,,,,,,,,,,,,,0.967012252592,0.962962962963,,,,,0.00404928962893
+complementarity_v1,pre_post_by_fold,,glass,pass1_npv,,2,,,,,,,,,,,,,,,,0.952669902913,0.95271590465,,,,,-4.60017376327e-05
+complementarity_v1,pre_post_by_fold,,glass,pass1_npv,,3,,,,,,,,,,,,,,,,0.952680067002,0.949713818479,,,,,0.00296624852253
+complementarity_v1,pre_post_by_fold,,glass,pass1_npv,,4,,,,,,,,,,,,,,,,0.957656116339,0.954931972789,,,,,0.00272414354964
+complementarity_v1,pre_post_by_fold,,glass,pass1_leakage_share,,0,,,,,,,,,,,,,,,,0.153638814016,0.153638814016,,,,,0
+complementarity_v1,pre_post_by_fold,,glass,pass1_leakage_share,,1,,,,,,,,,,,,,,,,0.0943396226415,0.106469002695,,,,,-0.0121293800539
+complementarity_v1,pre_post_by_fold,,glass,pass1_leakage_share,,2,,,,,,,,,,,,,,,,0.157681940701,0.16307277628,,,,,-0.00539083557951
+complementarity_v1,pre_post_by_fold,,glass,pass1_leakage_share,,3,,,,,,,,,,,,,,,,0.152086137281,0.165545087483,,,,,-0.0134589502019
+complementarity_v1,pre_post_by_fold,,glass,pass1_leakage_share,,4,,,,,,,,,,,,,,,,0.133243606999,0.14266487214,,,,,-0.00942126514132
+complementarity_v1,pre_post_by_fold,,glass,pass2_precision,,0,,,,,,,,,,,,,,,,0.232450023245,0.285340314136,,,,,-0.0528902908911
+complementarity_v1,pre_post_by_fold,,glass,pass2_precision,,1,,,,,,,,,,,,,,,,0.269643866591,0.297514619883,,,,,-0.0278707532917
+complementarity_v1,pre_post_by_fold,,glass,pass2_precision,,2,,,,,,,,,,,,,,,,0.268030139935,0.339130434783,,,,,-0.0711002948472
+complementarity_v1,pre_post_by_fold,,glass,pass2_precision,,3,,,,,,,,,,,,,,,,0.34693877551,0.299709724238,,,,,0.0472290512722
+complementarity_v1,pre_post_by_fold,,glass,pass2_precision,,4,,,,,,,,,,,,,,,,0.298293515358,0.325262308313,,,,,-0.0269687929548
+complementarity_v1,pre_post_by_fold,,glass,pass2_recall,,0,,,,,,,,,,,,,,,,0.673854447439,0.587601078167,,,,,0.0862533692722
+complementarity_v1,pre_post_by_fold,,glass,pass2_recall,,1,,,,,,,,,,,,,,,,0.642857142857,0.548517520216,,,,,0.0943396226415
+complementarity_v1,pre_post_by_fold,,glass,pass2_recall,,2,,,,,,,,,,,,,,,,0.67115902965,0.525606469003,,,,,0.145552560647
+complementarity_v1,pre_post_by_fold,,glass,pass2_recall,,3,,,,,,,,,,,,,,,,0.57200538358,0.555854643338,,,,,0.0161507402423
+complementarity_v1,pre_post_by_fold,,glass,pass2_recall,,4,,,,,,,,,,,,,,,,0.588156123822,0.542395693136,,,,,0.0457604306864
+complementarity_v1,pre_post_by_fold,,glass,pass2_recall_eligible,,0,,,,,,,,,,,,,,,,0.796178343949,0.694267515924,,,,,0.101910828025
+complementarity_v1,pre_post_by_fold,,glass,pass2_recall_eligible,,1,,,,,,,,,,,,,,,,0.709821428571,0.613876319759,,,,,0.0959451088128
+complementarity_v1,pre_post_by_fold,,glass,pass2_recall_eligible,,2,,,,,,,,,,,,,,,,0.7968,0.628019323671,,,,,0.168780676329
+complementarity_v1,pre_post_by_fold,,glass,pass2_recall_eligible,,3,,,,,,,,,,,,,,,,0.674603174603,0.666129032258,,,,,0.00847414234511
+complementarity_v1,pre_post_by_fold,,glass,pass2_recall_eligible,,4,,,,,,,,,,,,,,,,0.678571428571,0.632653061224,,,,,0.0459183673469
+complementarity_v1,pre_post_by_fold,,glass,unique_tp,,0,,,,,,,,,,,,,,,,45,13,,,,,32
+complementarity_v1,pre_post_by_fold,,glass,unique_tp,,1,,,,,,,,,,,,,,,,35,25,,,,,10
+complementarity_v1,pre_post_by_fold,,glass,unique_tp,,2,,,,,,,,,,,,,,,,29,18,,,,,11
+complementarity_v1,pre_post_by_fold,,glass,unique_tp,,3,,,,,,,,,,,,,,,,10,11,,,,,-1
+complementarity_v1,pre_post_by_fold,,glass,unique_tp,,4,,,,,,,,,,,,,,,,12,19,,,,,-7
+complementarity_v1,pre_post_by_fold,,glass,pass1_fp_suppression,,0,,,,,,,,,,,,,,,,0.0962821734986,0.0962821734986,,,,,0
+complementarity_v1,pre_post_by_fold,,glass,pass1_fp_suppression,,1,,,,,,,,,,,,,,,,0.0749097472924,0.076714801444,,,,,-0.00180505415162
+complementarity_v1,pre_post_by_fold,,glass,pass1_fp_suppression,,2,,,,,,,,,,,,,,,,0.0965073529412,0.120404411765,,,,,-0.0238970588235
+complementarity_v1,pre_post_by_fold,,glass,pass1_fp_suppression,,3,,,,,,,,,,,,,,,,0.0720949957591,0.0746395250212,,,,,-0.00254452926209
+complementarity_v1,pre_post_by_fold,,glass,pass1_fp_suppression,,4,,,,,,,,,,,,,,,,0.170909090909,0.176363636364,,,,,-0.00545454545455
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_rate,,0,,,,,,,,,,,,,,,,0.392109256449,0.466009104704,,,,,-0.0738998482549
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_rate,,1,,,,,,,,,,,,,,,,0.377389984825,0.381942336874,,,,,-0.00455235204856
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_rate,,2,,,,,,,,,,,,,,,,0.426251896813,0.426251896813,,,,,0
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_rate,,3,,,,,,,,,,,,,,,,0.387253414264,0.391198786039,,,,,-0.00394537177542
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_rate,,4,,,,,,,,,,,,,,,,0.40091047041,0.435053110774,,,,,-0.0341426403642
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_rate,,0,,,,,,,,,,,,,,,,0.281942336874,0.24871016692,,,,,0.0332321699545
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_rate,,1,,,,,,,,,,,,,,,,0.301365705615,0.251896813354,,,,,0.049468892261
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_rate,,2,,,,,,,,,,,,,,,,0.279969650986,0.248103186646,,,,,0.0318664643399
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_rate,,3,,,,,,,,,,,,,,,,0.288770864947,0.261608497724,,,,,0.0271623672231
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_rate,,4,,,,,,,,,,,,,,,,0.278452200303,0.244461305008,,,,,0.0339908952959
+complementarity_v1,pre_post_by_fold,,blackbox,coverage,,0,,,,,,,,,,,,,,,,0.674051593323,0.714719271624,,,,,-0.0406676783005
+complementarity_v1,pre_post_by_fold,,blackbox,coverage,,1,,,,,,,,,,,,,,,,0.67875569044,0.633839150228,,,,,0.0449165402124
+complementarity_v1,pre_post_by_fold,,blackbox,coverage,,2,,,,,,,,,,,,,,,,0.7062215478,0.67435508346,,,,,0.0318664643399
+complementarity_v1,pre_post_by_fold,,blackbox,coverage,,3,,,,,,,,,,,,,,,,0.676024279211,0.652807283763,,,,,0.0232169954476
+complementarity_v1,pre_post_by_fold,,blackbox,coverage,,4,,,,,,,,,,,,,,,,0.679362670713,0.679514415781,,,,,-0.000151745068285
+complementarity_v1,pre_post_by_fold,,blackbox,abstain_rate,,0,,,,,,,,,,,,,,,,0.325948406677,0.285280728376,,,,,0.0406676783005
+complementarity_v1,pre_post_by_fold,,blackbox,abstain_rate,,1,,,,,,,,,,,,,,,,0.32124430956,0.366160849772,,,,,-0.0449165402124
+complementarity_v1,pre_post_by_fold,,blackbox,abstain_rate,,2,,,,,,,,,,,,,,,,0.2937784522,0.32564491654,,,,,-0.0318664643399
+complementarity_v1,pre_post_by_fold,,blackbox,abstain_rate,,3,,,,,,,,,,,,,,,,0.323975720789,0.347192716237,,,,,-0.0232169954476
+complementarity_v1,pre_post_by_fold,,blackbox,abstain_rate,,4,,,,,,,,,,,,,,,,0.320637329287,0.320485584219,,,,,0.000151745068285
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_npv,,0,,,,,,,,,,,,,,,,0.954721362229,0.956366004559,,,,,-0.00164464232967
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_npv,,1,,,,,,,,,,,,,,,,0.963409730599,0.962653953119,,,,,0.000755777480323
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_npv,,2,,,,,,,,,,,,,,,,0.961196155215,0.961196155215,,,,,0
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_npv,,3,,,,,,,,,,,,,,,,0.957288401254,0.956943366951,,,,,0.000345034302794
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_npv,,4,,,,,,,,,,,,,,,,0.961014383043,0.960237181723,,,,,0.000777201320094
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_leakage_share,,0,,,,,,,,,,,,,,,,0.157681940701,0.180592991914,,,,,-0.0229110512129
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_leakage_share,,1,,,,,,,,,,,,,,,,0.122641509434,0.126684636119,,,,,-0.00404312668464
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_leakage_share,,2,,,,,,,,,,,,,,,,0.146900269542,0.146900269542,,,,,0
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_leakage_share,,3,,,,,,,,,,,,,,,,0.146702557201,0.149394347241,,,,,-0.00269179004038
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_leakage_share,,4,,,,,,,,,,,,,,,,0.138627187079,0.153432032301,,,,,-0.0148048452221
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_precision,,0,,,,,,,,,,,,,,,,0.271797631862,0.297132397804,,,,,-0.0253347659413
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_precision,,1,,,,,,,,,,,,,,,,0.269385699899,0.301807228916,,,,,-0.0324215290164
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_precision,,2,,,,,,,,,,,,,,,,0.275338753388,0.300305810398,,,,,-0.02496705701
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_precision,,3,,,,,,,,,,,,,,,,0.266946925906,0.286542923434,,,,,-0.0195959975274
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_precision,,4,,,,,,,,,,,,,,,,0.274659400545,0.304779639975,,,,,-0.0301202394302
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_recall,,0,,,,,,,,,,,,,,,,0.680592991914,0.656334231806,,,,,0.0242587601078
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_recall,,1,,,,,,,,,,,,,,,,0.72102425876,0.675202156334,,,,,0.0458221024259
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_recall,,2,,,,,,,,,,,,,,,,0.684636118598,0.661725067385,,,,,0.0229110512129
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_recall,,3,,,,,,,,,,,,,,,,0.683714670256,0.664872139973,,,,,0.0188425302826
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_recall,,4,,,,,,,,,,,,,,,,0.678331090175,0.660834454913,,,,,0.0174966352624
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_recall_eligible,,0,,,,,,,,,,,,,,,,0.808,0.800986842105,,,,,0.00701315789474
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_recall_eligible,,1,,,,,,,,,,,,,,,,0.821812596006,0.773148148148,,,,,0.048664447858
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_recall_eligible,,2,,,,,,,,,,,,,,,,0.80252764613,0.775671406003,,,,,0.0268562401264
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_recall_eligible,,3,,,,,,,,,,,,,,,,0.801261829653,0.78164556962,,,,,0.0196162600327
+complementarity_v1,pre_post_by_fold,,blackbox,pass2_recall_eligible,,4,,,,,,,,,,,,,,,,0.7875,0.780604133545,,,,,0.00689586645469
+complementarity_v1,pre_post_by_fold,,blackbox,unique_tp,,0,,,,,,,,,,,,,,,,22,14,,,,,8
+complementarity_v1,pre_post_by_fold,,blackbox,unique_tp,,1,,,,,,,,,,,,,,,,43,17,,,,,26
+complementarity_v1,pre_post_by_fold,,blackbox,unique_tp,,2,,,,,,,,,,,,,,,,22,12,,,,,10
+complementarity_v1,pre_post_by_fold,,blackbox,unique_tp,,3,,,,,,,,,,,,,,,,16,8,,,,,8
+complementarity_v1,pre_post_by_fold,,blackbox,unique_tp,,4,,,,,,,,,,,,,,,,14,9,,,,,5
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_fp_suppression,,0,,,,,,,,,,,,,,,,0.00571973307912,0.0123927550048,,,,,-0.00667302192564
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_fp_suppression,,1,,,,,,,,,,,,,,,,0,0,,,,,0
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_fp_suppression,,2,,,,,,,,,,,,,,,,0.00183823529412,0.00183823529412,,,,,0
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_fp_suppression,,3,,,,,,,,,,,,,,,,0.000848176420696,0.000848176420696,,,,,0
+complementarity_v1,pre_post_by_fold,,blackbox,pass1_fp_suppression,,4,,,,,,,,,,,,,,,,0,0,,,,,0

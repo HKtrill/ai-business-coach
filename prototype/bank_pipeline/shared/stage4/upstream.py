@@ -130,6 +130,8 @@ def upstream_record(streams, upstream: str, arbiter: str, arbiter_arm: str) -> d
         if s.stage == "stage2":
             stages[s.stage]["pass2_population"] = s.notes.get("pass2_population")
             stages[s.stage]["pass2_population_evidence"] = s.notes.get("pass2_population_evidence")
+            # PR 38 (F31 R5): the RF Router's eligibility rule; None for GLASS.
+            stages[s.stage]["pass2_eligibility"] = s.notes.get("pass2_eligibility")
     return {"arm": upstream, "arbiter": arbiter, "arbiter_arm": arbiter_arm,
             "crossover": upstream != arbiter_arm,
             "combination": f"{upstream} upstream -> {arbiter}", "stages": stages}

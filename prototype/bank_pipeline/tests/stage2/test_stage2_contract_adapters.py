@@ -64,7 +64,7 @@ from tests.stage2.test_ilp_rule_selector_union import (
     P1, P2, FakeRule, make_selector, no_solution, real_but_time_limited, rng, script_solver,
 )
 from tests.stage2.test_stage2_operating_contract_v2 import _v2
-from tests.support.synthetic import irregular_index
+from tests.support.synthetic_bank import irregular_index
 
 BANK_ROOT = Path(__file__).resolve().parents[2]
 BASELINE = BANK_ROOT / "research_logs" / "baselines" / "pr37_stage2_pre_correction_v1"

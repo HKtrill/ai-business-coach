@@ -37,7 +37,7 @@ from glass_pipeline.lr import lr_stage_calibrated
 from glass_pipeline.lr.artifacts import save_artifact
 from glass_pipeline.meta_ebm.meta_stage import train_meta_stage
 from tests.support.notebooks import ACTIVE_NOTEBOOKS, BANK_ROOT, read_before_bound
-from tests.support.synthetic import make_bank_frame
+from tests.support.synthetic_bank import make_bank_frame
 
 GLASS = BANK_ROOT / "glass_pipeline" / "glass_cascade.ipynb"
 BLACKBOX = BANK_ROOT / "blackbox_pipeline" / "blackbox_cascade.ipynb"

@@ -2,361 +2,465 @@
 
 ### Phase 1 — Finish and Validate the Cascades
 
-#### PR 37 — Router Baseline and Stage 2 Operating Contract
+## PR 38 — Stage 2 Cross-Fit and Router Complementarity
 
-**Router redundancy diagnosis** — measure before changing Stage 2
+**Objective:** Execute the corrected Stage 2 cross-fitting protocol established in PR 37, evaluate router redundancy and complementarity, determine whether complementarity-aware selection is justified, and freeze the Stage 2 selector implementation for PR 39.
 
-- [x] Add a three-state router trace: Pass 1 / Pass 2 / abstain.
-- [x] Measure Pass 2 unique positives vs LR/EBM at a matched flag rate.
-- [x] Measure Pass 1 false-positive suppression on train OOF:
-  - Negatives routed `NOT_SUBSCRIBE`.
-  - Negatives that LR and EBM would otherwise flag at their frozen upstream operating points.
-- [x] Measure Pass 1 / Pass 2 overlap and redundancy.
-- [x] Record the current Stage 2 redundancy baseline before selector changes.
-- [x] Preserve the pre-correction baseline as an immutable, version-controlled research record — Commit 2: 19-file manifest, pinned code identities, and baseline verification/reproduction checks.
+### Commit 1 — Planning, Roadmap, and Execution Contract
 
-**Stage 2 operating contract**
+**Objective:** Establish the PR 38 execution sequence, requirements, dependencies, and acceptance criteria before implementation or corrected training.
 
-- [x] Define a shared, arm-neutral Stage 2 operating contract independent of either router's realized performance — Commit 4, Step 4A.
-- [x] Implement and validate the working NPV / leakage / precision constraints before corrected reruns:
-  - Pass 1 NPV ≥ 0.95.
-  - Pass 1 positive leakage ≤ 0.15.
-  - Pass 2 precision ≥ 0.30.
-  - Pass 1 minimum routed-set support: 125.
-  - Pass 2 minimum routed-set support: 75.
-  - No absolute positive-leakage count cap.
-- [x] Define lexicographic coverage optimization: maximize feasible Pass 1 routed rows, then maximize feasible Pass 2 routed rows on the resulting remainder — Steps 4A–4B.
-- [x] Implement opt-in coverage maximization under the same shared constraints for GLASS and RF Router, while preserving historical selector behavior — Step 4B.
-- [x] Document the provisional constraints, their rationale, historical evidence exposure, and feasibility limitations before corrected PR 38 reruns — Step 4A.
-- [x] Implement versioned contract configuration, deterministic fingerprinting, and explicit working/frozen status — Step 4A.
-- [x] Remove dependence on `match_glass_oof` from the new primary shared-contract pathway while retaining historical reproduction compatibility — Steps 4A–4B.
-- [ ] Finalize `match_glass_oof` replacement as the frozen primary PR 38 operating policy — Step 4D.
-- [ ] Freeze the final Stage 2 operating contract, numerical settings, version, fingerprint, and approved configuration profiles for subsequent selector experiments — Step 4D.
+- [x] Review the completed PR 37 handoff, frozen Stage 2 contract, F17/F31 decision records, and pre-registered evaluation protocol.
 
-**Constrained optimization and implementation safeguards — Commit 4**
+- [x] Map F17 gates G1–G13 and F31 requirements R1–R8 to their PR 38 execution and validation steps.
 
-- [x] Implement a shared, arm-neutral obligation checker with exact count-based comparisons, common metric definitions, and appropriate denominators — Step 4A.
-- [x] Enforce explicit validation of zero support, insufficient class support, undefined ratios, and invalid constraint configurations — Step 4A.
-- [x] Distinguish fit-time constraint enforcement from observed outer-OOF performance; do not silently treat outer-OOF shortfalls as fit-time violations — Step 4A.
-- [x] Implement explicit, versioned constraint provenance, including historical OOF exposure, prior test-set exposure, and separation of historical evidence from active constraint sources — Step 4A.
-- [x] Implement shared-contract adapters for GLASS and RF Router without sharing fitted estimators or changing historical defaults — Steps 4A–4B.
-- [x] Enforce GLASS Pass 1 constraints on the selected rule union rather than relying solely on individual-rule gates:
-  - Union NPV.
-  - Union positive leakage.
-  - Minimum union support.
-  - Exact union-membership accounting.
-- [x] Enforce GLASS Pass 2 constraints on the selected rule union:
-  - Union precision.
-  - Minimum union support.
-  - Inclusion of zero-positive atoms in precision calculations.
-  - Exact union-membership accounting.
-- [x] Implement opt-in Pass 2 union-row coverage maximization while preserving the historical positive-yield objective — Step 4B.
-- [x] Define and test deterministic candidate ordering, selection behavior, and constraint-boundary comparisons — Step 4B.
-- [x] Independently validate ILP solutions, feasible incumbents, and greedy fallback outputs against the shared obligations — Step 4B.
-- [x] Improve CBC solver reporting by recording available termination, incumbent, bound, and MIP-gap evidence without changing solver tolerances or time limits — Step 4B.
-- [x] Preserve explicit failure behavior for infeasible or unsupported selections; prohibit silent relaxation of the shared constraints — Step 4B.
-- [x] Propagate shared constraints into the GLASS inner-fold selectors and required Pass 2 remainder selection without activating corrected notebook reruns — Step 4B.
-- [x] Preserve training-side population boundaries, arm-specific estimator ownership, and held-out-label isolation in the new contract pathways — Step 4B.
+- [x] Identify existing PR 37 functionality that can be reused versus work requiring new implementation.
 
-**GLASS selector performance optimization — Commit 4, Step 4B**
+- [x] Define the corrected GLASS/RF execution sequence and required training-side inputs.
 
-- [x] Profile GLASS selector performance and identify significant avoidable computation.
-- [x] Identify redundant rule-matching operations in pairwise overlap diagnostics.
-- [x] Optimize overlap diagnostics by caching rule-matching masks and reusing them across rule pairs.
-- [x] Preserve identical diagnostic values and avoid changes to rule-search or selection semantics.
-- [x] Add deterministic performance-equivalence regression coverage.
-- [x] Independently benchmark the optimization in the local Windows environment:
-  - 124 rules, 2,000 rows, 7,626 rule pairs.
-  - Historical implementation: 2.39 seconds.
-  - Optimized implementation: 0.041 seconds.
-  - Approximately **58× faster overlap diagnostics**, with identical values.
-- [x] Preserve historical solver time limits, optimization tolerances, candidate-generation behavior, and default selector configurations.
-- [x] Evaluate any further selector optimization only if justified by later profiling; avoid unnecessary algorithmic changes during PR 38.
+- [x] Define the preflight, primary rerun, sensitivity-analysis, and complementarity-ablation boundaries.
 
-**Pre-registered PR 38 evaluation protocol — Commit 4, Step 4C**
+- [x] Establish test, reproducibility, artifact-provenance, and final acceptance requirements.
 
-- [x] Define the primary GLASS-versus-RF comparison metrics and acceptance hierarchy.
-- [x] Define secondary diagnostics for coverage, NPV, positive leakage, precision, recall, abstention, and class-conditional routing.
-- [x] Specify comparisons against LR/EBM at frozen upstream operating points and matched flag rates.
-- [x] Define paired pre-correction versus post-correction comparisons, including changes in routed-row identities and unique contributions.
-- [x] Distinguish changes attributable to F17, shared constraints, Pass 2 coverage optimization, and any later selector ablation; avoid unsupported causal attribution.
-- [x] Pre-register pooled OOF and fold-level reporting, uncertainty estimation, constraint shortfalls, and infeasible-candidate handling.
-- [x] Define explicit reporting for solver nonoptimality, missing bounds, greedy fallback, unsuccessful folds, and insufficient support.
-- [x] Define complementarity-aware selection as a secondary ablation unless pre-registered evidence justifies adoption.
-- [x] Specify complementarity-aware adoption/rejection criteria for unique-positive discovery, matched flag budgets, constraint preservation, coverage, uncertainty, and computational feasibility.
-- [x] Require an equivalent RF objective or documented methodological asymmetry if complementarity-aware selection is adopted.
-- [x] Define structural, methodological, reproducibility, and empirical-performance requirements for final Stage 2 artifact acceptance.
-- [x] Document prior test-set exposure and its implications for claims of independent validation.
-- [x] Distinguish historical exploratory OOF evidence, corrected nested cross-fitted evaluation, and genuinely independent external validation.
-- [x] Prohibit test-derived results from informing corrected selector choices, contract adjustments, or ablation adoption decisions.
-- [x] Version-control the evaluation protocol and validate its executable invariants before PR 38 corrected reruns.
+- [x] Preserve the frozen PR 37 operating contract and historical baselines without retroactive modification.
 
-**Contract freeze, independent configuration, and final handoff — Commit 4, Step 4D**
+- [x] Define the PR 38/PR 39 boundary: selector design freezes in PR 38; final binning, calibration, and cascade regeneration remain PR 39.
 
-- [x] Freeze the approved shared contract values, schema version, content fingerprint, and provenance record.
-- [x] Freeze the GLASS arm-internal selection profile, including rule-quality gates, rule counts, novelty settings, and relevant selector configuration.
-- [x] Move RF Router hyperparameter ownership into an independent, version-controlled configuration rather than sourcing the primary configuration dynamically from a GLASS-side artifact.
-- [x] Record the original RF hyperparameter tuning provenance, including full-training-data exposure and limitations of prior model selection.
-- [x] Freeze the approved F17 primary configurations and distinguish them from secondary sensitivity configurations.
-- [x] Freeze the PR 38 evaluation protocol, metrics, comparison procedures, uncertainty rules, and acceptance criteria.
-- [x] Record final contract and configuration identities required by PR 38.
-- [x] Reconcile PR 37 roadmap checkboxes with actual implementation, documentation, and validation evidence.
-- [x] Produce the final Commit 4 methodology record and PR 38 handoff requirements.
-- [x] Perform final combined regression, real-data, provenance, Git integrity, and historical baseline validation.
-- [x] Create and push **one Commit 4** after Steps 4A–4D have been completed and validated.
+- [x] Finalize and version-control the updated PR 38 roadmap.
 
-## Commit 5 — Final Validation, Documentation, and PR 38 Handoff
-
-**Objective:** Independently validate the completed PR 37 implementation, reconcile its documentation and provenance, preserve the historical baseline, and establish explicit PR 38 readiness. No new selector architecture, corrected model training, or operating-contract changes are planned.
-
-### Step 5A — Targeted Automated Validation
-
-**Router diagnostics and shared contract**
-
-- [x] Run all new router-diagnostic, shared-contract, constrained-optimization, and evaluation-protocol tests from Commits 1–4.
-- [x] Verify three-state routing is mutually exclusive and exhaustive:
-  - `PASS_1_NOT_SUBSCRIBE`
-  - `PASS_2_SUBSCRIBE`
-  - `ABSTAIN`
-- [x] Verify Pass 1 precedence, Pass 2 remainder eligibility, coverage accounting, and abstention calculations.
-- [x] Verify unique-positive discovery, overlap, redundancy, and Pass 1 false-positive suppression calculations.
-- [x] Verify matched-flag-rate logic, frozen upstream operating points, and deterministic score-tie handling.
-- [x] Verify shared NPV, leakage, precision, and support constraints using exact count-based comparisons.
-- [x] Verify GLASS union-level obligations, including zero-positive atoms and exact union membership.
-- [x] Verify infeasible-candidate handling, solver outcome reporting, incumbent validation, and explicit fallback behavior.
-- [x] Verify GLASS and RF apply identical shared obligations without sharing fitted estimator state.
-- [x] Verify contract versions, fingerprints, configuration provenance, and validation refusals.
-- [x] Verify evaluation-protocol invariants, including pooled OOF denominators, paired comparisons, undefined metrics, and unsuccessful-fold reporting.
-
-**Leakage prevention and methodological safeguards**
-
-- [x] Test cross-arm index, row-identity, split, fold-assignment, and provenance mismatches.
-- [x] Verify no new held-out test-label dependency, training/OOF contamination, or cross-fold selection leakage.
-- [x] Verify primary F17 configuration requirements and training-population isolation.
-- [x] Verify F31 confidence semantics and Stage 4 interface compatibility.
-- [x] Confirm the primary operating policy no longer depends dynamically on `match_glass_oof`.
-- [x] Confirm previously exposed test results cannot alter contract values, thresholds, selector choices, or evaluation rules.
-
-**Regression and integration testing**
-
-- [x] Run the complete existing PR 36/PR 37 fast regression suite.
-- [x] Run the complete Stage 2 and parity regression suites.
-- [x] Run the local real-data tests using the existing artifacts.
-- [x] Run designated slow ILP integration tests.
-- [x] Verify historical default behavior and backward compatibility.
-- [x] Verify the GLASS overlap-diagnostics optimization preserves identical diagnostic outputs.
-- [x] Resolve all newly introduced failures, regressions, and actionable warnings.
-- [x] Record final test counts, deselections, warnings, environment information, and any known limitations.
-
-### Step 5B — Documentation, Provenance, and Baseline Preservation
-
-**Research methodology and decision records**
-
-- [x] Publish and reconcile the complete router redundancy-diagnostic methodology.
-- [x] Preserve the pre-correction redundancy tables, source identities, and immutable historical baseline.
-- [x] Verify that the F17 training-population decision and F31 confidence disposition are accurately documented.
-- [x] Publish the frozen shared operating contract, numerical constraints, objective, and rationale.
-- [x] Publish the GLASS and RF arm-internal configuration records, including RF hyperparameter provenance.
-- [x] Publish the pre-registered PR 38 evaluation protocol and acceptance criteria.
-- [x] Explain the distinction between historical diagnostic OOF analysis, corrected cross-fitted evaluation, and independent external validation.
-- [x] Document previous test-set exposure and its implications for performance claims.
-- [x] Document solver limitations, uncertainty handling, infeasible-fold reporting, and methodological asymmetries.
-- [x] Verify documentation matches actual schemas, metric definitions, configuration defaults, and executable behavior.
-
-**Engineering changes and optimization records**
-
-- [x] Document the Commit 4 GLASS union-level constrained-optimization implementation.
-- [x] Document CBC solver reporting, time-limited incumbents, fallback requirements, and reproducibility limitations.
-- [x] Document the selector overlap-diagnostics optimization:
-  - Original repeated rule matching.
-  - Cached-mask implementation.
-  - Behavioral equivalence.
-  - Local benchmark: 2.39 seconds → 0.041 seconds, approximately 58× faster.
-  - Clarify that this improvement applies to overlap diagnostics, not overall model training.
-- [x] Record any remaining performance bottlenecks without expanding PR 37 into another optimization effort.
-
-**Reproducibility and artifact integrity**
-
-- [x] Verify the immutable 19-file pre-correction baseline using both `--verify` and `--check`.
-- [x] Verify all 15 baseline-pinned code identities.
-- [x] Perform the independent external 37-artifact SHA-256 verification.
-- [x] Verify historical RF two-pass metadata and sweep provenance.
-- [x] Verify contract, protocol, GLASS configuration, and RF hyperparameter fingerprints.
-- [x] Confirm model artifacts remain unchanged and Git-ignored where required.
-- [x] Confirm all intended source code, tests, configuration records, and methodology documents are version-controlled.
-- [x] Verify no unintended changes to notebooks, Stage 4 interfaces, historical baselines, or model artifacts.
-- [x] Reconcile the final PR 37 roadmap against completed implementation and test evidence.
-
-### Step 5C — PR 38 Readiness Review
-
-**Operating contract and architectural decisions**
-
-- [x] Confirm pre-correction baselines remain reproducible.
-- [x] Confirm F17 training-population policy is resolved and frozen.
-- [x] Confirm F31 disposition is resolved, with outstanding PR 38 validation requirements explicitly handed off.
-- [x] Confirm `match_glass_oof` replacement is fully specified and frozen for the primary corrected reruns.
-- [x] Confirm identical shared operating constraints for GLASS and RF Router.
-- [x] Confirm independent fitted-estimator ownership and versioned arm-specific configurations.
-- [x] Confirm the corrected-selector evaluation protocol is frozen.
-- [x] Confirm complementarity-aware selection remains a secondary ablation unless its pre-registered adoption requirements are met.
-
-**PR 38 execution gates**
-
-- [x] Document the required G3 real-data feasibility preflight before corrected primary reruns.
-- [x] Document the G13 label-derived feature-engineering leakage audit.
-- [x] Confirm all required F17 nested-training safeguards are specified.
-- [x] Confirm the F31 nested-versus-deployed `t1` boundary-strip review trigger and reporting requirements.
-- [x] Confirm infeasible fits, missing incumbents, insufficient remainder support, and contract shortfalls have explicit handling rules.
-- [x] Confirm corrected GLASS and RF rerun procedures, required training-side inputs, and fold identities.
-- [x] Confirm artifact regeneration, serialization, fingerprint, and provenance requirements.
-- [x] Confirm structural artifact acceptance is distinguished from comparative predictive performance.
-- [x] Confirm final evaluation cannot be used retroactively to adjust frozen contracts or adoption criteria.
-- [x] Confirm PR 38 has a clear implementation and validation checklist.
-
-**Final PR 37 acceptance**
-
-- [x] Review all changes introduced across Commits 1–5.
-- [x] Confirm the final test suite passes with no unresolved newly introduced failures.
-- [x] Confirm baseline and artifact integrity checks pass.
-- [x] Confirm the roadmap and documentation accurately represent completed and deferred work.
-- [x] Verify the final Git diff, staged files, commit history, and branch state.
-- [x] Confirm no unintended generated artifacts or local files are included.
-- [x] Prepare and review the final PR 37 handoff record.
-- [x] Create and push Commit 5 after validation and documentation reconciliation.
-- [x] Perform the final PR 37 readiness review before merging or closing the PR.
-
-**Deliverable:** Fully validated and documented PR 37 implementation, preserved historical evidence, frozen Stage 2 methodology, and an explicit execution-ready PR 38 handoff.
+**Deliverable:** Reviewed, approved, and version-controlled PR 38 roadmap.
 
 ---
 
-### PR 37 — Final completion boundary
+### Commit 2 — Corrected-Selector Preflight and Safeguards
 
-- [ ] **Commit 4 complete:** Shared constrained optimization, pre-registered PR 38 evaluation protocol, frozen contract and configuration provenance.
-- [ ] **Commit 5 complete:** Final integration validation, documentation reconciliation, historical baseline verification, and PR 38 readiness certification.
-- [ ] **PR 37 complete:** Historical redundancy evidence preserved, methodological decisions version-controlled, shared Stage 2 operating policy frozen, and PR 38 execution requirements formally handed off.
+**Objective:** Complete all required implementation and feasibility gates before initiating the corrected five-fold primary reruns.
 
-**Out of scope for PR 37:** Corrected five-fold Stage 2 reruns, final model artifact regeneration, notebook deployment of corrected selectors, full complementarity-aware selector experiments, and independent-validation claims based on previously exposed test data.
+#### **Step 2A — Configuration, Integration, and Leakage Safeguards**
 
-**Deferred from PR 36**
+- [x] Before any real-data fit (including the G13 audit), complete handoff Phase 0:
 
-- [x] Decide whether GLASS should retain `full` or switch to `oof_remainder` for a more directly controlled router comparison — decided in Commit 3: both routers fit Pass 2 on their own OOF Pass 1 remainder, with both nested safeguards on; GLASS `full` is retained only as sensitivity analysis S1 ([F17 decision record](methodology/pr37_f17_decision_record.md)).
-- [x] **(Conditional)** Reassess RF Router confidence-blending assumptions only if Stage 2 probability construction changes. Otherwise, retain the validated implementation — reviewed in Commit 3: construction retained (Disposition A); PR 38 still owes validation and provenance requirements R1–R8 ([F31 disposition record](methodology/pr37_f31_disposition_record.md)).
+  - Verify the archived snapshot and historical baseline (`--verify`, archive `--check`).
 
-**Methodological safeguards and cross-arm independence**
+  - Pin `$BANK_ARTIFACT_MANIFEST`.
 
-- [x] Verify and regression-protect independent fitted-estimator ownership across GLASS and the black-box arm; distinguish shared RF hyperparameters from shared fitted model state — Commit 3: no fitted estimator crosses arms; protected by `tests/parity/test_stage2_cross_arm_independence.py` ([F17 record, section 5](methodology/pr37_f17_decision_record.md)).
-- [ ] Finalize independent, version-controlled RF Router hyperparameter ownership — decision established; implementation and provenance freeze scheduled for Step 4D ([Commit 3 handoff](methodology/pr37_commit3_handoff.md)).
-- [x] Specify whether `nested_t1` and `fold_nested_rf` will be required in the PR 38 primary protocol — both required (F17 gate G1); opt-in code and synthetic tests introduced in Commit 3 ([F17 record](methodology/pr37_f17_decision_record.md)).
-- [x] Define validation and explicit failure requirements for infeasible inner folds and insufficient remainder support — F17 gates G3 and G8, strengthened by shared obligation and selector outcome checks in Steps 4A–4B ([F17 record](methodology/pr37_f17_decision_record.md)).
-- [x] Finalize and version-control the Step 3A methodological investigation and F17/F31 decision records — three records and the Commit 3 handoff under `documentation/methodology/` ([index](methodology/pr37_commit3_handoff.md)).
-- [x] Document differences between fit-time rule constraints and shared outer-OOF evaluation requirements — established in F17 L2 and F31 K2; GLASS union-level constraint mapping implemented in Step 4B.
-- [x] Preserve historical GLASS and RF operating behavior unless the new shared contract is explicitly activated — regression-tested in Steps 4A–4B.
-- [x] Preserve F31 Disposition A: RF empirical confidence bands and heuristic probability-like blending remain unchanged and must not be represented as calibrated probabilities.
-- [ ] Complete PR 38 G3 real-data feasibility preflight under the frozen shared contract before corrected primary reruns.
-- [ ] Complete the PR 38 G13 label-derived feature-engineering leakage audit before accepting corrected artifacts.
-- [ ] Review the F31 nested-versus-deployed `t1` boundary strip when it reaches the declared 5% Pass 2 flagged-band trigger.
+  - Inventory historical router artifacts.
 
-**Regression testing, reproducibility, and baseline preservation**
+  - Establish a separate versioned PR 38 output location.
 
-- [x] Add targeted regression coverage for the shared contract, provenance validation, exact constraint arithmetic, undefined metrics, and RF adapter mapping — Step 4A.
-- [x] Add targeted regression coverage for GLASS union constraints, zero-positive atoms, deterministic selection, solver outcomes, shared adapters, and performance equivalence — Step 4B.
-- [x] Independently validate the combined Steps 4A–4B implementation in the local Windows environment:
-  - 2,450 full fast-suite tests passed.
-  - 1,381 Stage 2/parity tests passed.
-  - 87 real-data tests passed.
-  - Additional slow ILP test passed.
-- [x] Verify that the frozen historical 19-file baseline remains unchanged and reproducible after Steps 4A–4B — both `--verify` and `--check` passed 19/19.
-- [x] Validate Step 4B patch integrity, 9/9 prerequisite identities, 12/12 patched files, and zero conflicts.
-- [x] Verify clean Git whitespace checks and preservation of the intended uncommitted working-tree changes.
-- [x] Confirm historical RF two-pass metadata and sweep-file membership in the external PR 36 SHA-256 snapshot.
-- [ ] Complete final independent artifact-hash verification and combined regression checks after Step 4D.
-- [ ] Confirm that all final Commit 4 documentation, tests, contract files, and configurations are included in the Git commit, while Git-ignored model artifacts and frozen baselines remain unchanged.
+- [x] Validate G1: frozen primary configuration, including required `nested_t1` and `fold_nested_rf` safeguards.
 
-**PR 37 completion boundary**
+- [x] Validate G2: correct GLASS/RF wiring, arm-specific ownership, and Pass 2 training on each arm's own OOF Pass 1 remainder.
 
-- [ ] Commit 4 complete: shared constrained optimization, pre-registered evaluation protocol, and frozen operating/configuration contracts.
-- [ ] Commit 5 complete: final PR 37 regression review, documentation cleanup, readiness checks, and PR 38 handoff.
-- [ ] PR 37 closed with historical redundancy evidence preserved, methodological decisions version-controlled, and PR 38 execution gates explicitly documented.
+- [x] Validate G5: required persistence, intermediate records, and training-side provenance support, including F31 R1, R2, and R5 records that must be produced inside the cross-fit.
 
-**Out of scope for PR 37:** Corrected five-fold Stage 2 reruns, final model artifact regeneration, deployment of corrected selectors into production notebooks, full real-data complementarity-aware selector experiments, and claims of independent validation based on previously exposed test data. These remain PR 38 or later work.
+- [x] Validate G8: explicit rejection of infeasible fits, missing valid incumbents, insufficient remainder support, and invalid configurations.
 
-#### PR 38 — Stage 2 Cross-Fit and Router Complementarity
+- [x] Validate G9: independent arm configuration and identical frozen shared-contract obligations.
 
-**Corrected-selector Stage 2 rerun**
+- [x] Complete G13: audit label-derived feature engineering for own-label and cross-fold leakage, including density, curvature, and day × month encoders.
 
-- [ ] Validate the PR 37 F17/F31 obligations before treating any corrected rerun as primary evidence ([Commit 3 handoff](methodology/pr37_commit3_handoff.md)):
-  - before the full 5-fold primary reruns, pass the preflight and implementation gates: G1 configuration, G2 wiring, G3 feasibility preflight, G5 persistence, G8 explicit rejection, G9 independent contract, G13 feature-engineering audit (a confirmed material own-label dependency must be corrected and validated before primary results are accepted)
-  - with the primary reruns, verify G4 isolation provenance, G7 reproducibility, G10 versioned artifacts and pins, G11 baseline preservation; record the mandatory F31 requirements R1–R5, R7 and R8 (R6, band-level spread, is an optional diagnostic)
-  - afterwards, G12: sensitivity analysis S1 (GLASS `full` vs `oof_remainder`, descriptive only), begun once the applicable primary-run gates other than G6 have passed; G6 Pass 1 invariance is verified during S1, and S1 is not accepted unless it passes
-- [ ] Run the corrected GLASS Router under the frozen Stage 2 operating contract
-- [ ] Run the RF Router under the same operating contract
-- [ ] Rerun the full 5-fold Stage 2 outer cross-fit for both arms
-- [ ] Regenerate Stage 2 artifacts
-- [ ] Verify OOF provenance, fold identity, routing semantics, and constraint compliance
+  - [x] Correct and validate any confirmed material own-label dependency, and decide whether the primary adopts the correction, before any five-fold primary run.
 
-**Corrected-router complementarity**
+- [x] Add or update targeted regression tests for any implementation changes.
 
-- [ ] Re-run the three-state router trace
-- [ ] Re-measure Pass 2 unique positives at matched flag rate
-- [ ] Re-measure Pass 1 false-positive suppression
-- [ ] Compare redundancy before vs after the selector correction
-- [ ] Measure GLASS Router vs LR/EBM OOF score and decision overlap
+#### **Step 2B — Real-Data Feasibility and Primary-Run Authorization**
 
-**Complementarity experiment**
+- [x] Execute G3 real-data feasibility preflight under the frozen operating contract.
 
-- [ ] Evaluate an optional complementarity-aware selector using train-side OOF upstream predictions only
-- [ ] Test rules favoring:
-  - positives Stage 1 LR misses
-  - rows where LR and EBM disagree
-- [ ] Compare standard union-coverage selection vs complementarity-aware selection
-- [ ] Treat complementarity-aware selection as an ablation unless evidence supports adopting it
-- [ ] If adopted, provide the RF Router an equivalent objective or document the asymmetry explicitly
-- [ ] Freeze the final Stage 2 selector design
+- [x] Verify Pass 1 and Pass 2 constraint feasibility, support requirements, and solver outcomes.
 
-**Final Stage 2 freeze**
+- [x] Verify training population boundaries, fold construction, and upstream OOF dependencies.
 
-- [ ] Select the final Stage 2 selector design based on the pre-declared comparison
-- [ ] If complementarity-aware selection is adopted, rerun both arms under the frozen operating contract
-- [ ] Regenerate final Stage 2 OOF and test artifacts
-- [ ] Verify final OOF provenance, constraint compliance, and mirrored contracts
-- [ ] Freeze the Stage 2 implementation and artifacts for downstream regeneration
+- [x] Confirm historical baselines and existing artifacts remain unchanged.
 
-#### PR 39 — Protocol Finalization and Artifact Regeneration
+- [x] Run targeted regression and relevant integration tests.
 
-**Stage 1 calibration**
+- [x] Record preflight outcomes, limitations, and explicit pass/fail decisions.
 
-- [ ] Resolve sigmoid vs isotonic calibration once for both arms
-- [ ] Measure whether isotonic score granularity materially affects Stage 4
-- [ ] Freeze the shared Stage 1 calibration policy
+- [x] Authorize the primary five-fold reruns only after required gates pass.
 
-**Stage 1 feature naming**
+**Deliverable:** Validated corrected-selector implementation with documented primary-run readiness.
 
-- [ ] Rename:
+---
+
+### Commit 3 — Corrected Stage 2 Cross-Fit and Complementarity Evaluation
+
+**Objective:** Implement, execute, and validate corrected Stage 2 cross-fitting, complementarity analysis, and sensitivity experiments using the pre-registered PR 37 protocol. Complete all required testing, artifact verification, and structural acceptance before closing Commit 3.
+
+#### Step 3A — Corrected Five-Fold Primary Reruns
+
+- [x] Run corrected GLASS Router under the frozen Stage 2 operating contract.
+
+- [x] Run corrected RF Router under the identical shared contract.
+
+- [x] Complete the full five-fold Stage 2 outer cross-fit for both arms.
+
+- [x] Verify G4: fold isolation, training-population boundaries, and OOF provenance.
+
+- [x] Verify G7: deterministic reproducibility and fold identities.
+
+- [X] Verify G10: versioned artifacts, configuration identities, and provenance pins.
+
+- [x] Verify G11: preservation of historical baselines and previously frozen evidence.
+
+- [x] Record mandatory F31 requirements R1–R5, R7, and R8; R6 band-level spread remains optional.
+
+- [x] Verify routing semantics, Pass 1 precedence, Pass 2 remainder eligibility, and abstention accounting.
+
+- [x] Record every fold's fit status, including infeasible fits, solver nonoptimality, greedy fallbacks, and unsuccessful fits.
+
+- [x] Require all five folds accepted in both arms before any outer-OOF performance result is examined, without relaxing the contract.
+
+- [x] Regenerate corrected Stage 2 OOF and required model artifacts.
+
+- [x] Validate artifact serialization, fingerprints, metadata, and interface compatibility.
+
+- [x] Pass structural acceptance V1–V8, including population and upstream identity verification, before any comparative analysis.
+
+#### Step 3B — Corrected-Router Complementarity Analysis
+
+- [x] Re-run the three-state router trace:
+
+  - `PASS_1_NOT_SUBSCRIBE`
+
+  - `PASS_2_SUBSCRIBE`
+
+  - `ABSTAIN`
+
+- [x] Re-measure Pass 2 unique-positive discovery at matched flag rates.
+
+- [x] Re-measure Pass 1 false-positive suppression against frozen LR/EBM operating points.
+
+- [x] Measure GLASS/RF routing coverage, precision, NPV, leakage, abstention, and class-conditional behavior.
+
+- [x] Report observed outer-OOF constraint compliance and shortfalls under protocol section 11, separately from fit-time status.
+
+- [x] Compare pre-correction versus post-correction redundancy and routed-row identities.
+
+- [x] Measure GLASS Router versus LR/EBM decision overlap, score-conditional routing, and disagreement using the existing Step 2 diagnostic definitions.
+
+- [x] Evaluate comparative results using the pre-registered metrics, paired comparisons, and uncertainty procedures.
+
+- [x] Distinguish implementation correctness, contract feasibility, and empirical predictive performance.
+
+#### Step 3C — F17 Sensitivity and Final Validation
+
+- [x] Execute G12 sensitivity analysis S1: GLASS `full` versus `oof_remainder`, descriptive only, after the applicable primary-run gates pass.
+
+- [x] Verify G6 Pass 1 invariance during S1; reject S1 if its required invariance fails.
+
+- [x] Report S1 separately from the corrected primary comparison.
+
+- [x] Complete regression, provenance, reproducibility, and artifact-integrity verification.
+
+- [x] Document corrected primary results, sensitivity findings, remaining limitations, and implications for complementarity-aware selection.
+
+**Deliverable:** Corrected and structurally accepted GLASS/RF five-fold cross-fitted artifacts, completed complementarity and sensitivity analyses, passing regression and validation tests, verified provenance, and documented findings ready for Commit 4.
+
+---
+
+### Commit 4 — Research Report Consolidation and Housekeeping
+
+**Objective:** Reduce PR 38's excessive generated CSV/JSON reports into a compact, navigable research reporting structure. Preserve the scientific information, independently required acceptance/provenance evidence, and reproducibility—not every redundant file. Complete the work with one implementation patch, or at most two if compatibility fixes genuinely require a follow-up. No retraining or changes to modeling behavior.
+
+#### Step 4A — Inventory and Owner Decisions (read-only; no patch)
+
+- [x] Inventory both local PR 38 research-log runs, including the accepted c3_20261112_153333 and historical c3_20261112_134824 directories. Include file counts, relative paths, sizes, purpose, and references/dependencies.
+
+- [x] Identify which CSV/JSON outputs duplicate information, can be consolidated, are temporary, or must remain independent for acceptance, checksum verification, or reproducibility.
+
+- [x] Propose a concise per-group disposition: consolidate / retain on GitHub / retain locally / discard. Review consequential decisions with the owner before deleting or changing any evidence.
+
+- [x] Choose compact report groupings. Aim for approximately 10 or fewer primary CSV tables and 5–8 primary JSON reports where practical; independent validation/provenance files are exempt. These are our optimistic targets, as opposed to acceptance gates.
+
+#### Step 4B — Consolidation, Cleanup, and Focused Verification (1–2 patches total)
+
+- [x] Patch 1 — Main consolidation: Produce consolidated, clearly named research tables and JSON reports from existing validated outputs; reduce overlapping reporting; curate GitHub-facing results; include a short index identifying the authoritative run, report contents, and where supporting evidence lives.
+
+- [x] Where feasible within scope, adjust the reporting/writer paths so future runs do not recreate unnecessary fragmentation. Retain detailed internal evidence only where technically or scientifically necessary. Do not rewrite immutable accepted records or break checksum/provenance chains.
+
+- [x] Carry out the owner-approved cleanup. Discard truly redundant or temporary files once their lack of required dependencies is established; retain locally only what is necessary for verification or worthwhile historical evidence. Do not create an automatic permanent archive of every original file.
+
+- [x] Keep necessary acceptance, G7/G13, G10/F31, S1, authorization, manifest, and checksum evidence independently verifiable where required; preserve run IDs, fingerprints, frozen configurations, and write-once safeguards. Large model binaries stay Git-ignored.
+
+- [x] Patch 2 — Only if necessary: Apply narrowly scoped path/reader/verification compatibility changes that cannot reasonably be included in Patch 1. Otherwise finish in one patch.
+
+- [x] Run focused record-generation/retrieval tests and relevant existing integrity checks only. No primary cross-fit, complementarity rerun, S1 rerun, new modeling experiments, or broad test campaign.
+
+- [x] Commit and push the approved consolidated reporting and necessary supporting evidence as one housekeeping commit. Keep Commit 5's selector/ablation decisions out of this commit.
+
+**Deliverable:** A substantially smaller, coherent set of GitHub-accessible PR 38 research reports; essential evidence remains verifiable, redundant files are removed where approved, and any affected reporting/storage paths pass focused checks. Maximum two implementation patches; one Commit 4 Git commit.
+
+---
+
+### Commit 5 — Complementarity Ablation and Final Stage 2 Freeze
+
+**Objective:** Decide whether the pre-registered complementarity ablation is warranted, execute it only if justified, and freeze the final Stage 2 selector and artifacts for PR 39.
+
+**Execution scheduling:** All ablation decisions, any justified experimental implementation, and the final selector freeze belong to Commit 5—not Commit 4.
+
+#### **Step 5A — Complementarity-Aware Selection Experiment**
+
+- [x] Review Commit 3 evidence against the pre-registered criteria to determine whether the optional experiment is warranted.
+
+- [x] If warranted, implement and evaluate complementarity-aware selection using train-side OOF upstream predictions only.
+
+- [x] Evaluate rule objectives favoring:
+
+  - [x] Positive cases missed by Stage 1 LR.
+
+  - [x] Rows where LR and EBM disagree.
+
+- [x] Compare standard union-coverage selection against complementarity-aware selection.
+
+- [x] Measure unique-positive discovery, matched flag-budget performance, coverage, precision, leakage, uncertainty, and computational cost.
+
+- [x] Verify training-side isolation and preservation of the frozen operating contract.
+
+- [x] Treat complementarity-aware selection as a secondary ablation unless the pre-registered adoption criteria are satisfied.
+
+- [x] If adoption is justified, implement an equivalent RF Router objective or explicitly document the methodological asymmetry.
+
+- [x] Record an evidence-based adoption or rejection decision without changing the frozen criteria retroactively.
+
+#### **Step 5B — Final Selector Decision and Artifact Freeze**
+
+- [x] Select the final Stage 2 selector design based on the pre-registered comparisons and acceptance hierarchy.
+
+- [x] If complementarity-aware selection is adopted, rerun the required GLASS/RF cross-fitting and evaluation under the frozen contract and a later, versioned evaluation protocol; preserve the Commit 3 primary results.
+
+- [x] If the original selector is retained, re-verify and freeze the accepted Commit 3 artifacts without unnecessary retraining.
+
+- [x] Regenerate final PR 38 Stage 2 OOF and required test artifacts only when the selected design requires regeneration.
+
+- [x] Verify final fold identities, OOF provenance, constraint compliance, routing semantics, and mirrored contracts.
+
+- [x] Validate artifact versions, fingerprints, serialization, upstream compatibility, and reproducibility.
+
+- [x] Confirm historical baseline preservation and no unintended model-artifact or notebook changes.
+
+- [x] Run final targeted, regression, and applicable real-data validation.
+
+- [x] Freeze the selected Stage 2 implementation, configuration, and PR 38 research artifacts.
+
+- [x] Document the final selector decision, experimental evidence, methodological limitations, and PR 39 regeneration requirements.
+
+- [x] Confirm all PR 38 acceptance criteria and reconcile the roadmap.
+
+**Deliverable:** Evidence-based complementarity-ablation decision; any justified ablation completed and evaluated; final Stage 2 selector, accepted artifact identities, and PR 39 regeneration/handoff requirements documented and frozen.
+
+---
+
+### PR 38 — Final Completion Boundary
+
+- [x] **Commit 1 complete:** PR 38 roadmap and validation requirements reviewed, finalized, and version-controlled.
+
+- [x] **Commit 2 complete:** Preflight, leakage safeguards, and corrected-run readiness validated.
+
+- [x] **Commit 3 complete:** Corrected five-fold GLASS/RF cross-fitting, complementarity analysis, and sensitivity experiments executed, validated, and structurally accepted.
+
+- [x] **Commit 4 complete:** Redundant research reporting consolidated into a compact GitHub-facing record set; owner-approved cleanup completed, required provenance preserved, and reporting compatibility verified in one or two patches.
+
+- [x] **Commit 5 complete:** Optional complementarity ablation evaluated against pre-registered criteria, final Stage 2 selector selected and frozen, and PR 39 handoff requirements documented.
+
+- [x] **PR 38 complete:** Stage 2 selector research concluded, validated artifacts and provenance preserved, and PR 39 handoff established.
+
+**Out of scope:** Stage 1 calibration changes, Stage 1 feature renaming, final Stage 2 binning revisions, Stage 4 regeneration, final cascade notebook presentation, and paper-level independent validation. These remain assigned to subsequent PRs.
+
+## PR 39 — Protocol Finalization, Artifact Regeneration, and Phase 1 Closure
+
+**Objective:** Finalize Stage 1 calibration and feature naming, revalidate Stage 2 binning, standardize GLASS component naming, regenerate both cascades under their final contracts, and establish a validated pre-presentation baseline that concludes Phase 1.
+
+**Execution principles:**
+
+- Preserve the accepted PR 38 Stage 2 selector design, historical results, and provenance.
+- Complete all methodology and naming changes before final artifact regeneration.
+- Use train-only or properly cross-fitted evidence for decisions that affect modeling.
+- Apply the same shared operating obligations to both cascade arms.
+- Regenerate dependent artifacts in order, without repeating expensive runs unnecessarily.
+- Keep final notebook presentation and restructuring in Phase 2.
+- Perform comprehensive regression testing and clean-kernel notebook execution after integration stabilizes.
+
+---
+
+### Commit 1 — Planning, Dependency Audit, and Finalization Contract
+
+**Objective:** Establish the PR 39 execution sequence, regeneration dependencies, evaluation requirements, and acceptance criteria before modifying the finalized cascades.
+
+- [ ] Review the PR 38 handoff, accepted run `c3_20261112_153333`, frozen Stage 2 selector, and outstanding PR 36 naming requirements.
+- [ ] Inventory Stage 1–4 artifacts, training scripts, shared contracts, downstream consumers, and notebook dependencies for both arms.
+- [ ] Identify which artifacts must be regenerated after calibration, feature naming, binning, or component naming changes.
+- [ ] Define the Stage 1 calibration comparison and decision criteria before examining new results.
+- [ ] Define the train-only Stage 2 binning evaluation, threshold-change criteria, and validation requirements.
+- [ ] Establish a versioned PR 39 artifact/provenance location without overwriting PR 38 evidence.
+- [ ] Define the Stage 1–3 regeneration sequence, Stage 4 dependencies, and 2×2 arbiter crossover protocol.
+- [ ] Establish testing, reproducibility, serialization, compatibility, and final notebook acceptance requirements.
+- [ ] Explicitly separate Phase 1 functional validation from Phase 2 notebook presentation and research preparation.
+- [ ] Finalize and version-control the PR 39 roadmap.
+
+**Deliverable:** Approved PR 39 execution plan with frozen decision criteria, artifact dependencies, and acceptance requirements.
+
+---
+
+### Commit 2 — Stage 1 Calibration and Feature Contract Finalization
+
+**Objective:** Resolve the remaining Stage 1 methodological and naming decisions before any downstream artifact regeneration.
+
+#### Step 2A — Calibration Policy
+
+- [ ] Review existing sigmoid and isotonic calibration implementations, diagnostics, and historical evidence.
+- [ ] Compare calibration quality using leakage-safe training-side OOF evidence, including probability reliability, score resolution, and calibration stability.
+- [ ] Measure whether isotonic score granularity materially affects Stage 4 inputs or decision behavior using an appropriately isolated diagnostic comparison.
+- [ ] Evaluate the comparison against the criteria established in Commit 1.
+- [ ] Select one shared calibration policy for the GLASS and black-box arms.
+- [ ] Update calibration configuration, provenance requirements, shared contracts, and focused tests.
+- [ ] Freeze the Stage 1 calibration policy without regenerating the full cascade yet.
+
+#### Step 2B — Feature Naming and Contract Migration
+
+- [ ] Rename the following Stage 1 features:
   - `cellular_crisis` → `cellular_downturn`
   - `euribor3m_local_rate` → `subscribe_rate_by_euribor_bin`
   - `dow_month_encoded` → `subscribe_rate_by_dow_month`
-- [ ] Update feature contracts, documentation, artifacts, and downstream references
+- [ ] Update feature definitions, training code, imports, metadata, documentation, and dependent references.
+- [ ] Verify that naming-only changes preserve feature values and mathematical behavior.
+- [ ] Revalidate leakage-safe handling of label-derived feature encodings, especially within OOF folds.
+- [ ] Update serialization and compatibility expectations for the new versioned artifact contracts.
+- [ ] Run focused calibration, feature-contract, and compatibility tests.
 
-**Stage 2 binning revalidation**
+**Deliverable:** Frozen Stage 1 calibration and feature contracts, with implementation changes validated and ready for regeneration.
 
-- [ ] Re-evaluate NSD and ECI bin thresholds using train-only, leakage-safe lift analysis
-- [ ] Compare current lift behavior against the original threshold rationale
-- [ ] Measure per-bin support, lift, and fold stability
-- [ ] Check conjunction / router utility before merging or removing weak bins
-- [ ] Re-derive thresholds where drift materially changes the intended bin semantics
-- [ ] Freeze the final Stage 2 binning contract before artifact regeneration
+---
 
-**Final regeneration**
+### Commit 3 — Stage 2 Binning and GLASS Naming Finalization
 
-- [ ] Regenerate affected Stage 1–3 artifacts under the finalized contracts
-- [ ] Rerun Stage 4 with finalized upstream artifacts
-- [ ] Re-run the 2×2 arbiter crossover
-- [ ] Revalidate mirrored contracts after all methodology changes
-- [ ] Record the final pre-presentation cascade baseline
+**Objective:** Resolve final Stage 2 feature-bin semantics and the outstanding GLASS component naming cleanup before retraining downstream models.
 
-**Deferred from PR 36**
+#### Step 3A — NSD and ECI Binning Revalidation
 
-- [ ] Standardize GLASS Router / GLASS Arbiter naming across modules, imports, artifact paths, metadata, and documentation where appropriate. Preserve model-family identities and validate compatibility before final artifact regeneration.
+- [ ] Re-examine existing NSD and ECI thresholds, original design rationale, and current bin definitions.
+- [ ] Perform train-only, leakage-safe lift analysis using appropriate fold boundaries.
+- [ ] Measure per-bin support, class rates, lift, and fold-level stability.
+- [ ] Identify weak, unstable, redundant, or overlapping bins without assuming they should be removed.
+- [ ] Evaluate conjunction behavior and actual GLASS/RF router utility before merging or changing bins.
+- [ ] Retain existing thresholds unless the pre-established evidence criteria justify revisions.
+- [ ] If changes are justified, update bin definitions, encoders, feature contracts, and dependent tests.
+- [ ] Preserve the PR 38 selector algorithm and frozen shared routing obligations; version any changed input contract explicitly.
+- [ ] Freeze the final Stage 2 binning configuration.
+
+#### Step 3B — GLASS Component Naming Standardization
+
+- [ ] Resolve naming inconsistencies between GLASS Router and GLASS Arbiter across modules, imports, interfaces, and documentation.
+- [ ] Update artifact paths, metadata, configuration identifiers, and downstream references where appropriate.
+- [ ] Preserve the distinction between GLASS and black-box model families.
+- [ ] Avoid changing modeling behavior during naming cleanup.
+- [ ] Validate compatibility and add focused regression tests only where changes require them.
+- [ ] Confirm the final Stage 1–2 contracts and naming structure are ready for regeneration.
+
+**Deliverable:** Finalized Stage 2 binning and GLASS component naming, with the frozen selector design preserved.
+
+---
+
+### Commit 4 — Final Stage 1–3 Artifact Regeneration
+
+**Objective:** Regenerate the affected upstream artifacts using the finalized methodology, while preserving historical baselines and validating the new training dependencies before Stage 4.
+
+#### Step 4A — Regeneration Readiness and Upstream Execution
+
+- [ ] Verify that the Commit 2 and Commit 3 methodology/configuration freezes are complete.
+- [ ] Verify historical artifact identities and initialize the versioned PR 39 regeneration records.
+- [ ] Regenerate Stage 1 artifacts for both arms using the shared calibration and updated feature contracts.
+- [ ] Regenerate affected Stage 2 GLASS/RF artifacts using the final bins and frozen selector design.
+- [ ] Recompute Stage 2 OOF predictions where changed upstream inputs or feature contracts require it.
+- [ ] Preserve nested training, fold isolation, Pass 1 precedence, and Pass 2 remainder eligibility.
+- [ ] Regenerate affected Stage 3 artifacts and OOF predictions under the finalized upstream dependencies.
+- [ ] Reuse unchanged artifacts only when provenance and compatibility checks establish that reuse is valid.
+
+#### Step 4B — Upstream Acceptance and Artifact Verification
+
+- [ ] Validate fold identities, OOF alignment, feature contracts, upstream fingerprints, and training-side isolation.
+- [ ] Verify both Stage 2 arms against the same frozen shared operating contract.
+- [ ] Record infeasible folds, solver outcomes, constraint compliance, and any deviations or limitations.
+- [ ] Validate serialization/deserialization, versions, metadata, artifact paths, and interface compatibility.
+- [ ] Verify that historical PR 38 results and model artifacts remain unchanged.
+- [ ] Run focused real-data and upstream regression tests.
+- [ ] Record an explicit Stage 1–3 acceptance decision before authorizing Stage 4 regeneration.
+
+**Deliverable:** Regenerated and validated Stage 1–3 artifacts and OOF dependencies, accepted for final Stage 4 training.
+
+---
+
+### Commit 5 — Stage 4 Regeneration and Arbiter Crossover
+
+**Objective:** Regenerate the final arbiters, execute the 2×2 crossover, and establish the complete cascade performance baseline under the finalized upstream contracts.
+
+#### Step 5A — Final Stage 4 Integration
+
+- [ ] Verify accepted Stage 1–3 artifacts and OOF inputs from Commit 4.
+- [ ] Regenerate the GLASS and black-box Stage 4 arbiters using leakage-safe finalized upstream OOF evidence.
+- [ ] Verify input alignment, model-family ownership, routing conventions, and calibration dependencies.
+- [ ] Validate Stage 4 artifact provenance, metadata, versioning, and serialization.
+- [ ] Confirm both complete cascade arms execute under their finalized contracts.
+- [ ] Run focused Stage 4 integration tests before comparative evaluation.
+
+#### Step 5B — 2×2 Crossover and Final Baseline
+
+- [ ] Re-run the registered 2×2 arbiter crossover using the finalized upstream artifacts.
+- [ ] Evaluate the registered combinations under consistent data splits, operating points, and comparison procedures.
+- [ ] Report predictive performance, calibration, abstention/coverage where applicable, and comparative uncertainty.
+- [ ] Examine Stage 2 contributions and GLASS/black-box differences without changing the frozen selector based on these results.
+- [ ] Revalidate mirrored contracts and identify any remaining integration limitations.
+- [ ] Record final model identities, crossover findings, and the pre-presentation cascade baseline.
+- [ ] Preserve earlier PR 38 comparisons as historical evidence rather than replacing them with PR 39 results.
+
+**Deliverable:** Regenerated Stage 4 arbiters, completed crossover analysis, and the final pre-presentation baseline for both cascades.
+
+---
+
+### Commit 6 — Final Validation, Notebook Execution, and Phase 1 Freeze
+
+**Objective:** Complete the final integrated verification, validate reproducibility from clean notebook kernels, and formally close Phase 1.
+
+#### Step 6A — Final Regression and Reproducibility Validation
+
+- [ ] Run the relevant targeted, regression, real-data, and end-to-end validation suites against the final implementation.
+- [ ] Verify shared and arm-specific contracts across Stages 1–4.
+- [ ] Validate training/test isolation, OOF provenance, model versions, serialization, fingerprints, and configuration identities.
+- [ ] Verify the final GLASS/RF Stage 2 constraints and three-state routing semantics.
+- [ ] Confirm the 2×2 crossover results and final baseline references remain reproducible.
+- [ ] Check historical baseline preservation and confirm no unexpected artifact or model-family changes.
+- [ ] Resolve material failures before freezing Phase 1; record any limitations that do not block acceptance.
+
+#### Step 6B — Clean-Kernel Notebook Runs and Phase 1 Handoff
+
+- [ ] Execute the relevant cascade notebooks from fresh kernels using the finalized implementation and artifact contracts.
+- [ ] Verify that notebook cells run in order without relying on stale kernel state or undocumented local variables.
+- [ ] Validate notebook references, artifact loading, output consistency, and integration with the finalized pipeline.
+- [ ] Resolve execution-breaking notebook issues without undertaking the Phase 2 presentation redesign.
+- [ ] Record final artifact identities, accepted baselines, test results, notebook execution outcomes, and known limitations.
+- [ ] Freeze the Phase 1 cascade implementations and validated research baseline.
+- [ ] Document the Phase 2 handoff, including notebook restructuring, baseline presentation, and remaining research deliverables.
+- [ ] Reconcile the PR 39 roadmap and confirm final acceptance.
+
+**Deliverable:** Validated, reproducible GLASS and black-box cascades, finalized artifact contracts, clean-kernel execution evidence, and an approved Phase 1 baseline.
+
+---
+
+### PR 39 — Final Completion Boundary
+
+- [ ] **Commit 1 complete:** PR 39 roadmap, dependency audit, evaluation rules, and regeneration sequence finalized.
+- [ ] **Commit 2 complete:** Shared Stage 1 calibration and feature naming frozen.
+- [ ] **Commit 3 complete:** Stage 2 binning and GLASS component naming finalized.
+- [ ] **Commit 4 complete:** Final Stage 1–3 artifacts regenerated and accepted.
+- [ ] **Commit 5 complete:** Stage 4 arbiters regenerated, 2×2 crossover completed, and cascade baselines established.
+- [ ] **Commit 6 complete:** Final regression, provenance, reproducibility, and clean-kernel notebook validation completed.
+- [ ] **PR 39 complete:** Both cascade implementations and their final Phase 1 artifact contracts frozen, with Phase 2 handoff established.
+- [ ] **Phase 1 complete:** GLASS and black-box cascades are operational, integrated, validated, and ready for final notebook organization and research presentation.
+
+**Out of scope:** Complementarity-aware selector redesign, additional Stage 2 training-objective experiments, notebook presentation restructuring, final notebook slicing and organization, paper-level independent validation, and new research extensions. These belong to later phases.
+
+**Execution policy:** Use the Patch Method throughout. Favor one focused implementation patch per substantial step, with additional patches only for genuine corrections. Run focused tests during development and reserve expensive complete regression/notebook execution for the final integrated state wherever the acceptance requirements permit.
 
 ### Phase 2 — Finalize the Notebooks and Freeze the Cascades
 

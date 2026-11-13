@@ -23,7 +23,7 @@ from glass_pipeline.glass_router.ilp_rule_selector.ilp_rule_selector import ILPR
 from shared.stage2 import RF_FEATURES_BINARY
 from shared.stage2.feature_engineering import engineer_features
 from tests.stage2.conftest import legacy_config, new_router
-from tests.support.synthetic import make_bank_frame, split_frame
+from tests.support.synthetic_bank import make_bank_frame, split_frame
 
 pytestmark = pytest.mark.slow
 

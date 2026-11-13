@@ -23,7 +23,7 @@ import glass_pipeline.lr.penalty as penalty_mod
 from glass_pipeline.lr.lr_stage import LRStage
 from glass_pipeline.lr.penalty import SKLEARN_PENALTY_DEPRECATED, penalty_kwargs
 from tests.stage1.conftest import LABEL_FREE_FEATURES, fit_glass_stage1
-from tests.support.synthetic import make_bank_frame
+from tests.support.synthetic_bank import make_bank_frame
 
 LEGACY = {
     "l2": {"penalty": "l2"},

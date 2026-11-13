@@ -14,7 +14,7 @@ import pytest
 from data.bank_database import build_database
 from data.preprocessing import BankPreprocessor
 from tests.support import mutations as mut
-from tests.support.synthetic import BANK_SCHEMA, TARGET, irregular_index
+from tests.support.synthetic_bank import BANK_SCHEMA, TARGET, irregular_index
 
 JOBS = ["admin.", "blue-collar", "entrepreneur", "housemaid", "management", "retired",
         "self-employed", "services", "student", "technician", "unemployed", "unknown"]

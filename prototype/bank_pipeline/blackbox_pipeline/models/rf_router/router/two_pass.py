@@ -90,6 +90,8 @@ class RFRouter(_BaseRouter):
         # Fold that held out each training row in the Pass 1 OOF run. Lets the
         # notebook assert the router's folds ARE the shared Stage fold plan.
         self.oof_pass1_fold_id_: Optional[np.ndarray] = None
+        # PR 38 (G13): the inner-fold feature pathway's provenance; None = historical.
+        self.inner_feature_pathway_: Optional[dict] = None
 
     # ------------------------------------------------------------------
     def fit(
@@ -97,9 +99,28 @@ class RFRouter(_BaseRouter):
         X_train: pd.DataFrame,
         y_train,
         split_fingerprint_value: Optional[str] = None,
+        *,
+        inner_features=None,
     ) -> "RFRouter":
+        """
+        ``inner_features`` (PR 38, G13; opt-in): ``inner_features(X, y,
+        fold_id)`` returns ``{k: bins}``, inner fold k's features for every
+        training row computed without fold k's labels. The Pass 1 OOF forest
+        of fold k is then fitted and scored on ``bins[k]``, and under
+        ``nested_t1`` so is every forest ``t1_k`` is solved from. These scores
+        are the router's inner-OOF Pass 1 scores: ``t1``, the Pass 1 band and
+        the remainder use them. Pass 2 and the refits use ``X``. Its
+        provenance (``inner_features.provenance(fold_id)``) is kept in
+        ``inner_feature_pathway_``; the provider itself is not. None: unchanged.
+        """
         cfg = self.config
         X, y = self._check_fit_inputs(X_train, y_train)
+        self.inner_feature_pathway_ = None
+        fold_features = None
+        if inner_features is not None:
+            if cfg.validate_nested:
+                raise ValueError("inner_features cannot be combined with validate_nested")
+            fold_features = (lambda fold_id: inner_features(X, y, fold_id))  # noqa: E731
         y_arr = np.asarray(y).astype(int)
 
         self.feature_names_ = list(X.columns)
@@ -119,7 +140,7 @@ class RFRouter(_BaseRouter):
             p1_trainer, cfg.n_oof_folds, cfg.random_state,
             cfg.stratify_oof, verbose=cfg.verbose,
         )
-        oof1 = scorer1.score(X, y, label="pass1 OOF")
+        oof1 = scorer1.score(X, y, label="pass1 OOF", fold_features=fold_features)
         p1_oof = oof1.scored_proba()
 
         # ---- 2. t1 --------------------------------------------------------
@@ -140,7 +161,7 @@ class RFRouter(_BaseRouter):
                 X, y, pass1_proba=p1_oof, fold_id=oof1.fold_id, trainer=p1_trainer,
                 solver=self.solver, n_folds=cfg.eligibility_folds,
                 random_state=cfg.random_state, stratify=cfg.stratify_oof,
-                verbose=cfg.verbose,
+                verbose=cfg.verbose, fold_features=fold_features,
             )
             remainder = nested.remainder
         else:
@@ -188,6 +209,8 @@ class RFRouter(_BaseRouter):
         self.oof_pass1_proba_ = p1_oof
         self.oof_pass2_proba_ = oof2.proba  # NaN outside the remainder
         self.oof_pass1_fold_id_ = oof1.fold_id
+        if inner_features is not None:
+            self.inner_feature_pathway_ = inner_features.provenance(oof1.fold_id)
 
         self.fit_report_ = _FitReport(
             mode="two_pass (GLASS counterpart)",

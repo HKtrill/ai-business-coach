@@ -1,0 +1,373 @@
+{
+  "format": "pr38.stage2.configs/1",
+  "primary": {
+    "checks": {
+      "G1_glass_f17": {
+        "expected": {
+          "inner_feature_ranker": "fold_nested_rf",
+          "pass1_oof_folds": 5,
+          "pass2_population": "oof_remainder",
+          "random_state": 42,
+          "remainder_min_size": 500
+        },
+        "got": {
+          "inner_feature_ranker": "fold_nested_rf",
+          "pass1_oof_folds": 5,
+          "pass2_population": "oof_remainder",
+          "random_state": 42,
+          "remainder_min_size": 500
+        },
+        "passed": true
+      },
+      "G1_glass_fields_set_by_contract": {
+        "contract_fields": [
+          "contract_provenance",
+          "max_union_leakage_rate_pass1",
+          "min_union_npv_pass1",
+          "min_union_precision_pass2",
+          "min_union_support_pass1",
+          "min_union_support_pass2",
+          "pass2_union_objective"
+        ],
+        "got": [
+          "contract_provenance",
+          "max_union_leakage_rate_pass1",
+          "min_union_npv_pass1",
+          "min_union_precision_pass2",
+          "min_union_support_pass1",
+          "min_union_support_pass2",
+          "pass2_union_objective"
+        ],
+        "passed": true
+      },
+      "G1_rf_f17": {
+        "expected": {
+          "eligibility": "nested_t1",
+          "eligibility_folds": 5,
+          "mode": "two_pass",
+          "n_oof_folds": 5,
+          "random_state": 42,
+          "remainder_min_size": 500
+        },
+        "got": {
+          "eligibility": "nested_t1",
+          "eligibility_folds": 5,
+          "mode": "two_pass",
+          "n_oof_folds": 5,
+          "random_state": 42,
+          "remainder_min_size": 500
+        },
+        "passed": true
+      },
+      "G9_glass_contract_provenance": {
+        "constraint_source": "shared_contract",
+        "contract_fingerprint": "0817825b9eecbd11",
+        "contract_id": "pr37-stage2-primary",
+        "contract_status": "frozen",
+        "contract_version": "1.0.0",
+        "schema_version": "stage2-operating-contract/2"
+      },
+      "G9_rf_constraint_provenance": {
+        "constraint_source": "shared_contract",
+        "contract_fingerprint": "0817825b9eecbd11",
+        "contract_id": "pr37-stage2-primary",
+        "contract_status": "frozen",
+        "contract_version": "1.0.0",
+        "schema_version": "stage2-operating-contract/2"
+      },
+      "check_glass_config_follows_contract": "passed",
+      "check_glass_primary_config": "passed",
+      "check_glass_primary_ranker": "passed",
+      "check_rf_config_follows_contract": "passed",
+      "check_rf_primary_config": "passed",
+      "identities": {
+        "contract": [
+          "pr37-stage2-primary",
+          "1.0.0",
+          "0817825b9eecbd11"
+        ],
+        "glass_profile": {
+          "fingerprint": "198731d5cdf263f4",
+          "profile_id": "pr37-glass-router-primary",
+          "profile_version": "1.0.0"
+        },
+        "protocol": [
+          "pr38-stage2-evaluation",
+          "1.0.0",
+          "245a1a68fb68cf4e"
+        ],
+        "rf_profile": {
+          "fingerprint": "4e3f9c07e6ecc8ad",
+          "profile_id": "pr37-rf-router-primary",
+          "profile_version": "1.0.0"
+        }
+      },
+      "strict_loaders": "load_frozen_specification, load_glass_primary_profile, load_rf_primary_profile, check_arm_profile_binding (both), is_pinned_frozen"
+    },
+    "glass_config": {
+      "contract_provenance": {
+        "constraint_source": "shared_contract",
+        "contract_fingerprint": "0817825b9eecbd11",
+        "contract_id": "pr37-stage2-primary",
+        "contract_status": "frozen",
+        "contract_version": "1.0.0",
+        "schema_version": "stage2-operating-contract/2"
+      },
+      "diversity_weight": 0.35,
+      "enable_novelty_constraints": true,
+      "inner_feature_ranker": "fold_nested_rf",
+      "lambda_rf_misalignment": null,
+      "lambda_rf_uncertainty": null,
+      "max_complexity": 3,
+      "max_feature_reuse_pass1": null,
+      "max_feature_reuse_pass2": null,
+      "max_high_overlap_rules": 20,
+      "max_jaccard_overlap": 0.5,
+      "max_leakage_fraction_depth2": 0.9,
+      "max_leakage_rate_depth2": 0.9,
+      "max_pass1_rules": 8,
+      "max_pass2_rules": 8,
+      "max_precision_not_subscribe": 1.0,
+      "max_precision_subscribe": 1.0,
+      "max_recall_subscribe": 0.35,
+      "max_subscriber_leakage_absolute": 800,
+      "max_subscriber_leakage_rate": 0.05,
+      "max_union_leakage_rate_pass1": 0.15,
+      "min_novelty_ratio_pass1": 0.2,
+      "min_novelty_ratio_pass2": 0.25,
+      "min_pass1_rules": 2,
+      "min_pass2_rules": 2,
+      "min_precision_not_subscribe": 0.93,
+      "min_precision_subscribe": 0.2,
+      "min_recall_subscribe": 0.01,
+      "min_support_pass1": 120,
+      "min_support_pass2": 25,
+      "min_union_npv_pass1": 0.95,
+      "min_union_precision_pass2": 0.3,
+      "min_union_support_pass1": 125,
+      "min_union_support_pass2": 75,
+      "mode": "strict",
+      "pass1_oof_folds": 5,
+      "pass2_population": "oof_remainder",
+      "pass2_union_objective": "rows",
+      "random_state": 42,
+      "remainder_min_size": 500
+    },
+    "ranker": {
+      "glass_rf_model": "fold_rf",
+      "rf_params": {
+        "class_weight": "balanced",
+        "max_depth": 6,
+        "max_features": 0.39989815740885837,
+        "min_samples_leaf": 12,
+        "minority_weight": 1.3001084911026792,
+        "n_estimators": 650
+      }
+    },
+    "rf_config": {
+      "constraints": {
+        "max_subscriber_leakage_absolute": 4611686018427387904,
+        "max_subscriber_leakage_rate": 0.15,
+        "min_band_support_pass1": 125,
+        "min_band_support_pass2": 75,
+        "min_pass1_coverage": null,
+        "min_precision_not_subscribe": 0.95,
+        "min_precision_subscribe": 0.3,
+        "min_recall_subscribe": null,
+        "recall_denominator": "global",
+        "require_band_ordering": true
+      },
+      "eligibility": "nested_t1",
+      "eligibility_folds": 5,
+      "mode": "two_pass",
+      "n_inner_folds": 5,
+      "n_oof_folds": 5,
+      "pass2_rf_params": null,
+      "random_state": 42,
+      "remainder_min_size": 500,
+      "rf_params": {
+        "class_weight": "balanced",
+        "max_depth": 6,
+        "max_features": 0.39989815740885837,
+        "min_samples_leaf": 12,
+        "minority_weight": 1.3001084911026792,
+        "n_estimators": 650
+      },
+      "stratify_oof": true,
+      "validate_nested": false,
+      "verbose": false
+    },
+    "role": "primary"
+  },
+  "s1": {
+    "checks": {
+      "G1_glass_f17": {
+        "expected": {
+          "inner_feature_ranker": "fold_nested_rf",
+          "pass1_oof_folds": 5,
+          "pass2_population": "oof_remainder",
+          "random_state": 42,
+          "remainder_min_size": 500
+        },
+        "got": {
+          "inner_feature_ranker": "fold_nested_rf",
+          "pass1_oof_folds": 5,
+          "pass2_population": "oof_remainder",
+          "random_state": 42,
+          "remainder_min_size": 500
+        },
+        "passed": true
+      },
+      "G1_glass_fields_set_by_contract": {
+        "contract_fields": [
+          "contract_provenance",
+          "max_union_leakage_rate_pass1",
+          "min_union_npv_pass1",
+          "min_union_precision_pass2",
+          "min_union_support_pass1",
+          "min_union_support_pass2",
+          "pass2_union_objective"
+        ],
+        "got": [
+          "contract_provenance",
+          "max_union_leakage_rate_pass1",
+          "min_union_npv_pass1",
+          "min_union_precision_pass2",
+          "min_union_support_pass1",
+          "min_union_support_pass2",
+          "pass2_union_objective"
+        ],
+        "passed": true
+      },
+      "G1_rf_f17": {
+        "expected": {
+          "eligibility": "nested_t1",
+          "eligibility_folds": 5,
+          "mode": "two_pass",
+          "n_oof_folds": 5,
+          "random_state": 42,
+          "remainder_min_size": 500
+        },
+        "got": {
+          "eligibility": "nested_t1",
+          "eligibility_folds": 5,
+          "mode": "two_pass",
+          "n_oof_folds": 5,
+          "random_state": 42,
+          "remainder_min_size": 500
+        },
+        "passed": true
+      },
+      "G9_glass_contract_provenance": {
+        "constraint_source": "shared_contract",
+        "contract_fingerprint": "0817825b9eecbd11",
+        "contract_id": "pr37-stage2-primary",
+        "contract_status": "frozen",
+        "contract_version": "1.0.0",
+        "schema_version": "stage2-operating-contract/2"
+      },
+      "G9_rf_constraint_provenance": {
+        "constraint_source": "shared_contract",
+        "contract_fingerprint": "0817825b9eecbd11",
+        "contract_id": "pr37-stage2-primary",
+        "contract_status": "frozen",
+        "contract_version": "1.0.0",
+        "schema_version": "stage2-operating-contract/2"
+      },
+      "check_glass_config_follows_contract": "passed",
+      "check_glass_primary_config": "passed",
+      "check_glass_primary_ranker": "passed",
+      "check_glass_s1_config": "passed",
+      "check_rf_config_follows_contract": "passed",
+      "check_rf_primary_config": "passed",
+      "identities": {
+        "contract": [
+          "pr37-stage2-primary",
+          "1.0.0",
+          "0817825b9eecbd11"
+        ],
+        "glass_profile": {
+          "fingerprint": "198731d5cdf263f4",
+          "profile_id": "pr37-glass-router-primary",
+          "profile_version": "1.0.0"
+        },
+        "protocol": [
+          "pr38-stage2-evaluation",
+          "1.0.0",
+          "245a1a68fb68cf4e"
+        ],
+        "rf_profile": {
+          "fingerprint": "4e3f9c07e6ecc8ad",
+          "profile_id": "pr37-rf-router-primary",
+          "profile_version": "1.0.0"
+        }
+      },
+      "s1_factor": [
+        "pass2_population",
+        "full"
+      ],
+      "strict_loaders": "load_frozen_specification, load_glass_primary_profile, load_rf_primary_profile, check_arm_profile_binding (both), is_pinned_frozen"
+    },
+    "glass_config": {
+      "contract_provenance": {
+        "constraint_source": "shared_contract",
+        "contract_fingerprint": "0817825b9eecbd11",
+        "contract_id": "pr37-stage2-primary",
+        "contract_status": "frozen",
+        "contract_version": "1.0.0",
+        "schema_version": "stage2-operating-contract/2"
+      },
+      "diversity_weight": 0.35,
+      "enable_novelty_constraints": true,
+      "inner_feature_ranker": "fold_nested_rf",
+      "lambda_rf_misalignment": null,
+      "lambda_rf_uncertainty": null,
+      "max_complexity": 3,
+      "max_feature_reuse_pass1": null,
+      "max_feature_reuse_pass2": null,
+      "max_high_overlap_rules": 20,
+      "max_jaccard_overlap": 0.5,
+      "max_leakage_fraction_depth2": 0.9,
+      "max_leakage_rate_depth2": 0.9,
+      "max_pass1_rules": 8,
+      "max_pass2_rules": 8,
+      "max_precision_not_subscribe": 1.0,
+      "max_precision_subscribe": 1.0,
+      "max_recall_subscribe": 0.35,
+      "max_subscriber_leakage_absolute": 800,
+      "max_subscriber_leakage_rate": 0.05,
+      "max_union_leakage_rate_pass1": 0.15,
+      "min_novelty_ratio_pass1": 0.2,
+      "min_novelty_ratio_pass2": 0.25,
+      "min_pass1_rules": 2,
+      "min_pass2_rules": 2,
+      "min_precision_not_subscribe": 0.93,
+      "min_precision_subscribe": 0.2,
+      "min_recall_subscribe": 0.01,
+      "min_support_pass1": 120,
+      "min_support_pass2": 25,
+      "min_union_npv_pass1": 0.95,
+      "min_union_precision_pass2": 0.3,
+      "min_union_support_pass1": 125,
+      "min_union_support_pass2": 75,
+      "mode": "strict",
+      "pass1_oof_folds": 5,
+      "pass2_population": "full",
+      "pass2_union_objective": "rows",
+      "random_state": 42,
+      "remainder_min_size": 500
+    },
+    "ranker": {
+      "glass_rf_model": "fold_rf",
+      "rf_params": {
+        "class_weight": "balanced",
+        "max_depth": 6,
+        "max_features": 0.39989815740885837,
+        "min_samples_leaf": 12,
+        "minority_weight": 1.3001084911026792,
+        "n_estimators": 650
+      }
+    },
+    "role": "s1_full"
+  }
+}
