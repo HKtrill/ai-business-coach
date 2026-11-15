@@ -3,25 +3,35 @@ Feature Engineering for Logistic Regression Stage
 =================================================
 
 Produces the three validated LR Stage 1 features:
-    cellular_crisis        — cellular contact during economic crisis
-    euribor3m_local_rate   — empirical P(subscribe) per euribor quantile bin
-    dow_month_encoded      — smoothed P(subscribe | day_of_week x month)
+    cellular_downturn             — cellular contact during an economic downturn
+    subscribe_rate_by_euribor_bin — empirical P(subscribe) per euribor quantile bin
+    subscribe_rate_by_dow_month   — smoothed P(subscribe | day_of_week x month)
+
+PR 39 (Commit 2, Step 2B) renamed them; values and definitions are unchanged.
+Before it they were ``cellular_crisis``, ``euribor3m_local_rate`` and
+``dow_month_encoded`` (``STAGE1_FEATURE_RENAMES``), the names every artifact
+saved earlier carries (feature contract 1.0.0). Stages 2 and 3 compute their
+own features and keep those names (PR 39 decision D2 (a)).
 
 Replaces the original EconomicFeatureEngineer (PCA / composite approach)
 with the validated feature set ported from the research notebook.
 
 Leakage fixes vs research notebook:
-    euribor3m_local_rate — bin rates fitted on X_train only;
-                           test mapped via stored IntervalIndex.
-    dow_month_encoded    — target encoding fitted on X_train + y_train;
-                           unseen day-month cells fall back to global mean.
+    subscribe_rate_by_euribor_bin — bin rates fitted on X_train only;
+                                    test mapped via stored IntervalIndex.
+    subscribe_rate_by_dow_month   — target encoding fitted on X_train + y_train;
+                                    unseen day-month cells fall back to global mean.
 
 Author: Glass Pipeline Team
 Date: 2026-05
 """
 
+import hashlib
+import json
 import pandas as pd
-from typing import Tuple
+from collections.abc import Mapping, Sequence
+from types import MappingProxyType
+from typing import Optional, Tuple
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -37,13 +47,132 @@ _CRISIS_SCORE_CUTOFF:  int   = 3
 _N_BINS_DEFAULT:    int = 20
 _SMOOTHING_FACTOR:  int = 100
 
-LR_FEATURES = ['cellular_crisis', 'euribor3m_local_rate', 'dow_month_encoded']
+LR_FEATURES = ['cellular_downturn', 'subscribe_rate_by_euribor_bin', 'subscribe_rate_by_dow_month']
 
 #: The LR features learned from the training LABELS. Fitted once on the whole
 #: training split they are fine for scoring the test split, but inside any
 #: cross-validation they must be refit per fold (audit F3) — see
 #: ``shared.stage1.crossfit``.
-TARGET_ENCODED_FEATURES = ('euribor3m_local_rate', 'dow_month_encoded')
+TARGET_ENCODED_FEATURES = ('subscribe_rate_by_euribor_bin', 'subscribe_rate_by_dow_month')
+
+# ---------------------------------------------------------------------------
+# Feature contracts (PR 39, Commit 2, Step 2B)
+# ---------------------------------------------------------------------------
+#: Historical name -> final name, in ``LR_FEATURES`` order. Names only: every
+#: value and definition is unchanged.
+STAGE1_FEATURE_RENAMES = MappingProxyType({
+    'cellular_crisis':      'cellular_downturn',
+    'euribor3m_local_rate': 'subscribe_rate_by_euribor_bin',
+    'dow_month_encoded':    'subscribe_rate_by_dow_month',
+})
+
+#: The names, in the same order, that every Stage 1 artifact saved before the
+#: rename carries. They are read as they are, never translated.
+HISTORICAL_LR_FEATURES = tuple(STAGE1_FEATURE_RENAMES)
+HISTORICAL_TARGET_ENCODED_FEATURES = ('euribor3m_local_rate', 'dow_month_encoded')
+
+
+def _feature_contract(version: str, features: Sequence[str]) -> Mapping:
+    names = [str(f) for f in features]
+    return MappingProxyType({
+        "id": "stage1-features",
+        "version": version,
+        "features": tuple(names),
+        "fingerprint": hashlib.sha256(json.dumps(names).encode("utf-8")).hexdigest()[:16],
+    })
+
+
+#: The current Stage 1 feature contract: names and order. Saved in every
+#: Stage 1 artifact (LR and MLP artifact version 3.0).
+STAGE1_FEATURE_CONTRACT = _feature_contract("2.0.0", LR_FEATURES)
+#: What every earlier artifact (version 2.0) holds, readable for verification.
+HISTORICAL_STAGE1_FEATURE_CONTRACT = _feature_contract("1.0.0", HISTORICAL_LR_FEATURES)
+
+
+def stage1_feature_contract(feature_names) -> Optional[Mapping]:
+    """
+    The Stage 1 feature contract whose ordered names these are, or ``None``.
+
+    Only the two registered lists match, each in its own order: the current
+    ``LR_FEATURES`` (2.0.0) and the historical names (1.0.0).
+    """
+    if feature_names is None:
+        return None
+    names = tuple(str(f) for f in feature_names)
+    for contract in (STAGE1_FEATURE_CONTRACT, HISTORICAL_STAGE1_FEATURE_CONTRACT):
+        if names == contract["features"]:
+            return contract
+    return None
+
+
+def feature_contract_record(contract: Mapping) -> dict:
+    """A contract as the plain dict an artifact stores (pickle- and JSON-safe)."""
+    return {"id": contract["id"], "version": contract["version"],
+            "features": list(contract["features"]), "fingerprint": contract["fingerprint"]}
+
+
+def current_feature_contract_record(feature_names, where: str = "Stage 1 artifact") -> dict:
+    """
+    The record a new Stage 1 artifact saves: the current contract, which
+    ``feature_names`` must be exactly (same names, same order).
+
+    Raises
+    ------
+    ValueError
+        For any other list. The historical names are readable, never written:
+        a stage fitted on them predates the rename and must be refit.
+    """
+    contract = stage1_feature_contract(feature_names)
+    if contract is not STAGE1_FEATURE_CONTRACT:
+        found = "historical contract 1.0.0" if contract is not None else "no registered contract"
+        raise ValueError(
+            f"{where}: feature_names {list(feature_names) if feature_names is not None else None} "
+            f"match {found}; a new Stage 1 artifact must carry Stage 1 feature contract "
+            f"{STAGE1_FEATURE_CONTRACT['version']} {list(LR_FEATURES)} (in this order)."
+        )
+    return feature_contract_record(contract)
+
+
+def artifact_feature_contract(artifact) -> Mapping:
+    """
+    The registered Stage 1 feature contract a saved artifact was written with.
+
+    Reads the artifact as saved, never translating its names: a pre-rename
+    artifact (LR / MLP artifact version 2.0) is identified from its
+    ``feature_names`` as contract 1.0.0; a current one (3.0) carries a
+    ``feature_contract`` record, which must agree with its ``feature_names``.
+    A bare ``StageOutput`` dict is identified from its own ``feature_names``.
+
+    Raises
+    ------
+    ValueError
+        If the names match no registered contract, or the recorded contract
+        disagrees with them.
+    """
+    if not isinstance(artifact, Mapping):
+        raise ValueError(f"expected an artifact dict, got {type(artifact).__name__}")
+    names = artifact.get("feature_names")
+    so = artifact.get("stage_output")
+    if names is None and isinstance(so, Mapping):
+        names = so.get("feature_names")
+    contract = stage1_feature_contract(names)
+    if contract is None:
+        raise ValueError(f"feature_names {names!r} match no registered Stage 1 feature contract")
+    if isinstance(so, Mapping) and so.get("feature_names") is not None and \
+            stage1_feature_contract(so["feature_names"]) is not contract:
+        raise ValueError("artifact feature_names and stage_output.feature_names disagree")
+    recorded = artifact.get("feature_contract")
+    if recorded is not None and dict(recorded) != feature_contract_record(contract):
+        raise ValueError(
+            f"recorded feature_contract {dict(recorded)!r} does not match the artifact's "
+            f"feature_names (contract {contract['version']})")
+    return contract
+
+
+if [STAGE1_FEATURE_RENAMES[f] for f in HISTORICAL_LR_FEATURES] != LR_FEATURES or \
+        tuple(STAGE1_FEATURE_RENAMES[f] for f in HISTORICAL_TARGET_ENCODED_FEATURES) != \
+        TARGET_ENCODED_FEATURES:                                  # pragma: no cover
+    raise AssertionError("STAGE1_FEATURE_RENAMES does not map the historical names in order")
 
 
 # ---------------------------------------------------------------------------
@@ -54,9 +183,9 @@ class LRFeatureEngineer:
     Feature engineer for LR Stage 1.
 
     Produces exactly three features:
-        cellular_crisis       — no target used; safe to compute on any split.
-        euribor3m_local_rate  — fitted on train only; leakage-free on test.
-        dow_month_encoded     — fitted on train only; leakage-free on test.
+        cellular_downturn             — no target used; safe on any split.
+        subscribe_rate_by_euribor_bin — fitted on train only; leakage-free on test.
+        subscribe_rate_by_dow_month   — fitted on train only; leakage-free on test.
 
     Usage
     -----
@@ -99,8 +228,8 @@ class LRFeatureEngineer:
         print("🔧 FITTING LR FEATURE ENGINEER")
         print("="*70)
 
-        self._fit_euribor_local_rate(X_train, y_train)
-        self._fit_dow_month_encoded(X_train, y_train)
+        self._fit_subscribe_rate_by_euribor_bin(X_train, y_train)
+        self._fit_subscribe_rate_by_dow_month(X_train, y_train)
 
         self.fitted = True
         print("\n✅ LR feature engineer fitted.")
@@ -124,9 +253,9 @@ class LRFeatureEngineer:
             raise ValueError("Engineer not fitted. Call fit() first.")
 
         X_eng = X.copy()
-        X_eng = self._add_cellular_crisis(X_eng)
-        X_eng = self._transform_euribor_local_rate(X_eng)
-        X_eng = self._transform_dow_month_encoded(X_eng)
+        X_eng = self._add_cellular_downturn(X_eng)
+        X_eng = self._transform_subscribe_rate_by_euribor_bin(X_eng)
+        X_eng = self._transform_subscribe_rate_by_dow_month(X_eng)
 
         return X_eng[LR_FEATURES]
 
@@ -137,17 +266,17 @@ class LRFeatureEngineer:
         return self.fit(X_train, y_train).transform(X_train)
 
     # ------------------------------------------------------------------
-    # cellular_crisis
+    # cellular_downturn (historically cellular_crisis)
     # ------------------------------------------------------------------
-    def _add_cellular_crisis(self, X: pd.DataFrame) -> pd.DataFrame:
+    def _add_cellular_downturn(self, X: pd.DataFrame) -> pd.DataFrame:
         """
-        Cellular contact during economic crisis.
+        Cellular contact during an economic downturn.
 
         crisis_score = (euribor3m < 1.5)*3
                      + (emp.var.rate < -1.0)*2
                      + (nr.employed < 5100)*1
 
-        cellular_crisis = (contact == 0) AND (crisis_score >= 3)
+        cellular_downturn = (contact == 0) AND (crisis_score >= 3)
 
         No target used — safe to compute directly on any split.
         """
@@ -156,18 +285,18 @@ class LRFeatureEngineer:
             + (X['emp.var.rate'] < _CRISIS_EMP_VAR_THRESH).astype(int) * 2
             + (X['nr.employed']  < _CRISIS_NR_EMP_THRESH).astype(int) * 1
         )
-        X['cellular_crisis'] = (
+        X['cellular_downturn'] = (
             (X['contact'] == 0) & (crisis_score >= _CRISIS_SCORE_CUTOFF)
         ).astype(int)
 
-        print(f"\n✅ cellular_crisis: {X['cellular_crisis'].sum():,} positives "
-              f"({X['cellular_crisis'].mean():.1%})")
+        print(f"\n✅ cellular_downturn: {X['cellular_downturn'].sum():,} positives "
+              f"({X['cellular_downturn'].mean():.1%})")
         return X
 
     # ------------------------------------------------------------------
-    # euribor3m_local_rate
+    # subscribe_rate_by_euribor_bin (historically euribor3m_local_rate)
     # ------------------------------------------------------------------
-    def _fit_euribor_local_rate(
+    def _fit_subscribe_rate_by_euribor_bin(
         self, X_train: pd.DataFrame, y_train: pd.Series
     ) -> None:
         """
@@ -188,12 +317,12 @@ class LRFeatureEngineer:
             df_tmp.groupby(bins, observed=True)['y'].mean()
         )
 
-        print(f"\n📐 euribor3m_local_rate:")
+        print(f"\n📐 subscribe_rate_by_euribor_bin:")
         print(f"   Bins fitted : {len(self._euribor_intervals)}")
         print(f"   Rate range  : [{self._euribor_bin_rates.min():.4f}, "
               f"{self._euribor_bin_rates.max():.4f}]")
 
-    def _transform_euribor_local_rate(self, X: pd.DataFrame) -> pd.DataFrame:
+    def _transform_subscribe_rate_by_euribor_bin(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Map euribor3m values to fitted bin rates.
         Out-of-training-range values fall back to the training median rate.
@@ -206,17 +335,18 @@ class LRFeatureEngineer:
 
         fallback = float(self._euribor_bin_rates.median())
         n_oob    = mapped.isna().sum()
-        X['euribor3m_local_rate'] = mapped.fillna(fallback)
+        X['subscribe_rate_by_euribor_bin'] = mapped.fillna(fallback)
 
-        print(f"✅ euribor3m_local_rate: range [{X['euribor3m_local_rate'].min():.4f}, "
-              f"{X['euribor3m_local_rate'].max():.4f}]"
+        print(f"✅ subscribe_rate_by_euribor_bin: range "
+              f"[{X['subscribe_rate_by_euribor_bin'].min():.4f}, "
+              f"{X['subscribe_rate_by_euribor_bin'].max():.4f}]"
               + (f"  ({n_oob} OOB → median fallback)" if n_oob else ""))
         return X
 
     # ------------------------------------------------------------------
-    # dow_month_encoded
+    # subscribe_rate_by_dow_month (historically dow_month_encoded)
     # ------------------------------------------------------------------
-    def _fit_dow_month_encoded(
+    def _fit_subscribe_rate_by_dow_month(
         self, X_train: pd.DataFrame, y_train: pd.Series
     ) -> None:
         """
@@ -240,13 +370,13 @@ class LRFeatureEngineer:
             + self.smoothing_factor * self._global_mean
         ) / (stats['count'] + self.smoothing_factor)
 
-        print(f"\n📐 dow_month_encoded:")
+        print(f"\n📐 subscribe_rate_by_dow_month:")
         print(f"   Global mean  : {self._global_mean:.4f}")
         print(f"   Cells fitted : {len(self._dm_smoothed)}")
         print(f"   Encoded range: [{self._dm_smoothed.min():.4f}, "
               f"{self._dm_smoothed.max():.4f}]")
 
-    def _transform_dow_month_encoded(self, X: pd.DataFrame) -> pd.DataFrame:
+    def _transform_subscribe_rate_by_dow_month(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Map day x month combos to smoothed rates.
         Unseen combinations (e.g. rare test combos) fall back to global mean.
@@ -256,11 +386,11 @@ class LRFeatureEngineer:
             + X['month'].astype(str)
         )
         n_unseen = dm_key.map(self._dm_smoothed).isna().sum()
-        X['dow_month_encoded'] = (
+        X['subscribe_rate_by_dow_month'] = (
             dm_key.map(self._dm_smoothed).fillna(self._global_mean)
         )
 
-        print(f"✅ dow_month_encoded"
+        print(f"✅ subscribe_rate_by_dow_month"
               + (f": {n_unseen} unseen cells → global mean fallback" if n_unseen
                  else ": all cells mapped"))
         return X
@@ -286,9 +416,9 @@ def engineer_features(
     y_train : pd.Series
         Training labels — required for leakage-free target encodings.
     n_bins : int
-        Quantile bins for euribor3m_local_rate. Default 20.
+        Quantile bins for subscribe_rate_by_euribor_bin. Default 20.
     smoothing_factor : int
-        Laplace smoothing weight for dow_month_encoded. Default 100.
+        Laplace smoothing weight for subscribe_rate_by_dow_month. Default 100.
 
     Returns
     -------

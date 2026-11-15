@@ -13,7 +13,7 @@ Example
 ...     STAGE1_FEATURES, CalibratedStage1MLP,
 ... )
 >>> stage = CalibratedStage1MLP(
-...     calibration_method="auto",
+...     calibration_method="sigmoid",
 ...     cv_folds=10,
 ...     n_trials=100,
 ...     random_state=42,

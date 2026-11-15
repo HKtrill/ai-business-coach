@@ -10,8 +10,8 @@ Stage 4 train columns. A fold's held-out rows must be scored by a pipeline
 that never saw them, so everything learned from the data is refit inside the
 fold:
 
-* the target encodings ``euribor3m_local_rate`` and ``dow_month_encoded``
-  (audit F3). Fitted once on the whole training split, they carry each
+* the target encodings ``subscribe_rate_by_euribor_bin`` and
+  ``subscribe_rate_by_dow_month`` (audit F3). Fitted once on the whole training split, they carry each
   held-out row's own label into its features. Here ``LRFeatureEngineer`` is
   refit on the fold's training rows and applied to its held-out rows;
 * the ``StandardScaler`` (audit F4), refit on the fold's training rows.

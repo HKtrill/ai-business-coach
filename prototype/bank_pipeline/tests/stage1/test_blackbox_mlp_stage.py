@@ -46,8 +46,11 @@ from blackbox_pipeline.models.mlp import (
     assert_matches_glass, load_stage1_mlp, params_to_kwargs, save_stage1_mlp,
 )
 from shared.stage1.calibration_guard import CalibrationLeakageError
-from shared.stage1.feature_engineering import LR_FEATURES, LRFeatureEngineer, engineer_features
-from shared.stage1.oof_calibration import CALIBRATION_FAMILIES, Stage1CalibratedModel
+from shared.stage1.feature_engineering import (HISTORICAL_LR_FEATURES, LR_FEATURES,
+                                               STAGE1_FEATURE_CONTRACT, LRFeatureEngineer,
+                                               engineer_features, feature_contract_record)
+from shared.stage1.oof_calibration import (CALIBRATION_FAMILIES, STAGE1_CALIBRATION_FAMILY,
+                                           Stage1CalibratedModel)
 from shared.stage4 import Stage4InputError, build_stage4_inputs, stage_output_stream
 from shared.stage_io import (
     THRESHOLD_SOURCES, StageOutput, StageOutputError, ThresholdContaminationError,
@@ -292,7 +295,7 @@ def test_metrics_and_description_report_the_fitted_stage(mlp_run):
 # ----------------------------------------------------------------------
 def test_calibration_records_the_winner_and_the_request(mlp10):
     stage, out = mlp10.stage, mlp10.output
-    assert stage.config.calibration_method == out.calibration_requested == "auto"
+    assert stage.config.calibration_method == out.calibration_requested == STAGE1_CALIBRATION_FAMILY
     assert stage.calibration_method == out.calibration_method in CALIBRATION_FAMILIES
     assert stage.calibrated_model.method == stage.calibration_method
     assert stage.calibration_metrics["oof_family_by_fold"].count(",") == CV - 1
@@ -343,7 +346,8 @@ def test_drift_from_the_glass_feature_set_is_detected():
     assert_matches_glass(LR_FEATURES)
     assert_matches_glass(list(reversed(LR_FEATURES)))                 # membership, not order
     for drifted in (LR_FEATURES[:-1], [*LR_FEATURES, "previous"],
-                    ["cellular_crisis", "euribor3m_local_rate", "dow_encoded"]):
+                    [*LR_FEATURES[:-1], "subscribe_rate_by_dow"],
+                    list(HISTORICAL_LR_FEATURES)):                 # pre-rename names
         with pytest.raises(AssertionError, match="drifted"):
             assert_matches_glass(drifted)
 
@@ -375,7 +379,7 @@ def test_columns_are_realigned_by_name_so_their_order_is_free(mlp_run):
 
 def test_a_dtype_only_change_scores_identically(mlp_run):
     X = mlp_run.X_test
-    np.testing.assert_allclose(mlp_run.stage.predict_proba(mut.cast_column(X, "cellular_crisis")),
+    np.testing.assert_allclose(mlp_run.stage.predict_proba(mut.cast_column(X, "cellular_downturn")),
                                mlp_run.stage.predict_proba(X))
 
 
@@ -535,13 +539,15 @@ def test_artifact_keeps_schema_config_and_provenance(plain, saved):
     _, _, _, stage, output = plain
     out_dir, path, _ = saved
     art = _quiet(load_stage1_mlp, path)
-    assert art["artifact_version"] == "2.0"
+    assert art["artifact_version"] == "3.0"
     assert art["feature_names"] == list(STAGE1_FEATURES)
+    assert art["feature_contract"] == feature_contract_record(STAGE1_FEATURE_CONTRACT)
     assert list(art["scaler"].feature_names_in_) == list(STAGE1_FEATURES)
     meta = json.loads((out_dir / "stage1_mlp_metadata.json").read_text())
     assert Stage1MLPConfig.from_dict(meta["config"]) == stage.config      # via JSON lists
     assert not {"scaler", "model", "calibrated_model", "train_proba_oof", "train_fold_id",
                 "y_train", "stage_output"} & set(meta)
+    assert meta["feature_contract"] == art["feature_contract"]              # in the metadata too
     assert (art["optimal_threshold"], art["threshold_source"]) == (stage.optimal_threshold,
                                                                    stage.THRESHOLD_SOURCE)
     assert art["oof_provenance"] == stage.oof_provenance_ and "nested cross-fit" in art["oof_provenance"]
@@ -656,7 +662,8 @@ def test_the_notebook_runs_stage1_under_the_tested_protocol():
     named, value, consts = _notebook_calls()
     (ctor,) = named("CalibratedStage1MLP")
     kw = {k.arg: value(k.value) for k in ctor.keywords}
-    assert kw == {"calibration_method": "auto", "cv_folds": CV, "n_trials": 100, "random_state": SEED}
+    assert kw == {"calibration_method": STAGE1_CALIBRATION_FAMILY, "cv_folds": CV, "n_trials": 100,
+                  "random_state": SEED}
     fits = [c for c in named("fit") if any(k.arg == "X_train_raw" for k in c.keywords)]
     assert len(fits) == 1 and ast.unparse(fits[0].func.value) == "stage1"      # F3: raw rows passed
     assert ast.unparse(consts["STAGE1_THRESHOLD"]) == "stage1.optimal_threshold"

@@ -507,7 +507,8 @@ def test_the_glass_notebook_runs_meta_ebm_on_its_own_producers_outputs():
     c8, lr = call("train_calibrated_lr_stage")                        # Stage 1: its saved path
     assert bound(lr) == "(lr_calibrated_artifact, lr_calibrated_path)"
     assert [ast.unparse(a) for a in lr.args] == ["X_train_eng", "X_test_eng", "y_train", "y_test"]
-    assert kw(lr) == {"save": "True", "output_dir": "'./models/lr'", "X_train_raw": "X_train"}
+    assert kw(lr) == {"save": "True", "output_dir": "'./models/lr'", "X_train_raw": "X_train",
+                      "calibration_method": "'sigmoid'"}         # the shared Stage 1 family
 
     c14, crossfit = call("crossfit_stage2")                           # Stage 2: the bundle
     c16, save = call("save_model")

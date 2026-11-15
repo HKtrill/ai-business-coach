@@ -482,18 +482,37 @@ def test_router_defaults_are_unchanged():
     assert g["max_union_leakage_rate_pass1"] is None
 
 
+#: Baseline-pinned files changed on purpose, each with the change that did it
+#: and the file's LF-normalised SHA-256 as that change left it. Any further
+#: edit fails again. ``stage2_baseline.py --check`` reports each one as a
+#: code-identity note, recorded in that commit's run record (PR 39 §7.5).
+DELIBERATE_PIN_CHANGES = {
+    "shared/stage2/diagnostics/boundary.py": (
+        "PR 39 Commit 2 Step 2B: extract_lr_view accepts the historical Stage 1 "
+        "feature contract 1.0.0 beside the renamed 2.0.0, check label unchanged",
+        "a8340178ce641fb38b951b9889fe640c6b1501595f9cbe533788398726ca4ce8",
+    ),
+}
+
+
 def test_the_baseline_pinned_code_is_unchanged():
     """
     The 15 code files the pre-correction baseline pins (LF-normalised SHA-256).
     PR 38 gate G10 changes tests/support/artifact_audit.py deliberately; record
-    that here in the same change, never by deleting this test.
+    that here in the same change (``DELIBERATE_PIN_CHANGES``), never by
+    deleting this test.
     """
     manifest = json.loads((BASELINE / "MANIFEST.json").read_text(encoding="utf-8"))
     pinned = manifest["code"]["files"]
     assert len(pinned) == 15
-    changed = []
+    assert set(DELIBERATE_PIN_CHANGES) <= set(pinned)
+    changed, unexpected = [], []
     for rel, want in pinned.items():
         data = (BANK_ROOT / rel).read_bytes().replace(b"\r\n", b"\n")
-        if hashlib.sha256(data).hexdigest() != want:
+        got = hashlib.sha256(data).hexdigest()
+        if got != want:
             changed.append(rel)
-    assert changed == []
+            if rel not in DELIBERATE_PIN_CHANGES or got != DELIBERATE_PIN_CHANGES[rel][1]:
+                unexpected.append(rel)
+    assert unexpected == []
+    assert sorted(changed) == sorted(DELIBERATE_PIN_CHANGES)       # no stale entries

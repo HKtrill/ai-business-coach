@@ -4,7 +4,7 @@ synthetic bank data with the production producers, savers and Stage 4.
 
     split    data.global_splits.GlobalSplitManager(test_size=0.20, random_state=42)
     Stage 1  shared.stage1 engineer_features -> CalibratedLRStage (10-fold nested
-             cross-fit, calibration "auto") -> save()            [Cells 5, 8]
+             cross-fit, the shared sigmoid calibration) -> save() [Cells 5, 8]
     Stage 2  glass_router.rf engineer_features -> full-train GlassRouterPipeline ->
              build_glass_output / predict_proba (test); crossfit_stage2 (5 folds,
              seed 42) -> ModelSaver.save_model(oof=..., split_fingerprint=
@@ -57,6 +57,7 @@ from glass_pipeline.glass_router.pipeline import GlassRouterPipeline
 from glass_pipeline.glass_router.rf import engineer_features as router_features
 from glass_pipeline.glass_router.rule_generator.rule_logger import RuleLogger
 from glass_pipeline.lr.lr_stage_calibrated import CalibratedLRStage
+from shared.stage1.oof_calibration import STAGE1_CALIBRATION_FAMILY
 from glass_pipeline.meta_ebm.meta_stage import train_meta_stage
 from shared.stage1.feature_engineering import engineer_features as lr_features
 from shared.stage2 import RF_FEATURES_BINARY
@@ -145,7 +146,8 @@ def build_glass_cascade(out_dir: Path, GS: Optional[dict] = None) -> GlassCascad
     with _lightweight():
         # Stage 1
         lr_tr, lr_te, _ = lr_features(X_tr, X_te, y_tr)
-        stage = CalibratedLRStage(tune_hyperparameters=False, calibration_method="auto",
+        stage = CalibratedLRStage(tune_hyperparameters=False,
+                                  calibration_method=STAGE1_CALIBRATION_FAMILY,
                                   optimize_threshold=True, cv_folds=10)
         stage.fit(lr_tr, y_tr, X_train_raw=X_tr)
         stage.evaluate(lr_te, y_te, plot=False)

@@ -22,16 +22,16 @@
 
 **Objective:** Establish the PR 39 execution sequence, regeneration dependencies, evaluation requirements, and acceptance criteria before modifying the finalized cascades.
 
-- [ ] Review the PR 38 handoff, accepted run `c3_20261112_153333`, frozen Stage 2 selector, and outstanding PR 36 naming requirements.
-- [ ] Inventory Stage 1–4 artifacts, training scripts, shared contracts, downstream consumers, and notebook dependencies for both arms.
-- [ ] Identify which artifacts must be regenerated after calibration, feature naming, binning, or component naming changes.
-- [ ] Define the Stage 1 calibration comparison and decision criteria before examining new results.
-- [ ] Define the train-only Stage 2 binning evaluation, threshold-change criteria, and validation requirements.
-- [ ] Establish a versioned PR 39 artifact/provenance location without overwriting PR 38 evidence.
-- [ ] Define the Stage 1–3 regeneration sequence, Stage 4 dependencies, and 2×2 arbiter crossover protocol.
-- [ ] Establish testing, reproducibility, serialization, compatibility, and final notebook acceptance requirements.
-- [ ] Explicitly separate Phase 1 functional validation from Phase 2 notebook presentation and research preparation.
-- [ ] Finalize and version-control the PR 39 roadmap.
+- [x] Review the PR 38 handoff, accepted run `c3_20261112_153333`, frozen Stage 2 selector, and outstanding PR 36 naming requirements.
+- [x] Inventory Stage 1–4 artifacts, training scripts, shared contracts, downstream consumers, and notebook dependencies for both arms.
+- [x] Identify which artifacts must be regenerated after calibration, feature naming, binning, or component naming changes.
+- [x] Define the Stage 1 calibration comparison and decision criteria before examining new results.
+- [x] Define the train-only Stage 2 binning evaluation, threshold-change criteria, and validation requirements.
+- [x] Establish a versioned PR 39 artifact/provenance location without overwriting PR 38 evidence.
+- [x] Define the Stage 1–3 regeneration sequence, Stage 4 dependencies, and 2×2 arbiter crossover protocol.
+- [x] Establish testing, reproducibility, serialization, compatibility, and final notebook acceptance requirements.
+- [x] Explicitly separate Phase 1 functional validation from Phase 2 notebook presentation and research preparation.
+- [x] Finalize and version-control the PR 39 roadmap.
 
 **Deliverable:** Approved PR 39 execution plan with frozen decision criteria, artifact dependencies, and acceptance requirements.
 
@@ -43,25 +43,25 @@
 
 #### Step 2A — Calibration Policy
 
-- [ ] Review existing sigmoid and isotonic calibration implementations, diagnostics, and historical evidence.
-- [ ] Compare calibration quality using leakage-safe training-side OOF evidence, including probability reliability, score resolution, and calibration stability.
-- [ ] Measure whether isotonic score granularity materially affects Stage 4 inputs or decision behavior using an appropriately isolated diagnostic comparison.
-- [ ] Evaluate the comparison against the criteria established in Commit 1.
-- [ ] Select one shared calibration policy for the GLASS and black-box arms.
-- [ ] Update calibration configuration, provenance requirements, shared contracts, and focused tests.
-- [ ] Freeze the Stage 1 calibration policy without regenerating the full cascade yet.
+- [x] Review existing sigmoid and isotonic calibration implementations, diagnostics, and historical evidence.
+- [x] Compare calibration quality using leakage-safe training-side OOF evidence, including probability reliability, score resolution, and calibration stability.
+- [x] Measure whether isotonic score granularity materially affects Stage 4 inputs or decision behavior using an appropriately isolated diagnostic comparison.
+- [x] Evaluate the comparison against the criteria established in Commit 1.
+- [x] Select one shared calibration policy for the GLASS and black-box arms.
+- [x] Update calibration configuration, provenance requirements, shared contracts, and focused tests.
+- [x] Freeze the Stage 1 calibration policy without regenerating the full cascade yet.
 
 #### Step 2B — Feature Naming and Contract Migration
 
-- [ ] Rename the following Stage 1 features:
+- [x] Rename the following Stage 1 features:
   - `cellular_crisis` → `cellular_downturn`
   - `euribor3m_local_rate` → `subscribe_rate_by_euribor_bin`
   - `dow_month_encoded` → `subscribe_rate_by_dow_month`
-- [ ] Update feature definitions, training code, imports, metadata, documentation, and dependent references.
-- [ ] Verify that naming-only changes preserve feature values and mathematical behavior.
-- [ ] Revalidate leakage-safe handling of label-derived feature encodings, especially within OOF folds.
-- [ ] Update serialization and compatibility expectations for the new versioned artifact contracts.
-- [ ] Run focused calibration, feature-contract, and compatibility tests.
+- [x] Update feature definitions, training code, imports, metadata, documentation, and dependent references.
+- [x] Verify that naming-only changes preserve feature values and mathematical behavior.
+- [x] Revalidate leakage-safe handling of label-derived feature encodings, especially within OOF folds.
+- [x] Update serialization and compatibility expectations for the new versioned artifact contracts.
+- [x] Run focused calibration, feature-contract, and compatibility tests.
 
 **Deliverable:** Frozen Stage 1 calibration and feature contracts, with implementation changes validated and ready for regeneration.
 
@@ -183,8 +183,8 @@
 
 ### PR 39 — Final Completion Boundary
 
-- [ ] **Commit 1 complete:** PR 39 roadmap, dependency audit, evaluation rules, and regeneration sequence finalized.
-- [ ] **Commit 2 complete:** Shared Stage 1 calibration and feature naming frozen.
+- [x] **Commit 1 complete:** PR 39 roadmap, dependency audit, evaluation rules, and regeneration sequence finalized.
+- [x] **Commit 2 complete:** Shared Stage 1 calibration and feature naming frozen.
 - [ ] **Commit 3 complete:** Stage 2 binning and GLASS component naming finalized.
 - [ ] **Commit 4 complete:** Final Stage 1–3 artifacts regenerated and accepted.
 - [ ] **Commit 5 complete:** Stage 4 arbiters regenerated, 2×2 crossover completed, and cascade baselines established.
@@ -196,9 +196,53 @@
 
 **Execution policy:** Use the Patch Method throughout. Favor one focused implementation patch per substantial step, with additional patches only for genuine corrections. Run focused tests during development and reserve expensive complete regression/notebook execution for the final integrated state wherever the acceptance requirements permit.
 
+## PR 40 — Test Warning Cleanup and Maintenance
+
+**Objective:** Eliminate recurring, actionable test warnings by correcting their underlying causes rather than suppressing them. Improve test clarity and maintainability while preserving the finalized PR 39 modeling contracts, behavior, artifacts, and reproducibility.
+
+### Commit 1 — Warning Diagnosis, Corrections, and Validation
+
+**Objective:** Identify and resolve the recurring scikit-learn MLP batch-size warnings and any closely related, actionable warnings through minimal, reviewable changes.
+
+#### Step 1A — Warning Inventory and Root-Cause Analysis
+
+- [ ] Start from the completed PR 39 baseline with a clean working tree.
+- [ ] Reproduce and inventory recurring warnings from the relevant test suites.
+- [ ] Identify warning sources, affected tests, triggering configurations, and underlying causes.
+- [ ] Distinguish harmless test-fixture issues from genuine implementation, compatibility, or deprecation concerns.
+- [ ] Determine the smallest safe correction for each actionable warning.
+
+#### Step 1B — Targeted Warning Corrections
+
+- [ ] Correct invalid or unnecessary MLP batch-size configurations, prioritizing synthetic test fixtures.
+- [ ] Preserve the effective training behavior and numerical expectations of affected tests.
+- [ ] Address other recurring warnings only where the cause is verified and the correction is similarly narrow.
+- [ ] Do not suppress warnings through filters, blanket pytest settings, or equivalent workarounds.
+- [ ] Preserve production hyperparameters, model-family behavior, frozen contracts, and existing artifacts.
+- [ ] Complete the corrections in one focused implementation patch; use a second only if necessary.
+
+#### Step 1C — Regression and Final Verification
+
+- [ ] Rerun affected tests and confirm their original assertions and contracts remain valid.
+- [ ] Verify that targeted warnings no longer occur without suppression.
+- [ ] Run relevant regression tests and confirm no new failures or warnings were introduced.
+- [ ] Verify that no model artifacts, historical evidence, or frozen research records were modified.
+- [ ] Review the final diff, confirm the changes remain maintenance-only, and commit the cleanup.
+
+**Deliverable:** A cleaner test suite with the identified warning causes corrected, passing regression tests, unchanged modeling behavior, and no warning suppression. One maintenance commit, with one or at most two implementation patches.
+
+---
+
+### PR 40 — Final Completion Boundary
+
+- [ ] **Commit 1 complete:** Recurring actionable warnings diagnosed, corrected, and validated without altering frozen modeling contracts or artifacts.
+- [ ] **PR 40 complete:** Maintenance changes committed, regression tests passing, and warning cleanup documented.
+
+**Out of scope:** Model retraining, hyperparameter optimization, feature engineering changes, calibration revisions, Stage 2 selector changes, artifact regeneration, notebook redesign, and unrelated refactoring.
+
 ### Phase 2 — Finalize the Notebooks and Freeze the Cascades
 
-#### PR 40 — Black-Box Notebook Presentation
+#### PR 41 — Black-Box Notebook Presentation
 
 - [ ] Condense verbose outputs into concise stage summaries
 - [ ] Build shared plotting infrastructure
@@ -207,7 +251,7 @@
 - [ ] Standardize saved cascade artifacts for downstream comparison loading
 - [ ] Final clean-kernel rerun
 
-#### PR 41 — GLASS Notebook Presentation and Cascade Freeze
+#### PR 42 — GLASS Notebook Presentation and Cascade Freeze
 
 - [ ] Condense and consolidate GLASS notebook outputs
 - [ ] Add cascade visuals through the shared plotting module
@@ -219,7 +263,7 @@
 
 ### Phase 3 — Comparisons Pipeline
 
-#### PR 42 — Comparison Scaffolding
+#### PR 43 — Comparison Scaffolding
 
 - [ ] Load frozen artifacts without retraining
 - [ ] Enforce split-fingerprint and feature-contract provenance
@@ -228,7 +272,7 @@
 - [ ] Freeze final comparison questions, primary metrics, and analysis plan before the final comparison rerun
 - [ ] Establish shared comparison tables / result schemas
 
-#### PR 43 — Cascade vs Cascade
+#### PR 44 — Cascade vs Cascade
 
 **Cascade comparison**
 - [ ] GLASS vs black-box comparison
@@ -253,7 +297,7 @@
 - [ ] Paired bootstrap confidence intervals
 - [ ] Compare calibrated probabilities where calibration-quality metrics are interpreted
 
-#### PR 44 — Standalone Model Baselines
+#### PR 45 — Standalone Model Baselines
 
 - [ ] Glass-box standalone models:
   - Logistic Regression
@@ -271,7 +315,7 @@
 - [ ] Generate OOF train-side predictions and held-out test predictions under the same leakage safeguards
 - [ ] Test whether either cascade adds predictive value beyond its strongest standalone alternatives
 
-#### PR 45 — Robustness and Ablations
+#### PR 46 — Robustness and Ablations
 
 - [ ] 5-fold vs 10-fold sensitivity on both arms
 - [ ] Repeated seeds / splits for model-family claims
@@ -296,7 +340,7 @@
 
 ### Phase 4 — Paper Readiness
 
-#### PR 46 — Paper Exports and Final Freeze
+#### PR 47 — Paper Exports and Final Freeze
 
 - [ ] Export final figures and tables
 - [ ] Final end-to-end validation

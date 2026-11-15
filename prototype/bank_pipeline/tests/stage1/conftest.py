@@ -297,7 +297,7 @@ def unrecorded_scale(stage, X: pd.DataFrame) -> np.ndarray:
 
 @pytest.fixture(scope="session")
 def lr_run() -> Stage1Run:
-    """The notebook configuration (auto calibration, 10 folds), without Optuna."""
+    """The notebook configuration (the shared sigmoid calibration, 10 folds), without Optuna."""
     return fit_glass_stage1()
 
 
@@ -310,6 +310,19 @@ def lr_run_5() -> Stage1Run:
 @pytest.fixture(scope="session")
 def mlp_run() -> Stage1Run:
     return fit_mlp_stage1()
+
+
+@pytest.fixture(scope="session")
+def lr_run_5_auto() -> Stage1Run:
+    """``lr_run_5`` with ``calibration_method="auto"``: both families and the per-fold
+    selection, the diagnostic path the PR 39 evidence run uses (not the policy)."""
+    return fit_glass_stage1(cv_folds=5, calibration_method="auto")
+
+
+@pytest.fixture(scope="session")
+def mlp_run_auto() -> Stage1Run:
+    """``mlp_run`` with ``calibration_method="auto"`` (see ``lr_run_5_auto``)."""
+    return fit_mlp_stage1(calibration_method="auto")
 
 
 @pytest.fixture

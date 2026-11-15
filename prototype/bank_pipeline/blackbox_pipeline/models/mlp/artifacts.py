@@ -14,6 +14,15 @@ probabilities, fold ids and labels (indexed Series), and — when a
 ``StageOutput`` is passed — the full shared contract including test
 probabilities and the threshold's provenance.
 
+v3.0 (PR 39)
+------------
+The three Stage 1 features were renamed (values unchanged; see
+``shared.stage1.feature_engineering.STAGE1_FEATURE_RENAMES``). v3.0 artifacts
+and their metadata record Stage 1 feature contract 2.0.0 under
+``feature_contract`` (id, version, ordered features, fingerprint). v2.0
+artifacts keep the names they were saved with (contract 1.0.0) and still load
+as they are; nothing in them is renamed.
+
 Versions (PR 37)
 ----------------
 Every save writes an immutable, read-only version
@@ -39,11 +48,18 @@ import pandas as pd
 import sklearn
 
 from shared.artifact_versions import save_versioned
+from shared.stage1.feature_engineering import (
+    artifact_feature_contract,
+    current_feature_contract_record,
+)
 
 __all__ = ["save_stage1_mlp", "load_stage1_mlp"]
 
 #: Bumped when the artifact layout changes.
-_ARTIFACT_VERSION = "2.0"
+_ARTIFACT_VERSION = "3.0"
+#: Versions ``load_stage1_mlp`` reads without a warning: 2.0 holds the
+#: historical feature names (contract 1.0.0), 3.0 the current ones (2.0.0).
+_READABLE_VERSIONS = ("2.0", "3.0")
 
 
 def save_stage1_mlp(
@@ -80,10 +96,12 @@ def save_stage1_mlp(
     Raises
     ------
     ValueError
-        If the stage is not fitted.
+        If the stage is not fitted, or its features are not the current
+        Stage 1 feature contract.
     """
     if not getattr(stage, "fitted", False):
         raise ValueError("Stage is not fitted; nothing to save")
+    feature_contract = current_feature_contract_record(stage.feature_names_, "Stage 1 MLP artifact")
 
     if stage_output is None:
         print(
@@ -100,12 +118,14 @@ def save_stage1_mlp(
         "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "config": stage.config.to_dict(),
         "feature_names": list(stage.feature_names_),
+        "feature_contract": feature_contract,
         "scaler": stage.scaler,
         "model": stage.model,
         "calibrated_model": stage.calibrated_model,
         "best_params": stage.best_params,
         "best_cv_roc_auc": stage.best_cv_roc_auc,
-        "calibration_method": stage.calibration_method,
+        "calibration_method": stage.calibration_method,         # winner
+        "calibration_requested": stage.config.calibration_method,  # request
         "calibration_metrics": stage.calibration_metrics,
         "optimal_threshold": stage.optimal_threshold,
         "cv_f2": stage.cv_f2,
@@ -178,14 +198,20 @@ def load_stage1_mlp(path: str | Path) -> dict:
 
     Notes
     -----
-    A version mismatch produces a warning but does not prevent loading.
+    The payload is returned as saved. v2.0 (historical feature names) and
+    v3.0 load silently; a v3.0 artifact whose ``feature_contract`` disagrees
+    with its feature names is refused. Any other version produces a warning
+    but does not prevent loading.
     """
     payload = joblib.load(Path(path))
 
-    if payload.get("artifact_version") != _ARTIFACT_VERSION:
+    version = payload.get("artifact_version")
+    if version == _ARTIFACT_VERSION:
+        artifact_feature_contract(payload)           # raises on a mismatched record
+    elif version not in _READABLE_VERSIONS:
         print(
-            f"⚠️  artifact version {payload.get('artifact_version')} "
-            f"(expected {_ARTIFACT_VERSION}) — fields may have moved"
+            f"⚠️  artifact version {version} "
+            f"(expected one of {_READABLE_VERSIONS}) — fields may have moved"
         )
 
     return payload

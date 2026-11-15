@@ -32,6 +32,19 @@ Procedure
    training split (the stage's final model). That pair scores the test split,
    whose labels are never used.
 
+Steps 2-3 compute both families only for ``method="auto"``. With one family
+requested, steps 2-4 use that family alone, so every outer fold, the
+out-of-fold output and the final calibrator share it.
+
+Stage 1 policy
+--------------
+Both arms use ``STAGE1_CALIBRATION_FAMILY`` (``"sigmoid"``), the family the
+registered conservative rule C1-C5 of the frozen PR 39 execution contract
+(section 6.1) selected on evidence run ``c2_20261114_184433``; the decision
+record is ``STAGE1_CALIBRATION_POLICY["decision_record"]``. It is the rule's
+selection, not a finding that sigmoid is the better-calibrated family.
+``"auto"`` stays available for diagnostics: the evidence run uses it.
+
 Scores are what ``CalibratedClassifierCV`` feeds its calibrators:
 ``decision_function`` when the base model has one (LR), otherwise
 ``predict_proba[:, 1]`` (MLP). The calibrators match scikit-learn's: Platt's
@@ -75,6 +88,8 @@ from .crossfit import FoldDesign, inner_fold_designs
 
 __all__ = [
     "CALIBRATION_FAMILIES",
+    "STAGE1_CALIBRATION_FAMILY",
+    "STAGE1_CALIBRATION_POLICY",
     "PlattCalibrator",
     "Stage1CalibratedModel",
     "OOFCalibration",
@@ -84,6 +99,17 @@ __all__ = [
 ]
 
 CALIBRATION_FAMILIES = ("sigmoid", "isotonic")
+
+#: The one Stage 1 calibration family of both arms (PR 39, Commit 2, Step 2A).
+STAGE1_CALIBRATION_FAMILY = "sigmoid"
+STAGE1_CALIBRATION_POLICY = {
+    "id": "pr39-stage1-calibration",
+    "version": "1.0.0",
+    "family": STAGE1_CALIBRATION_FAMILY,
+    "evidence_run": "c2_20261114_184433",
+    "decision_record": ("research_logs/pr39/c2_20261114_184433/"
+                        "stage1_calibration_decision.json"),
+}
 
 
 # ----------------------------------------------------------------------
@@ -320,6 +346,9 @@ def calibrate_oof(
         "oof_selection": "per_fold_inner_brier" if auto else "requested",  # OOF output (step 3)
         "oof_family_by_fold": ",".join(fold_family[k] for k in sorted(fold_family)),
         "metrics_population": "out_of_fold",
+        # the shared Stage 1 policy this calibration follows, if it follows it
+        "policy": (f"{STAGE1_CALIBRATION_POLICY['id']}/{STAGE1_CALIBRATION_POLICY['version']}"
+                   if method == STAGE1_CALIBRATION_FAMILY else None),
     }
     index = y.index
     return OOFCalibration(

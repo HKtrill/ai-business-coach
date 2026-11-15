@@ -41,6 +41,7 @@ from blackbox_pipeline.models.mlp import (
     CalibratedStage1MLP, Stage1MLPClassifier, Stage1MLPConfig, oversample_positives,
     params_to_kwargs, sample_params, tune_stage1_mlp_auc,
 )
+from shared.stage1.oof_calibration import STAGE1_CALIBRATION_FAMILY
 
 SEED = 1
 #: Settings that early-stop well before ``max_epochs`` on ``_data(SEED)``.
@@ -325,10 +326,12 @@ def test_early_stopping_keeps_the_best_epoch_and_stops_patience_epochs_later(dat
 # ----------------------------------------------------------------------
 def test_defaults_are_the_notebook_protocol():
     cfg = Stage1MLPConfig()
-    assert (cfg.calibration_method, cfg.cv_folds, cfg.n_trials, cfg.random_state) == ("auto", 10, 100, 42)
+    assert (cfg.calibration_method, cfg.cv_folds, cfg.n_trials, cfg.random_state) == (
+        STAGE1_CALIBRATION_FAMILY, 10, 100, 42)
     assert (cfg.threshold_beta, cfg.threshold_grid, cfg.strict_oof) == (2.0, (0.05, 0.50, 0.01), True)
     stage = CalibratedStage1MLP()
-    assert stage.config == cfg and stage.cv_folds == 10 and stage.calibration_method == "auto"
+    assert stage.config == cfg and stage.cv_folds == 10
+    assert stage.calibration_method == STAGE1_CALIBRATION_FAMILY
     fixed = cfg.estimator_fixed_kwargs
     assert fixed == {"max_epochs": 200, "patience": 15, "val_fraction": 0.15, "random_state": 42}
     defaults = Stage1MLPClassifier().get_params()

@@ -170,9 +170,10 @@ def _lr_factory_protocol() -> tuple:
     tree = ast.parse(inspect.getsource(lr_stage_calibrated.train_lr_stage))
     (call,) = [n for n in ast.walk(tree) if isinstance(n, ast.Call)
                and getattr(n.func, "id", None) == "CalibratedLRStage"]
-    kw = {k.arg: ast.literal_eval(k.value) for k in call.keywords}
+    kw = {k.arg: k.value for k in call.keywords}
     defaults = inspect.signature(CalibratedLRStage).parameters
-    return tuple(kw.get(k, defaults[k].default) for k in ("cv_folds", "random_state"))
+    return tuple(ast.literal_eval(kw[k]) if k in kw else defaults[k].default
+                 for k in ("cv_folds", "random_state"))
 
 
 def _stage3_protocol(nb: Notebook, name: str) -> tuple:

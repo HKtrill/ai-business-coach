@@ -1,0 +1,4 @@
+# PR 39 records are byte-exact evidence: later records pin them by SHA-256, so Git
+# must never convert their line endings (core.autocrlf would break every hash).
+# Applies to files inside each run folder, not to this folder's README.md.
+*/** -text

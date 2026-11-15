@@ -4,9 +4,10 @@ blackbox_pipeline.models.mlp.features
 The Stage 1 input contract — which columns, and what a valid label vector is.
 
 Stage 1 sees exactly the three engineered features the GLASS LR stage sees
-(``glass_pipeline.lr.feature_engineering.LR_FEATURES``). Holding that list in
+(``shared.stage1.feature_engineering.LR_FEATURES``). Holding that list in
 one place means drift between the two arms fails loudly instead of quietly
-changing what "Stage 1" means.
+changing what "Stage 1" means. The names are the Stage 1 feature contract
+2.0.0 (PR 39 renames; values unchanged): see ``STAGE1_FEATURE_CONTRACT``.
 
 Notes
 -----
@@ -32,11 +33,13 @@ __all__ = [
     "assert_matches_glass",
 ]
 
-#: Canonical Stage 1 feature names, in the order the scaler and MLP expect.
+#: Canonical Stage 1 feature names, in the order the scaler and MLP expect
+#: (Stage 1 feature contract 2.0.0; ``assert_matches_glass`` keeps it in step
+#: with the GLASS LR list).
 STAGE1_FEATURES: Tuple[str, ...] = (
-    "cellular_crisis",
-    "euribor3m_local_rate",
-    "dow_month_encoded",
+    "cellular_downturn",
+    "subscribe_rate_by_euribor_bin",
+    "subscribe_rate_by_dow_month",
 )
 
 
