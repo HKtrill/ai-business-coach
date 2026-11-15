@@ -1,0 +1,2259 @@
+{
+  "format": "pr39.stage2.binning_evidence/1",
+  "run_id": "c3_20261114_231604",
+  "contract": {
+    "record": "documentation/methodology/pr39_execution_contract.md",
+    "version": "1.0.0",
+    "section": "6.2",
+    "gates": [
+      "A3.1",
+      "A3.2",
+      "A3.3"
+    ],
+    "decision": "D6"
+  },
+  "registered": true,
+  "status": "official Step 3A evidence",
+  "started_utc": "2026-11-15T07:16:08+00:00",
+  "finished_utc": "2026-11-15T07:16:16+00:00",
+  "population": {
+    "rows": 32950,
+    "positives": 3712,
+    "router_split_fingerprint": "fc3e73a5ef91aea4",
+    "train_label_fingerprint": "b984d2a50527",
+    "fold_fingerprint": "8aea082fcaf371b7",
+    "n_folds": 5,
+    "frozen_protocol_check": {
+      "passed": true,
+      "checks": {
+        "rows": {
+          "got": 32950,
+          "pinned": 32950,
+          "passed": true
+        },
+        "positives": {
+          "got": 3712,
+          "pinned": 3712,
+          "passed": true
+        },
+        "fold_rows": {
+          "got": [
+            6590,
+            6590,
+            6590,
+            6590,
+            6590
+          ],
+          "pinned": [
+            6590,
+            6590,
+            6590,
+            6590,
+            6590
+          ],
+          "passed": true
+        },
+        "fold_positives": {
+          "got": [
+            742,
+            742,
+            742,
+            743,
+            743
+          ],
+          "pinned": [
+            742,
+            742,
+            742,
+            743,
+            743
+          ],
+          "passed": true
+        },
+        "router_split_fingerprint": {
+          "got": "fc3e73a5ef91aea4",
+          "pinned": "fc3e73a5ef91aea4",
+          "passed": true
+        },
+        "train_label_fingerprint": {
+          "got": "b984d2a50527",
+          "pinned": "b984d2a50527",
+          "passed": true
+        },
+        "fold_fingerprint": {
+          "got": "8aea082fcaf371b7",
+          "pinned": "8aea082fcaf371b7",
+          "passed": true
+        }
+      }
+    },
+    "test_split": "labels never read; features unused; the test index enters only the row-only router split fingerprint"
+  },
+  "frozen_records": {
+    "current": {
+      "identities": {
+        "contract": [
+          "pr37-stage2-primary",
+          "1.0.0",
+          "0817825b9eecbd11"
+        ],
+        "protocol": [
+          "pr38-stage2-evaluation",
+          "1.0.0",
+          "245a1a68fb68cf4e"
+        ],
+        "glass_profile": {
+          "profile_id": "pr37-glass-router-primary",
+          "profile_version": "1.0.0",
+          "fingerprint": "198731d5cdf263f4"
+        },
+        "rf_profile": {
+          "profile_id": "pr37-rf-router-primary",
+          "profile_version": "1.0.0",
+          "fingerprint": "4e3f9c07e6ecc8ad"
+        }
+      },
+      "feature_pathway": {
+        "pathway": "fold_label_excluded",
+        "record": [
+          "stage2-inner-fold-feature-isolation",
+          "1.0.0",
+          "0d4953ef34d1d3dc"
+        ]
+      }
+    },
+    "accepted_run": {
+      "identities": {
+        "contract": [
+          "pr37-stage2-primary",
+          "1.0.0",
+          "0817825b9eecbd11"
+        ],
+        "glass_profile": {
+          "fingerprint": "198731d5cdf263f4",
+          "profile_id": "pr37-glass-router-primary",
+          "profile_version": "1.0.0"
+        },
+        "protocol": [
+          "pr38-stage2-evaluation",
+          "1.0.0",
+          "245a1a68fb68cf4e"
+        ],
+        "rf_profile": {
+          "fingerprint": "4e3f9c07e6ecc8ad",
+          "profile_id": "pr37-rf-router-primary",
+          "profile_version": "1.0.0"
+        }
+      },
+      "feature_pathway": {
+        "pathway": "fold_label_excluded",
+        "record": [
+          "stage2-inner-fold-feature-isolation",
+          "1.0.0",
+          "0d4953ef34d1d3dc"
+        ]
+      }
+    },
+    "accepted_run_manifest": "research_logs/pr38/c3_20261112_153333/primary_MANIFEST.json",
+    "unchanged": true
+  },
+  "scope": {
+    "revalidated": [
+      "NSD",
+      "ECI"
+    ],
+    "retained_without_revalidation": [
+      "JED",
+      "CCI",
+      "DOW",
+      "BEHAV",
+      "CAMPAIGN",
+      "CPI"
+    ]
+  },
+  "binning_identity": {
+    "id": "stage2-binning",
+    "sha256": "9cdd79aff9d61101949a7e761c6837e13e81036d865c37b5213dca2867912376",
+    "fingerprint": "9cdd79aff9d61101",
+    "covers": [
+      "BINNING_STRATEGY",
+      "RF_FEATURES_BINARY"
+    ]
+  },
+  "intended_semantics": {
+    "nsd_cold": "below",
+    "nsd_warm": null,
+    "nsd_elevated": "above",
+    "nsd_hot": "above",
+    "eci_cold": "below",
+    "eci_mid": null,
+    "eci_warm": "above",
+    "eci_hot": "above"
+  },
+  "criteria": {
+    "T1": {
+      "name": "sparse bin",
+      "min_expected_positives": 10,
+      "rule": "in any outer fold, held-out support x that fold's base rate < 10"
+    },
+    "T2": {
+      "name": "reversal",
+      "interval": "Wilson 95%",
+      "z": 1.959963984540054,
+      "rule": "pooled lift interval wholly on the wrong side of 1.0 for the intended direction (bins with no intended direction cannot fire)"
+    },
+    "T3": {
+      "name": "ordering",
+      "min_folds": 4,
+      "n_folds": 5,
+      "rule": "an adjacent pair inverted in pooled OOF lift and in at least 4 of 5 folds"
+    },
+    "T4": {
+      "name": "hot collapse",
+      "min_lift": 1.5,
+      "rule": "a *_hot bin's pooled OOF lift < 1.5"
+    },
+    "note": "binning criteria, not routing obligations: the routed-set floors (Pass 1 125, Pass 2 75 rows) are not applied to bins and are unchanged"
+  },
+  "eb": {
+    "method": "outer fold k: RFFeatureEngineer fitted on the training rows outside k, applied to the rows of k (features only), binned with the thresholds under test through the production binning path; in-sample: one engineer fitted on all training rows (the historical method)",
+    "fold_fits": [
+      {
+        "fold": 0,
+        "fit_rows": 26360,
+        "fit_positives": 2970,
+        "fit_label_fingerprint": "85c06667c5ec",
+        "heldout_rows": 6590,
+        "heldout_rows_in_fit": 0
+      },
+      {
+        "fold": 1,
+        "fit_rows": 26360,
+        "fit_positives": 2970,
+        "fit_label_fingerprint": "530be40451f7",
+        "heldout_rows": 6590,
+        "heldout_rows_in_fit": 0
+      },
+      {
+        "fold": 2,
+        "fit_rows": 26360,
+        "fit_positives": 2970,
+        "fit_label_fingerprint": "24e4da6a264c",
+        "heldout_rows": 6590,
+        "heldout_rows_in_fit": 0
+      },
+      {
+        "fold": 3,
+        "fit_rows": 26360,
+        "fit_positives": 2969,
+        "fit_label_fingerprint": "add85f9ee20c",
+        "heldout_rows": 6590,
+        "heldout_rows_in_fit": 0
+      },
+      {
+        "fold": 4,
+        "fit_rows": 26360,
+        "fit_positives": 2969,
+        "fit_label_fingerprint": "3e17d1f98a63",
+        "heldout_rows": 6590,
+        "heldout_rows_in_fit": 0
+      }
+    ],
+    "families": {
+      "NSD": {
+        "source": "neighborhood_subscription_density",
+        "thresholds": [
+          [
+            "nsd_cold",
+            null,
+            0.0524
+          ],
+          [
+            "nsd_warm",
+            0.0524,
+            0.192
+          ],
+          [
+            "nsd_elevated",
+            0.192,
+            0.23
+          ],
+          [
+            "nsd_hot",
+            0.23,
+            null
+          ]
+        ],
+        "historical_rationale": "Dead <=0.052 (0.27-0.49x), transition to 0.19 (~0.9x), warm 0.19-0.23 (1.04-1.43x), hot >0.23 (4.08x lift)",
+        "oof": {
+          "base_rate": {
+            "pooled": {
+              "rows": 32950,
+              "positives": 3712,
+              "base_rate": 0.11265553869499241
+            },
+            "folds": [
+              {
+                "rows": 6590,
+                "positives": 742,
+                "base_rate": 0.1125948406676783
+              },
+              {
+                "rows": 6590,
+                "positives": 742,
+                "base_rate": 0.1125948406676783
+              },
+              {
+                "rows": 6590,
+                "positives": 742,
+                "base_rate": 0.1125948406676783
+              },
+              {
+                "rows": 6590,
+                "positives": 743,
+                "base_rate": 0.11274658573596358
+              },
+              {
+                "rows": 6590,
+                "positives": 743,
+                "base_rate": 0.11274658573596358
+              }
+            ]
+          },
+          "bins": {
+            "nsd_cold": {
+              "pooled": {
+                "support": 20364,
+                "positives": 1001,
+                "rate": 0.04915537222549597,
+                "lift": 0.43633338222793433,
+                "lift_wilson95": [
+                  0.41072234734978436,
+                  0.46345399498209716
+                ],
+                "expected_positives": 2294.1173899848254
+              },
+              "folds": [
+                {
+                  "support": 4477,
+                  "positives": 228,
+                  "rate": 0.05092696001786911,
+                  "lift": 0.4523027850643631,
+                  "lift_wilson95": [
+                    0.39844920942822826,
+                    0.5129949274781226
+                  ],
+                  "expected_positives": 504.08710166919576
+                },
+                {
+                  "support": 3824,
+                  "positives": 183,
+                  "rate": 0.04785564853556486,
+                  "lift": 0.42502523429834554,
+                  "lift_wilson95": [
+                    0.3688621722686515,
+                    0.4892482186221029
+                  ],
+                  "expected_positives": 430.56267071320184
+                },
+                {
+                  "support": 3790,
+                  "positives": 178,
+                  "rate": 0.04696569920844327,
+                  "lift": 0.4171212369051767,
+                  "lift_wilson95": [
+                    0.3612658339197136,
+                    0.4811248007478168
+                  ],
+                  "expected_positives": 426.73444613050077
+                },
+                {
+                  "support": 4415,
+                  "positives": 222,
+                  "rate": 0.05028312570781427,
+                  "lift": 0.44598357794683186,
+                  "lift_wilson95": [
+                    0.3921983388575534,
+                    0.5067039300389734
+                  ],
+                  "expected_positives": 497.7761760242792
+                },
+                {
+                  "support": 3858,
+                  "positives": 190,
+                  "rate": 0.04924831518921721,
+                  "lift": 0.4368053796728687,
+                  "lift_wilson95": [
+                    0.38012086005674706,
+                    0.5014435350163029
+                  ],
+                  "expected_positives": 434.9763277693475
+                }
+              ]
+            },
+            "nsd_warm": {
+              "pooled": {
+                "support": 8221,
+                "positives": 926,
+                "rate": 0.11263836516238901,
+                "lift": 0.999847557139202,
+                "lift_wilson95": [
+                  0.9407830243708725,
+                  1.062123994961877
+                ],
+                "expected_positives": 926.1411836115326
+              },
+              "folds": [
+                {
+                  "support": 926,
+                  "positives": 133,
+                  "rate": 0.14362850971922247,
+                  "lift": 1.2756224785036065,
+                  "lift_wilson95": [
+                    1.088066065450864,
+                    1.489330700456878
+                  ],
+                  "expected_positives": 104.26282245827011
+                },
+                {
+                  "support": 1931,
+                  "positives": 192,
+                  "rate": 0.09943034697048161,
+                  "lift": 0.8830808443874311,
+                  "lift_wilson95": [
+                    0.7715137279451662,
+                    1.008774648605581
+                  ],
+                  "expected_positives": 217.4206373292868
+                },
+                {
+                  "support": 2007,
+                  "positives": 213,
+                  "rate": 0.10612855007473841,
+                  "lift": 0.9425702762702508,
+                  "lift_wilson95": [
+                    0.8295040785677561,
+                    1.0690019477454376
+                  ],
+                  "expected_positives": 225.97784522003036
+                },
+                {
+                  "support": 1394,
+                  "positives": 179,
+                  "rate": 0.1284074605451937,
+                  "lift": 1.13890331762157,
+                  "lift_wilson95": [
+                    0.9921480679646012,
+                    1.3037732965326043
+                  ],
+                  "expected_positives": 157.16874051593322
+                },
+                {
+                  "support": 1963,
+                  "positives": 209,
+                  "rate": 0.10646968925114621,
+                  "lift": 0.9443273918775956,
+                  "lift_wilson95": [
+                    0.8300521021610907,
+                    1.0722369428909981
+                  ],
+                  "expected_positives": 221.3215477996965
+                }
+              ]
+            },
+            "nsd_elevated": {
+              "pooled": {
+                "support": 1421,
+                "positives": 398,
+                "rate": 0.2800844475721323,
+                "lift": 2.4862021949088793,
+                "lift_wilson95": [
+                  2.284432980351007,
+                  2.6984974013180194
+                ],
+                "expected_positives": 160.08352048558422
+              },
+              "folds": [
+                {
+                  "support": 374,
+                  "positives": 26,
+                  "rate": 0.06951871657754011,
+                  "lift": 0.6174236418409559,
+                  "lift_wilson95": [
+                    0.42524015916593383,
+                    0.887348523472793
+                  ],
+                  "expected_positives": 42.11047040971169
+                },
+                {
+                  "support": 275,
+                  "positives": 101,
+                  "rate": 0.36727272727272725,
+                  "lift": 3.2618965939720654,
+                  "lift_wilson95": [
+                    2.7753538244677483,
+                    3.780918951464502
+                  ],
+                  "expected_positives": 30.963581183611534
+                },
+                {
+                  "support": 255,
+                  "positives": 81,
+                  "rate": 0.3176470588235294,
+                  "lift": 2.821151101950214,
+                  "lift_wilson95": [
+                    2.3408931626399117,
+                    3.3494804246826706
+                  ],
+                  "expected_positives": 28.711684370257966
+                },
+                {
+                  "support": 258,
+                  "positives": 92,
+                  "rate": 0.35658914728682173,
+                  "lift": 3.1627489644954982,
+                  "lift_wilson95": [
+                    2.666490781939939,
+                    3.6963292739092126
+                  ],
+                  "expected_positives": 29.088619119878604
+                },
+                {
+                  "support": 259,
+                  "positives": 98,
+                  "rate": 0.3783783783783784,
+                  "lift": 3.356007420610382,
+                  "lift_wilson95": [
+                    2.8515093678771826,
+                    3.892036615265341
+                  ],
+                  "expected_positives": 29.201365705614567
+                }
+              ]
+            },
+            "nsd_hot": {
+              "pooled": {
+                "support": 2944,
+                "positives": 1387,
+                "rate": 0.4711277173913043,
+                "lift": 4.182020012942747,
+                "lift_wilson95": [
+                  4.022402183029907,
+                  4.3423058031179185
+                ],
+                "expected_positives": 331.6579059180577
+              },
+              "folds": [
+                {
+                  "support": 813,
+                  "positives": 355,
+                  "rate": 0.43665436654366546,
+                  "lift": 3.8781027972004787,
+                  "lift_wilson95": [
+                    3.5786604082960105,
+                    4.1828367811143705
+                  ],
+                  "expected_positives": 91.53960546282246
+                },
+                {
+                  "support": 560,
+                  "positives": 266,
+                  "rate": 0.475,
+                  "lift": 4.21866576819407,
+                  "lift_wilson95": [
+                    3.8540940627887097,
+                    4.586262928543278
+                  ],
+                  "expected_positives": 63.05311077389985
+                },
+                {
+                  "support": 538,
+                  "positives": 270,
+                  "rate": 0.5018587360594795,
+                  "lift": 4.457208990070041,
+                  "lift_wilson95": [
+                    4.083187610523034,
+                    4.830996295615538
+                  ],
+                  "expected_positives": 60.57602427921093
+                },
+                {
+                  "support": 523,
+                  "positives": 250,
+                  "rate": 0.4780114722753346,
+                  "lift": 4.2396979842455655,
+                  "lift_wilson95": [
+                    3.8628016474249267,
+                    4.619438382586098
+                  ],
+                  "expected_positives": 58.96646433990895
+                },
+                {
+                  "support": 510,
+                  "positives": 246,
+                  "rate": 0.4823529411764706,
+                  "lift": 4.2782044177024785,
+                  "lift_wilson95": [
+                    3.8961692708727225,
+                    4.662579834556306
+                  ],
+                  "expected_positives": 57.50075872534143
+                }
+              ]
+            }
+          }
+        },
+        "in_sample": {
+          "base_rate": {
+            "pooled": {
+              "rows": 32950,
+              "positives": 3712,
+              "base_rate": 0.11265553869499241
+            }
+          },
+          "bins": {
+            "nsd_cold": {
+              "pooled": {
+                "support": 22120,
+                "positives": 1090,
+                "rate": 0.049276672694394216,
+                "lift": 0.43741011995697454,
+                "lift_wilson95": [
+                  0.41277823765479066,
+                  0.46343138892685315
+                ],
+                "expected_positives": 2491.9405159332323
+              }
+            },
+            "nsd_warm": {
+              "pooled": {
+                "support": 6839,
+                "positives": 863,
+                "rate": 0.12618803918701565,
+                "lift": 1.1201228155205187,
+                "lift_wilson95": [
+                  1.0521221735825343,
+                  1.1918490070129903
+                ],
+                "expected_positives": 770.451229135053
+              }
+            },
+            "nsd_elevated": {
+              "pooled": {
+                "support": 1326,
+                "positives": 467,
+                "rate": 0.3521870286576169,
+                "lift": 3.126229147162844,
+                "lift_wilson95": [
+                  2.9021073094344803,
+                  3.357931283396416
+                ],
+                "expected_positives": 149.38124430955995
+              }
+            },
+            "nsd_hot": {
+              "pooled": {
+                "support": 2665,
+                "positives": 1292,
+                "rate": 0.4848030018761726,
+                "lift": 4.303410267192858,
+                "lift_wilson95": [
+                  4.13529682457218,
+                  4.471912046717119
+                ],
+                "expected_positives": 300.22701062215475
+              }
+            }
+          }
+        },
+        "moved_by_in_sample_engineer": {
+          "rows": 2409,
+          "by_in_sample_bin": {
+            "nsd_cold": 1756,
+            "nsd_warm": 374,
+            "nsd_elevated": 279,
+            "nsd_hot": 0
+          }
+        },
+        "oof_bins_fingerprint": "7a5570f7810db2cc"
+      },
+      "ECI": {
+        "source": "economic_curvature_intensity",
+        "thresholds": [
+          [
+            "eci_cold",
+            null,
+            0.0291
+          ],
+          [
+            "eci_mid",
+            0.0291,
+            0.0758
+          ],
+          [
+            "eci_warm",
+            0.0758,
+            0.0948
+          ],
+          [
+            "eci_hot",
+            0.0948,
+            null
+          ]
+        ],
+        "historical_rationale": "Dead <=0.029 (0.44-0.52x), mid 0.029-0.076 (mixed), warm 0.076-0.095 (1.49-1.67x), hot >0.095 (3.53x)",
+        "oof": {
+          "base_rate": {
+            "pooled": {
+              "rows": 32950,
+              "positives": 3712,
+              "base_rate": 0.11265553869499241
+            },
+            "folds": [
+              {
+                "rows": 6590,
+                "positives": 742,
+                "base_rate": 0.1125948406676783
+              },
+              {
+                "rows": 6590,
+                "positives": 742,
+                "base_rate": 0.1125948406676783
+              },
+              {
+                "rows": 6590,
+                "positives": 742,
+                "base_rate": 0.1125948406676783
+              },
+              {
+                "rows": 6590,
+                "positives": 743,
+                "base_rate": 0.11274658573596358
+              },
+              {
+                "rows": 6590,
+                "positives": 743,
+                "base_rate": 0.11274658573596358
+              }
+            ]
+          },
+          "bins": {
+            "eci_cold": {
+              "pooled": {
+                "support": 8606,
+                "positives": 503,
+                "rate": 0.05844759470137113,
+                "lift": 0.5188168764574835,
+                "lift_wilson95": [
+                  0.4765459958809402,
+                  0.5645852812450659
+                ],
+                "expected_positives": 969.5135660091047
+              },
+              "folds": [
+                {
+                  "support": 2096,
+                  "positives": 119,
+                  "rate": 0.05677480916030534,
+                  "lift": 0.5042398818954342,
+                  "lift_wilson95": [
+                    0.4232401010861356,
+                    0.5996424191469235
+                  ],
+                  "expected_positives": 235.99878603945373
+                },
+                {
+                  "support": 573,
+                  "positives": 21,
+                  "rate": 0.03664921465968586,
+                  "lift": 0.3254963943495011,
+                  "lift_wilson95": [
+                    0.21398744955716228,
+                    0.49181550597172863
+                  ],
+                  "expected_positives": 64.51684370257966
+                },
+                {
+                  "support": 1491,
+                  "positives": 87,
+                  "rate": 0.05835010060362173,
+                  "lift": 0.5182306778677456,
+                  "lift_wilson95": [
+                    0.4222951316310983,
+                    0.634326231567118
+                  ],
+                  "expected_positives": 167.87890743550835
+                },
+                {
+                  "support": 2659,
+                  "positives": 158,
+                  "rate": 0.059420834900338476,
+                  "lift": 0.5270300161416293,
+                  "lift_wilson95": [
+                    0.4528266176563485,
+                    0.6125080219263532
+                  ],
+                  "expected_positives": 299.79317147192717
+                },
+                {
+                  "support": 1787,
+                  "positives": 118,
+                  "rate": 0.06603245663122552,
+                  "lift": 0.5856714524896045,
+                  "lift_wilson95": [
+                    0.4915800981705132,
+                    0.6962756892179064
+                  ],
+                  "expected_positives": 201.47814871016692
+                }
+              ]
+            },
+            "eci_mid": {
+              "pooled": {
+                "support": 8721,
+                "positives": 720,
+                "rate": 0.0825593395252838,
+                "lift": 0.7328475854951781,
+                "lift_wilson95": [
+                  0.6831918946937251,
+                  0.7857662294149812
+                ],
+                "expected_positives": 982.4689529590288
+              },
+              "folds": [
+                {
+                  "support": 1250,
+                  "positives": 116,
+                  "rate": 0.0928,
+                  "lift": 0.8241940700808624,
+                  "lift_wilson95": [
+                    0.6922069201128299,
+                    0.9783413769222339
+                  ],
+                  "expected_positives": 140.74355083459787
+                },
+                {
+                  "support": 3039,
+                  "positives": 214,
+                  "rate": 0.07041790062520566,
+                  "lift": 0.6254096564960987,
+                  "lift_wilson95": [
+                    0.549345242348079,
+                    0.7111073585089047
+                  ],
+                  "expected_positives": 342.1757207890744
+                },
+                {
+                  "support": 1765,
+                  "positives": 138,
+                  "rate": 0.07818696883852691,
+                  "lift": 0.6944098714904209,
+                  "lift_wilson95": [
+                    0.5911330954422905,
+                    0.8139585664192159
+                  ],
+                  "expected_positives": 198.7298937784522
+                },
+                {
+                  "support": 796,
+                  "positives": 124,
+                  "rate": 0.15577889447236182,
+                  "lift": 1.3816728325341379,
+                  "lift_wilson95": [
+                    1.1729464548565998,
+                    1.6197254487043846
+                  ],
+                  "expected_positives": 89.746282245827
+                },
+                {
+                  "support": 1871,
+                  "positives": 128,
+                  "rate": 0.068412613575628,
+                  "lift": 0.6067821311754893,
+                  "lift_wilson95": [
+                    0.5129680463341321,
+                    0.7162827492322187
+                  ],
+                  "expected_positives": 210.94886191198785
+                }
+              ]
+            },
+            "eci_warm": {
+              "pooled": {
+                "support": 11549,
+                "positives": 1341,
+                "rate": 0.11611394925967616,
+                "lift": 1.0306989838648517,
+                "lift_wilson95": [
+                  0.9799645774675714,
+                  1.0836995324034784
+                ],
+                "expected_positives": 1301.0588163884674
+              },
+              "folds": [
+                {
+                  "support": 2461,
+                  "positives": 290,
+                  "rate": 0.11783827712312069,
+                  "lift": 1.0465690650153172,
+                  "lift_wilson95": [
+                    0.9386898573665294,
+                    1.1650277906922761
+                  ],
+                  "expected_positives": 277.0959028831563
+                },
+                {
+                  "support": 2132,
+                  "positives": 270,
+                  "rate": 0.12664165103189493,
+                  "lift": 1.1247553642859671,
+                  "lift_wilson95": [
+                    1.0053124650950491,
+                    1.2561261786538211
+                  ],
+                  "expected_positives": 240.05220030349014
+                },
+                {
+                  "support": 2447,
+                  "positives": 246,
+                  "rate": 0.10053126277073968,
+                  "lift": 0.8928585197562998,
+                  "lift_wilson95": [
+                    0.7925390627490585,
+                    1.0042997814857166
+                  ],
+                  "expected_positives": 275.5195751138088
+                },
+                {
+                  "support": 2381,
+                  "positives": 258,
+                  "rate": 0.10835783284334313,
+                  "lift": 0.9610741836307285,
+                  "lift_wilson95": [
+                    0.8558809017029033,
+                    1.077458048504278
+                  ],
+                  "expected_positives": 268.4496206373293
+                },
+                {
+                  "support": 2128,
+                  "positives": 277,
+                  "rate": 0.13016917293233082,
+                  "lift": 1.1545287343527055,
+                  "lift_wilson95": [
+                    1.0336127114120455,
+                    1.2872662136556638
+                  ],
+                  "expected_positives": 239.9247344461305
+                }
+              ]
+            },
+            "eci_hot": {
+              "pooled": {
+                "support": 4074,
+                "positives": 1148,
+                "rate": 0.281786941580756,
+                "lift": 2.5013145811115063,
+                "lift_wilson95": [
+                  2.3805604319036555,
+                  2.62571815183724
+                ],
+                "expected_positives": 458.95866464339906
+              },
+              "folds": [
+                {
+                  "support": 783,
+                  "positives": 217,
+                  "rate": 0.2771392081736909,
+                  "lift": 2.46138461167739,
+                  "lift_wilson95": [
+                    2.1931245701647497,
+                    2.7489711936982135
+                  ],
+                  "expected_positives": 88.16176024279211
+                },
+                {
+                  "support": 846,
+                  "positives": 237,
+                  "rate": 0.2801418439716312,
+                  "lift": 2.4880522261092315,
+                  "lift_wilson95": [
+                    2.2285862778616106,
+                    2.7651709236859596
+                  ],
+                  "expected_positives": 95.25523520485585
+                },
+                {
+                  "support": 887,
+                  "positives": 271,
+                  "rate": 0.3055242390078918,
+                  "lift": 2.7134834704339714,
+                  "lift_wilson95": [
+                    2.452182053504688,
+                    2.989680993091954
+                  ],
+                  "expected_positives": 99.87162367223065
+                },
+                {
+                  "support": 754,
+                  "positives": 203,
+                  "rate": 0.2692307692307692,
+                  "lift": 2.3879283569727714,
+                  "lift_wilson95": [
+                    2.1180146759801963,
+                    2.6785922395731463
+                  ],
+                  "expected_positives": 85.01092564491654
+                },
+                {
+                  "support": 804,
+                  "positives": 220,
+                  "rate": 0.2736318407960199,
+                  "lift": 2.4269634331706205,
+                  "lift_wilson95": [
+                    2.1636699169145013,
+                    2.7093516116445504
+                  ],
+                  "expected_positives": 90.64825493171472
+                }
+              ]
+            }
+          }
+        },
+        "in_sample": {
+          "base_rate": {
+            "pooled": {
+              "rows": 32950,
+              "positives": 3712,
+              "base_rate": 0.11265553869499241
+            }
+          },
+          "bins": {
+            "eci_cold": {
+              "pooled": {
+                "support": 7392,
+                "positives": 433,
+                "rate": 0.058576839826839824,
+                "lift": 0.519964135855165,
+                "lift_wilson95": [
+                  0.4744488294716515,
+                  0.569549880311694
+                ],
+                "expected_positives": 832.7497420333839
+              }
+            },
+            "eci_mid": {
+              "pooled": {
+                "support": 9078,
+                "positives": 714,
+                "rate": 0.07865168539325842,
+                "lift": 0.698160838822162,
+                "lift_wilson95": [
+                  0.6505729432689572,
+                  0.7489127671536747
+                ],
+                "expected_positives": 1022.6869802731411
+              }
+            },
+            "eci_warm": {
+              "pooled": {
+                "support": 12491,
+                "positives": 1461,
+                "rate": 0.11696421423424866,
+                "lift": 1.038246459864896,
+                "lift_wilson95": [
+                  0.9892606195502315,
+                  1.0893229544973204
+                ],
+                "expected_positives": 1407.1803338391503
+              }
+            },
+            "eci_hot": {
+              "pooled": {
+                "support": 3989,
+                "positives": 1104,
+                "rate": 0.27676109300576585,
+                "lift": 2.456702051330815,
+                "lift_wilson95": [
+                  2.3354115862728078,
+                  2.581805469373666
+                ],
+                "expected_positives": 449.3829438543247
+              }
+            }
+          }
+        },
+        "moved_by_in_sample_engineer": {
+          "rows": 3982,
+          "by_in_sample_bin": {
+            "eci_cold": 910,
+            "eci_mid": 2124,
+            "eci_warm": 945,
+            "eci_hot": 3
+          }
+        },
+        "oof_bins_fingerprint": "a118f73b0be6f13c"
+      }
+    },
+    "nsd_eci_joint_oof": {
+      "rows_are": [
+        "nsd_cold",
+        "nsd_warm",
+        "nsd_elevated",
+        "nsd_hot"
+      ],
+      "columns_are": [
+        "eci_cold",
+        "eci_mid",
+        "eci_warm",
+        "eci_hot"
+      ],
+      "rows": [
+        [
+          6850,
+          7990,
+          5524,
+          0
+        ],
+        [
+          1756,
+          212,
+          4911,
+          1342
+        ],
+        [
+          0,
+          0,
+          260,
+          1161
+        ],
+        [
+          0,
+          519,
+          854,
+          1571
+        ]
+      ],
+      "positives": [
+        [
+          414,
+          427,
+          160,
+          0
+        ],
+        [
+          89,
+          52,
+          682,
+          103
+        ],
+        [
+          0,
+          0,
+          18,
+          380
+        ],
+        [
+          0,
+          241,
+          481,
+          665
+        ]
+      ]
+    }
+  },
+  "triggers": {
+    "NSD": {
+      "T1": {
+        "fired": false,
+        "bins": [],
+        "min_expected_positives_by_bin": {
+          "nsd_cold": 426.73444613050077,
+          "nsd_warm": 104.26282245827011,
+          "nsd_elevated": 28.711684370257966,
+          "nsd_hot": 57.50075872534143
+        }
+      },
+      "T2": {
+        "fired": false,
+        "bins": [],
+        "by_bin": {
+          "nsd_cold": {
+            "direction": "below",
+            "pooled_lift_wilson95": [
+              0.41072234734978436,
+              0.46345399498209716
+            ]
+          },
+          "nsd_warm": {
+            "direction": null,
+            "pooled_lift_wilson95": [
+              0.9407830243708725,
+              1.062123994961877
+            ]
+          },
+          "nsd_elevated": {
+            "direction": "above",
+            "pooled_lift_wilson95": [
+              2.284432980351007,
+              2.6984974013180194
+            ]
+          },
+          "nsd_hot": {
+            "direction": "above",
+            "pooled_lift_wilson95": [
+              4.022402183029907,
+              4.3423058031179185
+            ]
+          }
+        }
+      },
+      "T3": {
+        "fired": false,
+        "pairs": [
+          {
+            "pair": [
+              "nsd_cold",
+              "nsd_warm"
+            ],
+            "inverted_pooled": false,
+            "inverted_folds": [],
+            "fired": false
+          },
+          {
+            "pair": [
+              "nsd_warm",
+              "nsd_elevated"
+            ],
+            "inverted_pooled": false,
+            "inverted_folds": [
+              0
+            ],
+            "fired": false
+          },
+          {
+            "pair": [
+              "nsd_elevated",
+              "nsd_hot"
+            ],
+            "inverted_pooled": false,
+            "inverted_folds": [],
+            "fired": false
+          }
+        ]
+      },
+      "T4": {
+        "fired": false,
+        "bins": [],
+        "pooled_lift": {
+          "nsd_hot": 4.182020012942747
+        }
+      }
+    },
+    "ECI": {
+      "T1": {
+        "fired": false,
+        "bins": [],
+        "min_expected_positives_by_bin": {
+          "eci_cold": 64.51684370257966,
+          "eci_mid": 89.746282245827,
+          "eci_warm": 239.9247344461305,
+          "eci_hot": 85.01092564491654
+        }
+      },
+      "T2": {
+        "fired": false,
+        "bins": [],
+        "by_bin": {
+          "eci_cold": {
+            "direction": "below",
+            "pooled_lift_wilson95": [
+              0.4765459958809402,
+              0.5645852812450659
+            ]
+          },
+          "eci_mid": {
+            "direction": null,
+            "pooled_lift_wilson95": [
+              0.6831918946937251,
+              0.7857662294149812
+            ]
+          },
+          "eci_warm": {
+            "direction": "above",
+            "pooled_lift_wilson95": [
+              0.9799645774675714,
+              1.0836995324034784
+            ]
+          },
+          "eci_hot": {
+            "direction": "above",
+            "pooled_lift_wilson95": [
+              2.3805604319036555,
+              2.62571815183724
+            ]
+          }
+        }
+      },
+      "T3": {
+        "fired": false,
+        "pairs": [
+          {
+            "pair": [
+              "eci_cold",
+              "eci_mid"
+            ],
+            "inverted_pooled": false,
+            "inverted_folds": [],
+            "fired": false
+          },
+          {
+            "pair": [
+              "eci_mid",
+              "eci_warm"
+            ],
+            "inverted_pooled": false,
+            "inverted_folds": [
+              3
+            ],
+            "fired": false
+          },
+          {
+            "pair": [
+              "eci_warm",
+              "eci_hot"
+            ],
+            "inverted_pooled": false,
+            "inverted_folds": [],
+            "fired": false
+          }
+        ]
+      },
+      "T4": {
+        "fired": false,
+        "bins": [],
+        "pooled_lift": {
+          "eci_hot": 2.5013145811115063
+        }
+      }
+    }
+  },
+  "decision": {
+    "families": {
+      "NSD": {
+        "flagged": false,
+        "fired": [],
+        "outcome": "retain",
+        "thresholds": [
+          [
+            "nsd_cold",
+            null,
+            0.0524
+          ],
+          [
+            "nsd_warm",
+            0.0524,
+            0.192
+          ],
+          [
+            "nsd_elevated",
+            0.192,
+            0.23
+          ],
+          [
+            "nsd_hot",
+            0.23,
+            null
+          ]
+        ],
+        "candidate": null,
+        "preflight": "not required: no trigger fired"
+      },
+      "ECI": {
+        "flagged": false,
+        "fired": [],
+        "outcome": "retain",
+        "thresholds": [
+          [
+            "eci_cold",
+            null,
+            0.0291
+          ],
+          [
+            "eci_mid",
+            0.0291,
+            0.0758
+          ],
+          [
+            "eci_warm",
+            0.0758,
+            0.0948
+          ],
+          [
+            "eci_hot",
+            0.0948,
+            null
+          ]
+        ],
+        "candidate": null,
+        "preflight": "not required: no trigger fired"
+      }
+    },
+    "outcome": "retain",
+    "binning_identity": {
+      "id": "stage2-binning",
+      "sha256": "9cdd79aff9d61101949a7e761c6837e13e81036d865c37b5213dca2867912376",
+      "fingerprint": "9cdd79aff9d61101",
+      "covers": [
+        "BINNING_STRATEGY",
+        "RF_FEATURES_BINARY"
+      ]
+    },
+    "inner_feature_record": "unchanged: inner_feature_isolation_v1.json (no adoption)",
+    "stage2_regeneration": "not required by the binning: no revision adopted (section 5.2); reuse of c3_20261112_153333 remains subject to the Commit 4A checks",
+    "router_utility": "E-B2 is reported; it vetoes only through the fold-0 preflight, which no retained family needs; it is not a decision input"
+  },
+  "eb2": {
+    "source": {
+      "run_id": "c3_20261112_153333",
+      "role": "primary",
+      "gate": "stage2_crossfit.acceptance.require_accepted passed",
+      "manifest_sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88",
+      "glass_bundle": {
+        "path": "glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+        "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+      },
+      "rf_router": {
+        "path": "rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+        "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+      }
+    },
+    "read": "fit-time records and saved models only: per-fold GLASS Pass 1 rules and Pass 2 rule ids (evidence.json), full-train GLASS rules (bundle), RF Router impurity importances (saved full-train forests); no outer-OOF route, Stage 4 or test result",
+    "not_recorded": [
+      "GLASS Pass 2 rule conditions per outer fold (rule ids only)",
+      "RF Router per-fold forests (only the full-train forests are saved)"
+    ],
+    "bins": {
+      "nsd_cold": {
+        "glass_pass1_folds_with_bin": [
+          0,
+          2,
+          3
+        ],
+        "glass_pass1_folds": {
+          "as_1": 4,
+          "as_0": 0
+        },
+        "glass_pass1_full_train": {
+          "as_1": 1,
+          "as_0": 0
+        },
+        "glass_pass2_full_train": {
+          "as_1": 0,
+          "as_0": 1
+        },
+        "conjoined_with": [
+          "behav_warm",
+          "campaign_heavy",
+          "dow_cold",
+          "eci_warm",
+          "jed_cold",
+          "jed_hot"
+        ],
+        "rf_mdi": {
+          "pass1": 0.306406664368,
+          "pass2": 0.105806823335
+        },
+        "rf_mdi_rank_of_29": {
+          "pass1": 1,
+          "pass2": 4
+        }
+      },
+      "nsd_warm": {
+        "glass_pass1_folds_with_bin": [
+          0,
+          4
+        ],
+        "glass_pass1_folds": {
+          "as_1": 1,
+          "as_0": 1
+        },
+        "glass_pass1_full_train": {
+          "as_1": 0,
+          "as_0": 0
+        },
+        "glass_pass2_full_train": {
+          "as_1": 0,
+          "as_0": 0
+        },
+        "conjoined_with": [
+          "cci_hot2",
+          "dow_cold",
+          "dow_hot",
+          "jed_warm"
+        ],
+        "rf_mdi": {
+          "pass1": 0.049955301807,
+          "pass2": 0.04660382493
+        },
+        "rf_mdi_rank_of_29": {
+          "pass1": 6,
+          "pass2": 6
+        }
+      },
+      "nsd_elevated": {
+        "glass_pass1_folds_with_bin": [
+          0,
+          1,
+          4
+        ],
+        "glass_pass1_folds": {
+          "as_1": 0,
+          "as_0": 4
+        },
+        "glass_pass1_full_train": {
+          "as_1": 0,
+          "as_0": 0
+        },
+        "glass_pass2_full_train": {
+          "as_1": 0,
+          "as_0": 0
+        },
+        "conjoined_with": [
+          "campaign_heavy",
+          "cci_hot1",
+          "dow_cold",
+          "eci_mid",
+          "jed_cold"
+        ],
+        "rf_mdi": {
+          "pass1": 0.027638104766,
+          "pass2": 0.06353351484
+        },
+        "rf_mdi_rank_of_29": {
+          "pass1": 8,
+          "pass2": 5
+        }
+      },
+      "nsd_hot": {
+        "glass_pass1_folds_with_bin": [
+          2,
+          3
+        ],
+        "glass_pass1_folds": {
+          "as_1": 0,
+          "as_0": 2
+        },
+        "glass_pass1_full_train": {
+          "as_1": 0,
+          "as_0": 1
+        },
+        "glass_pass2_full_train": {
+          "as_1": 0,
+          "as_0": 0
+        },
+        "conjoined_with": [
+          "campaign_heavy",
+          "cci_hot1",
+          "eci_mid",
+          "jed_transition"
+        ],
+        "rf_mdi": {
+          "pass1": 0.078189382956,
+          "pass2": 0.144419423492
+        },
+        "rf_mdi_rank_of_29": {
+          "pass1": 4,
+          "pass2": 2
+        }
+      },
+      "eci_cold": {
+        "glass_pass1_folds_with_bin": [],
+        "glass_pass1_folds": {
+          "as_1": 0,
+          "as_0": 0
+        },
+        "glass_pass1_full_train": {
+          "as_1": 0,
+          "as_0": 0
+        },
+        "glass_pass2_full_train": {
+          "as_1": 0,
+          "as_0": 0
+        },
+        "conjoined_with": [],
+        "rf_mdi": {
+          "pass1": 0.004997697017,
+          "pass2": 0.00146963934
+        },
+        "rf_mdi_rank_of_29": {
+          "pass1": 19,
+          "pass2": 27
+        }
+      },
+      "eci_mid": {
+        "glass_pass1_folds_with_bin": [
+          1,
+          3
+        ],
+        "glass_pass1_folds": {
+          "as_1": 1,
+          "as_0": 1
+        },
+        "glass_pass1_full_train": {
+          "as_1": 0,
+          "as_0": 0
+        },
+        "glass_pass2_full_train": {
+          "as_1": 0,
+          "as_0": 1
+        },
+        "conjoined_with": [
+          "behav_hot",
+          "cci_dead_mid",
+          "jed_cold",
+          "jed_transition",
+          "nsd_elevated",
+          "nsd_hot"
+        ],
+        "rf_mdi": {
+          "pass1": 0.002183705942,
+          "pass2": 0.002177039025
+        },
+        "rf_mdi_rank_of_29": {
+          "pass1": 26,
+          "pass2": 26
+        }
+      },
+      "eci_warm": {
+        "glass_pass1_folds_with_bin": [
+          0,
+          2,
+          3,
+          4
+        ],
+        "glass_pass1_folds": {
+          "as_1": 4,
+          "as_0": 0
+        },
+        "glass_pass1_full_train": {
+          "as_1": 1,
+          "as_0": 0
+        },
+        "glass_pass2_full_train": {
+          "as_1": 0,
+          "as_0": 1
+        },
+        "conjoined_with": [
+          "behav_warm",
+          "campaign_heavy",
+          "dow_cold",
+          "dow_hot",
+          "jed_cold",
+          "jed_hot",
+          "nsd_cold"
+        ],
+        "rf_mdi": {
+          "pass1": 0.011878776685,
+          "pass2": 0.009510396047
+        },
+        "rf_mdi_rank_of_29": {
+          "pass1": 13,
+          "pass2": 16
+        }
+      },
+      "eci_hot": {
+        "glass_pass1_folds_with_bin": [
+          2,
+          3,
+          4
+        ],
+        "glass_pass1_folds": {
+          "as_1": 0,
+          "as_0": 3
+        },
+        "glass_pass1_full_train": {
+          "as_1": 0,
+          "as_0": 0
+        },
+        "glass_pass2_full_train": {
+          "as_1": 0,
+          "as_0": 0
+        },
+        "conjoined_with": [
+          "cci_hot1",
+          "cci_low",
+          "cpi_cellular",
+          "dow_cold",
+          "jed_transition"
+        ],
+        "rf_mdi": {
+          "pass1": 0.005835064572,
+          "pass2": 0.009740574045
+        },
+        "rf_mdi_rank_of_29": {
+          "pass1": 18,
+          "pass2": 15
+        }
+      }
+    },
+    "family_rf_mdi": {
+      "NSD": {
+        "pass1": 0.462189453898,
+        "pass2": 0.360363586598
+      },
+      "ECI": {
+        "pass1": 0.024895244216,
+        "pass2": 0.022897648457
+      }
+    },
+    "pass2_rule_ids_by_fold": [
+      [
+        6247,
+        6080
+      ],
+      [
+        6575,
+        6254
+      ],
+      [
+        6161,
+        5970
+      ],
+      [
+        6706,
+        6654,
+        6443
+      ],
+      [
+        6067,
+        6312,
+        5849
+      ]
+    ],
+    "glass_rules": {
+      "pass1_by_fold": [
+        [
+          {
+            "rule_id": 5888,
+            "conditions": [
+              [
+                "dow_cold",
+                0
+              ],
+              [
+                "eci_warm",
+                1
+              ],
+              [
+                "nsd_cold",
+                1
+              ]
+            ],
+            "precision": 0.968488099229
+          },
+          {
+            "rule_id": 5804,
+            "conditions": [
+              [
+                "cci_hot1",
+                0
+              ],
+              [
+                "dow_cold",
+                1
+              ],
+              [
+                "nsd_elevated",
+                0
+              ]
+            ],
+            "precision": 0.96346087556
+          },
+          {
+            "rule_id": 5821,
+            "conditions": [
+              [
+                "cci_hot2",
+                0
+              ],
+              [
+                "dow_cold",
+                1
+              ],
+              [
+                "nsd_warm",
+                0
+              ]
+            ],
+            "precision": 0.949620151939
+          },
+          {
+            "rule_id": 5817,
+            "conditions": [
+              [
+                "cpi_cellular",
+                0
+              ],
+              [
+                "dow_hot",
+                0
+              ],
+              [
+                "jed_transition",
+                1
+              ]
+            ],
+            "precision": 0.949232081911
+          }
+        ],
+        [
+          {
+            "rule_id": 5844,
+            "conditions": [
+              [
+                "eci_mid",
+                0
+              ],
+              [
+                "jed_cold",
+                1
+              ],
+              [
+                "nsd_elevated",
+                0
+              ]
+            ],
+            "precision": 0.960076045627
+          },
+          {
+            "rule_id": 5751,
+            "conditions": [
+              [
+                "behav_hot",
+                0
+              ],
+              [
+                "cci_low",
+                0
+              ],
+              [
+                "dow_cold",
+                1
+              ]
+            ],
+            "precision": 0.965059851181
+          },
+          {
+            "rule_id": 5707,
+            "conditions": [
+              [
+                "campaign_heavy",
+                1
+              ],
+              [
+                "cci_hot1",
+                0
+              ],
+              [
+                "nsd_elevated",
+                0
+              ]
+            ],
+            "precision": 0.949835911861
+          },
+          {
+            "rule_id": 5727,
+            "conditions": [
+              [
+                "campaign_heavy",
+                0
+              ],
+              [
+                "dow_hot",
+                0
+              ],
+              [
+                "jed_transition",
+                1
+              ]
+            ],
+            "precision": 0.939233817701
+          }
+        ],
+        [
+          {
+            "rule_id": 5833,
+            "conditions": [
+              [
+                "eci_warm",
+                1
+              ],
+              [
+                "jed_hot",
+                0
+              ],
+              [
+                "nsd_cold",
+                1
+              ]
+            ],
+            "precision": 0.970254957507
+          },
+          {
+            "rule_id": 5790,
+            "conditions": [
+              [
+                "campaign_heavy",
+                0
+              ],
+              [
+                "cci_hot1",
+                0
+              ],
+              [
+                "dow_cold",
+                1
+              ]
+            ],
+            "precision": 0.955233291299
+          },
+          {
+            "rule_id": 5785,
+            "conditions": [
+              [
+                "cci_low",
+                0
+              ],
+              [
+                "eci_hot",
+                0
+              ],
+              [
+                "jed_transition",
+                1
+              ]
+            ],
+            "precision": 0.950776053215
+          },
+          {
+            "rule_id": 5708,
+            "conditions": [
+              [
+                "campaign_heavy",
+                1
+              ],
+              [
+                "cci_hot1",
+                0
+              ],
+              [
+                "nsd_hot",
+                0
+              ]
+            ],
+            "precision": 0.953544061303
+          }
+        ],
+        [
+          {
+            "rule_id": 5879,
+            "conditions": [
+              [
+                "campaign_heavy",
+                0
+              ],
+              [
+                "eci_warm",
+                1
+              ],
+              [
+                "nsd_cold",
+                1
+              ]
+            ],
+            "precision": 0.969723562966
+          },
+          {
+            "rule_id": 5736,
+            "conditions": [
+              [
+                "cci_hot1",
+                0
+              ],
+              [
+                "dow_cold",
+                1
+              ],
+              [
+                "eci_hot",
+                0
+              ]
+            ],
+            "precision": 0.961209964413
+          },
+          {
+            "rule_id": 5877,
+            "conditions": [
+              [
+                "campaign_heavy",
+                0
+              ],
+              [
+                "jed_cold",
+                0
+              ],
+              [
+                "nsd_cold",
+                1
+              ]
+            ],
+            "precision": 0.951086956522
+          },
+          {
+            "rule_id": 5794,
+            "conditions": [
+              [
+                "eci_mid",
+                1
+              ],
+              [
+                "jed_transition",
+                0
+              ],
+              [
+                "nsd_hot",
+                0
+              ]
+            ],
+            "precision": 0.938240270728
+          }
+        ],
+        [
+          {
+            "rule_id": 5815,
+            "conditions": [
+              [
+                "dow_hot",
+                0
+              ],
+              [
+                "eci_warm",
+                1
+              ],
+              [
+                "jed_cold",
+                1
+              ]
+            ],
+            "precision": 0.971539099199
+          },
+          {
+            "rule_id": 5783,
+            "conditions": [
+              [
+                "cpi_cellular",
+                0
+              ],
+              [
+                "dow_cold",
+                1
+              ],
+              [
+                "eci_hot",
+                0
+              ]
+            ],
+            "precision": 0.951726449883
+          },
+          {
+            "rule_id": 5791,
+            "conditions": [
+              [
+                "dow_hot",
+                0
+              ],
+              [
+                "jed_warm",
+                0
+              ],
+              [
+                "nsd_warm",
+                1
+              ]
+            ],
+            "precision": 0.944023569024
+          },
+          {
+            "rule_id": 5738,
+            "conditions": [
+              [
+                "campaign_heavy",
+                1
+              ],
+              [
+                "cci_hot1",
+                0
+              ],
+              [
+                "nsd_elevated",
+                0
+              ]
+            ],
+            "precision": 0.949736716132
+          }
+        ]
+      ],
+      "pass1_full_train": [
+        {
+          "rule_id": 5796,
+          "conditions": [
+            [
+              "behav_warm",
+              0
+            ],
+            [
+              "cci_hot1",
+              0
+            ],
+            [
+              "dow_cold",
+              1
+            ]
+          ],
+          "precision": 0.956723716381,
+          "coverage": 0.12412746585735963
+        },
+        {
+          "rule_id": 5874,
+          "conditions": [
+            [
+              "dow_cold",
+              0
+            ],
+            [
+              "eci_warm",
+              1
+            ],
+            [
+              "nsd_cold",
+              1
+            ]
+          ],
+          "precision": 0.968215811966,
+          "coverage": 0.11362670713201821
+        },
+        {
+          "rule_id": 5800,
+          "conditions": [
+            [
+              "campaign_heavy",
+              0
+            ],
+            [
+              "dow_hot",
+              0
+            ],
+            [
+              "jed_transition",
+              1
+            ]
+          ],
+          "precision": 0.946737213404,
+          "coverage": 0.08603945371775418
+        },
+        {
+          "rule_id": 5693,
+          "conditions": [
+            [
+              "campaign_heavy",
+              1
+            ],
+            [
+              "cci_hot1",
+              0
+            ],
+            [
+              "nsd_hot",
+              0
+            ]
+          ],
+          "precision": 0.952819332566,
+          "coverage": 0.07911987860394537
+        }
+      ],
+      "pass2_full_train": [
+        {
+          "rule_id": 6494,
+          "conditions": [
+            [
+              "behav_warm",
+              0
+            ],
+            [
+              "eci_warm",
+              0
+            ],
+            [
+              "nsd_cold",
+              0
+            ]
+          ],
+          "precision": 0.320136339801,
+          "coverage": 0.11575113808801213
+        },
+        {
+          "rule_id": 6330,
+          "conditions": [
+            [
+              "behav_hot",
+              1
+            ],
+            [
+              "cci_dead_mid",
+              0
+            ],
+            [
+              "eci_mid",
+              0
+            ]
+          ],
+          "precision": 0.350226244344,
+          "coverage": 0.1006069802731411
+        }
+      ],
+      "precision_and_coverage": "fit-time, on each fit's own training rows"
+    }
+  },
+  "limitations": [
+    "Every threshold, historical or revised, is a fixed constant chosen with all training labels. Outer-fold cross-fitting does not remove that dependence (section 6.2).",
+    "PR 38 recorded the GLASS Pass 2 rules of each outer fold by rule id only, and saved only the full-train RF Router forests: E-B2 has the per-fold Pass 1 rules, the full-train Pass 1 and Pass 2 rules and the full-train forests' importances."
+  ],
+  "code": {
+    "head": "7c2e611b9b86194e3a8f7065bbbbc1b9f3f717ff",
+    "uncommitted_tracked_changes": true,
+    "files_sha256_lf": {
+      "stage2_binning/__init__.py": "ed267f9d60763394ac7517c94208c2db9fc724de3a1c145651c256583e5b6f38",
+      "stage2_binning/__main__.py": "a60b7526de2d6fca45bd3d53d7107a64530f5d3064ca3ca09ef404b1d642359b",
+      "stage2_binning/evidence.py": "c646438b9ecf2f381a7e419e37a21f91b5302c67f36e83be892c9665c706a51e",
+      "stage2_binning/runner.py": "9ea07ec27a4327246945e76452428bf2188c9cb1414bfe2288358b30f0684a31",
+      "shared/stage2/binning.py": "f9709097d22fa0b62b5427080715a6f28389864f45ca4aeb74c4c8b4546a70b2",
+      "shared/stage2/feature_engineering.py": "519b42c17ce240c4d794d4b58da21e4a870005554e4b8d93a52ebaf8f0102a30",
+      "stage2_crossfit/g13.py": "180359f3d2901b401f82c11579ebdc51ddd35d5cd5538815a865f0c2e63d74e9",
+      "stage2_crossfit/inner_features.py": "e546940bfd3e4ba7d41680b83f9e28d75e2fbef206307aa319cb091a07c88180",
+      "stage2_crossfit/runner.py": "35c7a0c0e63de5d06f11c42c817ef0a31c45210de01545b5167aab7b14792030",
+      "stage2_crossfit/acceptance.py": "4bbe1b4b0e6dc241dd81a2498cb10381c018cb945d1a047e67e52583b2e05c44",
+      "stage2_crossfit/evidence.py": "5fb7f19c9b711123f3fffe39c86fc1c8788673f23cbef6421fd379a93cd7dd0d",
+      "data/preprocessing/bank_preprocessing.py": "250bea912216acf4b5a8be7ea352aa1ccdc1d8d26cb7377e832095ca9baaec5e",
+      "data/global_splits/split_manager.py": "d06c5330edc64194e7d26dcfc43a3d84f21cd54f6ccd8427f0ae5a89d5214150"
+    }
+  },
+  "environment": {
+    "python": "3.14.3",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.5.4",
+    "pandas": "3.0.6",
+    "scipy": "1.18.1",
+    "scikit_learn": "1.9.1"
+  }
+}

@@ -52,8 +52,8 @@ import pytest
 
 from blackbox_pipeline.models.rf_router import RFRouter
 from blackbox_pipeline.models.rf_router.router.base import apply_cuts
-from glass_pipeline.meta_ebm.loader import load_stage_outputs
-from glass_pipeline.meta_ebm.router_evidence import rule_positive_rate
+from glass_pipeline.glass_arbiter.loader import load_stage_outputs
+from glass_pipeline.glass_arbiter.router_evidence import rule_positive_rate
 import shared.stage4.adapters as adapters
 from shared.stage4 import build_stage4_inputs, router_stream
 from shared.validation import ValidationError

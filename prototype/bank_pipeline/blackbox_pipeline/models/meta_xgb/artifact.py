@@ -7,7 +7,7 @@ The learned part is a ``Stage3Artifact`` (``learner``) produced by the shared
 runner, so tuning / meta-OOF / refit / calibration / threshold blocks have the
 exact schema both Stage 3 artifacts use. Around it, the Stage 4 fields: input
 provenance, feature contract, operating point, abstention, evaluations and the
-comparison with Meta-EBM.
+comparison with the GLASS Arbiter.
 
 Four kinds of prediction, never mixed
 -------------------------------------
@@ -56,7 +56,7 @@ class MetaXGBArtifact:
     stage: str = "stage4"
     model_family: str = "meta_xgb"
     arm: str = "blackbox"
-    counterpart: str = "glass_pipeline.meta_ebm (Meta-EBM)"
+    counterpart: str = "glass_pipeline.glass_arbiter (GLASS Arbiter)"
     schema: str = SCHEMA
 
     # ---- convenience views --------------------------------------------

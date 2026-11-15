@@ -492,6 +492,11 @@ DELIBERATE_PIN_CHANGES = {
         "feature contract 1.0.0 beside the renamed 2.0.0, check label unchanged",
         "a8340178ce641fb38b951b9889fe640c6b1501595f9cbe533788398726ca4ce8",
     ),
+    "tests/support/artifact_audit.py": (
+        "PR 39 Commit 3 Step 3B (D5): GLASS Arbiter roots and keys, the PR 36-38 "
+        "meta_ebm roots and keys kept readable as saved",
+        "67903c5ac72f5c9c50a4e1d5398f768aa4373a3dbe334734958013053e77d3d8",
+    ),
 }
 
 

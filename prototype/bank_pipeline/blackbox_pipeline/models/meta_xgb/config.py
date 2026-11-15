@@ -17,9 +17,9 @@ Feature contract (arm-neutral names; values from the black-box Stage 1–3)
     stage3_proba     Stage 3 P(y=1)            XGBoost Stage3Artifact, matched
                                                pair chosen by calibration["applied"]
 
-These are exactly the channels the GLASS Meta-EBM receives (three
+These are exactly the channels the GLASS Arbiter receives (three
 probabilities + the router's Pass 1 / Pass 2 masks). The router probability is
-withheld where the router abstains because the Meta-EBM never reads it there;
+withheld where the router abstains because the GLASS Arbiter never reads it there;
 the one-hot state lets the model tell an abstention from a real 0.5.
 Nothing else enters: no raw or engineered features, no labels, no upstream
 thresholds, margins or decisions, no router confidence, no test-derived value.
@@ -86,14 +86,14 @@ class MetaXGBConfig(Stage3Config):
     train-side thresholds, isotonic calibration gated at OOF ECE > 0.05.
 
     Stage-4-specific: identity fields, the feature contract, a 50-trial budget
-    (Meta-EBM has no search; see the report for why 50) and
+    (the GLASS Arbiter has no search; see the report for why 50) and
     ``impute_missing=False`` so the router's abstain-row NaN stays missing.
     """
 
     stage: str = "stage4"
     model_family: str = "meta_xgb"
     arm: str = "blackbox"
-    counterpart: str = "glass_pipeline.meta_ebm (Meta-EBM weighted-confidence arbiter)"
+    counterpart: str = "glass_pipeline.glass_arbiter (GLASS Arbiter, weighted-confidence arbiter)"
     column_prefix: str = "meta_xgb_"
 
     n_trials: int = 50

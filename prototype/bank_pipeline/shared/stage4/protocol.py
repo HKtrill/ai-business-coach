@@ -4,8 +4,8 @@ shared.stage4.protocol
 The abstention rule Stage 4 arbiters are held to, stated once.
 
 Both Stage 4 arms choose their abstention cut with ``tune_min_confidence``:
-the GLASS Meta-EBM on its arbiter's weighted confidence
-(``glass_pipeline.meta_ebm.tuning.tune_arbiter_threshold`` delegates here),
+the GLASS Arbiter on its weighted confidence
+(``glass_pipeline.glass_arbiter.tuning.tune_arbiter_threshold`` delegates here),
 Meta-XGB on its meta-model's |p − t|.
 
     rule        abstain where confidence < cut (retain confidence ≥ cut)
@@ -24,7 +24,7 @@ confidence value, so the distinct values enumerate every retained set the
 rule can produce: the search is exhaustive, has no resolution or range
 parameter, and does not depend on a confidence's scale. The fixed grid
 ``ABSTENTION_GRID`` (0.03–0.53, step 0.02) it replaces gave each arm a
-different effective budget: after PR 36 F25 the Meta-EBM's weighted
+different effective budget: after PR 36 F25 the GLASS Arbiter's weighted
 confidence has a median near 0.04, leaving one eligible grid value (0.03,
 ~68% coverage) instead of the constrained optimum. The grid is kept for
 callers that pass it explicitly; the rule applied to it is the same.
@@ -70,7 +70,7 @@ def tune_min_confidence(
     """
     Best ``min_confidence`` by F2 on retained rows, subject to coverage.
 
-    Abstain where ``confidence < min_confidence`` (the Meta-EBM rule:
+    Abstain where ``confidence < min_confidence`` (the GLASS Arbiter rule:
     ``max(conf1, conf0) < min_weighted_confidence``). ``grid=None`` searches
     every distinct value of ``confidence`` (exact); an explicit ``grid`` is
     searched with the same rule. Returns {min_confidence, train_f2,

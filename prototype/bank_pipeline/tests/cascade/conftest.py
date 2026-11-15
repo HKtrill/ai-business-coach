@@ -12,7 +12,7 @@ synthetic bank data with the production producers, savers and Stage 4.
     Stage 3  Stage3Block.from_global_split(EBMFeaturePipeline, per-fold GLASS DAG)
              -> train_ebm_stage (5 tuning folds, nested calibration and thresholds)
                                                                   [Cells 17, 18]
-    Stage 4  train_meta_stage(GLOBAL_SPLIT, lr_path, glass_path, ebm_path)
+    Stage 4  train_glass_arbiter(GLOBAL_SPLIT, lr_path, glass_path, ebm_path)
              with the real fingerprint schemes (no stand-ins)     [Cell 19]
 
 Lightweight on purpose, and the same everywhere it is used:
@@ -58,7 +58,7 @@ from glass_pipeline.glass_router.rf import engineer_features as router_features
 from glass_pipeline.glass_router.rule_generator.rule_logger import RuleLogger
 from glass_pipeline.lr.lr_stage_calibrated import CalibratedLRStage
 from shared.stage1.oof_calibration import STAGE1_CALIBRATION_FAMILY
-from glass_pipeline.meta_ebm.meta_stage import train_meta_stage
+from glass_pipeline.glass_arbiter.meta_stage import train_glass_arbiter
 from shared.stage1.feature_engineering import engineer_features as lr_features
 from shared.stage2 import RF_FEATURES_BINARY
 from shared.stage3.data import Stage3Block
@@ -123,7 +123,7 @@ class GlassCascade:
     oof: object                    # Stage2OOF
     config: object                 # GlassRouterConfig
     ebm: object                    # Stage3Artifact as returned
-    meta: dict                     # Meta-EBM artifact as returned
+    meta: dict                     # GLASS Arbiter artifact as returned
 
     def load(self, name):
         return joblib.load(self.paths[name])
@@ -177,7 +177,7 @@ def build_glass_cascade(out_dir: Path, GS: Optional[dict] = None) -> GlassCascad
         ebm_art, ebm_path = train_ebm_stage(block=block, config=ebm_cfg, params=dict(EBM_TEST_PARAMS))
 
         # Stage 4
-        meta, meta_path = train_meta_stage(GS, lr_path=lr_path, glass_path=glass_path,
+        meta, meta_path = train_glass_arbiter(GS, lr_path=lr_path, glass_path=glass_path,
                                            ebm_path=ebm_path, artifact_dir=str(out_dir / "meta"),
                                            target_recall=0.70, verbose=False)
     return GlassCascade(GS=GS, paths={"lr": lr_path, "glass": glass_path, "ebm": ebm_path,

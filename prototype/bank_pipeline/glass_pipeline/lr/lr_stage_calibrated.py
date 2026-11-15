@@ -96,7 +96,7 @@ class CalibratedLRStage(BaseLRStage):
 
     predict_proba() routes through calibrated_model.
     predict() uses optimal_threshold (CV-optimised for F2), not 0.5.
-    save() writes the full calibrated artifact consumed by Meta-EBM loader.
+    save() writes the full calibrated artifact consumed by the GLASS Arbiter loader.
 
     Attributes
     ----------

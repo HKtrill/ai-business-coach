@@ -50,13 +50,13 @@ import pytest
 import shared.stage4.contract as contract
 import shared.stage_io as stage_io
 
-from blackbox_pipeline.models.meta_xgb.comparison import load_meta_ebm_for_comparison
+from blackbox_pipeline.models.meta_xgb.comparison import load_glass_arbiter_for_comparison
 from blackbox_pipeline.models.rf_router import split_fingerprint as router_split_fingerprint
 from glass_pipeline.glass_router.pipeline import fold_fingerprint
-from glass_pipeline.meta_ebm.arbiter import meta_arbiter
-from glass_pipeline.meta_ebm.loader import load_stage_outputs
-from glass_pipeline.meta_ebm.meta_stage import find_recall_threshold, train_meta_stage
-from glass_pipeline.meta_ebm.router_evidence import fold_base_rates
+from glass_pipeline.glass_arbiter.arbiter import meta_arbiter
+from glass_pipeline.glass_arbiter.loader import load_stage_outputs
+from glass_pipeline.glass_arbiter.meta_stage import find_recall_threshold, train_glass_arbiter
+from glass_pipeline.glass_arbiter.router_evidence import fold_base_rates
 from shared.stage3.data import FoldPlan
 from shared.stage4 import ABSTENTION_SEARCH, Stage4InputError, tune_min_confidence
 from shared.stage_io import StageOutputError, fold_assignment, split_fingerprint
@@ -92,7 +92,7 @@ def test_each_stage_is_bound_to_the_split_by_its_own_fingerprint_scheme(cascade)
 
 def test_both_router_fits_record_the_splits_training_labels_and_stage4_checks_them_f12(cascade):
     """ModelSaver writes the full-train fit's train_label_fingerprint and the
-    cross-fit's (in oof_protocol); Meta-EBM's Stage 4 verified both."""
+    cross-fit's (in oof_protocol); the GLASS Arbiter's Stage 4 verified both."""
     want = stage_io.label_fingerprint(cascade.GS["X_train"].index, cascade.GS["y_train"])
     bundle = joblib.load(cascade.paths["glass"])
     assert bundle["train_label_fingerprint"] == bundle["oof_protocol"]["train_label_fingerprint"] == want
@@ -389,7 +389,7 @@ def test_the_abstention_cut_is_the_exact_search_on_the_cascades_training_confide
 # ----------------------------------------------------------------------
 def test_stage4_reruns_identically_from_the_reloaded_artifacts(cascade, tmp_path):
     loaded = cascade.load("meta")
-    again, path = train_meta_stage(cascade.GS, lr_path=cascade.paths["lr"],
+    again, path = train_glass_arbiter(cascade.GS, lr_path=cascade.paths["lr"],
                                    glass_path=cascade.paths["glass"], ebm_path=cascade.paths["ebm"],
                                    artifact_dir=str(tmp_path), verbose=False)
     for key in CONFIG_KEYS + ("no_abstain", "with_abstain", "split_fingerprints"):
@@ -399,7 +399,7 @@ def test_stage4_reruns_identically_from_the_reloaded_artifacts(cascade, tmp_path
         np.testing.assert_array_equal(again["test_preds"][key], cascade.meta["test_preds"][key])
         np.testing.assert_array_equal(loaded["test_preds"][key], cascade.meta["test_preds"][key])
     np.testing.assert_array_equal(again["test_probs"]["meta"], cascade.meta["test_probs"]["meta"])
-    found = load_meta_ebm_for_comparison(cascade.GS, cascade.paths["meta"])   # real schemes
+    found = load_glass_arbiter_for_comparison(cascade.GS, cascade.paths["meta"])   # real schemes
     np.testing.assert_array_equal(found["test_preds"]["with_abstain"],
                                   cascade.meta["test_preds"]["with_abstain"])
 

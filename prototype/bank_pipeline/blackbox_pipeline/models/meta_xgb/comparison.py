@@ -1,21 +1,21 @@
 """
 blackbox_pipeline.models.meta_xgb.comparison
 ============================================
-GLASS Meta-EBM vs black-box Meta-XGB on the SAME held-out rows, each at its own
-pre-selected (train-only) configuration. Nothing here feeds back into either
-model: both artifacts are frozen before this runs.
+The GLASS Arbiter vs black-box Meta-XGB on the SAME held-out rows, each at its
+own pre-selected (train-only) configuration. Nothing here feeds back into
+either model: both artifacts are frozen before this runs.
 
 Reported
 --------
 * metrics without abstention and on retained rows with abstention
   (coverage, accuracy, precision, recall, F1, F2, ROC-AUC, PR-AUC);
 * paired behaviour: prediction agreement, both correct / both wrong /
-  Meta-EBM only / Meta-XGB only, exact McNemar test on the discordant pairs;
+  GLASS Arbiter only / Meta-XGB only, exact McNemar test on the discordant pairs;
 * with abstention: retention overlap, and the 2×2 on rows both retain;
 * paired bootstrap (2000 resamples, seed 42 — the Stage 3 comparison
-  convention) of every Δ = Meta-XGB − Meta-EBM with a 95% CI.
+  convention) of every Δ = Meta-XGB − GLASS Arbiter with a 95% CI.
 
-Meta-EBM's ranking score is its arbiter's weighted probability
+The GLASS Arbiter's ranking score is its weighted probability
 (``test_probs["meta"]``): a legitimate score for ROC/PR-AUC, but a weighted
 average of base probabilities, not a calibrated probability — noted in output.
 
@@ -29,6 +29,16 @@ Two questions, one function (PR 36 F29)
   ``shared.stage4.upstream``).
 Either way ``protocol["upstream"]`` records both combinations and whether the
 upstream was the same.
+
+Names (PR 39, decision D5)
+--------------------------
+The GLASS side was "Meta-EBM" through PR 38. Its readers accept both artifact
+schemas (``glass_arbiter/1`` and the historical ``meta_ebm/2``), read as
+saved. Results use the GLASS Arbiter names (``"GLASS Arbiter"``,
+``glass_arbiter_*`` keys); comparisons saved before PR 39 inside a Meta-XGB
+artifact keep their ``meta_ebm_*`` keys. ``load_meta_ebm_for_comparison``,
+``find_meta_ebm_artifact`` and ``compare_with_meta_ebm`` remain aliases
+through PR 39.
 """
 
 from __future__ import annotations
@@ -45,48 +55,58 @@ from shared.stage4 import (
     Stage4InputError, check_split_identity, index_alignment, same_upstream, split_reference,
 )
 
+from glass_pipeline.glass_arbiter.artifacts import ARTIFACT_PATTERNS, READABLE_SCHEMAS
+
 from .evaluation import abstention_metrics, classification_metrics
 
 N_BOOT, SEED = 2000, 42
+LABEL = "GLASS Arbiter"
 
 
 # ======================================================================
-def load_meta_ebm_for_comparison(GLOBAL_SPLIT, meta_ebm, extra_fingerprints=None) -> dict:
+def load_glass_arbiter_for_comparison(GLOBAL_SPLIT, glass_arbiter,
+                                      extra_fingerprints=None) -> dict:
     """
+    The GLASS Arbiter artifact (schema ``glass_arbiter/1``, or a historical
+    ``meta_ebm/2`` read as saved), split-checked.
+
     PR 36 (audit F12): every fingerprint scheme the artifact records must
     match GLOBAL_SPLIT, and its primary ``split_fingerprint`` must agree with
-    them (``check_split_identity``). Matching ANY one value accepted a
-    Meta-EBM built on the same rows with other training labels, because the
+    them (``check_split_identity``). Matching ANY one value accepted an
+    arbiter built on the same rows with other training labels, because the
     router scheme hashes row indices only.
     """
-    art = joblib.load(meta_ebm) if isinstance(meta_ebm, (str, bytes)) or \
-        hasattr(meta_ebm, "__fspath__") else meta_ebm
-    if not isinstance(art, dict) or art.get("schema") != "meta_ebm/2":
+    art = joblib.load(glass_arbiter) if isinstance(glass_arbiter, (str, bytes)) or \
+        hasattr(glass_arbiter, "__fspath__") else glass_arbiter
+    if not isinstance(art, dict) or art.get("schema") not in READABLE_SCHEMAS:
         raise Stage4InputError(
-            "Meta-EBM artifact is not schema 'meta_ebm/2' (the audited Stage 4). "
-            "Re-run GLASS Cell 19 so its test rows and provenance are recorded.")
+            f"GLASS Arbiter artifact is not one of the schemas {list(READABLE_SCHEMAS)} (the "
+            "audited Stage 4). Re-run GLASS Cell 19 so its test rows and provenance are recorded.")
     ref = split_reference(GLOBAL_SPLIT, extra_fingerprints)
-    check_split_identity(art.get("split_fingerprints"), ref, "Meta-EBM artifact",
+    check_split_identity(art.get("split_fingerprints"), ref, "GLASS Arbiter artifact",
                          primary=art.get("split_fingerprint"))
-    index_alignment(art["index_test"], ref.index_test, "Meta-EBM index_test")
+    index_alignment(art["index_test"], ref.index_test, "GLASS Arbiter index_test")
     return art
 
 
-def find_meta_ebm_artifact(dirs, GLOBAL_SPLIT, extra_fingerprints=None, verbose=True,
-                           upstream: str = "glass"):
+def find_glass_arbiter_artifact(dirs, GLOBAL_SPLIT, extra_fingerprints=None, verbose=True,
+                                upstream: str = "glass"):
     """
-    Newest meta_ebm_*.joblib that passes ``load_meta_ebm_for_comparison`` and
-    was run on the ``upstream`` arm (default: the native GLASS Meta-EBM). PR 36
-    F29: a crossover Meta-EBM (black-box upstream) saved in the same folder
-    used to be returned as "the GLASS Meta-EBM" when it was newest. An
-    artifact written before the upstream record counts as native.
+    Newest GLASS Arbiter file in ``dirs`` (``glass_arbiter_*.joblib``, or a
+    historical ``meta_ebm_*.joblib``) that passes
+    ``load_glass_arbiter_for_comparison`` and was run on the ``upstream`` arm
+    (default: the native GLASS Arbiter). PR 36 F29: a crossover arbiter
+    (black-box upstream) saved in the same folder used to be returned as the
+    native one when it was newest. An artifact written before the upstream
+    record counts as native.
     """
     from pathlib import Path
-    files = sorted((p for d in dirs if Path(d).is_dir() for p in Path(d).glob("meta_ebm_*.joblib")),
+    files = sorted((p for d in dirs if Path(d).is_dir()
+                    for pattern in ARTIFACT_PATTERNS for p in Path(d).glob(pattern)),
                    key=lambda p: p.stat().st_mtime, reverse=True)
     for f in files:
         try:
-            art = load_meta_ebm_for_comparison(GLOBAL_SPLIT, str(f), extra_fingerprints)
+            art = load_glass_arbiter_for_comparison(GLOBAL_SPLIT, str(f), extra_fingerprints)
         except Exception as exc:            # noqa: BLE001 — try the next file
             if verbose:
                 print(f"  (skip {f.name}: {exc})")
@@ -97,8 +117,9 @@ def find_meta_ebm_artifact(dirs, GLOBAL_SPLIT, extra_fingerprints=None, verbose=
                 print(f"  (skip {f.name}: {arm} upstream, not {upstream})")
             continue
         return art, str(f)
-    raise FileNotFoundError(f"No audited Meta-EBM artifact (meta_ebm/2) on the {upstream} upstream "
-                            f"for this split in {[str(d) for d in dirs]}")
+    raise FileNotFoundError(f"No audited GLASS Arbiter artifact ({', '.join(READABLE_SCHEMAS)}) "
+                            f"on the {upstream} upstream for this split in "
+                            f"{[str(d) for d in dirs]}")
 
 
 # ======================================================================
@@ -139,21 +160,22 @@ def _paired_table(y, da, db, mask=None):
     n_disc = int(a_only + b_only)
     p = binomtest(int(b_only), n_disc, 0.5).pvalue if n_disc else 1.0
     return {"n": int(m.sum()), "agreement": float((da[m] == db[m]).mean()) if m.any() else np.nan,
-            "both_correct": int(both), "meta_ebm_only_correct": int(a_only),
+            "both_correct": int(both), "glass_arbiter_only_correct": int(a_only),
             "meta_xgb_only_correct": int(b_only), "both_wrong": int(neither),
             "mcnemar_exact_p": float(p)}
 
 
-def compare_with_meta_ebm(GLOBAL_SPLIT, meta_ebm, meta_xgb, n_boot: int = N_BOOT,
-                          seed: int = SEED, verbose: bool = True,
-                          extra_fingerprints: Optional[dict] = None,
-                          require_same_upstream: bool = False) -> dict:
+def compare_with_glass_arbiter(GLOBAL_SPLIT, glass_arbiter, meta_xgb, n_boot: int = N_BOOT,
+                               seed: int = SEED, verbose: bool = True,
+                               extra_fingerprints: Optional[dict] = None,
+                               require_same_upstream: bool = False) -> dict:
     """
-    ``meta_ebm``: path or dict (schema meta_ebm/2); ``meta_xgb``: MetaXGBArtifact.
+    ``glass_arbiter``: path or dict (schema ``glass_arbiter/1`` or the
+    historical ``meta_ebm/2``); ``meta_xgb``: MetaXGBArtifact.
     ``require_same_upstream``: the arbiter-effect comparison — refuse unless
     both arbiters consumed identical Stage 1-3 outputs (PR 36 F29).
     """
-    ebm = load_meta_ebm_for_comparison(GLOBAL_SPLIT, meta_ebm, extra_fingerprints)
+    ebm = load_glass_arbiter_for_comparison(GLOBAL_SPLIT, glass_arbiter, extra_fingerprints)
     up_ebm = (ebm.get("stage4_inputs") or {}).get("upstream")
     up_xgb = (getattr(meta_xgb, "stage4_inputs", None) or {}).get("upstream")
     differs = same_upstream(up_ebm, up_xgb)
@@ -173,12 +195,12 @@ def compare_with_meta_ebm(GLOBAL_SPLIT, meta_ebm, meta_xgb, n_boot: int = N_BOOT
     x_pred = np.asarray(meta_xgb.test["pred"]).astype(int)
     x_score = np.asarray(meta_xgb.test["proba"], dtype=float)
     x_keep = np.asarray(meta_xgb.test["retained"], dtype=bool)
-    # Retained rows use Meta-EBM's own with-abstain predictions as stored.
+    # Retained rows use the GLASS Arbiter's own with-abstain predictions as stored.
     e_pred_keep = np.where(e_keep, e_abst, e_pred)
 
     metrics = {
-        "Meta-EBM": {"no_abstain": classification_metrics(y, e_pred, e_score),
-                     "with_abstain": abstention_metrics(y, e_pred_keep, e_score, e_keep)},
+        LABEL: {"no_abstain": classification_metrics(y, e_pred, e_score),
+                "with_abstain": abstention_metrics(y, e_pred_keep, e_score, e_keep)},
         "Meta-XGB": {"no_abstain": classification_metrics(y, x_pred, x_score),
                      "with_abstain": abstention_metrics(y, x_pred, x_score, x_keep)},
     }
@@ -196,7 +218,7 @@ def compare_with_meta_ebm(GLOBAL_SPLIT, meta_ebm, meta_xgb, n_boot: int = N_BOOT
         "no_abstain": _paired_table(y, e_pred, x_pred),
         "with_abstain_both_retained": _paired_table(y, e_pred_keep, x_pred, e_keep & x_keep),
         "retention": {"both": int((e_keep & x_keep).sum()),
-                      "meta_ebm_only": int((e_keep & ~x_keep).sum()),
+                      "glass_arbiter_only": int((e_keep & ~x_keep).sum()),
                       "meta_xgb_only": int((~e_keep & x_keep).sum()),
                       "neither": int((~e_keep & ~x_keep).sum())},
     }
@@ -225,26 +247,27 @@ def compare_with_meta_ebm(GLOBAL_SPLIT, meta_ebm, meta_xgb, n_boot: int = N_BOOT
         d = np.asarray(deltas[k], dtype=float)
         d = d[np.isfinite(d)]
         lo, hi = np.percentile(d, [2.5, 97.5])
-        brows.append({"metric": k, "Meta-EBM": point_e[k], "Meta-XGB": point_x[k],
-                      "Δ (XGB−EBM)": point_x[k] - point_e[k], "95% CI low": lo,
+        brows.append({"metric": k, LABEL: point_e[k], "Meta-XGB": point_x[k],
+                      "Δ (XGB−Arbiter)": point_x[k] - point_e[k], "95% CI low": lo,
                       "95% CI high": hi, "P(Δ > 0)": float((d > 0).mean()),
                       "CI excludes 0": not (lo <= 0 <= hi)})
     boot = pd.DataFrame(brows)
 
     out = {
         "table": table, "paired": paired, "bootstrap": boot,
-        "meta_ebm_config": {"thresholds": ebm.get("thresholds"),
-                            "abstention": ebm.get("abstention"),
-                            "timestamp": ebm.get("timestamp")},
+        "glass_arbiter_config": {"schema": ebm.get("schema"),
+                                 "thresholds": ebm.get("thresholds"),
+                                 "abstention": ebm.get("abstention"),
+                                 "timestamp": ebm.get("timestamp")},
         "meta_xgb_config": {"operating": meta_xgb.operating,
                             "min_confidence": meta_xgb.abstention["min_confidence"]},
         "protocol": {"n_boot": n_boot, "seed": seed, "n_test": int(len(y)),
                      "selection": "each model at its own train-selected configuration; "
                                   "no test-based tuning of either",
-                     "meta_ebm_score": "arbiter weighted probability (ranking score, "
-                                       "not calibrated)",
+                     "glass_arbiter_score": "arbiter weighted probability (ranking score, "
+                                            "not calibrated)",
                      "upstream": {
-                         "meta_ebm": None if not up_ebm else up_ebm.get("combination"),
+                         "glass_arbiter": None if not up_ebm else up_ebm.get("combination"),
                          "meta_xgb": None if not up_xgb else up_xgb.get("combination"),
                          "held_fixed": differs is None,
                          "why_not": differs,
@@ -254,7 +277,7 @@ def compare_with_meta_ebm(GLOBAL_SPLIT, meta_ebm, meta_xgb, n_boot: int = N_BOOT
                       "paired": paired,
                       "bootstrap": boot.round(6).to_dict("records")}
     if verbose:
-        print(f"upstream: Meta-EBM {out['protocol']['upstream']['meta_ebm']} | Meta-XGB "
+        print(f"upstream: {LABEL} {out['protocol']['upstream']['glass_arbiter']} | Meta-XGB "
               f"{out['protocol']['upstream']['meta_xgb']} | "
               + ("held fixed" if differs is None else f"NOT held fixed ({differs})"))
         with pd.option_context("display.float_format", "{:.4f}".format, "display.width", 140):
@@ -263,7 +286,19 @@ def compare_with_meta_ebm(GLOBAL_SPLIT, meta_ebm, meta_xgb, n_boot: int = N_BOOT
             print("\npaired behaviour")
             print(pd.DataFrame({k: v for k, v in paired.items() if k != "retention"}).T.to_string())
             print(f"retention overlap: {paired['retention']}")
-            print(f"\npaired bootstrap Δ = Meta-XGB − Meta-EBM ({n_boot} resamples, seed {seed})")
+            print(f"\npaired bootstrap Δ = Meta-XGB − {LABEL} ({n_boot} resamples, seed {seed})")
             print(boot.to_string(index=False))
         print("\nNote: a difference is only reported as real where its 95% CI excludes 0.")
     return out
+
+
+# ----------------------------------------------------------------------
+# PR 36-38 names, kept as aliases through PR 39 (D5)
+# ----------------------------------------------------------------------
+load_meta_ebm_for_comparison = load_glass_arbiter_for_comparison
+find_meta_ebm_artifact = find_glass_arbiter_artifact
+
+
+def compare_with_meta_ebm(GLOBAL_SPLIT, meta_ebm, meta_xgb, **kwargs) -> dict:
+    """PR 36-38 name of ``compare_with_glass_arbiter`` (same results, current keys)."""
+    return compare_with_glass_arbiter(GLOBAL_SPLIT, meta_ebm, meta_xgb, **kwargs)

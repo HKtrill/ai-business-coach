@@ -31,7 +31,7 @@ Contracts pinned here
   compared by name — never "some recorded hash equals some recomputed hash",
   which let the label-blind router value vouch for a relabelled split. An
   artifact's primary fingerprint must be one of the values it records.
-* the Meta-EBM vs Meta-XGB comparison refuses either side built on another
+* the GLASS Arbiter vs Meta-XGB comparison refuses either side built on another
   split, including the same rows with other labels, or contradicting itself,
   and still accepts artifacts recording a single (primary) fingerprint.
 """
@@ -48,7 +48,7 @@ import shared.stage4 as stage4
 import shared.stage4.contract as contract
 from blackbox_pipeline.models.meta_xgb.artifact import load_meta_xgb, save_meta_xgb
 from blackbox_pipeline.models.meta_xgb.comparison import (
-    compare_with_meta_ebm, load_meta_ebm_for_comparison,
+    compare_with_glass_arbiter, load_glass_arbiter_for_comparison,
 )
 from blackbox_pipeline.models.rf_router import split_fingerprint as router_split_fingerprint
 from glass_pipeline.glass_router.pipeline import fold_fingerprint
@@ -215,7 +215,7 @@ def test_a_primary_fingerprint_must_be_one_of_the_recorded_values(GS):
 
 
 # ----------------------------------------------------------------------
-# Meta-EBM vs Meta-XGB comparison (both consumers of check_split_identity)
+# GLASS Arbiter vs Meta-XGB comparison (both consumers of check_split_identity)
 # ----------------------------------------------------------------------
 @pytest.fixture(scope="module")
 def meta(tmp_path_factory):
@@ -225,11 +225,12 @@ def meta(tmp_path_factory):
     return w["GS"], art
 
 
-def meta_ebm(GS, primary_only=False) -> dict:
-    """The meta_ebm/2 fields the comparison reads, recorded on ``GS``."""
+def glass_arbiter(GS, primary_only=False, schema="glass_arbiter/1") -> dict:
+    """The GLASS Arbiter fields the comparison reads, recorded on ``GS`` (either
+    schema: the comparison reads a historical ``meta_ebm/2`` artifact as saved)."""
     ref = split_reference(GS, ROUTER_FP)
     p = np.random.default_rng(0).random(len(GS["y_test"]))
-    art = {"schema": "meta_ebm/2", "split_fingerprint": ref.fingerprint,
+    art = {"schema": schema, "split_fingerprint": ref.fingerprint,
            "split_fingerprints": dict(ref.fingerprints), "index_test": list(GS["X_test"].index),
            "test_preds": {"no_abstain": (p > .5).astype(int),
                           "with_abstain": np.where(np.abs(p - .5) < .1, -1, (p > .5).astype(int))},
@@ -239,44 +240,46 @@ def meta_ebm(GS, primary_only=False) -> dict:
     return art
 
 
+@pytest.mark.parametrize("schema", ["glass_arbiter/1", "meta_ebm/2"])
 @pytest.mark.parametrize("primary_only", [False, True], ids=["all schemes", "primary only"])
-def test_both_meta_artifacts_from_the_split_compared_on_are_accepted(meta, primary_only):
+def test_both_meta_artifacts_from_the_split_compared_on_are_accepted(meta, primary_only, schema):
     GS, art = meta
-    out = compare_with_meta_ebm(GS, meta_ebm(GS, primary_only), art, n_boot=20, verbose=False,
-                                extra_fingerprints=ROUTER_FP)
+    out = compare_with_glass_arbiter(GS, glass_arbiter(GS, primary_only, schema), art, n_boot=20,
+                                     verbose=False, extra_fingerprints=ROUTER_FP)
     assert out["protocol"]["n_test"] == len(GS["y_test"])
     assert set(art.split_fingerprints) == {"stage_io", "router"}
 
 
 @pytest.mark.parametrize("side", ["train", "test"])
-def test_a_meta_ebm_built_on_the_same_rows_with_other_labels_is_refused(meta, side):
+def test_a_glass_arbiter_built_on_the_same_rows_with_other_labels_is_refused(meta, side):
     GS, _ = meta
-    other = meta_ebm(_relabelled(GS, side))
+    other = glass_arbiter(_relabelled(GS, side))
     assert other["split_fingerprints"]["router"] == split_reference(GS, ROUTER_FP).fingerprints["router"]
-    with pytest.raises(Stage4InputError, match=r"Meta-EBM artifact was built on another split \(stage_io"):
-        load_meta_ebm_for_comparison(GS, other, ROUTER_FP)
+    with pytest.raises(Stage4InputError,
+                       match=r"GLASS Arbiter artifact was built on another split \(stage_io"):
+        load_glass_arbiter_for_comparison(GS, other, ROUTER_FP)
 
 
 @pytest.mark.parametrize("side", ["train", "test"])
 def test_a_meta_xgb_built_on_the_same_rows_with_other_labels_is_refused(meta, side):
     GS, art = meta
-    split = _relabelled(GS, side)                     # the Meta-EBM side agrees with this split
+    split = _relabelled(GS, side)                     # the GLASS Arbiter side agrees with this split
     assert list(art.index_test) == list(split["X_test"].index)
     with pytest.raises(Stage4InputError, match=r"Meta-XGB artifact was built on another split \(stage_io"):
-        compare_with_meta_ebm(split, meta_ebm(split), art, n_boot=20, verbose=False,
-                              extra_fingerprints=ROUTER_FP)
+        compare_with_glass_arbiter(split, glass_arbiter(split), art, n_boot=20, verbose=False,
+                                   extra_fingerprints=ROUTER_FP)
 
 
 def test_a_meta_artifact_whose_primary_fingerprint_contradicts_its_dictionary_is_refused(
         meta, tmp_path):
     GS, art = meta
-    ebm = {**meta_ebm(GS), "split_fingerprint": "0" * 12}
-    with pytest.raises(Stage4InputError, match="Meta-EBM artifact: its split_fingerprint"):
-        load_meta_ebm_for_comparison(GS, ebm, ROUTER_FP)
+    ebm = {**glass_arbiter(GS), "split_fingerprint": "0" * 12}
+    with pytest.raises(Stage4InputError, match="GLASS Arbiter artifact: its split_fingerprint"):
+        load_glass_arbiter_for_comparison(GS, ebm, ROUTER_FP)
     bad = dataclasses.replace(art, split_fingerprint="0" * 12)
     with pytest.raises(Stage4InputError, match="Meta-XGB artifact: its split_fingerprint"):
-        compare_with_meta_ebm(GS, meta_ebm(GS), bad, n_boot=20, verbose=False,
-                              extra_fingerprints=ROUTER_FP)
+        compare_with_glass_arbiter(GS, glass_arbiter(GS), bad, n_boot=20, verbose=False,
+                                   extra_fingerprints=ROUTER_FP)
     with pytest.raises(ValueError, match="contradicts its own split_fingerprints"):
         load_meta_xgb(save_meta_xgb(bad, str(tmp_path / "bad")))
     good = load_meta_xgb(save_meta_xgb(art, str(tmp_path / "good")),

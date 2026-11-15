@@ -35,7 +35,7 @@ from glass_pipeline.glass_router.model_saver import ModelSaver
 from glass_pipeline.glass_router.rf import save_rf_artifact
 from glass_pipeline.lr import lr_stage_calibrated
 from glass_pipeline.lr.artifacts import save_artifact
-from glass_pipeline.meta_ebm.meta_stage import train_meta_stage
+from glass_pipeline.glass_arbiter.meta_stage import train_glass_arbiter
 from tests.support.notebooks import ACTIVE_NOTEBOOKS, BANK_ROOT, read_before_bound
 from tests.support.synthetic_bank import make_bank_frame
 
@@ -89,7 +89,7 @@ DISCOVERY = {                      # black-box name -> (folder expression, folde
     "RF_ARTIFACT_DIRS": ('[BANK_ROOT / "models" / "rf"]', "models/rf"),
     "GLASS_ARTIFACT_DIRS": ('[BANK_ROOT / "models" / "glass_router"]', "models/glass_router"),
     "XGB_ARTIFACT_DIRS": ('[BLACKBOX_ROOT / "models" / "xgb"]', "blackbox_pipeline/models/xgb"),
-    "META_EBM_DIRS": ('[BANK_ROOT / "models" / "meta_ebm"]', "models/meta_ebm"),
+    "GLASS_ARBITER_DIRS": ('[BANK_ROOT / "models" / "glass_arbiter"]', "models/glass_arbiter"),
 }
 
 
@@ -105,8 +105,8 @@ def test_the_blackbox_notebook_searches_only_the_folders_current_producers_write
     assert '"./models/glass_router/glass_router_' in inspect.getsource(ModelSaver.save_model)
     assert all(not c.args and "output_path" not in _kw(c)            # its default folder
                for c in _calls(GLASS, "save_model"))
-    assert default(train_meta_stage, "artifact_dir").strip("./") == DISCOVERY["META_EBM_DIRS"][1]
-    assert all("artifact_dir" not in _kw(c) for c in _calls(GLASS, "train_meta_stage"))
+    assert default(train_glass_arbiter, "artifact_dir").strip("./") == DISCOVERY["GLASS_ARBITER_DIRS"][1]
+    assert all("artifact_dir" not in _kw(c) for c in _calls(GLASS, "train_glass_arbiter"))
     (xgb_cfg,) = _calls(BLACKBOX, "XGBStage3Config")
     assert _same(_kw(xgb_cfg)["artifact_dir"], 'str(BLACKBOX_ROOT / "models" / "xgb")')
     # GLASS Stage 1, found by Cell 14A

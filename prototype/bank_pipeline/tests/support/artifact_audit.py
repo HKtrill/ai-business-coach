@@ -11,11 +11,20 @@ What is saved, and what the audit starts from
 ---------------------------------------------
 The four Stage 4 arbiters of the 2x2 are the roots (``ROOTS``):
 
-    key                   upstream   saved by                     folder (bank_pipeline/)
-    meta_ebm              glass      GLASS Cell 19 (native)       models/meta_ebm
-    meta_xgb              blackbox   black-box Cell 36 (native)   blackbox_pipeline/models/meta_xgb
-    meta_ebm_on_blackbox  blackbox   black-box Cell 37            blackbox_pipeline/models/stage4_crossover/arbiter_on_blackbox
-    meta_xgb_on_glass     glass      black-box Cell 37            blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass
+    key                        upstream   saved by                     folder (bank_pipeline/)
+    glass_arbiter              glass      GLASS Cell 19 (native)       models/glass_arbiter
+    meta_xgb                   blackbox   black-box Cell 36 (native)   blackbox_pipeline/models/meta_xgb
+    glass_arbiter_on_blackbox  blackbox   black-box Cell 37            blackbox_pipeline/models/stage4_crossover/glass_arbiter_on_blackbox
+    meta_xgb_on_glass          glass      black-box Cell 37            blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass
+
+PR 39 (decision D5) renamed the GLASS Arbiter, "Meta-EBM" through PR 38. The
+PR 36-38 generation stays auditable as saved, under its own names
+(``HISTORICAL_ROOTS``: keys ``meta_ebm`` / ``meta_ebm_on_blackbox``, folders
+``models/meta_ebm`` and ``stage4_crossover/arbiter_on_blackbox``, files
+``meta_ebm_*.joblib``, schema ``meta_ebm/2``, upstream arbiter ``meta_ebm``)
+— the keys of ``stage2_crossfit.phase0.ARBITER_KEYS`` and of every existing
+manifest. A root is checked against its own generation's schema and arbiter
+id; nothing is translated, and one audit never mixes the two generations.
 
 Each records, in ``stage4_inputs["upstream"]`` (PR 36 F29), the path and a
 content fingerprint of exactly the Stage 1-3 outputs it consumed — GLASS LR /
@@ -27,13 +36,18 @@ saved; the Cell 36 cascade comparison is saved inside the native Meta-XGB.
 
 Selection — explicit, or newest, never a fallback
 -------------------------------------------------
-A JSON manifest (``{"meta_ebm": "<path>", ...}``, all four keys, paths
-absolute or relative to bank_pipeline/) named by ``$BANK_ARTIFACT_MANIFEST``
-fixes the roots. Without one, each root is the newest file (modification
-time) matching its producer's name in its producer's folder. Either way that
-file is audited and nothing else: a missing, unreadable, legacy or
-inconsistent artifact fails with its path and the field at fault; the audit
-never moves on to an older file.
+A JSON manifest (``{"glass_arbiter": "<path>", ...}``: exactly the four keys
+of one generation — ``ROOTS`` or ``HISTORICAL_ROOTS`` — paths absolute or
+relative to bank_pipeline/) named by ``$BANK_ARTIFACT_MANIFEST`` fixes the
+roots, under the keys it uses. Without one, each root is the newest file
+(modification time) matching its producer's name in its producer's folder:
+the PR 39 roots once any PR 39 GLASS Arbiter file exists, the PR 36-38 roots
+before that. Either way that file is audited and nothing else: a missing,
+unreadable, legacy or inconsistent artifact fails with its path and the field
+at fault; the audit never moves on to an older file. ``key_in`` names a
+selection's key for a ``ROOTS`` key; looking a root up by the other
+generation's key (``selection["meta_ebm"]`` in a PR 39 selection) returns the
+same root, so callers written for either generation's keys resolve.
 
 Checks, all through the existing validators
 -------------------------------------------
@@ -56,7 +70,7 @@ Checks, all through the existing validators
 * ``check_crossover``        both columns compare with the upstream held fixed
                              (``require_same_upstream=True``), rows differ,
                              and the Cell 36 comparison used the audited
-                             Meta-EBM.
+                             GLASS Arbiter.
 * ``unloadable_xgb_artifacts``  XGBoost files that ``XGB_PARAM_SOURCE='artifact'``
                              could pick but that need modules removed in P4.
 """
@@ -81,8 +95,11 @@ import numpy as np
 from tests.support.notebooks import BANK_ROOT
 
 STAGES = ("stage1", "stage2", "stage3")
-NATIVE_ARM = {"meta_ebm": "glass", "meta_xgb": "blackbox"}
-SLOTS = {"meta_ebm": {"stage1": "lr", "stage2": "glass", "stage3": "ebm"},
+#: The GLASS Arbiter's upstream arbiter id: current, then PR 36-38 (D5).
+GLASS_ARBITERS = ("glass_arbiter", "meta_ebm")
+_GLASS_SLOTS = {"stage1": "lr", "stage2": "glass", "stage3": "ebm"}
+NATIVE_ARM = {"glass_arbiter": "glass", "meta_ebm": "glass", "meta_xgb": "blackbox"}
+SLOTS = {"glass_arbiter": _GLASS_SLOTS, "meta_ebm": _GLASS_SLOTS,
          "meta_xgb": {"stage1": "mlp", "stage2": "rf_router", "stage3": "xgb"}}
 #: Normalised Pass 2 population per upstream router (F17): GLASS fits Pass 2 on the full
 #: population, the RF Router on its OOF Pass 1 remainder.
@@ -105,21 +122,79 @@ class Root:
 
 _XO = "blackbox_pipeline/models/stage4_crossover"
 _META_XGB = "meta_xgb_stage4_*.joblib"     # MetaXGBConfig.artifact_stem (asserted by the harness tests)
+_NATIVE_XGB = Root("meta_xgb", "blackbox", "blackbox_pipeline/models/meta_xgb", _META_XGB,
+                   "black-box notebook Cell 36")
+_XGB_ON_GLASS = Root("meta_xgb", "glass", f"{_XO}/meta_xgb_on_glass", _META_XGB,
+                     "black-box notebook Cell 37")
 ROOTS = {
+    "glass_arbiter": Root("glass_arbiter", "glass", "models/glass_arbiter",
+                          "glass_arbiter_*.joblib", "GLASS notebook Cell 19"),
+    "meta_xgb": _NATIVE_XGB,
+    "glass_arbiter_on_blackbox": Root("glass_arbiter", "blackbox",
+                                      f"{_XO}/glass_arbiter_on_blackbox",
+                                      "glass_arbiter_*.joblib", "black-box notebook Cell 37"),
+    "meta_xgb_on_glass": _XGB_ON_GLASS,
+}
+#: The PR 36-38 generation (phase0.ARBITER_KEYS, existing manifests), read as saved.
+HISTORICAL_ROOTS = {
     "meta_ebm": Root("meta_ebm", "glass", "models/meta_ebm", "meta_ebm_*.joblib",
                      "GLASS notebook Cell 19"),
-    "meta_xgb": Root("meta_xgb", "blackbox", "blackbox_pipeline/models/meta_xgb",
-                     _META_XGB, "black-box notebook Cell 36"),
+    "meta_xgb": _NATIVE_XGB,
     "meta_ebm_on_blackbox": Root("meta_ebm", "blackbox", f"{_XO}/arbiter_on_blackbox",
                                  "meta_ebm_*.joblib", "black-box notebook Cell 37"),
-    "meta_xgb_on_glass": Root("meta_xgb", "glass", f"{_XO}/meta_xgb_on_glass",
-                              _META_XGB, "black-box notebook Cell 37"),
+    "meta_xgb_on_glass": _XGB_ON_GLASS,
 }
-#: Crossover columns (one upstream, both arbiters) and rows (one arbiter, both upstreams).
-COLUMNS = {"glass": ("meta_ebm", "meta_xgb_on_glass"),
-           "blackbox": ("meta_ebm_on_blackbox", "meta_xgb")}
-ROWS = {"meta_ebm": ("meta_ebm", "meta_ebm_on_blackbox"),
+#: ``ROOTS`` key -> its PR 36-38 key.
+HISTORICAL_KEYS = {"glass_arbiter": "meta_ebm", "meta_xgb": "meta_xgb",
+                   "glass_arbiter_on_blackbox": "meta_ebm_on_blackbox",
+                   "meta_xgb_on_glass": "meta_xgb_on_glass"}
+_CURRENT_KEYS = {old: new for new, old in HISTORICAL_KEYS.items()}
+_ALL_ROOTS = {**HISTORICAL_ROOTS, **ROOTS}
+#: Crossover columns (one upstream, both arbiters) and rows (one arbiter, both
+#: upstreams), in ``ROOTS`` keys (``key_in`` for a historical selection).
+COLUMNS = {"glass": ("glass_arbiter", "meta_xgb_on_glass"),
+           "blackbox": ("glass_arbiter_on_blackbox", "meta_xgb")}
+ROWS = {"glass_arbiter": ("glass_arbiter", "glass_arbiter_on_blackbox"),
         "meta_xgb": ("meta_xgb_on_glass", "meta_xgb")}
+
+
+class Selection(dict):
+    """
+    ``select_roots``' result, keyed as selected. A missing key falls back to
+    the same root under the other generation's key (current <-> PR 36-38);
+    iteration, ``in``, ``len`` and ``.get`` see only the selected keys.
+    """
+
+    def __missing__(self, key):
+        alias = HISTORICAL_KEYS.get(key) or _CURRENT_KEYS.get(key)
+        if alias is not None and dict.__contains__(self, alias):
+            return dict.__getitem__(self, alias)
+        raise KeyError(key)
+
+
+def root(key: str) -> Root:
+    """The ``Root`` of a current or a PR 36-38 key."""
+    try:
+        return _ALL_ROOTS[key]
+    except KeyError:
+        raise AuditError(f"unknown arbiter key {key!r}: expected one of {sorted(ROOTS)} or "
+                         f"{sorted(HISTORICAL_ROOTS)}") from None
+
+
+def key_in(selection, key: str) -> str:
+    """The key ``selection`` (a ``select_roots`` result) uses for the ``ROOTS`` key ``key``."""
+    if key in selection:
+        return key
+    old = HISTORICAL_KEYS.get(key)
+    if old in selection:
+        return old
+    raise AuditError(f"{key!r} (or {old!r}) is not in the selection {sorted(selection)}")
+
+
+def _glass_schema(arbiter: str) -> str:
+    """The schema a GLASS Arbiter artifact of this upstream arbiter id is saved with."""
+    from glass_pipeline.glass_arbiter.artifacts import SCHEMA_ARBITER
+    return {a: s for s, a in SCHEMA_ARBITER.items()}[arbiter]
 XGB_STAGE3_FOLDER = "blackbox_pipeline/models/xgb"     # XGB_ARTIFACT_DIRS, black-box Cell 29
 
 
@@ -149,6 +224,12 @@ def _resolve(path, root_dir: Path) -> Path:
     return p if p.is_absolute() else root_dir / p
 
 
+def _newest(root_dir: Path, r: Root) -> list:
+    folder = root_dir / r.folder
+    return sorted(folder.glob(r.pattern), key=lambda p: (p.stat().st_mtime, p.name)) \
+        if folder.is_dir() else []
+
+
 def select_roots(root_dir=BANK_ROOT, manifest=None) -> dict:
     """``{key: path}`` of the four arbiters to audit (module docstring: Selection)."""
     root_dir = Path(root_dir)
@@ -159,24 +240,25 @@ def select_roots(root_dir=BANK_ROOT, manifest=None) -> dict:
             raise AuditError(f"manifest {manifest}: unreadable ({exc})") from None
         if not isinstance(entries, dict):
             raise AuditError(f"manifest {manifest}: expected {{key: path}}, got {type(entries).__name__}")
-        missing, unknown = sorted(set(ROOTS) - set(entries)), sorted(set(entries) - set(ROOTS))
+        roots = HISTORICAL_ROOTS if set(entries) == set(HISTORICAL_ROOTS) else ROOTS
+        missing, unknown = sorted(set(roots) - set(entries)), sorted(set(entries) - set(roots))
         if missing or unknown:
-            raise AuditError(f"manifest {manifest}: needs exactly {sorted(ROOTS)}; "
-                             f"missing {missing}, unknown {unknown}")
-        out = {k: _resolve(entries[k], root_dir) for k in ROOTS}
+            raise AuditError(f"manifest {manifest}: needs exactly {sorted(ROOTS)} (or the PR 36-38 "
+                             f"keys {sorted(HISTORICAL_ROOTS)}); missing {missing}, unknown {unknown}")
+        out = Selection({k: _resolve(entries[k], root_dir) for k in roots})
         absent = [f"{k}: {p}" for k, p in out.items() if not p.is_file()]
         if absent:
             raise AuditError(f"manifest {manifest} names files that do not exist: {absent}")
         return out
-    out, absent = {}, []
-    for key, r in ROOTS.items():
-        folder = root_dir / r.folder
-        files = sorted(folder.glob(r.pattern), key=lambda p: (p.stat().st_mtime, p.name)) \
-            if folder.is_dir() else []
+    current = any(_newest(root_dir, ROOTS[k]) for k in ROOTS if ROOTS[k].arbiter in GLASS_ARBITERS)
+    roots = ROOTS if current else HISTORICAL_ROOTS
+    out, absent = Selection(), []
+    for key, r in roots.items():
+        files = _newest(root_dir, r)
         if files:
             out[key] = files[-1]
         else:
-            absent.append(f"{key}: no {r.pattern} in {folder} (written by {r.producer})")
+            absent.append(f"{key}: no {r.pattern} in {root_dir / r.folder} (written by {r.producer})")
     if absent:
         raise AuditError("arbiter artifacts missing — regenerate them (P6) or name them in "
                          f"${MANIFEST_ENV}:\n  " + "\n  ".join(absent))
@@ -194,9 +276,10 @@ def load_arbiter(key: str, path, GLOBAL_SPLIT: dict, extra_fingerprints: Optiona
     """The arbiter artifact, schema- and split-checked by the existing loaders."""
     from shared.stage4 import check_split_identity, index_alignment, split_reference
     try:
-        if ROOTS[key].arbiter == "meta_ebm":
-            from blackbox_pipeline.models.meta_xgb.comparison import load_meta_ebm_for_comparison
-            return load_meta_ebm_for_comparison(GLOBAL_SPLIT, str(path), extra_fingerprints)
+        if root(key).arbiter in GLASS_ARBITERS:
+            from blackbox_pipeline.models.meta_xgb.comparison import (
+                load_glass_arbiter_for_comparison)
+            return load_glass_arbiter_for_comparison(GLOBAL_SPLIT, str(path), extra_fingerprints)
         from blackbox_pipeline.models.meta_xgb.artifact import load_meta_xgb
         art = load_meta_xgb(str(path))
         ref = split_reference(GLOBAL_SPLIT, extra_fingerprints)
@@ -220,19 +303,18 @@ def check_arbiter_identity(key: str, art) -> None:
     """The 2x2 cell ``key`` claims to be, with complete recorded evidence."""
     from blackbox_pipeline.models.meta_xgb.artifact import SCHEMA as META_XGB_SCHEMA
     from blackbox_pipeline.models.meta_xgb.config import STAGE4_FEATURES
-    from glass_pipeline.meta_ebm.meta_stage import ARTIFACT_SCHEMA as META_EBM_SCHEMA
     from shared.stage4 import UPSTREAM
     from shared.stage4.adapters import PASS2_COMPLETE
     from shared.stage4.contract import LABEL_FINGERPRINT_SIDES, LABELS_CARRIED, LABELS_FINGERPRINTED
 
-    r, d, problems = ROOTS[key], _fields(art), []
+    r, d, problems = root(key), _fields(art), []
 
     def want(field, got, expected):
         if got != expected:
             problems.append(f"{field} = {got!r}, expected {expected!r}")
 
-    if r.arbiter == "meta_ebm":
-        want("schema", d.get("schema"), META_EBM_SCHEMA)
+    if r.arbiter in GLASS_ARBITERS:                 # each generation its own schema (D5)
+        want("schema", d.get("schema"), _glass_schema(r.arbiter))
     else:
         for field, expected in (("schema", META_XGB_SCHEMA), ("stage", "stage4"),
                                 ("model_family", "meta_xgb"), ("arm", "blackbox")):
@@ -316,10 +398,10 @@ def reload_upstream(key: str, art, GLOBAL_SPLIT: dict, root_dir=BANK_ROOT,
     outputs on disk must be the outputs the arbiter consumed.
     """
     from shared.stage4 import same_upstream
-    r = ROOTS[key]
+    r = root(key)
     paths = upstream_paths(key, art, root_dir)
-    if r.arbiter == "meta_ebm":
-        from glass_pipeline.meta_ebm.loader import load_stage_outputs as loader
+    if r.arbiter in GLASS_ARBITERS:
+        from glass_pipeline.glass_arbiter.loader import load_stage_outputs as loader
     else:
         from blackbox_pipeline.models.meta_xgb.inputs import load_blackbox_stage4_inputs as loader
     try:
@@ -433,8 +515,8 @@ def check_fresh_reload(expected: dict, root_dir=BANK_ROOT) -> dict:
 def expected_reload(key: str, path, art, upstream: dict) -> dict:
     """What a clean reload of the arbiter and its upstream files must show."""
     from shared.stage4 import UPSTREAM
-    r = ROOTS[key]
-    if r.arbiter == "meta_ebm":
+    r = root(key)
+    if r.arbiter in GLASS_ARBITERS:
         out = {str(path): {"type": "builtins.dict", "schema": _fields(art)["schema"],
                            "split_fingerprint": _fields(art)["split_fingerprint"]}}
     else:
@@ -520,38 +602,43 @@ def check_crossover(arts: dict, paths: dict, GLOBAL_SPLIT: dict,
                     extra_fingerprints: Optional[dict] = None, n_boot: int = 200) -> dict:
     """
     Columns: one upstream, both arbiters, compared with the upstream held fixed
-    (Cell 38: ``compare_with_meta_ebm(require_same_upstream=True)``). Rows: one
-    arbiter on both upstreams consumed different outputs at every stage — no
-    artifact was mixed in from the other arm. All four on one split and test
-    index. The native Meta-XGB's saved cascade comparison (Cell 36) used the
-    audited native Meta-EBM. Returns the two column comparisons.
+    (Cell 38: ``compare_with_glass_arbiter(require_same_upstream=True)``).
+    Rows: one arbiter on both upstreams consumed different outputs at every
+    stage — no artifact was mixed in from the other arm. All four on one split
+    and test index. The native Meta-XGB's saved cascade comparison (Cell 36)
+    used the audited native GLASS Arbiter. ``arts`` / ``paths`` are keyed as
+    the selection is (``ROOTS`` or ``HISTORICAL_ROOTS``). Returns the two
+    column comparisons.
     """
-    from blackbox_pipeline.models.meta_xgb.comparison import compare_with_meta_ebm
+    from blackbox_pipeline.models.meta_xgb.comparison import compare_with_glass_arbiter
     problems, columns = [], {}
+    native = key_in(arts, "glass_arbiter")
     fps = {k: _plain(_fields(a)["split_fingerprints"]) for k, a in arts.items()}
     tests = {k: list(_fields(a)["index_test"]) for k, a in arts.items()}
     if len({json.dumps(v, sort_keys=True) for v in fps.values()}) != 1:
         problems.append(f"split fingerprints differ across arbiters: {fps}")
-    if any(t != tests["meta_ebm"] for t in tests.values()):
+    if any(t != tests[native] for t in tests.values()):
         problems.append("index_test differs across arbiters")
-    for arm, (ebm_key, xgb_key) in COLUMNS.items():
+    for arm, column in COLUMNS.items():
+        ebm_key, xgb_key = (key_in(arts, k) for k in column)
         try:
-            res = compare_with_meta_ebm(GLOBAL_SPLIT, str(paths[ebm_key]), arts[xgb_key],
-                                        n_boot=n_boot, verbose=False,
-                                        extra_fingerprints=extra_fingerprints,
-                                        require_same_upstream=True)
+            res = compare_with_glass_arbiter(GLOBAL_SPLIT, str(paths[ebm_key]), arts[xgb_key],
+                                             n_boot=n_boot, verbose=False,
+                                             extra_fingerprints=extra_fingerprints,
+                                             require_same_upstream=True)
         except Exception as exc:                # noqa: BLE001 — every failure is a finding
             problems.append(f"{arm} column ({paths[ebm_key]} vs {paths[xgb_key]}): "
                             f"{type(exc).__name__}: {exc}")
             continue
         up = res["protocol"]["upstream"]
-        expected = {"meta_ebm": f"{arm} upstream -> meta_ebm", "meta_xgb": f"{arm} upstream -> meta_xgb",
-                    "held_fixed": True}
+        expected = {"glass_arbiter": f"{arm} upstream -> {root(ebm_key).arbiter}",
+                    "meta_xgb": f"{arm} upstream -> meta_xgb", "held_fixed": True}
         got = {k: up.get(k) for k in expected}
         if got != expected:
             problems.append(f"{arm} column: comparison recorded {got}, expected {expected}")
         columns[arm] = res
-    for arbiter, (a, b) in ROWS.items():
+    for arbiter, row in ROWS.items():
+        a, b = (key_in(arts, k) for k in row)
         ra, rb = upstream_record(a, arts[a]), upstream_record(b, arts[b])
         for stage in STAGES:
             fa = (ra["stages"].get(stage) or {}).get("content_fingerprint")
@@ -560,15 +647,19 @@ def check_crossover(arts: dict, paths: dict, GLOBAL_SPLIT: dict,
                                 f"({a} vs {b}) — an artifact was mixed in from the other arm")
     comparison = getattr(arts["meta_xgb"], "comparison", None)
     if not comparison:
-        problems.append("meta_xgb records no cascade comparison (Cell 36 passes meta_ebm_path)")
+        problems.append("meta_xgb records no cascade comparison (Cell 36 passes "
+                        "glass_arbiter_path)")
     else:
-        got = (comparison.get("meta_ebm_config") or {}).get("timestamp")
-        if got != _fields(arts["meta_ebm"]).get("timestamp"):
-            problems.append(f"meta_xgb's cascade comparison used the Meta-EBM of {got!r}, not the "
-                            f"audited {paths['meta_ebm']} ({_fields(arts['meta_ebm']).get('timestamp')!r})")
+        # Saved before PR 39, a comparison names the GLASS side meta_ebm (D5).
+        config = comparison.get("glass_arbiter_config") or comparison.get("meta_ebm_config") or {}
+        got = config.get("timestamp")
+        if got != _fields(arts[native]).get("timestamp"):
+            problems.append(f"meta_xgb's cascade comparison used the GLASS Arbiter of {got!r}, not "
+                            f"the audited {paths[native]} ({_fields(arts[native]).get('timestamp')!r})")
         up = (comparison.get("protocol") or {}).get("upstream") or {}
-        if (up.get("meta_ebm"), up.get("meta_xgb"), up.get("held_fixed")) != \
-                ("glass upstream -> meta_ebm", "blackbox upstream -> meta_xgb", False):
+        glass_up = up.get("glass_arbiter", up.get("meta_ebm"))
+        if (glass_up, up.get("meta_xgb"), up.get("held_fixed")) != \
+                (f"glass upstream -> {root(native).arbiter}", "blackbox upstream -> meta_xgb", False):
             problems.append(f"meta_xgb's cascade comparison records {up}")
     if problems:
         raise AuditError("2x2 crossover:\n  " + "\n  ".join(problems))

@@ -41,7 +41,7 @@ import glass_pipeline.glass_router.pipeline.glass_router_pipeline as glass_mod
 import shared.stage4.contract as contract
 from blackbox_pipeline.models.meta_xgb import load_blackbox_stage4_inputs
 from blackbox_pipeline.models.rf_router import RFRouter, SingleRFRouter
-from glass_pipeline.meta_ebm.loader import load_stage_outputs
+from glass_pipeline.glass_arbiter.loader import load_stage_outputs
 from shared.stage4 import build_stage4_inputs, router_stream
 import shared.stage_io as stage_io
 from shared.stage_io import fold_assignment

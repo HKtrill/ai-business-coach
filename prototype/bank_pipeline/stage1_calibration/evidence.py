@@ -142,7 +142,7 @@ def stage4_inputs(y, p_by_family: Mapping[str, np.ndarray],
     observed value whose recall is >= the target) and uses |p - t| as that
     voter's confidence; tied probabilities make the achievable recall jump.
     """
-    from glass_pipeline.meta_ebm.meta_stage import find_recall_threshold
+    from glass_pipeline.glass_arbiter.meta_stage import find_recall_threshold
 
     y = np.asarray(y).astype(int)
     out: Dict[str, Any] = {"target_recall": float(target_recall)}

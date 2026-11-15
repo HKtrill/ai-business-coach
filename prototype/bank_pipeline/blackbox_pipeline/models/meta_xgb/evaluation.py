@@ -2,7 +2,7 @@
 blackbox_pipeline.models.meta_xgb.evaluation
 ============================================
 Metric blocks for Stage 4, used identically for Meta-XGB and (in the
-comparison) Meta-EBM: no-abstention metrics on every row, and with-abstention
+comparison) the GLASS Arbiter: no-abstention metrics on every row, and with-abstention
 coverage + metrics on the retained rows.
 """
 

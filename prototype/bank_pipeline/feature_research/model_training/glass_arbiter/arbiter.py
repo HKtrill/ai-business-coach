@@ -3,7 +3,7 @@ feature_research/model_training/glass_arbiter/arbiter.py
 ========================================================
 The GLASS Arbiter on the research stages (LR, RF, EBM): the same
 weighted-confidence vote, trust weights, abstention rule and metrics as the
-cascade's Stage 4 arbiter (glass_pipeline.meta_ebm). Pure functions, no I/O.
+cascade's Stage 4 arbiter (glass_pipeline.glass_arbiter). Pure functions, no I/O.
 
 Difference from the cascade: all three research stages score every row, so
 there are no router coverage masks; the cascade's GLASS Router votes only on
@@ -55,7 +55,7 @@ from feature_research.model_training.glass_arbiter.thresholds import pick_thresh
 
 MODELS = ("lr", "rf", "ebm")
 
-# Same constants as shared.stage4.protocol / glass_pipeline.meta_ebm
+# Same constants as shared.stage4.protocol / glass_pipeline.glass_arbiter
 ABSTENTION_GRID = np.arange(0.03, 0.55, 0.02)
 ABSTENTION_MIN_COVERAGE = 0.50
 MIN_CONF_FALLBACK = 0.07

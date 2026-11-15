@@ -376,7 +376,7 @@ def test_a_meta_folds_own_labels_never_reach_its_training_side_outputs_f22(base,
     nested threshold, decisions and |p - t| abstention confidence come from
     meta-models and inner folds fitted on folds 1.. only. The abstention cut
     itself is one value chosen on every meta OOF row (reported in-selection,
-    as the Meta-EBM's)."""
+    as the GLASS Arbiter's)."""
     y = pd.Series(base.inputs.y_train, index=base.inputs.index_train)
     b = base.artifact.learner                         # the same block, labels unmoved
     pos = np.flatnonzero(np.asarray(b.oof["fold_id"]) == 0)
@@ -619,4 +619,4 @@ def test_the_notebook_runs_meta_xgb_under_the_tested_protocol():
     kw = {k.arg: ast.unparse(k.value) for k in main[0].keywords}
     assert [ast.unparse(a) for a in main[0].args] == ["GLOBAL_SPLIT"]
     assert kw == {"mlp_path": "MLP_S1_PATH", "rf_path": "RF_ROUTER_PATH", "xgb_path": "XGB_STAGE3_PATH",
-                  "config": "META_XGB_CONFIG", "meta_ebm_path": "META_EBM_PATH"}
+                  "config": "META_XGB_CONFIG", "glass_arbiter_path": "GLASS_ARBITER_PATH"}

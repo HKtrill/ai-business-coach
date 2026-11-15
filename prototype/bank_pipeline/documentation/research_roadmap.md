@@ -73,24 +73,24 @@
 
 #### Step 3A — NSD and ECI Binning Revalidation
 
-- [ ] Re-examine existing NSD and ECI thresholds, original design rationale, and current bin definitions.
-- [ ] Perform train-only, leakage-safe lift analysis using appropriate fold boundaries.
-- [ ] Measure per-bin support, class rates, lift, and fold-level stability.
-- [ ] Identify weak, unstable, redundant, or overlapping bins without assuming they should be removed.
-- [ ] Evaluate conjunction behavior and actual GLASS/RF router utility before merging or changing bins.
-- [ ] Retain existing thresholds unless the pre-established evidence criteria justify revisions.
-- [ ] If changes are justified, update bin definitions, encoders, feature contracts, and dependent tests.
-- [ ] Preserve the PR 38 selector algorithm and frozen shared routing obligations; version any changed input contract explicitly.
-- [ ] Freeze the final Stage 2 binning configuration.
+- [x] Re-examine existing NSD and ECI thresholds, original design rationale, and current bin definitions.
+- [x] Perform train-only, leakage-safe lift analysis using appropriate fold boundaries.
+- [x] Measure per-bin support, class rates, lift, and fold-level stability.
+- [x] Identify weak, unstable, redundant, or overlapping bins without assuming they should be removed.
+- [x] Evaluate conjunction behavior and actual GLASS/RF router utility before merging or changing bins.
+- [x] Retain existing thresholds unless the pre-established evidence criteria justify revisions.
+- [x] If changes are justified, update bin definitions, encoders, feature contracts, and dependent tests.
+- [x] Preserve the PR 38 selector algorithm and frozen shared routing obligations; version any changed input contract explicitly.
+- [x] Freeze the final Stage 2 binning configuration.
 
 #### Step 3B — GLASS Component Naming Standardization
 
-- [ ] Resolve naming inconsistencies between GLASS Router and GLASS Arbiter across modules, imports, interfaces, and documentation.
-- [ ] Update artifact paths, metadata, configuration identifiers, and downstream references where appropriate.
-- [ ] Preserve the distinction between GLASS and black-box model families.
-- [ ] Avoid changing modeling behavior during naming cleanup.
-- [ ] Validate compatibility and add focused regression tests only where changes require them.
-- [ ] Confirm the final Stage 1–2 contracts and naming structure are ready for regeneration.
+- [x] Resolve naming inconsistencies between GLASS Router and GLASS Arbiter across modules, imports, interfaces, and documentation.
+- [x] Update artifact paths, metadata, configuration identifiers, and downstream references where appropriate.
+- [x] Preserve the distinction between GLASS and black-box model families.
+- [x] Avoid changing modeling behavior during naming cleanup.
+- [x] Validate compatibility and add focused regression tests only where changes require them.
+- [x] Confirm the final Stage 1–2 contracts and naming structure are ready for regeneration.
 
 **Deliverable:** Finalized Stage 2 binning and GLASS component naming, with the frozen selector design preserved.
 
@@ -185,12 +185,12 @@
 
 - [x] **Commit 1 complete:** PR 39 roadmap, dependency audit, evaluation rules, and regeneration sequence finalized.
 - [x] **Commit 2 complete:** Shared Stage 1 calibration and feature naming frozen.
-- [ ] **Commit 3 complete:** Stage 2 binning and GLASS component naming finalized.
+- [x] **Commit 3 complete:** Stage 2 binning and GLASS component naming finalized.
 - [ ] **Commit 4 complete:** Final Stage 1–3 artifacts regenerated and accepted.
 - [ ] **Commit 5 complete:** Stage 4 arbiters regenerated, 2×2 crossover completed, and cascade baselines established.
 - [ ] **Commit 6 complete:** Final regression, provenance, reproducibility, and clean-kernel notebook validation completed.
 - [ ] **PR 39 complete:** Both cascade implementations and their final Phase 1 artifact contracts frozen, with Phase 2 handoff established.
-- [ ] **Phase 1 complete:** GLASS and black-box cascades are operational, integrated, validated, and ready for final notebook organization and research presentation.
+
 
 **Out of scope:** Complementarity-aware selector redesign, additional Stage 2 training-objective experiments, notebook presentation restructuring, final notebook slicing and organization, paper-level independent validation, and new research extensions. These belong to later phases.
 
@@ -237,6 +237,7 @@
 
 - [ ] **Commit 1 complete:** Recurring actionable warnings diagnosed, corrected, and validated without altering frozen modeling contracts or artifacts.
 - [ ] **PR 40 complete:** Maintenance changes committed, regression tests passing, and warning cleanup documented.
+- [ ] **Phase 1 complete:** GLASS and black-box cascades are operational, integrated, validated, and ready for final notebook organization and research presentation.
 
 **Out of scope:** Model retraining, hyperparameter optimization, feature engineering changes, calibration revisions, Stage 2 selector changes, artifact regeneration, notebook redesign, and unrelated refactoring.
 
@@ -337,6 +338,24 @@
 **Deferred from PR 36**
 
 - [ ] Evaluate sensitivity to upstream stacking dependence through robustness experiments
+
+**Stage 2 NSD/ECI binning drift and sensitivity (deferred from PR 39)**
+
+- [ ] Revisit the substantial lift drift observed during PR 39 Step 3A, particularly:
+  - `eci_warm`: original 1.49–1.67× lift versus approximately 1.03× OOF.
+  - `eci_hot`: original 3.53× versus approximately 2.50× OOF.
+  - `nsd_elevated`: approximately 2.49× pooled OOF lift, with significant fold-level variation.
+- [ ] Reproduce the original NSD/ECI feature-bin research using the corrected, fold-isolated feature engineering implementation.
+- [ ] Distinguish threshold-placement problems from encoder behavior, population shifts, and in-sample label leakage.
+- [ ] Reevaluate decile-lift distributions, candidate thresholds, bin counts, support, confidence intervals, and fold stability.
+- [ ] Investigate whether transitional or weak bins retain meaningful predictive utility through conjunctions with other Stage 2 features.
+- [ ] Evaluate alternative threshold configurations and bin structures under leakage-safe training protocols, without modifying the frozen Phase 1 baseline.
+- [ ] Measure GLASS/RF router sensitivity to candidate binning changes, including coverage, constraint feasibility, complementarity, and computational cost.
+- [ ] Compare candidate configurations against the frozen PR 39 binning baseline using predefined evaluation criteria.
+- [ ] Determine whether the existing bins should remain unchanged or whether evidence warrants a separately versioned methodology revision.
+- [ ] If revision is justified, document the required feature-contract changes, G13 leakage audit, downstream artifact regeneration, and follow-up PR rather than silently modifying frozen artifacts.
+
+**Deliverable:** Reproducible NSD/ECI binning sensitivity analysis, quantified explanation of the observed lift drift, and an evidence-based recommendation to retain or revisit the frozen binning configuration.
 
 ### Phase 4 — Paper Readiness
 

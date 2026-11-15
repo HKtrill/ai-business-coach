@@ -3,7 +3,7 @@ shared.stage4.upstream
 ======================
 Which arm's Stage 1-3 artifacts a Stage 4 arbiter consumes (PR 36 audit F29).
 
-The research design is a 2x2: each arbiter (GLASS Meta-EBM, black-box
+The research design is a 2x2: each arbiter (GLASS Arbiter, black-box
 Meta-XGB) on each arm's upstream, with the upstream arm held fixed inside one
 run. An arbiter reads its own arm by default; the crossover is declared
 explicitly with ``upstream="glass"`` or ``upstream="blackbox"``:
@@ -97,7 +97,7 @@ def stream_fingerprint(s: StageStream) -> str:
     16-hex identity of exactly the outputs a stream hands Stage 4: train and
     test probabilities on the rows where they are defined, router decisions
     and train fold ids. Independent of how an arbiter fills undefined router
-    rows (Meta-EBM: 0.5, Meta-XGB: NaN), so both arbiters reading one artifact
+    rows (GLASS Arbiter: 0.5, Meta-XGB: NaN), so both arbiters reading one artifact
     agree.
     """
     h = hashlib.sha256()

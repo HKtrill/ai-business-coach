@@ -5,7 +5,7 @@ The Stage 4 input boundary shared by BOTH arms: aligned, provenance-carrying
 base-model streams plus every alignment / provenance check.
 
 Arm-agnostic. Artifact-format adapters live in ``shared.stage4.adapters``;
-each arm's loader (``glass_pipeline.meta_ebm.loader``,
+each arm's loader (``glass_pipeline.glass_arbiter.loader``,
 ``blackbox_pipeline.models.meta_xgb.inputs``) only chooses which adapter reads
 which file.
 

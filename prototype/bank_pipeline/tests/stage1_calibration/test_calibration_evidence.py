@@ -23,7 +23,7 @@ import pytest
 
 import glass_pipeline.lr.lr_stage_calibrated as lr_mod
 from glass_pipeline.lr.lr_stage_calibrated import CalibratedLRStage
-from glass_pipeline.meta_ebm.meta_stage import find_recall_threshold
+from glass_pipeline.glass_arbiter.meta_stage import find_recall_threshold
 from shared.metrics import calculate_ece
 from shared.stage1.feature_engineering import LRFeatureEngineer
 from shared.stage_io import fold_assignment

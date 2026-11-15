@@ -2,17 +2,23 @@
 The real-artifact audit itself (tests.support.artifact_audit), on synthetic
 artifacts in the saved formats — the default suite, no saved artifacts needed.
 
-Contract: on a complete 2x2 written by the real producers (train_meta_stage,
+Contract: on a complete 2x2 written by the real producers (train_glass_arbiter,
 train_meta_xgb_stage) from saved upstream files, every check passes. A
 missing arbiter, a newest arbiter that is invalid (never an older one in its
 place), a manifest naming a missing file, a wrong identity or incomplete
 evidence, an arbiter written before the upstream record, an upstream file
 missing or replaced after the arbiter consumed it, a 2x2 column whose
 arbiters read different upstreams, an arbiter whose two upstreams share
-outputs, a cascade comparison made with another Meta-EBM, a pickle of the
+outputs, a cascade comparison made with another GLASS Arbiter, a pickle of the
 XGBoost package removed in P4a, and a Stage 3 model that does not reproduce
 its saved outputs each fail with the file and the field. The audit looks where the
 notebooks save, and the realdata suite runs only when ``-m`` names it.
+
+PR 39 (D5): the same 2x2 saved the PR 36-38 way (schema ``meta_ebm/2``, keys
+``meta_ebm`` / ``meta_ebm_on_blackbox``, their folders and file names, a
+comparison with ``meta_ebm_*`` keys) is audited as saved, under its own keys;
+a manifest or a selection never mixes the two generations, and a file is
+never accepted under the other generation's key.
 """
 
 from __future__ import annotations
@@ -20,6 +26,7 @@ from __future__ import annotations
 import ast
 import copy
 import functools
+import hashlib
 import inspect
 import json
 import os
@@ -38,13 +45,14 @@ import pytest
 
 import blackbox_pipeline.models.meta_xgb.comparison as comparison
 from blackbox_pipeline.models.meta_xgb import MetaXGBConfig
-from glass_pipeline.meta_ebm import meta_stage as ms
-from glass_pipeline.meta_ebm.artifacts import save_meta_ebm
-from glass_pipeline.meta_ebm.meta_stage import train_meta_stage
+from glass_pipeline.glass_arbiter import meta_stage as ms
+from glass_pipeline.glass_arbiter.artifacts import (ARTIFACT_PREFIX, HISTORICAL_ARTIFACT_PREFIX,
+                                                     save_glass_arbiter)
+from glass_pipeline.glass_arbiter.meta_stage import train_glass_arbiter
 from shared.stage3.artifact import Stage3ArtifactStore
 from tests.stage3.conftest import ARMS, run_arm
 from tests.support import artifact_audit as audit
-from tests.support.artifact_audit import AuditError, ROOTS
+from tests.support.artifact_audit import AuditError, HISTORICAL_ROOTS, ROOTS
 from tests.support.meta_xgb_world import run_meta
 from tests.support.notebooks import BANK_ROOT
 from tests.support.stage4_world import ROUTER_FP, build_world, make_router, make_stage1, make_stage3
@@ -72,19 +80,19 @@ def bank(tmp_path_factory):
             joblib.dump(art, path)
     folder = {k: str(root / r.folder) for k, r in ROOTS.items()}
     paths = {}
-    with pytest.MonkeyPatch.context() as mp:          # train_meta_stage takes no extra_fingerprints
+    with pytest.MonkeyPatch.context() as mp:          # train_glass_arbiter takes no extra_fingerprints
         real = ms.load_stage_outputs
         mp.setattr(ms, "load_stage_outputs", lambda *a, **k: real(*a, extra_fingerprints=ROUTER_FP, **k))
-        for key, up in (("meta_ebm", None), ("meta_ebm_on_blackbox", "blackbox")):
-            _, paths[key] = train_meta_stage(w["GS"], *files[ROOTS[key].upstream], verbose=False,
-                                             artifact_dir=folder[key], upstream=up)
+        for key, up in (("glass_arbiter", None), ("glass_arbiter_on_blackbox", "blackbox")):
+            _, paths[key] = train_glass_arbiter(w["GS"], *files[ROOTS[key].upstream], verbose=False,
+                                                artifact_dir=folder[key], upstream=up)
         blackbox = dict(zip(("mlp", "rf", "xgb"), files["blackbox"]))
         _, paths["meta_xgb_on_glass"] = run_meta(w, dict(zip(("mlp", "rf", "xgb"), files["glass"])),
                                                  folder["meta_xgb_on_glass"], save=True, upstream="glass")
-        quick = functools.partial(comparison.compare_with_meta_ebm, n_boot=20)   # speed only
-        mp.setattr(comparison, "compare_with_meta_ebm", quick)
+        quick = functools.partial(comparison.compare_with_glass_arbiter, n_boot=20)   # speed only
+        mp.setattr(comparison, "compare_with_glass_arbiter", quick)
         _, paths["meta_xgb"] = run_meta(w, blackbox, folder["meta_xgb"], save=True,
-                                        meta_ebm_path=paths["meta_ebm"])
+                                        glass_arbiter_path=paths["glass_arbiter"])
     return SimpleNamespace(root=root, GS=w["GS"], files=files,
                            paths={k: Path(p) for k, p in paths.items()})
 
@@ -134,14 +142,15 @@ def test_a_missing_arbiter_fails_naming_where_it_is_written(bank, tmp_path):
 
 def test_the_newest_arbiter_is_audited_with_no_fallback_to_an_older_one(bank, tmp_path):
     root = _copy_bank(bank, tmp_path)
-    older = joblib.load(bank.paths["meta_ebm"])
-    newer = Path(save_meta_ebm({**older, "schema": "meta_ebm/1"}, str(root / ROOTS["meta_ebm"].folder)))
+    older = joblib.load(bank.paths["glass_arbiter"])
+    newer = Path(save_glass_arbiter({**older, "schema": "meta_ebm/1"},
+                                    str(root / ROOTS["glass_arbiter"].folder)))
     os.utime(newer, (newer.stat().st_mtime + 60,) * 2)
     roots = audit.select_roots(root)
-    assert roots["meta_ebm"] == newer
-    with pytest.raises(AuditError, match=rf"^meta_ebm .*{re.escape(newer.name)}: Stage4InputError: "
-                                         r"Meta-EBM artifact is not schema 'meta_ebm/2'"):
-        audit.load_arbiter("meta_ebm", roots["meta_ebm"], bank.GS, ROUTER_FP)
+    assert roots["glass_arbiter"] == newer
+    with pytest.raises(AuditError, match=rf"^glass_arbiter .*{re.escape(newer.name)}: Stage4InputError: "
+                                         r"GLASS Arbiter artifact is not one of the schemas"):
+        audit.load_arbiter("glass_arbiter", roots["glass_arbiter"], bank.GS, ROUTER_FP)
 
 
 def test_a_manifest_names_the_arbiters_explicitly(bank, tmp_path):
@@ -149,11 +158,16 @@ def test_a_manifest_names_the_arbiters_explicitly(bank, tmp_path):
     manifest = tmp_path / "manifest.json"
     entries = {k: str(p.relative_to(bank.root)) for k, p in bank.paths.items()}
     manifest.write_text(json.dumps(entries), encoding="utf-8")
-    newer = Path(save_meta_ebm(joblib.load(bank.paths["meta_ebm"]), str(root / ROOTS["meta_ebm"].folder)))
+    newer = Path(save_glass_arbiter(joblib.load(bank.paths["glass_arbiter"]),
+                                    str(root / ROOTS["glass_arbiter"].folder)))
     os.utime(newer, (newer.stat().st_mtime + 60,) * 2)
     assert audit.select_roots(root, manifest) == {k: root / v for k, v in entries.items()}
     manifest.write_text(json.dumps({k: v for k, v in entries.items() if k != "meta_xgb"}))
     with pytest.raises(AuditError, match=r"missing \['meta_xgb'\]"):
+        audit.select_roots(root, manifest)
+    mixed = {("meta_ebm" if k == "glass_arbiter" else k): v for k, v in entries.items()}
+    manifest.write_text(json.dumps(mixed))                 # one generation per manifest
+    with pytest.raises(AuditError, match=r"missing \['glass_arbiter'\], unknown \['meta_ebm'\]"):
         audit.select_roots(root, manifest)
     manifest.write_text(json.dumps({**entries, "meta_xgb": "models/nowhere.joblib"}))
     with pytest.raises(AuditError, match=r"do not exist: \['meta_xgb: .*nowhere\.joblib'\]"):
@@ -168,21 +182,21 @@ def _stages(art):
 
 
 IDENTITY_CASES = {
-    "upstream arm swapped": ("meta_ebm", lambda a: audit._fields(a)["stage4_inputs"]["upstream"].update(arm="blackbox"),
+    "upstream arm swapped": ("glass_arbiter", lambda a: audit._fields(a)["stage4_inputs"]["upstream"].update(arm="blackbox"),
                              "upstream.arm = 'blackbox', expected 'glass'"),
-    "crossover not declared": ("meta_ebm_on_blackbox",
+    "crossover not declared": ("glass_arbiter_on_blackbox",
                                lambda a: audit._fields(a)["stage4_inputs"]["upstream"].update(crossover=False),
                                "upstream.crossover = False, expected True"),
     "wrong Pass 2 population": ("meta_xgb", lambda a: _stages(a)["stage2"].update(
         pass2_population={"cross_fit": "full", "full_train": "full"}), "pass2_population (F17)"),
     "label evidence missing": ("meta_xgb_on_glass", lambda a: _stages(a)["stage2"].update(label_evidence=None),
                                "stage2.label_evidence = None (F12)"),
-    "Stage 3 labelled unset": ("meta_ebm", lambda a: _stages(a)["stage3"].update(arm="unset"),
+    "Stage 3 labelled unset": ("glass_arbiter", lambda a: _stages(a)["stage3"].update(arm="unset"),
                                "stages.stage3.arm = 'unset', expected 'glass'"),
     "feature contract reordered": ("meta_xgb", lambda a: audit._fields(a)["feature_names"].reverse(),
                                    "feature_names"),
     "label-fingerprint checks not recorded": (
-        "meta_ebm", lambda a: audit._fields(a)["stage4_inputs"].update(validation=[
+        "glass_arbiter", lambda a: audit._fields(a)["stage4_inputs"].update(validation=[
             r for r in audit._fields(a)["stage4_inputs"]["validation"]
             if "training rows and labels" not in r["check"]]), "no record of"),
     "a failed check recorded": ("meta_xgb", lambda a: audit._fields(a)["stage4_inputs"]["validation"][0]
@@ -202,10 +216,10 @@ def test_identity_and_evidence_errors_name_the_artifact_and_field(bank, case):
 
 
 def test_an_arbiter_without_an_upstream_record_is_rejected_as_legacy(bank):
-    art = copy.deepcopy(_arts(bank)["meta_ebm"])
+    art = copy.deepcopy(_arts(bank)["glass_arbiter"])
     del art["stage4_inputs"]["upstream"]
     with pytest.raises(AuditError, match="written before PR 36 F29"):
-        audit.check_arbiter_identity("meta_ebm", art)
+        audit.check_arbiter_identity("glass_arbiter", art)
 
 
 CROSSOVER_CASES = {
@@ -213,10 +227,10 @@ CROSSOVER_CASES = {
         "meta_xgb_on_glass", lambda a: _stages(a)["stage3"].update(content_fingerprint="0" * 16),
         "glass column"),
     "one arbiter read the same outputs on both upstreams": (
-        "meta_ebm_on_blackbox", lambda a: None, "outputs are identical on both upstreams"),
-    "the cascade comparison used another Meta-EBM": (
-        "meta_xgb", lambda a: a.comparison["meta_ebm_config"].update(timestamp="2000-01-01 00:00:00"),
-        "cascade comparison used the Meta-EBM of '2000-01-01 00:00:00'"),
+        "glass_arbiter_on_blackbox", lambda a: None, "outputs are identical on both upstreams"),
+    "the cascade comparison used another GLASS Arbiter": (
+        "meta_xgb", lambda a: a.comparison["glass_arbiter_config"].update(timestamp="2000-01-01 00:00:00"),
+        "cascade comparison used the GLASS Arbiter of '2000-01-01 00:00:00'"),
 }
 
 
@@ -225,7 +239,8 @@ def test_the_2x2_check_refuses_mixed_or_unlinked_arbiters(bank, case):
     key, edit, message = CROSSOVER_CASES[case]
     arts = {k: copy.deepcopy(a) for k, a in _arts(bank).items()}
     if case.startswith("one arbiter"):                 # its stage1 outputs, recorded as the native's
-        _stages(arts[key])["stage1"]["content_fingerprint"] = _stages(arts["meta_ebm"])["stage1"]["content_fingerprint"]
+        _stages(arts[key])["stage1"]["content_fingerprint"] = \
+            _stages(arts["glass_arbiter"])["stage1"]["content_fingerprint"]
     edit(arts[key])
     with pytest.raises(AuditError, match=re.escape(message)):
         audit.check_crossover(arts, bank.paths, bank.GS, ROUTER_FP, n_boot=20)
@@ -244,6 +259,94 @@ def test_upstream_files_missing_or_replaced_after_the_arbiter_ran_are_caught(ban
     stage1["artifact_path"] = str(tmp_path / "lr.joblib")
     with pytest.raises(AuditError, match="stage1 outputs differ .* not the outputs it consumed"):
         audit.reload_upstream(key, art, bank.GS, bank.root, ROUTER_FP)
+
+
+# ----------------------------------------------------------------------
+# PR 39 (D5): the PR 36-38 generation, audited as saved under its own names
+# ----------------------------------------------------------------------
+def _saved_before_pr39(art: dict) -> dict:
+    """A GLASS Arbiter artifact as PR 36-38 wrote it: names only, every number kept."""
+    old = copy.deepcopy(art)
+    old["schema"] = "meta_ebm/2"
+    up = old["stage4_inputs"]["upstream"]
+    up.update(arbiter="meta_ebm", combination=f"{up['arm']} upstream -> meta_ebm")
+    return old
+
+
+def _comparison_saved_before_pr39(cmp: dict) -> dict:
+    old = copy.deepcopy(cmp)
+    config = old.pop("glass_arbiter_config")
+    config.pop("schema")
+    old["meta_ebm_config"] = config
+    protocol = old["protocol"]
+    protocol["meta_ebm_score"] = protocol.pop("glass_arbiter_score")
+    protocol["upstream"]["meta_ebm"] = protocol["upstream"].pop("glass_arbiter").replace(
+        "glass_arbiter", "meta_ebm")
+    return old
+
+
+@pytest.fixture(scope="module")
+def historical_bank(bank, tmp_path_factory):
+    """The same 2x2 as PR 36-38 saved it: its keys, folders, file names and schema."""
+    root = tmp_path_factory.mktemp("historical") / "bank_pipeline"
+    shutil.copytree(bank.root, root)
+    paths = {}
+    for new, old in (("glass_arbiter", "meta_ebm"), ("glass_arbiter_on_blackbox", "meta_ebm_on_blackbox")):
+        folder = root / HISTORICAL_ROOTS[old].folder
+        folder.mkdir(parents=True)
+        paths[old] = folder / bank.paths[new].name.replace(ARTIFACT_PREFIX, HISTORICAL_ARTIFACT_PREFIX)
+        joblib.dump(_saved_before_pr39(joblib.load(bank.paths[new])), paths[old])
+        shutil.rmtree(root / ROOTS[new].folder)          # only PR 36-38 GLASS Arbiter folders left
+    for key in ("meta_xgb", "meta_xgb_on_glass"):
+        paths[key] = root / bank.paths[key].relative_to(bank.root)
+    xgb = joblib.load(paths["meta_xgb"])
+    xgb.comparison = _comparison_saved_before_pr39(xgb.comparison)
+    joblib.dump(xgb, paths["meta_xgb"])
+    return SimpleNamespace(root=root, GS=bank.GS, files=bank.files, paths=paths)
+
+
+def test_the_pr36_38_generation_is_audited_as_saved_under_its_own_keys(historical_bank, tmp_path):
+    hb = historical_bank
+    before = {k: hashlib.sha256(p.read_bytes()).hexdigest() for k, p in hb.paths.items()}
+    roots = audit.select_roots(hb.root)                   # no PR 39 GLASS Arbiter on disk yet
+    assert roots == hb.paths and set(roots) == set(HISTORICAL_ROOTS)
+    manifest = tmp_path / "manifest.json"                 # an existing PR 38 manifest's keys
+    manifest.write_text(json.dumps({k: str(p) for k, p in hb.paths.items()}), encoding="utf-8")
+    assert audit.select_roots(hb.root, manifest) == hb.paths
+    arts, expected = {k: audit.load_arbiter(k, p, hb.GS, ROUTER_FP) for k, p in roots.items()}, {}
+    for key, art in arts.items():
+        audit.check_arbiter_identity(key, art)
+        _, up = audit.reload_upstream(key, art, hb.GS, hb.root, ROUTER_FP)
+        expected.update(audit.expected_reload(key, roots[key], art, up))
+    assert arts["meta_ebm"]["schema"] == "meta_ebm/2"
+    audit.check_fresh_reload(expected, hb.root)
+    columns = audit.check_crossover(arts, roots, hb.GS, ROUTER_FP, n_boot=20)
+    assert {arm: c["protocol"]["upstream"]["glass_arbiter"] for arm, c in columns.items()} == \
+        {"glass": "glass upstream -> meta_ebm", "blackbox": "blackbox upstream -> meta_ebm"}
+    assert {k: hashlib.sha256(p.read_bytes()).hexdigest() for k, p in hb.paths.items()} == before
+
+
+def test_the_two_generations_are_never_mixed_or_translated(bank, historical_bank, tmp_path):
+    hb = historical_bank
+    with pytest.raises(AuditError, match=r"schema = 'meta_ebm/2', expected 'glass_arbiter/1'"):
+        audit.check_arbiter_identity("glass_arbiter", joblib.load(hb.paths["meta_ebm"]))
+    with pytest.raises(AuditError, match=r"schema = 'glass_arbiter/1', expected 'meta_ebm/2'"):
+        audit.check_arbiter_identity("meta_ebm", joblib.load(bank.paths["glass_arbiter"]))
+    root = tmp_path / "bank_pipeline"                     # a PR 39 arbiter appears: PR 39 roots only
+    shutil.copytree(hb.root, root)
+    (root / ROOTS["glass_arbiter"].folder).mkdir(parents=True)
+    shutil.copy(bank.paths["glass_arbiter"], root / ROOTS["glass_arbiter"].folder)
+    with pytest.raises(AuditError, match=r"glass_arbiter_on_blackbox: no glass_arbiter_\*\.joblib"):
+        audit.select_roots(root)
+    assert audit.key_in(hb.paths, "glass_arbiter") == "meta_ebm"
+    assert audit.key_in(bank.paths, "glass_arbiter") == "glass_arbiter"
+    old, new = audit.select_roots(hb.root), audit.select_roots(bank.root)
+    assert old["glass_arbiter"] == old["meta_ebm"] and new["meta_ebm"] == new["glass_arbiter"]
+    assert "meta_ebm" not in new and set(new) == set(ROOTS) and new.get("meta_ebm") is None
+    with pytest.raises(KeyError):
+        new["arbiter"]
+    with pytest.raises(AuditError, match="unknown arbiter key"):
+        audit.root("arbiter")
 
 
 # ----------------------------------------------------------------------
@@ -311,10 +414,10 @@ def _folder(node) -> str:
 
 def test_the_audit_finds_the_arbiters_where_the_notebooks_save_them():
     bb = "blackbox_pipeline/blackbox_cascade.ipynb"
-    (glass_meta,) = _calls("glass_pipeline/glass_cascade.ipynb", "train_meta_stage")
+    (glass_meta,) = _calls("glass_pipeline/glass_cascade.ipynb", "train_glass_arbiter")
     assert "artifact_dir" not in {k.arg for k in glass_meta.keywords}
-    default = inspect.signature(train_meta_stage).parameters["artifact_dir"].default
-    assert PurePosixPath(default) == PurePosixPath(ROOTS["meta_ebm"].folder)
+    default = inspect.signature(train_glass_arbiter).parameters["artifact_dir"].default
+    assert PurePosixPath(default) == PurePosixPath(ROOTS["glass_arbiter"].folder)
     assigned = {}
     for c in json.loads((BANK_ROOT / bb).read_text(encoding="utf-8"))["cells"]:
         if c["cell_type"] == "code":
@@ -322,22 +425,25 @@ def test_the_audit_finds_the_arbiters_where_the_notebooks_save_them():
                 if isinstance(n, ast.Assign) and isinstance(n.targets[0], ast.Name):
                     assigned.setdefault(n.targets[0].id, []).append(n.value)
     assert [ast.unparse(v) for v in assigned["_XO_DIR"]] == ["BLACKBOX_ROOT / 'models' / 'stage4_crossover'"]
-    (crossover_ebm,) = _calls(bb, "train_meta_stage")
+    (crossover_ebm,) = _calls(bb, "train_glass_arbiter")
     kw = {k.arg: k.value for k in crossover_ebm.keywords}
-    assert ast.literal_eval(kw["upstream"]) == ROOTS["meta_ebm_on_blackbox"].upstream
-    assert _folder(kw["artifact_dir"]) == ROOTS["meta_ebm_on_blackbox"].folder
+    assert ast.literal_eval(kw["upstream"]) == ROOTS["glass_arbiter_on_blackbox"].upstream
+    assert _folder(kw["artifact_dir"]) == ROOTS["glass_arbiter_on_blackbox"].folder
     configs = {}
     for call in _calls(bb, "train_meta_xgb_stage"):
         kw = {k.arg: k.value for k in call.keywords}
         upstream = ast.literal_eval(kw["upstream"]) if "upstream" in kw else "blackbox"
-        configs[upstream] = (kw["config"], "meta_ebm_path" in kw)
+        configs[upstream] = (kw["config"], "glass_arbiter_path" in kw)
     assert ast.unparse(configs["blackbox"][0]) == "META_XGB_CONFIG" and configs["blackbox"][1]
     (meta_xgb_config,) = assigned["META_XGB_CONFIG"]
     assert _folder({k.arg: k.value for k in meta_xgb_config.keywords}["artifact_dir"]) == ROOTS["meta_xgb"].folder
     glass_cfg = {k.arg: k.value for k in configs["glass"][0].keywords}
     assert _folder(glass_cfg["artifact_dir"]) == ROOTS["meta_xgb_on_glass"].folder
-    assert 'f"meta_ebm_{ts}.joblib"' in inspect.getsource(save_meta_ebm)
-    assert ROOTS["meta_ebm"].pattern == ROOTS["meta_ebm_on_blackbox"].pattern == "meta_ebm_*.joblib"
+    assert 'f"{ARTIFACT_PREFIX}{ts}.joblib"' in inspect.getsource(save_glass_arbiter)
+    assert ROOTS["glass_arbiter"].pattern == ROOTS["glass_arbiter_on_blackbox"].pattern == \
+        f"{ARTIFACT_PREFIX}*.joblib" == "glass_arbiter_*.joblib"
+    assert HISTORICAL_ROOTS["meta_ebm"].pattern == HISTORICAL_ROOTS["meta_ebm_on_blackbox"].pattern \
+        == f"{HISTORICAL_ARTIFACT_PREFIX}*.joblib" == "meta_ebm_*.joblib"
     stem = MetaXGBConfig().artifact_stem
     assert ROOTS["meta_xgb"].pattern == ROOTS["meta_xgb_on_glass"].pattern == f"{stem}_*.joblib"
 

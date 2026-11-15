@@ -94,7 +94,7 @@ CODE_FILES = (
     "stage1_calibration/*.py", "shared/stage1/*.py", "shared/metrics.py",
     "shared/thresholds.py", "shared/stage_io.py", "glass_pipeline/lr/*.py",
     "blackbox_pipeline/models/mlp/*.py", "blackbox_pipeline/models/mlp/evaluation/*.py",
-    "glass_pipeline/meta_ebm/meta_stage.py", "stage2_crossfit/runner.py",
+    "glass_pipeline/glass_arbiter/meta_stage.py", "stage2_crossfit/runner.py",
     "data/preprocessing/bank_preprocessing.py", "data/global_splits/split_manager.py",
 )
 

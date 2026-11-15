@@ -1,5 +1,5 @@
 """
-GLASS Stage 4 (Meta-EBM) — input contract + behaviour.
+GLASS Stage 4 (GLASS Arbiter) — input contract + behaviour.
 
 Fixtures: ``tests.support.stage4_world`` (real StageOutput / Stage3Artifact
 classes, real router artifact layout). Run from ``prototype/bank_pipeline``:
@@ -19,9 +19,9 @@ from tests.support.stage4_world import (
 )
 from shared.validation import ValidationError
 
-from glass_pipeline.meta_ebm import meta_stage as ms
-from glass_pipeline.meta_ebm.loader import load_stage_outputs
-from glass_pipeline.meta_ebm.meta_stage import find_recall_threshold, train_meta_stage
+from glass_pipeline.glass_arbiter import meta_stage as ms
+from glass_pipeline.glass_arbiter.loader import load_stage_outputs
+from glass_pipeline.glass_arbiter.meta_stage import find_recall_threshold, train_glass_arbiter
 
 
 @pytest.fixture
@@ -47,14 +47,14 @@ def load(w, arts, tmp_path):
 
 def run(w, arts, tmp_path, **kw):
     p = dump(tmp_path, arts)
-    return train_meta_stage(w["GS"], lr_path=p["lr"], glass_path=p["router"],
+    return train_glass_arbiter(w["GS"], lr_path=p["lr"], glass_path=p["router"],
                             ebm_path=p["ebm"], artifact_dir=str(tmp_path / "meta"),
                             verbose=kw.pop("verbose", False), **kw)
 
 
 @pytest.fixture(autouse=True)
 def _router_scheme(monkeypatch):
-    """train_meta_stage has no extra_fingerprints arg: route it via the loader."""
+    """train_glass_arbiter has no extra_fingerprints arg: route it via the loader."""
     real = ms.load_stage_outputs
     monkeypatch.setattr(ms, "load_stage_outputs",
                         lambda *a, **k: real(*a, extra_fingerprints=ROUTER_FP, **k))
@@ -139,7 +139,7 @@ def test_router_semantics_inverted_fails(world):
 def test_end_to_end_and_provenance(world):
     w, arts, tmp = world
     art, path = run(w, arts, tmp)
-    assert joblib.load(path)["schema"] == "meta_ebm/2"
+    assert joblib.load(path)["schema"] == "glass_arbiter/1"
     prov = art["stage4_inputs"]["streams"]
     assert prov["ebm"]["train_source"] == "Stage3Artifact.oof['proba_calibrated']"
     assert art["artifact_thresholds"]["used_by_stage4"] is False

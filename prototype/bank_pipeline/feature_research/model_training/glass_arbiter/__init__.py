@@ -4,7 +4,7 @@ feature_research/model_training/glass_arbiter
 GLASS Arbiter on the research stages (formerly meta_ebm): weighted-confidence
 vote over the LR, RF and EBM out-of-fold scores, with abstention.
 
-Same rules as the cascade's Stage 4 arbiter (glass_pipeline.meta_ebm), kept as
+Same rules as the cascade's Stage 4 arbiter (glass_pipeline.glass_arbiter), kept as
 a separate implementation so the research and cascade code stay independent:
 recall-target thresholds, Brier + accuracy hybrid weights, F2-tuned
 min_weighted_confidence (coverage ≥ 0.50, fallback 0.07), the same metrics
