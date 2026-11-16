@@ -1,0 +1,3 @@
+# Failed or stopped attempts of a PR 39 run (upstream_regeneration writes them to
+# <run_id>/failed/) are never read by code and stay local (execution contract 7.1).
+*/failed/

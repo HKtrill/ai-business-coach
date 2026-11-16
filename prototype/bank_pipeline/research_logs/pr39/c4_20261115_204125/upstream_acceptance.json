@@ -1,0 +1,1408 @@
+{
+  "artifact_manifest": {
+    "path": "research_logs/pr39/c4_20261115_204125/artifact_manifest.json",
+    "sha256": "c3c95d5b02e75592e49fca80a14788ba48a934b071733caeb5c1b705f8a954c3"
+  },
+  "artifacts": {
+    "stage1.lr": {
+      "bytes": 942344,
+      "consumers": [
+        "black-box Cell 14A (GLASS_S1_PATH)",
+        "GLASS Cell 19",
+        "black-box Cell 37"
+      ],
+      "path": "models/lr/lr_calibrated_20261115_204501.joblib",
+      "producer": "GLASS notebook Cell 8 (train_calibrated_lr_stage)",
+      "sha256": "d3a05760fa7594e34e864b652c26b9158b8fe29df1f90ff7a59a4f530c78949c"
+    },
+    "stage1.mlp": {
+      "bytes": 949675,
+      "consumers": [
+        "black-box Cells 36-37 (MLP_S1_PATH)"
+      ],
+      "path": "models/mlp/stage1_mlp_20261116_094252_602977.joblib",
+      "producer": "black-box notebook Cell 14A (save_stage1_mlp)",
+      "sha256": "dd8922d94bb7370610c237e0f2f07810987a044419758aeda3918d865f109d70"
+    },
+    "stage2.glass_router": {
+      "bytes": 2481389,
+      "consumers": [
+        "GLASS Cell 8B / Cell 19 (glass_path)",
+        "black-box Cell 18 / Cell 37 (GLASS_BUNDLE_PATH)"
+      ],
+      "path": "models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+      "producer": "PR 38 primary run c3_20261112_153333 (stage2_crossfit)",
+      "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+    },
+    "stage2.rf_router": {
+      "bytes": 4158905,
+      "consumers": [
+        "black-box Cell 18 / Cells 35-37 (RF_ROUTER_PATH)"
+      ],
+      "path": "models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+      "producer": "PR 38 primary run c3_20261112_153333 (stage2_crossfit)",
+      "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+    },
+    "stage3.ebm": {
+      "bytes": 8296795,
+      "consumers": [
+        "black-box Cell 33 (_ebm_path)",
+        "GLASS Cell 19",
+        "black-box Cell 37"
+      ],
+      "path": "models/ebm/ebm_stage3_20261116_001529_813890.joblib",
+      "producer": "GLASS notebook Cell 18 (train_ebm_stage)",
+      "sha256": "d886ae5dcbdb077dda934680f8a05902d83a01f254f7d5a5f0667e321e24b631"
+    },
+    "stage3.xgb": {
+      "bytes": 10720121,
+      "consumers": [
+        "black-box Cells 36-37 (XGB_STAGE3_PATH)"
+      ],
+      "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib",
+      "producer": "black-box notebook Cell 31 (train_xgb_stage)",
+      "sha256": "8bf1d66ecd54236cdf7e6ebb10ec18e40f24d95a5b33a1ce122dac48b2dd2780"
+    }
+  },
+  "code": {
+    "acceptance": {
+      "code_sha256": "a62e68d792f6fc89df83ab2eb318d55f090bac4f4d273628a202eab276a1da13",
+      "files": 433,
+      "head": "5951ee396196240741fba17afe5619eda37f129e"
+    },
+    "acceptance_files": [
+      "tests/upstream_regeneration/test_acceptance.py",
+      "upstream_regeneration/acceptance.py"
+    ],
+    "derived": {
+      "before_transition": {
+        "code_sha256": "863970bc6910a2ac3063ffd29e8af09d992e4ff8298abe45ab2800fc95afa8c0",
+        "files": 428,
+        "head": "5951ee396196240741fba17afe5619eda37f129e"
+      },
+      "preflight": {
+        "code_sha256": "c4ff071c54862f6d217caf194aae0126c600ae279405b397b9a0d4da9bdcce50",
+        "files": 426,
+        "head": "5951ee396196240741fba17afe5619eda37f129e"
+      },
+      "run": {
+        "code_sha256": "4ea172a07af5dc658ecdfa6232cca9fe05ca8e31bc09b1d02b187324bb78b80e",
+        "files": 431,
+        "head": "5951ee396196240741fba17afe5619eda37f129e"
+      }
+    },
+    "run_record": {
+      "code_sha256": "4ea172a07af5dc658ecdfa6232cca9fe05ca8e31bc09b1d02b187324bb78b80e",
+      "files": 431,
+      "head": "5951ee396196240741fba17afe5619eda37f129e"
+    }
+  },
+  "contract": {
+    "decisions": [
+      "D3",
+      "D7"
+    ],
+    "gates": [
+      "A4.7"
+    ],
+    "record": "documentation/methodology/pr39_execution_contract.md",
+    "sections": [
+      "5.1",
+      "7.1",
+      "7.2",
+      "7.3"
+    ],
+    "version": "1.0.0"
+  },
+  "d7": {
+    "models/mlp/stage1_mlp_threshold_sweep.csv": {
+      "after_run": {
+        "bytes": 2565,
+        "sha256": "c5d816ac412ca3cc0396a07714a1e4d6fbbd95e905b6a0dff5a778ececc4887c"
+      },
+      "before_run": {
+        "bytes": 2563,
+        "sha256": "cb4bff93e15af5274e835bd93aaa0c21a00b2dfd53b3418f2d81eb1d7edf9249"
+      },
+      "changed_by_run": true,
+      "content_differs_from_head": true,
+      "disposition": "stage: its content differs from HEAD (D7: committed in the producing commit)",
+      "git_status": " M",
+      "now": {
+        "bytes": 2565,
+        "sha256": "c5d816ac412ca3cc0396a07714a1e4d6fbbd95e905b6a0dff5a778ececc4887c"
+      }
+    },
+    "models/mlp/stage1_mlp_training_history.csv": {
+      "after_run": {
+        "bytes": 1315,
+        "sha256": "58b10de205d98e1060f7e051919beac7108216e8edd9578463d863bff1760b62"
+      },
+      "before_run": {
+        "bytes": 1315,
+        "sha256": "58b10de205d98e1060f7e051919beac7108216e8edd9578463d863bff1760b62"
+      },
+      "changed_by_run": false,
+      "content_differs_from_head": false,
+      "disposition": "nothing to stage: Git reports its content equal to HEAD",
+      "git_status": null,
+      "now": {
+        "bytes": 1315,
+        "sha256": "58b10de205d98e1060f7e051919beac7108216e8edd9578463d863bff1760b62"
+      }
+    },
+    "models/mlp/stage1_mlp_tuning_trials.csv": {
+      "after_run": {
+        "bytes": 10750,
+        "sha256": "ad902565f892d5a9431496fbb649e2026fb10a47a4e262280a5e9258a18c1277"
+      },
+      "before_run": {
+        "bytes": 10750,
+        "sha256": "ad902565f892d5a9431496fbb649e2026fb10a47a4e262280a5e9258a18c1277"
+      },
+      "changed_by_run": false,
+      "content_differs_from_head": false,
+      "disposition": "nothing to stage: Git reports its content equal to HEAD",
+      "git_status": null,
+      "now": {
+        "bytes": 10750,
+        "sha256": "ad902565f892d5a9431496fbb649e2026fb10a47a4e262280a5e9258a18c1277"
+      }
+    }
+  },
+  "decision": {
+    "accepted": true,
+    "scope": "Stage 1-3 artifacts of the run (A4.7)",
+    "statement": "Owner (Phillip Harris), 2026-11-16, gate A4.7 of the PR 39 execution contract 1.0.0. I accept the Stage 1-3 artifacts of PR 39 run c4_20261115_204125 as the PR 39 upstream for Commit 5: stage1.lr, stage1.mlp, stage3.ebm and stage3.xgb, produced by this run, and stage2.glass_router and stage2.rf_router, reused unchanged from accepted PR 38 run c3_20261112_153333 under D3. The acceptance rests on the evidence this record re-verifies: records and their SHA-256 links, the code chain, the notebook copies, and A4.2-A4.6 recomputed from the artifacts and compared with their records. It also rests on the two run-specific dispositions recorded with it. run_record.json remains the regeneration record (accepted: false). This record and artifact_manifest.json are the acceptance. The frozen contract and the PR 37/38 evidence are unchanged.",
+    "statements_file": {
+      "name": "PR39_A47_statements.json",
+      "sha256": "26590d9a0c5160fcfdd0650a1d4485c2bd0758b80021ea98e84153fa1b717cc6"
+    }
+  },
+  "dispositions": {
+    "7.1": {
+      "failed_record": {
+        "failed_checks": [
+          "only the glass notebook's registered outputs and mutable aliases changed"
+        ],
+        "finished_utc": "2026-11-16T08:15:31+00:00",
+        "inventory_problems": [
+          "unregistered addition models/lr/lr_baseline_20261115_204420.joblib"
+        ],
+        "path": "research_logs/pr39/c4_20261115_204125/failed/execution_glass_20261116T081531857705Z.json",
+        "sha256": "9ff8d3d57a9d7487b9e64ce9fe2e91792b823b80193112e65815760f87a5bd7a",
+        "started_utc": "2026-11-16T04:44:14+00:00"
+      },
+      "recovery_checks": "28/28 checks passed",
+      "recovery_record_sha256": "4374fa01650f240ad94e1b4d998b5335bd45fd6a5126f8d496312907de6a2c2a",
+      "statement": "Section 7.1 deviation, run c4_20261115_204125 only. Section 7.1 says failed or stopped attempts are recorded locally and never read by code. recover-glass (fix3) parsed this run's failed GLASS execution record, so the run does not comply literally with that rule. Recovery used the failed record only as a locator and a statement of scope: run id and step, code identity, execution status, notebook copy paths and hashes, gate checks, and inventory. Every value that became evidence was rebuilt from primary files or checked against them: the truncated copy was rebuilt from the committed notebook; both notebook copies were hashed and checked as one complete execution with no error and every legacy Stage 2 cell skipped; the model folders were compared byte for byte and classified against the passed preflight inventory; restoring only the recovery's files reproduced the preflight code identity; and the PR 38 acceptance and the Stage 2 pins were re-verified (A4.R 28/28). The failed record never became evidence. It stays Git-ignored and uncommitted, and it is named only by SHA-256. finalize and this acceptance hash it without reading it and require it to be unchanged. A4.3-A4.6 were recomputed from the artifacts. No other failed attempt was parsed. The contract has no exception clause for 7.1 and is not amended. I accept this as a recorded run-specific deviation under A4.7's explicit decision, following the recorded owner dispositions of D3 and section 7.4. Later runs must not read failed attempts.",
+      "subject": "recover-glass parsed the failed GLASS execution record",
+      "transition_failed_attempt": {
+        "bytes": 52581,
+        "path": "research_logs/pr39/c4_20261115_204125/failed/run_record_20261116T161550658144Z.json",
+        "read": false,
+        "sha256": "046abbffb1a62f362236d55fbd4501d718abecd88b066451eb6d4d01bbcd3396"
+      }
+    },
+    "7.2": {
+      "authorization": {
+        "given_by": "the owner, by running finalize-transition",
+        "statement": "Owner authorizes commit4a-t1 for run c4_20261115_204125: validate Stage 3 split identity across the registered stage_io and router fingerprint schemes, preserving all model artifacts and execution evidence without retraining. PR 39 Commit 4A, 2026-11-16."
+      },
+      "codes": {
+        "acceptance": "a62e68d792f6fc89df83ab2eb318d55f090bac4f4d273628a202eab276a1da13",
+        "before_transition": "863970bc6910a2ac3063ffd29e8af09d992e4ff8298abe45ab2800fc95afa8c0",
+        "preflight": "c4ff071c54862f6d217caf194aae0126c600ae279405b397b9a0d4da9bdcce50",
+        "run": "4ea172a07af5dc658ecdfa6232cca9fe05ca8e31bc09b1d02b187324bb78b80e"
+      },
+      "statement": "Section 7.2, run c4_20261115_204125 only. No record was replaced: each matches its sidecar, and later records name earlier ones by SHA-256. The run's code identity changed twice, each time through a registered step written once. Each step names its failed attempt by SHA-256 and records both code identities and every changed file: recover-glass (fix3, 7 files) and finalize-transition commit4a-t1 (fix4, 7 files, with my authorization recorded in finalize_transition.json). Every changed file is under upstream_regeneration/ or its tests, which no notebook imports, so no artifact was produced under changed code: the GLASS notebook ran under the preflight code and the black-box notebook under the recovered code. This acceptance re-derives both earlier identities from the tree and the recorded file hashes. It runs the run's own validation code, with only its two new files added. I approve the transition as recorded. The contract is not amended; any code change within a later run needs its own registered, owner-authorized step.",
+      "subject": "a registered code transition within the run",
+      "transition_record_sha256": "bc3b3fa2335e5254c4e8caf554df3184699b2ee77ccba9729fdb47c5b6d6d389"
+    }
+  },
+  "environment": {
+    "executable": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+    "os": "Windows",
+    "packages": {
+      "interpret": "0.7.8",
+      "ipykernel": "6.31.0",
+      "joblib": "1.6.0",
+      "nbclient": "0.11.0",
+      "nbformat": "5.11.1",
+      "numpy": "2.5.4",
+      "optuna": "4.9.0",
+      "pandas": "3.0.6",
+      "pulp": "3.3.2",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1",
+      "xgboost": "3.4.1"
+    },
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.14.3"
+  },
+  "evidence_compared": {
+    "A4.2": [
+      "acceptance",
+      "manifest",
+      "names",
+      "binning",
+      "stage4_router_contract",
+      "r4_notes"
+    ],
+    "run_record": [
+      "stage1",
+      "stage3",
+      "stage4_inputs",
+      "reload",
+      "identities"
+    ]
+  },
+  "finished_utc": "2026-11-16T21:54:10+00:00",
+  "format": "pr39.commit4a.upstream_acceptance/1",
+  "gates": {
+    "A4.2 recomputed": {
+      "checks": [
+        {
+          "check": "the train side is the frozen protocol's population (rows, positives, folds, split, labels)",
+          "detail": "{'rows': 32950, 'positives': 3712, 'router_split_fingerprint': 'fc3e73a5ef91aea4', 'train_label_fingerprint': 'b984d2a50527', 'fold_fingerprint': '8aea082fcaf371b7'}",
+          "passed": true
+        },
+        {
+          "check": "reuse 1: acceptance.require_accepted('c3_20261112_153333') passes on the final code",
+          "detail": "{'candidate_manifest_sha256': 'f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88', 'glass': 'glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib', 'rf': 'rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib'}",
+          "passed": true
+        },
+        {
+          "check": "reuse 4: every file of the accepted candidate has the SHA-256 and size primary_MANIFEST.json lists",
+          "detail": "{'evidence.json': True, 'glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333.joblib': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368_metadata.json': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368_pass1_sweep.csv': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368_pass2_sweep.csv': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333_metadata.json': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333_pass1_sweep.csv': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333_pass2_sweep.csv': True}",
+          "passed": true
+        },
+        {
+          "check": "reuse 4: the two pinned files (shared.pinned_artifacts.STAGE2_PINS) are the manifest's GLASS bundle and immutable RF Router, and primary_MANIFEST.json has its pinned SHA-256",
+          "detail": "equal",
+          "passed": true
+        },
+        {
+          "check": "trigger 4 / reuse 3: both routers load by pinned path and SHA-256 and pass the Stage 4 router contract (router_stream + build_stage4_inputs), train and test side",
+          "detail": "{'glass': {'checks': 26, 'pass2_population': {'cross_fit': 'oof_remainder', 'full_train': 'oof_remainder'}, 'label_evidence': \"complete: the label fingerprints of the fits behind the train and the test outputs match GLOBAL_SPLIT's training rows and labels\"}, 'rf_router': {'checks': 28, 'pass2_population': {'cross_fit': 'oof_remainder', 'full_train': 'oof_remainder'}, 'label_evidence': \"complete: the label fingerprints of the fits behind the train and the test outputs match GLOBAL_SPLIT's training rows and labels\"}}",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: consumed train proba ≠ in-sample diagnostic",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: oof_protocol fold fingerprint = train_fold_id",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: oof_protocol n_folds = fold ids",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: train_pred agrees with train_decisions",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: fold ids carried (the artifact holds no labels; its fold plan is partial label evidence)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: cross-fit and full-train router share one Pass 2 population",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: training_base_rate = GLOBAL_SPLIT training positive rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: Pass 1 is the NOT_SUBSCRIBE route (train pos-rate < base rate)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: Pass 2 is the SUBSCRIBE route (train pos-rate > base rate)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: proba oriented as P(subscribe) (covered-row OOF AUC > 0.5)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [glass] glass: GLASS Router bundle with training_base_rate (F25 router evidence)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [glass] glass: training_base_rate = GLOBAL_SPLIT training positive rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [glass] glass: train probabilities = rule blends at fold base rates",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [glass] glass: test probabilities = rule blends at the training base rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: index = GLOBAL_SPLIT X_train",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: index = GLOBAL_SPLIT X_test",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: consumed train proba ≠ in-sample diagnostic",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: oof_protocol fold fingerprint = train_fold_id",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: oof_protocol n_folds = fold ids",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: train_pred agrees with train_decisions",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: fold ids carried (the artifact holds no labels; its fold plan is partial label evidence)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: the split fingerprints the artifact records agree",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: cross-fit and full-train router share one Pass 2 population",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: cross-fit and full-train router share one Pass 2 eligibility rule",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: training_base_rate = GLOBAL_SPLIT training positive rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: Pass 1 is the NOT_SUBSCRIBE route (train pos-rate < base rate)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: Pass 2 is the SUBSCRIBE route (train pos-rate > base rate)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: proba oriented as P(subscribe) (covered-row OOF AUC > 0.5)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [blackbox] glass: RF Router artifact with training_base_rate (F25 router evidence)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [blackbox] glass: training_base_rate = GLOBAL_SPLIT training positive rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [blackbox] glass: train probabilities = band blends at fold base rates",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [blackbox] glass: test probabilities = band blends at the training base rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: index = GLOBAL_SPLIT X_train",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: index = GLOBAL_SPLIT X_test",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "V7 R5 at Stage 4: pass2_eligibility nested_t1 on both sides of the RF Router",
+          "detail": "{'pass2_population': {'cross_fit': 'oof_remainder', 'full_train': 'oof_remainder'}, 'pass2_eligibility': {'cross_fit': 'nested_t1', 'full_train': 'nested_t1'}}",
+          "passed": true
+        },
+        {
+          "check": "trigger 2: binning identity now = the Step 3A record's (BINNING_STRATEGY, RF_FEATURES_BINARY)",
+          "detail": "9cdd79aff9d61101949a7e761c6837e13e81036d865c37b5213dca2867912376",
+          "passed": true
+        },
+        {
+          "check": "trigger 2: the GLASS Router bundle's features = RF_FEATURES_BINARY, in order",
+          "detail": "29",
+          "passed": true
+        },
+        {
+          "check": "trigger 2: the RF Router's feature_names = RF_FEATURES_BINARY, in order",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trigger 2: every feature the accepted GLASS rules use is a current bin",
+          "detail": "['behav_hot', 'behav_warm', 'campaign_heavy', 'cci_dead_mid', 'cci_hot1', 'dow_cold', 'dow_hot', 'eci_mid', 'eci_warm', 'jed_transition', 'nsd_cold', 'nsd_hot']",
+          "passed": true
+        },
+        {
+          "check": "trigger 4: glass Pass 2 population is oof_remainder in both fits (F17)",
+          "detail": "{'cross_fit': 'oof_remainder', 'full_train': 'oof_remainder'}",
+          "passed": true
+        },
+        {
+          "check": "trigger 4: rf_router Pass 2 population is oof_remainder in both fits (F17)",
+          "detail": "{'cross_fit': 'oof_remainder', 'full_train': 'oof_remainder'}",
+          "passed": true
+        },
+        {
+          "check": "triggers 1-3: python -m stage2_binning check --run-id c3_20261114_231604 recomputes every section exactly (E-B, E-B2, T1-T4, frozen records)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trigger 1: no NSD/ECI revision adopted (Step 3A decision: retain)",
+          "detail": "retain",
+          "passed": true
+        },
+        {
+          "check": "trigger 3: the frozen contract, protocol, profiles and G13 pathway are the accepted run's (no frozen Stage 2 record changed version)",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "65/65 checks passed",
+      "failed": [],
+      "gate": "A4.2",
+      "passed": true
+    },
+    "A4.3 recomputed": {
+      "checks": [
+        {
+          "check": "stage1.lr: holds a StageOutput that passes its contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: artifact version 3.0",
+          "detail": "3.0",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: Stage 1 feature contract 2.0.0 recorded and consistent",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: ordered feature names = LR_FEATURES",
+          "detail": "['cellular_downturn', 'subscribe_rate_by_euribor_bin', 'subscribe_rate_by_dow_month']",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: stage1 / glass",
+          "detail": "('stage1', 'glass')",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: calibration family sigmoid requested and selected (D1)",
+          "detail": "('sigmoid', 'sigmoid')",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: OOF provenance is the nested cross-fit (F16/F19)",
+          "detail": "refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model and calibrator fitted per fold)",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: Stage 1 fold plan = 10 stratified folds, seed 42, on GLOBAL_SPLIT's training labels",
+          "detail": "e4da0b4442f71ecf",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: split fingerprint = the frozen protocol's stage I/O split",
+          "detail": "d6cddadc3439",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: threshold source is a registered one",
+          "detail": "in_stage_f2_cv",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: holds a StageOutput that passes its contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: artifact version 3.0",
+          "detail": "3.0",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: Stage 1 feature contract 2.0.0 recorded and consistent",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: ordered feature names = LR_FEATURES",
+          "detail": "['cellular_downturn', 'subscribe_rate_by_euribor_bin', 'subscribe_rate_by_dow_month']",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: stage1 / blackbox",
+          "detail": "('stage1', 'blackbox')",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: calibration family sigmoid requested and selected (D1)",
+          "detail": "('sigmoid', 'sigmoid')",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: OOF provenance is the nested cross-fit (F16/F19)",
+          "detail": "refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model and calibrator fitted per fold)",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: Stage 1 fold plan = 10 stratified folds, seed 42, on GLOBAL_SPLIT's training labels",
+          "detail": "e4da0b4442f71ecf",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: split fingerprint = the frozen protocol's stage I/O split",
+          "detail": "d6cddadc3439",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: threshold source is a registered one",
+          "detail": "in_stage_f2_cv",
+          "passed": true
+        },
+        {
+          "check": "stage 1: both arms comparable row for row (assert_comparable: split, features, rows, labels, one fold partition)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "7.4 every artifact reloads in a fresh interpreter",
+          "detail": "6",
+          "passed": true
+        },
+        {
+          "check": "7.4 stage1.lr reloads as builtins.dict",
+          "detail": "builtins.dict",
+          "passed": true
+        },
+        {
+          "check": "7.4 stage1.mlp reloads as builtins.dict",
+          "detail": "builtins.dict",
+          "passed": true
+        },
+        {
+          "check": "7.4 stage3.ebm reloads as shared.stage3.artifact.Stage3Artifact",
+          "detail": "shared.stage3.artifact.Stage3Artifact",
+          "passed": true
+        },
+        {
+          "check": "7.4 stage3.xgb reloads as shared.stage3.artifact.Stage3Artifact",
+          "detail": "shared.stage3.artifact.Stage3Artifact",
+          "passed": true
+        }
+      ],
+      "evidence": "26/26 checks passed",
+      "failed": [],
+      "gate": "A4.3",
+      "passed": true
+    },
+    "A4.4 recomputed": {
+      "checks": [
+        {
+          "check": "stage3.ebm: a Stage3Artifact",
+          "detail": "Stage3Artifact",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: model_family / arm = ebm / glass (F21, F37)",
+          "detail": "('ebm', 'glass')",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: features = EBM_FEATURES, in order",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: per-fold feature fit",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: split fingerprint is this split's (either scheme)",
+          "detail": "d6cddadc3439",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: OOF fold ids = the shared 5-fold plan 8aea082fcaf371b7",
+          "detail": "8aea082fcaf371b7",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: OOF outputs recorded (proba, proba_calibrated, fold_id)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: calibration gate recorded per fold (F22)",
+          "detail": "{'applied': True, 'method': 'isotonic', 'ece_before': 0.27109085167045976, 'fold_applied': [True, True, True, True, True]}",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: operating threshold selected on out-of-fold training predictions",
+          "detail": "out-of-fold training predictions",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: a Stage3Artifact",
+          "detail": "Stage3Artifact",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: model_family / arm = xgboost / blackbox (F21, F37)",
+          "detail": "('xgboost', 'blackbox')",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: features = EBM_FEATURES, in order",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: per-fold feature fit",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: split fingerprint is this split's (either scheme)",
+          "detail": "fc3e73a5ef91aea4",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: OOF fold ids = the shared 5-fold plan 8aea082fcaf371b7",
+          "detail": "8aea082fcaf371b7",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: OOF outputs recorded (proba, proba_calibrated, fold_id)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: calibration gate recorded per fold (F22)",
+          "detail": "{'applied': True, 'method': 'isotonic', 'ece_before': 0.25699437785873896, 'fold_applied': [True, True, True, True, True]}",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: operating threshold selected on out-of-fold training predictions",
+          "detail": "out-of-fold training predictions",
+          "passed": true
+        },
+        {
+          "check": "stage 3: EBM and XGBoost were fitted on one block (block fingerprint)",
+          "detail": "9cc10fa1f5cf8d858a9168a2169372758102d06283592bed024fb06e1040318c",
+          "passed": true
+        },
+        {
+          "check": "stage 3: both arms were fitted on the frozen GLOBAL_SPLIT (each split fingerprint is GLOBAL_SPLIT's under a registered scheme, check_split_identity; its recorded train/test rows, order and labels are GLOBAL_SPLIT's; its canonical stage_io fingerprint is the frozen one)",
+          "detail": "{'stage3.ebm': 'd6cddadc3439 (stage_io)', 'stage3.xgb': 'fc3e73a5ef91aea4 (router)'}",
+          "passed": true
+        },
+        {
+          "check": "stage 3: one shared protocol, family-specific fields only (assert_matched_protocol; split_fingerprint by its canonical identity)",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "21/21 checks passed",
+      "failed": [],
+      "gate": "A4.4",
+      "passed": true
+    },
+    "A4.5 recomputed": {
+      "checks": [
+        {
+          "check": "A4.5 glass_arbiter <- glass upstream: build_stage4_inputs passes, train and test side (inputs only, no arbiter fitted)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 glass_arbiter <- glass upstream: every recorded validation check passed",
+          "detail": "66 checks",
+          "passed": true
+        },
+        {
+          "check": "A4.5 glass_arbiter <- glass upstream: the recorded upstream is the glass arm",
+          "detail": "glass upstream -> glass_arbiter",
+          "passed": true
+        },
+        {
+          "check": "A4.5 glass_arbiter <- blackbox upstream: build_stage4_inputs passes, train and test side (inputs only, no arbiter fitted)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 glass_arbiter <- blackbox upstream: every recorded validation check passed",
+          "detail": "68 checks",
+          "passed": true
+        },
+        {
+          "check": "A4.5 glass_arbiter <- blackbox upstream: the recorded upstream is the blackbox arm",
+          "detail": "blackbox upstream -> glass_arbiter",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: build_stage4_inputs passes, train and test side (inputs only, no arbiter fitted)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: every recorded validation check passed",
+          "detail": "63 checks",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: the recorded upstream is the glass arm",
+          "detail": "glass upstream -> meta_xgb",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: index = GLOBAL_SPLIT X_train",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: stage1_proba = stage_output.train_proba_oof",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: stage3_proba = Stage3Artifact.oof['proba_calibrated']",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: no other missing values",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: index = GLOBAL_SPLIT X_test",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: stage1_proba = stage_output.test_proba",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: stage3_proba = Stage3Artifact.refit['test_proba_calibrated']",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: no other missing values",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: build_stage4_inputs passes, train and test side (inputs only, no arbiter fitted)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: every recorded validation check passed",
+          "detail": "65 checks",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: the recorded upstream is the blackbox arm",
+          "detail": "blackbox upstream -> meta_xgb",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: index = GLOBAL_SPLIT X_train",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: stage1_proba = stage_output.train_proba_oof",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: stage3_proba = Stage3Artifact.oof['proba_calibrated']",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: no other missing values",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: index = GLOBAL_SPLIT X_test",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: stage1_proba = stage_output.test_proba",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: stage3_proba = Stage3Artifact.refit['test_proba_calibrated']",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: no other missing values",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "no Stage 4 artifact written: the model folders are as the black-box execution left them",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "45/45 checks passed",
+      "failed": [],
+      "gate": "A4.5",
+      "passed": true
+    },
+    "A4.6 recomputed": {
+      "checks": [
+        {
+          "check": "stage1.lr: models/lr/lr_calibrated_20261115_204501.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "d3a05760fa7594e3",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: models/mlp/stage1_mlp_20261116_094252_602977.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "dd8922d94bb73706",
+          "passed": true
+        },
+        {
+          "check": "stage2.glass_router: models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "889c8bd572047beb",
+          "passed": true
+        },
+        {
+          "check": "stage2.rf_router: models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "aadde1ea93d0e300",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: models/ebm/ebm_stage3_20261116_001529_813890.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "d886ae5dcbdb077d",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "8bf1d66ecd54236c",
+          "passed": true
+        },
+        {
+          "check": "7.5.1 phase0.verify_snapshot passes (37 entries, the baseline's SHA256SUMS)",
+          "detail": "{'entries': {'got': 37, 'baseline': 37, 'passed': True}, 'sums_file_sha256': {'got': 'e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a', 'baseline': 'e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a', 'passed': True}, 'archived_files': {'problems': [], 'passed': True}}",
+          "passed": true
+        },
+        {
+          "check": "7.5.2 phase0.run_baseline_checks passes (stage2_baseline.py --verify, stage2_baseline_archive.py --check)",
+          "detail": "{'verify': ['[2E verify] OK: pr37_stage2_pre_correction_v1: 19 files match MANIFEST.json (manifest sha256 905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b)'], 'archive_check': ['[2E check] OK: pr37_stage2_pre_correction_v1 reproduced from the recorded sources (reproduced_with_code_drift; 19 files)', '[2E check] note: the diagnostic code differs from the code recorded at generation, but every frozen output is reproduced exactly', '[2E check] shared/stage2/diagnostics/boundary.py: 0c653b69924b -> a8340178ce64', '[2E check] tests/support/artifact_audit.py: 015a6305af72 -> 39a4d6989525']}",
+          "passed": true
+        },
+        {
+          "check": "7.5.3 python -m stage2_crossfit report --run-id c3_20261112_153333 --check passes (Windows, F11)",
+          "detail": "['research report IDENTICAL -> C:\\\\Users\\\\phill\\\\projects\\\\ai-business-coach-clean\\\\prototype\\\\bank_pipeline\\\\research_logs\\\\pr38\\\\c3_20261112_153333\\\\report_v1', '  verification without v1 packages: 64 historical v1 table checksums reproduced from the report; every report file rebuilt']",
+          "passed": true
+        },
+        {
+          "check": "7.5.4 acceptance.require_accepted('c3_20261112_153333') passes",
+          "detail": "{'run_id': 'c3_20261112_153333', 'accepted': True, 'candidate_manifest_sha256': 'f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88'}",
+          "passed": true
+        },
+        {
+          "check": "7.5.5 models/ inventory before and after: only the run's registered additions and documented mutable aliases",
+          "detail": "[]",
+          "passed": true
+        },
+        {
+          "check": "7.5.6 git status: only this run's records and the D7 MLP CSVs are new",
+          "detail": "[]",
+          "passed": true
+        },
+        {
+          "check": "7.5.1 the snapshot's live counterparts: only Step 4A's registered mutable aliases changed; every historical artifact and legacy alias is as before the run",
+          "detail": "{'before': {'different': ['bank_pipeline/blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib', 'bank_pipeline/models/ebm/ebm_stage3_latest.joblib', 'bank_pipeline/models/mlp/stage1_blackbox_output.joblib', 'bank_pipeline/models/mlp/stage1_mlp.joblib', 'bank_pipeline/models/mlp/stage1_mlp_metadata.json', 'bank_pipeline/models/rf_router/rf_router_single.joblib', 'bank_pipeline/models/rf_router/rf_router_single_metadata.json', 'bank_pipeline/models/rf_router/rf_router_single_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_single_pass2_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass.joblib', 'bank_pipeline/models/rf_router/rf_router_two_pass_metadata.json', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass2_sweep.csv'], 'missing': [], 'same': 24}, 'after': {'same': 23, 'different': ['bank_pipeline/blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib', 'bank_pipeline/models/ebm/ebm_stage3_latest.joblib', 'bank_pipeline/models/mlp/stage1_blackbox_output.joblib', 'bank_pipeline/models/mlp/stage1_mlp.joblib', 'bank_pipeline/models/mlp/stage1_mlp_metadata.json', 'bank_pipeline/models/mlp/stage1_mlp_threshold_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_single.joblib', 'bank_pipeline/models/rf_router/rf_router_single_metadata.json', 'bank_pipeline/models/rf_router/rf_router_single_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_single_pass2_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass.joblib', 'bank_pipeline/models/rf_router/rf_router_two_pass_metadata.json', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass2_sweep.csv'], 'missing': []}}",
+          "passed": true
+        },
+        {
+          "check": "the two notebook executions are recorded (section 5.4)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "the failed attempts the run's recovery and transition name are preserved (path, SHA-256; hashed, not read)",
+          "detail": "['execution_glass_recovery: 9ff8d3d57a9d7487', 'finalize_transition: 046abbffb1a62f36']",
+          "passed": true
+        }
+      ],
+      "evidence": "15/15 checks passed",
+      "failed": [],
+      "gate": "A4.6",
+      "passed": true
+    },
+    "A4.7": {
+      "checks": [
+        {
+          "check": "every Step 4A record is present and matches its sidecar: preflight, stage2_reuse, execution_glass_recovery, execution_blackbox, finalize_transition, run_record",
+          "detail": "['a5c242a0221903d2', '2c6d8f1ad7712620', '4374fa01650f240a', '8d02fd383fde73ec', 'bc3b3fa2335e5254', '86125c55f32147b7']",
+          "passed": true
+        },
+        {
+          "check": "each record is this run's, under its own step name",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "the records are in order: each started after the previous one finished",
+          "detail": "[('preflight', '2026-11-16T04:41:27+00:00', '2026-11-16T04:41:45+00:00'), ('stage2_reuse', '2026-11-16T04:41:51+00:00', '2026-11-16T04:42:02+00:00'), ('execution_glass_recovery', '2026-11-16T09:13:00+00:00', '2026-11-16T09:13:05+00:00'), ('execution_blackbox', '2026-11-16T09:14:03+00:00', '2026-11-16T10:35:40+00:00'), ('finalize_transition', '2026-11-16T19:50:38+00:00', '2026-11-16T19:50:43+00:00'), ('run_record', '2026-11-16T19:53:36+00:00', '2026-11-16T19:54:00+00:00')]",
+          "passed": true
+        },
+        {
+          "check": "every later record names the earlier ones by their sidecar SHA-256 (13 links)",
+          "detail": "13",
+          "passed": true
+        },
+        {
+          "check": "the run record is the regeneration record, not an acceptance (accepted: false, Step 4B named)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "the run record's A4.1 and A4.2 are the preflight and stage2_reuse records; the Stage 2 decision is reuse",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "the run record's A4.3-A4.6: every recorded check passed",
+          "detail": "{'A4.3': '26/26 checks passed', 'A4.4': '21/21 checks passed', 'A4.5': '45/45 checks passed', 'A4.6': '15/15 checks passed'}",
+          "passed": true
+        },
+        {
+          "check": "this step's own files are present and new (tests/upstream_regeneration/test_acceptance.py, upstream_regeneration/acceptance.py)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "omitting those files reproduces the run record's code identity (the acceptance runs the run's validation code, unchanged)",
+          "detail": "{'run_record': '4ea172a07af5dc658ecdfa6232cca9fe05ca8e31bc09b1d02b187324bb78b80e', 'derived': '4ea172a07af5dc658ecdfa6232cca9fe05ca8e31bc09b1d02b187324bb78b80e'}",
+          "passed": true
+        },
+        {
+          "check": "restoring the transition's recorded files as well gives the code it transitioned from; the run record is the transitioned code",
+          "detail": "863970bc6910a2ac3063ffd29e8af09d992e4ff8298abe45ab2800fc95afa8c0",
+          "passed": true
+        },
+        {
+          "check": "restoring the recovery's recorded files as well gives the preflight code; the recovery ran from it",
+          "detail": "c4ff071c54862f6d217caf194aae0126c600ae279405b397b9a0d4da9bdcce50",
+          "passed": true
+        },
+        {
+          "check": "every step ran on the code the chain gives it (stage2_reuse: preflight's; the black-box execution: the recovered code)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "every recorded code change is under upstream_regeneration code or its tests, and each changed file is as its recovery or transition left it",
+          "detail": "['tests/upstream_regeneration/test_inventory_and_records.py', 'tests/upstream_regeneration/test_recovery.py', 'tests/upstream_regeneration/test_runner_orchestration.py', 'upstream_regeneration/inventory.py', 'upstream_regeneration/records.py', 'upstream_regeneration/recovery.py', 'upstream_regeneration/runner.py', 'tests/upstream_regeneration/test_finalize_transition.py', 'tests/upstream_regeneration/test_stage3_split_identity.py', 'tests/upstream_regeneration/test_upstream_checks.py', 'upstream_regeneration/__init__.py', 'upstream_regeneration/checks.py', 'upstream_regeneration/runner.py', 'upstream_regeneration/transition.py']",
+          "passed": true
+        },
+        {
+          "check": "the recovery and the transition are the registered ones (ids, resolved check, owner's statement)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass: the run record's execution entry is its record's (copies, truncated copy)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass: the committed notebook's truncated copy, rebuilt now, is the executed one (the notebook is unchanged since)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "glass: the input copy has its recorded SHA-256 (the truncated copy's)",
+          "detail": "C:\\Users\\phill\\pr39_runs\\c4_20261115_204125_glass_input.ipynb",
+          "passed": true
+        },
+        {
+          "check": "glass: the executed copy has its recorded SHA-256",
+          "detail": "C:\\Users\\phill\\pr39_runs\\c4_20261115_204125_glass_executed.ipynb",
+          "passed": true
+        },
+        {
+          "check": "blackbox: the run record's execution entry is its record's (copies, truncated copy)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox: the committed notebook's truncated copy, rebuilt now, is the executed one (the notebook is unchanged since)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "blackbox: the input copy has its recorded SHA-256 (the truncated copy's)",
+          "detail": "C:\\Users\\phill\\pr39_runs\\c4_20261115_204125_blackbox_input.ipynb",
+          "passed": true
+        },
+        {
+          "check": "blackbox: the executed copy has its recorded SHA-256",
+          "detail": "C:\\Users\\phill\\pr39_runs\\c4_20261115_204125_blackbox_executed.ipynb",
+          "passed": true
+        },
+        {
+          "check": "A4.2 recomputed now: every check passes, the same checks as stage2_reuse.json",
+          "detail": "65/65 checks passed",
+          "passed": true
+        },
+        {
+          "check": "A4.2 recomputed now: decision reuse, as recorded",
+          "detail": "reuse",
+          "passed": true
+        },
+        {
+          "check": "A4.2 recomputed evidence is the record's, value for value (PR 38 acceptance, Stage 2 manifest and pins, names and binning, router contracts, R4 notes)",
+          "detail": "['acceptance', 'manifest', 'names', 'binning', 'stage4_router_contract', 'r4_notes']",
+          "passed": true
+        },
+        {
+          "check": "A4.3 recomputed now: every check passes, the same checks as the run record",
+          "detail": "26/26 checks passed",
+          "passed": true
+        },
+        {
+          "check": "A4.4 recomputed now: every check passes, the same checks as the run record",
+          "detail": "21/21 checks passed",
+          "passed": true
+        },
+        {
+          "check": "A4.5 recomputed now: every check passes, the same checks as the run record",
+          "detail": "45/45 checks passed",
+          "passed": true
+        },
+        {
+          "check": "A4.6 recomputed now: every check passes, the same checks as the run record",
+          "detail": "15/15 checks passed",
+          "passed": true
+        },
+        {
+          "check": "the recomputed Stage 1, Stage 3, Stage 4 input and reload evidence and the section 7.3 identities are the run record's, value for value",
+          "detail": "['stage1', 'stage3', 'stage4_inputs', 'reload', 'identities']",
+          "passed": true
+        },
+        {
+          "check": "the six Stage 1-3 artifacts have one path, size and SHA-256 in every record that names them (execution records, pins file, transition, run record) and on disk (A4.6 above)",
+          "detail": "{'stage1.lr': 'd3a05760fa7594e3', 'stage1.mlp': 'dd8922d94bb73706', 'stage2.glass_router': '889c8bd572047beb', 'stage2.rf_router': 'aadde1ea93d0e300', 'stage3.ebm': 'd886ae5dcbdb077d', 'stage3.xgb': '8bf1d66ecd54236c'}",
+          "passed": true
+        },
+        {
+          "check": "D7: each tracked MLP CSV is as the black-box execution left it",
+          "detail": "{'models/mlp/stage1_mlp_threshold_sweep.csv': ' M', 'models/mlp/stage1_mlp_training_history.csv': None, 'models/mlp/stage1_mlp_tuning_trials.csv': None}",
+          "passed": true
+        },
+        {
+          "check": "D7: a CSV that differs from HEAD was changed by this run and was not already modified before it",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "every file the run added or changed in the model folders is classified (role, companion, sidecar or mutable alias); none deleted",
+          "detail": "22 files",
+          "passed": true
+        },
+        {
+          "check": "the owner's decision and the section 7.1 and 7.2 dispositions are stated",
+          "detail": "{'decision': 'Owner (Phillip Harris), 2026-11-16, gate A4.7 of the PR 39 execution contract 1.', 'disposition_7_1': 'Section 7.1 deviation, run c4_20261115_204125 only. Section 7.1 says failed or s', 'disposition_7_2': 'Section 7.2, run c4_20261115_204125 only. No record was replaced: each matches i'}",
+          "passed": true
+        }
+      ],
+      "evidence": "35/35 checks passed",
+      "failed": [],
+      "gate": "A4.7",
+      "passed": true
+    }
+  },
+  "git_status_delta": {
+    "gone": [],
+    "new": [
+      " M prototype/bank_pipeline/models/mlp/stage1_mlp_threshold_sweep.csv",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/execution_blackbox.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/execution_blackbox.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/execution_glass_recovery.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/execution_glass_recovery.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/finalize_transition.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/finalize_transition.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/preflight.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/preflight.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/run_record.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/run_record.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/stage2_reuse.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/stage2_reuse.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/upstream_pins.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/upstream_pins.json.sha256",
+      "?? prototype/bank_pipeline/tests/upstream_regeneration/test_acceptance.py",
+      "?? prototype/bank_pipeline/tests/upstream_regeneration/test_finalize_transition.py",
+      "?? prototype/bank_pipeline/tests/upstream_regeneration/test_recovery.py",
+      "?? prototype/bank_pipeline/tests/upstream_regeneration/test_stage3_split_identity.py",
+      "?? prototype/bank_pipeline/upstream_regeneration/acceptance.py",
+      "?? prototype/bank_pipeline/upstream_regeneration/recovery.py",
+      "?? prototype/bank_pipeline/upstream_regeneration/transition.py"
+    ],
+    "unexpected": []
+  },
+  "notebook_copies": {
+    "blackbox.executed_copy": {
+      "path": "C:\\Users\\phill\\pr39_runs\\c4_20261115_204125_blackbox_executed.ipynb",
+      "sha256": "b723be070ab97cf13df5584d0fc2c0e036dc59290565c3c1cd930d059a2d935f"
+    },
+    "blackbox.input_copy": {
+      "path": "C:\\Users\\phill\\pr39_runs\\c4_20261115_204125_blackbox_input.ipynb",
+      "sha256": "409b69933996c406bc43d2d04603ce860cedbd0e63428bf5d28cd6d8c7485ef6"
+    },
+    "glass.executed_copy": {
+      "path": "C:\\Users\\phill\\pr39_runs\\c4_20261115_204125_glass_executed.ipynb",
+      "sha256": "ef0f46587ad52100776cd263d1ac01ad506b2d87b5709550b132a71fc7a8c256"
+    },
+    "glass.input_copy": {
+      "path": "C:\\Users\\phill\\pr39_runs\\c4_20261115_204125_glass_input.ipynb",
+      "sha256": "d93448e9a98a46c2502ce3a2c8b2f020fb1f3754304ef5e1856abd61465764c7"
+    }
+  },
+  "passed": true,
+  "records": {
+    "execution_blackbox": "8d02fd383fde73ec99a3f31cc083e573b82f202dd6c63c34f2412358429b33ef",
+    "execution_glass_recovery": "4374fa01650f240ad94e1b4d998b5335bd45fd6a5126f8d496312907de6a2c2a",
+    "finalize_transition": "bc3b3fa2335e5254c4e8caf554df3184699b2ee77ccba9729fdb47c5b6d6d389",
+    "preflight": "a5c242a0221903d2c791b744943ea99c1a2127e3a813250a559f87856152511c",
+    "run_record": "86125c55f32147b7ded5ef9ce6c6c99be1101b226c7c8a09d8c3e5d79bc3a18a",
+    "stage2_reuse": "2c6d8f1ad7712620bffc273d1dd3e4924c4c0a94fc7d7bf6676ec91c082ea9b0"
+  },
+  "run_id": "c4_20261115_204125",
+  "started_utc": "2026-11-16T21:53:36+00:00",
+  "step": "upstream_acceptance",
+  "sums": {
+    "path": "C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\SHA256SUMS.txt"
+  }
+}

@@ -1,0 +1,613 @@
+{
+  "code": {
+    "code_sha256": "c4ff071c54862f6d217caf194aae0126c600ae279405b397b9a0d4da9bdcce50",
+    "files": 426,
+    "head": "5951ee396196240741fba17afe5619eda37f129e"
+  },
+  "contract": {
+    "decisions": [
+      "D3",
+      "D4",
+      "D7"
+    ],
+    "gates": [
+      "A4.1",
+      "A4.2",
+      "A4.3",
+      "A4.4",
+      "A4.5",
+      "A4.6"
+    ],
+    "record": "documentation/methodology/pr39_execution_contract.md",
+    "sections": [
+      "5.1",
+      "5.2",
+      "5.3",
+      "5.4",
+      "6.3",
+      "6.4",
+      "7.1",
+      "7.2",
+      "7.3",
+      "7.4",
+      "7.5"
+    ],
+    "version": "1.0.0"
+  },
+  "decision": {
+    "authorization": {
+      "amends": "PR 38 freeze record section 6 ('new run id')",
+      "approved": "owner, Commit 1 review, 2026-11-14",
+      "decision": "D3",
+      "record": "documentation/methodology/pr39_execution_contract.md 1.0.0 sections 5.2 and 10"
+    },
+    "failed": [],
+    "next": "pinned: the notebooks load Stage 2 by path and SHA-256; no Stage 2 fit",
+    "outcome": "reuse",
+    "pins": "shared.pinned_artifacts.STAGE2_PINS (run c3_20261112_153333)"
+  },
+  "evidence": {
+    "acceptance": {
+      "candidate_manifest_sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88",
+      "glass": "glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+      "rf": "rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib"
+    },
+    "binning": {
+      "decision": "retain",
+      "frozen_records_unchanged": true
+    },
+    "manifest": {
+      "files": {
+        "evidence.json": {
+          "bytes": 4176994,
+          "listed": {
+            "bytes": 4176994,
+            "sha256": "e30b17ca7ba1380646f1d7362df0af46b17fa98bc4a0d4a2c68299ad80a3af6a"
+          },
+          "present": true,
+          "sha256": "e30b17ca7ba1380646f1d7362df0af46b17fa98bc4a0d4a2c68299ad80a3af6a"
+        },
+        "glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib": {
+          "bytes": 2481389,
+          "listed": {
+            "bytes": 2481389,
+            "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+          },
+          "present": true,
+          "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+        },
+        "rf_router/rf_router_pr38_primary_c3_20261112_153333.joblib": {
+          "bytes": 4158905,
+          "listed": {
+            "bytes": 4158905,
+            "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+          },
+          "present": true,
+          "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+        },
+        "rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib": {
+          "bytes": 4158905,
+          "listed": {
+            "bytes": 4158905,
+            "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+          },
+          "present": true,
+          "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+        },
+        "rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368_metadata.json": {
+          "bytes": 2118459,
+          "listed": {
+            "bytes": 2118459,
+            "sha256": "e609f4931be74f7a2a418edb0ef0d85134ad9299945f8ac01b661b11b637acec"
+          },
+          "present": true,
+          "sha256": "e609f4931be74f7a2a418edb0ef0d85134ad9299945f8ac01b661b11b637acec"
+        },
+        "rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368_pass1_sweep.csv": {
+          "bytes": 159603,
+          "listed": {
+            "bytes": 159603,
+            "sha256": "8bf95a177cfbdf14ef13a1c946523f96ad802fd5b2535194fbb1fea85c3c1307"
+          },
+          "present": true,
+          "sha256": "8bf95a177cfbdf14ef13a1c946523f96ad802fd5b2535194fbb1fea85c3c1307"
+        },
+        "rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368_pass2_sweep.csv": {
+          "bytes": 133384,
+          "listed": {
+            "bytes": 133384,
+            "sha256": "53a2e028e456e04cad5115bef4cde0da36b1fef42082348afd4bb47a0a296a39"
+          },
+          "present": true,
+          "sha256": "53a2e028e456e04cad5115bef4cde0da36b1fef42082348afd4bb47a0a296a39"
+        },
+        "rf_router/rf_router_pr38_primary_c3_20261112_153333_metadata.json": {
+          "bytes": 2118872,
+          "listed": {
+            "bytes": 2118872,
+            "sha256": "56d050e5dd164d98c07d5e455dc179824077a7e5aad8e06a11c7963a565e0626"
+          },
+          "present": true,
+          "sha256": "56d050e5dd164d98c07d5e455dc179824077a7e5aad8e06a11c7963a565e0626"
+        },
+        "rf_router/rf_router_pr38_primary_c3_20261112_153333_pass1_sweep.csv": {
+          "bytes": 159603,
+          "listed": {
+            "bytes": 159603,
+            "sha256": "8bf95a177cfbdf14ef13a1c946523f96ad802fd5b2535194fbb1fea85c3c1307"
+          },
+          "present": true,
+          "sha256": "8bf95a177cfbdf14ef13a1c946523f96ad802fd5b2535194fbb1fea85c3c1307"
+        },
+        "rf_router/rf_router_pr38_primary_c3_20261112_153333_pass2_sweep.csv": {
+          "bytes": 133384,
+          "listed": {
+            "bytes": 133384,
+            "sha256": "53a2e028e456e04cad5115bef4cde0da36b1fef42082348afd4bb47a0a296a39"
+          },
+          "present": true,
+          "sha256": "53a2e028e456e04cad5115bef4cde0da36b1fef42082348afd4bb47a0a296a39"
+        }
+      },
+      "pins": [
+        {
+          "bytes": 2481389,
+          "path": "models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+          "role": "stage2.glass_router",
+          "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+        },
+        {
+          "bytes": 4158905,
+          "path": "models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+          "role": "stage2.rf_router",
+          "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+        }
+      ]
+    },
+    "names": {
+      "binning_identity": {
+        "covers": [
+          "BINNING_STRATEGY",
+          "RF_FEATURES_BINARY"
+        ],
+        "fingerprint": "9cdd79aff9d61101",
+        "id": "stage2-binning",
+        "sha256": "9cdd79aff9d61101949a7e761c6837e13e81036d865c37b5213dca2867912376"
+      },
+      "glass_rule_features": [
+        "behav_hot",
+        "behav_warm",
+        "campaign_heavy",
+        "cci_dead_mid",
+        "cci_hot1",
+        "dow_cold",
+        "dow_hot",
+        "eci_mid",
+        "eci_warm",
+        "jed_transition",
+        "nsd_cold",
+        "nsd_hot"
+      ],
+      "rf_features_binary": [
+        "nsd_cold",
+        "nsd_warm",
+        "nsd_elevated",
+        "nsd_hot",
+        "jed_cold",
+        "jed_transition",
+        "jed_warm",
+        "jed_hot",
+        "cci_low",
+        "cci_dead_mid",
+        "cci_hot1",
+        "cci_valley",
+        "cci_hot2",
+        "eci_cold",
+        "eci_mid",
+        "eci_warm",
+        "eci_hot",
+        "dow_cold",
+        "dow_low",
+        "dow_mid",
+        "dow_hot",
+        "behav_cold",
+        "behav_baseline",
+        "behav_warm",
+        "behav_hot",
+        "campaign_fresh",
+        "campaign_moderate",
+        "campaign_heavy",
+        "cpi_cellular"
+      ],
+      "rf_source_features": [
+        "campaign",
+        "neighborhood_subscription_density",
+        "cons.conf.idx",
+        "economic_curvature_intensity",
+        "joint_economic_decay",
+        "dow_month_encoded",
+        "behavioral_favorability",
+        "cpi_high_cellular"
+      ]
+    },
+    "r4_notes": {
+      "blackbox": {
+        "pass2_eligibility": {
+          "cross_fit": "nested_t1",
+          "full_train": "nested_t1"
+        },
+        "pass2_population": {
+          "cross_fit": "oof_remainder",
+          "full_train": "oof_remainder"
+        }
+      },
+      "glass": {
+        "pass2_eligibility": null,
+        "pass2_population": {
+          "cross_fit": "oof_remainder",
+          "full_train": "oof_remainder"
+        }
+      }
+    },
+    "stage4_router_contract": {
+      "glass": {
+        "checks": 26,
+        "label_evidence": "complete: the label fingerprints of the fits behind the train and the test outputs match GLOBAL_SPLIT's training rows and labels",
+        "pass2_population": {
+          "cross_fit": "oof_remainder",
+          "full_train": "oof_remainder"
+        }
+      },
+      "rf_router": {
+        "checks": 28,
+        "label_evidence": "complete: the label fingerprints of the fits behind the train and the test outputs match GLOBAL_SPLIT's training rows and labels",
+        "pass2_population": {
+          "cross_fit": "oof_remainder",
+          "full_train": "oof_remainder"
+        }
+      }
+    }
+  },
+  "finished_utc": "2026-11-16T04:42:02+00:00",
+  "format": "pr39.commit4a.stage2_reuse/1",
+  "gates": {
+    "A4.2": {
+      "checks": [
+        {
+          "check": "the train side is the frozen protocol's population (rows, positives, folds, split, labels)",
+          "detail": "{'rows': 32950, 'positives': 3712, 'router_split_fingerprint': 'fc3e73a5ef91aea4', 'train_label_fingerprint': 'b984d2a50527', 'fold_fingerprint': '8aea082fcaf371b7'}",
+          "passed": true
+        },
+        {
+          "check": "reuse 1: acceptance.require_accepted('c3_20261112_153333') passes on the final code",
+          "detail": "{'candidate_manifest_sha256': 'f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88', 'glass': 'glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib', 'rf': 'rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib'}",
+          "passed": true
+        },
+        {
+          "check": "reuse 4: every file of the accepted candidate has the SHA-256 and size primary_MANIFEST.json lists",
+          "detail": "{'evidence.json': True, 'glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333.joblib': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368_metadata.json': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368_pass1_sweep.csv': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368_pass2_sweep.csv': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333_metadata.json': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333_pass1_sweep.csv': True, 'rf_router/rf_router_pr38_primary_c3_20261112_153333_pass2_sweep.csv': True}",
+          "passed": true
+        },
+        {
+          "check": "reuse 4: the two pinned files (shared.pinned_artifacts.STAGE2_PINS) are the manifest's GLASS bundle and immutable RF Router, and primary_MANIFEST.json has its pinned SHA-256",
+          "detail": "equal",
+          "passed": true
+        },
+        {
+          "check": "trigger 4 / reuse 3: both routers load by pinned path and SHA-256 and pass the Stage 4 router contract (router_stream + build_stage4_inputs), train and test side",
+          "detail": "{'glass': {'checks': 26, 'pass2_population': {'cross_fit': 'oof_remainder', 'full_train': 'oof_remainder'}, 'label_evidence': \"complete: the label fingerprints of the fits behind the train and the test outputs match GLOBAL_SPLIT's training rows and labels\"}, 'rf_router': {'checks': 28, 'pass2_population': {'cross_fit': 'oof_remainder', 'full_train': 'oof_remainder'}, 'label_evidence': \"complete: the label fingerprints of the fits behind the train and the test outputs match GLOBAL_SPLIT's training rows and labels\"}}",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: consumed train proba ≠ in-sample diagnostic",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: oof_protocol fold fingerprint = train_fold_id",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: oof_protocol n_folds = fold ids",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: train_pred agrees with train_decisions",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: fold ids carried (the artifact holds no labels; its fold plan is partial label evidence)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: cross-fit and full-train router share one Pass 2 population",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: training_base_rate = GLOBAL_SPLIT training positive rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: Pass 1 is the NOT_SUBSCRIBE route (train pos-rate < base rate)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: Pass 2 is the SUBSCRIBE route (train pos-rate > base rate)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [glass] glass: proba oriented as P(subscribe) (covered-row OOF AUC > 0.5)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [glass] glass: GLASS Router bundle with training_base_rate (F25 router evidence)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [glass] glass: training_base_rate = GLOBAL_SPLIT training positive rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [glass] glass: train probabilities = rule blends at fold base rates",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [glass] glass: test probabilities = rule blends at the training base rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: index = GLOBAL_SPLIT X_train",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] train: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: index = GLOBAL_SPLIT X_test",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [glass] test: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: consumed train proba ≠ in-sample diagnostic",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: oof_protocol fold fingerprint = train_fold_id",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: oof_protocol n_folds = fold ids",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: train_pred agrees with train_decisions",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: fold ids carried (the artifact holds no labels; its fold plan is partial label evidence)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: the split fingerprints the artifact records agree",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: cross-fit and full-train router share one Pass 2 population",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: cross-fit and full-train router share one Pass 2 eligibility rule",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: training_base_rate = GLOBAL_SPLIT training positive rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: Pass 1 is the NOT_SUBSCRIBE route (train pos-rate < base rate)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: Pass 2 is the SUBSCRIBE route (train pos-rate > base rate)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 router_stream [blackbox] blackbox: proba oriented as P(subscribe) (covered-row OOF AUC > 0.5)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [blackbox] glass: RF Router artifact with training_base_rate (F25 router evidence)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [blackbox] glass: training_base_rate = GLOBAL_SPLIT training positive rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [blackbox] glass: train probabilities = band blends at fold base rates",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-EBM router evidence [blackbox] glass: test probabilities = band blends at the training base rate",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: index = GLOBAL_SPLIT X_train",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] train: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: index = GLOBAL_SPLIT X_test",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "R4 meta-XGB feature block [blackbox] test: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "V7 R5 at Stage 4: pass2_eligibility nested_t1 on both sides of the RF Router",
+          "detail": "{'pass2_population': {'cross_fit': 'oof_remainder', 'full_train': 'oof_remainder'}, 'pass2_eligibility': {'cross_fit': 'nested_t1', 'full_train': 'nested_t1'}}",
+          "passed": true
+        },
+        {
+          "check": "trigger 2: binning identity now = the Step 3A record's (BINNING_STRATEGY, RF_FEATURES_BINARY)",
+          "detail": "9cdd79aff9d61101949a7e761c6837e13e81036d865c37b5213dca2867912376",
+          "passed": true
+        },
+        {
+          "check": "trigger 2: the GLASS Router bundle's features = RF_FEATURES_BINARY, in order",
+          "detail": "29",
+          "passed": true
+        },
+        {
+          "check": "trigger 2: the RF Router's feature_names = RF_FEATURES_BINARY, in order",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trigger 2: every feature the accepted GLASS rules use is a current bin",
+          "detail": "['behav_hot', 'behav_warm', 'campaign_heavy', 'cci_dead_mid', 'cci_hot1', 'dow_cold', 'dow_hot', 'eci_mid', 'eci_warm', 'jed_transition', 'nsd_cold', 'nsd_hot']",
+          "passed": true
+        },
+        {
+          "check": "trigger 4: glass Pass 2 population is oof_remainder in both fits (F17)",
+          "detail": "{'cross_fit': 'oof_remainder', 'full_train': 'oof_remainder'}",
+          "passed": true
+        },
+        {
+          "check": "trigger 4: rf_router Pass 2 population is oof_remainder in both fits (F17)",
+          "detail": "{'cross_fit': 'oof_remainder', 'full_train': 'oof_remainder'}",
+          "passed": true
+        },
+        {
+          "check": "triggers 1-3: python -m stage2_binning check --run-id c3_20261114_231604 recomputes every section exactly (E-B, E-B2, T1-T4, frozen records)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "trigger 1: no NSD/ECI revision adopted (Step 3A decision: retain)",
+          "detail": "retain",
+          "passed": true
+        },
+        {
+          "check": "trigger 3: the frozen contract, protocol, profiles and G13 pathway are the accepted run's (no frozen Stage 2 record changed version)",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "65/65 checks passed",
+      "failed": [],
+      "gate": "A4.2",
+      "passed": true
+    }
+  },
+  "passed": true,
+  "preflight_sha256": "a5c242a0221903d2c791b744943ea99c1a2127e3a813250a559f87856152511c",
+  "run_id": "c4_20261115_204125",
+  "started_utc": "2026-11-16T04:41:51+00:00",
+  "step": "stage2_reuse"
+}

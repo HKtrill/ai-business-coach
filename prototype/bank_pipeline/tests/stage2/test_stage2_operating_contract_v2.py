@@ -494,8 +494,10 @@ DELIBERATE_PIN_CHANGES = {
     ),
     "tests/support/artifact_audit.py": (
         "PR 39 Commit 3 Step 3B (D5): GLASS Arbiter roots and keys, the PR 36-38 "
-        "meta_ebm roots and keys kept readable as saved",
-        "67903c5ac72f5c9c50a4e1d5398f768aa4373a3dbe334734958013053e77d3d8",
+        "meta_ebm roots and keys kept readable as saved; PR 39 Commit 4 Step 4A (G10): "
+        "the GLASS Pass 2 expectation of the PR 39 generation is oof_remainder, the "
+        "PR 36-38 generation audited as saved (full)",
+        "39a4d6989525d19871cec8db6a20fb4c6dc1bd13f295ea31a56d91723a2a31cd",
     ),
 }
 

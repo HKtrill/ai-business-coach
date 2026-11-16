@@ -56,9 +56,10 @@ Checks, all through the existing validators
 * ``check_arbiter_identity`` the cell it claims to be, and complete recorded
                              evidence: arbiter, upstream arm, crossover flag,
                              per-stage family / arm / slot, label evidence
-                             (F12), Pass 2 populations (F17: GLASS ``full``,
-                             RF ``oof_remainder``), a ledger with every check
-                             passed, Meta-XGB feature contract.
+                             (F12), Pass 2 populations (F17, by generation:
+                             PR 39 both ``oof_remainder``; PR 36-38 GLASS
+                             ``full``, RF ``oof_remainder``), a ledger with
+                             every check passed, Meta-XGB feature contract.
 * ``reload_upstream``        the recorded files through the arbiter's own
                              Stage 4 loader (F12 / F17 / F21 / F25 / F29,
                              split, folds, OOF honesty), and the outputs on
@@ -101,9 +102,17 @@ _GLASS_SLOTS = {"stage1": "lr", "stage2": "glass", "stage3": "ebm"}
 NATIVE_ARM = {"glass_arbiter": "glass", "meta_ebm": "glass", "meta_xgb": "blackbox"}
 SLOTS = {"glass_arbiter": _GLASS_SLOTS, "meta_ebm": _GLASS_SLOTS,
          "meta_xgb": {"stage1": "mlp", "stage2": "rf_router", "stage3": "xgb"}}
-#: Normalised Pass 2 population per upstream router (F17): GLASS fits Pass 2 on the full
-#: population, the RF Router on its OOF Pass 1 remainder.
-PASS2_POPULATION = {"glass": "full", "blackbox": "oof_remainder"}
+#: Normalised Pass 2 population per upstream router (F17) of the PR 39 generation: the
+#: GLASS Router is the accepted PR 38 primary, which fits Pass 2 on its OOF Pass 1
+#: remainder like the RF Router (F17 G10, updated in PR 39 Commit 4A, execution
+#: contract section 5.3; G10 clarification v1).
+PASS2_POPULATION = {"glass": "oof_remainder", "blackbox": "oof_remainder"}
+#: The PR 36-38 generation as saved: the notebook GLASS Router fitted Pass 2 on the full
+#: population (the legacy profile), the RF Router on its OOF Pass 1 remainder.
+HISTORICAL_PASS2_POPULATION = {"glass": "full", "blackbox": "oof_remainder"}
+#: Generation names: the PR 39 roots (``ROOTS``) and the PR 36-38 roots (``HISTORICAL_ROOTS``).
+GENERATION = "pr39"
+HISTORICAL_GENERATION = "pr36-38"
 MANIFEST_ENV = "BANK_ARTIFACT_MANIFEST"
 
 
@@ -163,7 +172,12 @@ class Selection(dict):
     ``select_roots``' result, keyed as selected. A missing key falls back to
     the same root under the other generation's key (current <-> PR 36-38);
     iteration, ``in``, ``len`` and ``.get`` see only the selected keys.
+    ``generation`` is the generation selected (``GENERATION`` or
+    ``HISTORICAL_GENERATION``): pass it to ``check_arbiter_identity``, since
+    two keys (``meta_xgb``, ``meta_xgb_on_glass``) are the same in both.
     """
+
+    generation = GENERATION
 
     def __missing__(self, key):
         alias = HISTORICAL_KEYS.get(key) or _CURRENT_KEYS.get(key)
@@ -246,6 +260,7 @@ def select_roots(root_dir=BANK_ROOT, manifest=None) -> dict:
             raise AuditError(f"manifest {manifest}: needs exactly {sorted(ROOTS)} (or the PR 36-38 "
                              f"keys {sorted(HISTORICAL_ROOTS)}); missing {missing}, unknown {unknown}")
         out = Selection({k: _resolve(entries[k], root_dir) for k in roots})
+        out.generation = HISTORICAL_GENERATION if roots is HISTORICAL_ROOTS else GENERATION
         absent = [f"{k}: {p}" for k, p in out.items() if not p.is_file()]
         if absent:
             raise AuditError(f"manifest {manifest} names files that do not exist: {absent}")
@@ -253,6 +268,7 @@ def select_roots(root_dir=BANK_ROOT, manifest=None) -> dict:
     current = any(_newest(root_dir, ROOTS[k]) for k in ROOTS if ROOTS[k].arbiter in GLASS_ARBITERS)
     roots = ROOTS if current else HISTORICAL_ROOTS
     out, absent = Selection(), []
+    out.generation = GENERATION if current else HISTORICAL_GENERATION
     for key, r in roots.items():
         files = _newest(root_dir, r)
         if files:
@@ -299,8 +315,28 @@ def upstream_record(key: str, art) -> dict:
     return record
 
 
-def check_arbiter_identity(key: str, art) -> None:
-    """The 2x2 cell ``key`` claims to be, with complete recorded evidence."""
+def generation_of(key: str, generation: Optional[str] = None) -> str:
+    """
+    The generation ``key`` is audited under: implied by a generation's own key
+    (``glass_arbiter*``: PR 39; ``meta_ebm*``: PR 36-38), else ``generation``
+    (a ``Selection.generation``), PR 39 when not given. A conflict is refused.
+    """
+    if generation not in (None, GENERATION, HISTORICAL_GENERATION):
+        raise AuditError(f"unknown generation {generation!r}: expected {GENERATION!r} or "
+                         f"{HISTORICAL_GENERATION!r}")
+    implied = (GENERATION if key in ROOTS and key not in HISTORICAL_ROOTS else
+               HISTORICAL_GENERATION if key in HISTORICAL_ROOTS and key not in ROOTS else None)
+    if implied is not None and generation not in (None, implied):
+        raise AuditError(f"{key!r} is a {implied} key, not {generation}: one audit never mixes "
+                         "the two generations")
+    return implied or generation or GENERATION
+
+
+def check_arbiter_identity(key: str, art, generation: Optional[str] = None) -> None:
+    """
+    The 2x2 cell ``key`` claims to be, with complete recorded evidence, under
+    its generation's expectations (``generation_of``).
+    """
     from blackbox_pipeline.models.meta_xgb.artifact import SCHEMA as META_XGB_SCHEMA
     from blackbox_pipeline.models.meta_xgb.config import STAGE4_FEATURES
     from shared.stage4 import UPSTREAM
@@ -308,6 +344,8 @@ def check_arbiter_identity(key: str, art) -> None:
     from shared.stage4.contract import LABEL_FINGERPRINT_SIDES, LABELS_CARRIED, LABELS_FINGERPRINTED
 
     r, d, problems = root(key), _fields(art), []
+    populations = (PASS2_POPULATION if generation_of(key, generation) == GENERATION
+                   else HISTORICAL_PASS2_POPULATION)
 
     def want(field, got, expected):
         if got != expected:
@@ -346,7 +384,7 @@ def check_arbiter_identity(key: str, art) -> None:
         for field in ("artifact_path", "content_fingerprint"):
             if not s.get(field):
                 problems.append(f"upstream.stages.{stage}.{field} missing")
-    pop = PASS2_POPULATION[r.upstream]
+    pop = populations[r.upstream]
     s2 = stages.get("stage2") or {}
     want("upstream.stages.stage2.pass2_population (F17)", s2.get("pass2_population"),
          {"cross_fit": pop, "full_train": pop})

@@ -675,4 +675,9 @@ def test_the_notebook_runs_stage1_under_the_tested_protocol():
     assert {k.arg for k in save.keywords} >= {"stage_output"}
     meta_xgb = [c for c in named("train_meta_xgb_stage")
                 if any(k.arg == "mlp_path" and ast.unparse(k.value) == "MLP_S1_PATH" for k in c.keywords)]
-    assert len(meta_xgb) == 1 and ast.unparse(consts["MLP_S1_PATH"]).startswith("MLP_S1.save(")
+    # PR 39 (execution contract section 7.1): Stage 4 reads the immutable MLP version, which
+    # holds the StageOutput; the fixed-name StageOutput file is no longer written
+    assert len(meta_xgb) == 1 and ast.unparse(consts["MLP_S1_PATH"]) == "MLP_ARTIFACT_PATH"
+    assert ast.unparse(consts["MLP_ARTIFACT_PATH"]).startswith("save_stage1_mlp(")
+    assert not [c for c in named("save") if isinstance(c.func, ast.Attribute)
+                and ast.unparse(c.func.value) == "MLP_S1"]

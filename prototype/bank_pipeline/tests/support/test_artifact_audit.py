@@ -19,6 +19,12 @@ PR 39 (D5): the same 2x2 saved the PR 36-38 way (schema ``meta_ebm/2``, keys
 comparison with ``meta_ebm_*`` keys) is audited as saved, under its own keys;
 a manifest or a selection never mixes the two generations, and a file is
 never accepted under the other generation's key.
+
+PR 39 (G10, Commit 4A): each generation is held to its own GLASS Router Pass 2
+population (F17). The PR 39 2x2 is built on a GLASS Router fitted on its OOF
+Pass 1 remainder (the accepted PR 38 primary); the PR 36-38 2x2 on its own
+upstream, a GLASS Router fitted on the full population (the legacy notebook
+profile). Neither is accepted under the other's expectation.
 """
 
 from __future__ import annotations
@@ -60,21 +66,20 @@ from tests.support.stage4_world import ROUTER_FP, build_world, make_router, make
 RF_REMAINDER = "OOF Pass 1 remainder (RF router design)"
 
 
-def _upstream(w):
-    return {"glass": [make_stage1(w), make_router(w, pass2_population="full"), make_stage3(w)],
+def _upstream(w, glass_population="oof_remainder"):
+    return {"glass": [make_stage1(w), make_router(w, pass2_population=glass_population),
+                      make_stage3(w)],
             "blackbox": [make_stage1(w, arm="blackbox", model="mlp", wrap=False),
                          make_router(w, layout="extra", band_blend=True, pass2_population=RF_REMAINDER),
                          make_stage3(w, family="xgboost")]}
 
 
-@pytest.fixture(scope="module")
-def bank(tmp_path_factory):
-    """A bank_pipeline/ tree with a synthetic 2x2 where the notebooks save theirs."""
-    root = tmp_path_factory.mktemp("bank_pipeline")
+def _build_2x2(root: Path, glass_population: str):
+    """A synthetic 2x2 under ``root`` where the notebooks save theirs (PR 39 names)."""
     w = build_world(n=1500, n_test=350)
     files = {}
-    for arm, arts in _upstream(w).items():
-        (root / "upstream").mkdir(exist_ok=True)
+    for arm, arts in _upstream(w, glass_population).items():
+        (root / "upstream").mkdir(parents=True, exist_ok=True)
         files[arm] = [str(root / "upstream" / f"{arm}_{s}.joblib") for s in audit.STAGES]
         for art, path in zip(arts, files[arm]):
             joblib.dump(art, path)
@@ -95,6 +100,12 @@ def bank(tmp_path_factory):
                                         glass_arbiter_path=paths["glass_arbiter"])
     return SimpleNamespace(root=root, GS=w["GS"], files=files,
                            paths={k: Path(p) for k, p in paths.items()})
+
+
+@pytest.fixture(scope="module")
+def bank(tmp_path_factory):
+    """The PR 39 2x2: its GLASS Router fits Pass 2 on the OOF Pass 1 remainder."""
+    return _build_2x2(tmp_path_factory.mktemp("bank_pipeline"), "oof_remainder")
 
 
 def _arts(bank):
@@ -286,8 +297,12 @@ def _comparison_saved_before_pr39(cmp: dict) -> dict:
 
 
 @pytest.fixture(scope="module")
-def historical_bank(bank, tmp_path_factory):
-    """The same 2x2 as PR 36-38 saved it: its keys, folders, file names and schema."""
+def historical_bank(tmp_path_factory):
+    """
+    A 2x2 as PR 36-38 saved it: its keys, folders, file names and schema, on its
+    own upstream (the legacy GLASS Router: Pass 2 on the full population).
+    """
+    bank = _build_2x2(tmp_path_factory.mktemp("historical_source") / "bank_pipeline", "full")
     root = tmp_path_factory.mktemp("historical") / "bank_pipeline"
     shutil.copytree(bank.root, root)
     paths = {}
@@ -310,12 +325,14 @@ def test_the_pr36_38_generation_is_audited_as_saved_under_its_own_keys(historica
     before = {k: hashlib.sha256(p.read_bytes()).hexdigest() for k, p in hb.paths.items()}
     roots = audit.select_roots(hb.root)                   # no PR 39 GLASS Arbiter on disk yet
     assert roots == hb.paths and set(roots) == set(HISTORICAL_ROOTS)
+    assert roots.generation == audit.HISTORICAL_GENERATION
     manifest = tmp_path / "manifest.json"                 # an existing PR 38 manifest's keys
     manifest.write_text(json.dumps({k: str(p) for k, p in hb.paths.items()}), encoding="utf-8")
     assert audit.select_roots(hb.root, manifest) == hb.paths
+    assert audit.select_roots(hb.root, manifest).generation == audit.HISTORICAL_GENERATION
     arts, expected = {k: audit.load_arbiter(k, p, hb.GS, ROUTER_FP) for k, p in roots.items()}, {}
     for key, art in arts.items():
-        audit.check_arbiter_identity(key, art)
+        audit.check_arbiter_identity(key, art, generation=roots.generation)
         _, up = audit.reload_upstream(key, art, hb.GS, hb.root, ROUTER_FP)
         expected.update(audit.expected_reload(key, roots[key], art, up))
     assert arts["meta_ebm"]["schema"] == "meta_ebm/2"
@@ -347,6 +364,28 @@ def test_the_two_generations_are_never_mixed_or_translated(bank, historical_bank
         new["arbiter"]
     with pytest.raises(AuditError, match="unknown arbiter key"):
         audit.root("arbiter")
+
+
+def test_each_generation_is_held_to_its_own_glass_pass2_population(bank, historical_bank):
+    """F17 G10 (PR 39 Commit 4A): PR 39 GLASS ``oof_remainder``, PR 36-38 GLASS ``full``."""
+    assert audit.PASS2_POPULATION == {"glass": "oof_remainder", "blackbox": "oof_remainder"}
+    assert audit.HISTORICAL_PASS2_POPULATION == {"glass": "full", "blackbox": "oof_remainder"}
+    key = "meta_xgb_on_glass"                         # the same key in both generations
+    new = audit.load_arbiter(key, bank.paths[key], bank.GS, ROUTER_FP)
+    old = audit.load_arbiter(key, historical_bank.paths[key], historical_bank.GS, ROUTER_FP)
+    audit.check_arbiter_identity(key, new)                                   # PR 39 by default
+    audit.check_arbiter_identity(key, new, generation=audit.GENERATION)
+    audit.check_arbiter_identity(key, old, generation=audit.HISTORICAL_GENERATION)
+    with pytest.raises(AuditError, match=r"pass2_population \(F17\) = \{'cross_fit': 'full'"):
+        audit.check_arbiter_identity(key, old)                               # full is not PR 39
+    with pytest.raises(AuditError, match=r"pass2_population \(F17\) = \{'cross_fit': 'oof_remainder'"):
+        audit.check_arbiter_identity(key, new, generation=audit.HISTORICAL_GENERATION)
+    glass = audit.load_arbiter("glass_arbiter", bank.paths["glass_arbiter"], bank.GS, ROUTER_FP)
+    with pytest.raises(AuditError, match="never mixes the two generations"):
+        audit.check_arbiter_identity("glass_arbiter", glass, generation=audit.HISTORICAL_GENERATION)
+    with pytest.raises(AuditError, match="unknown generation"):
+        audit.check_arbiter_identity(key, new, generation="pr40")
+    assert audit.select_roots(bank.root).generation == audit.GENERATION
 
 
 # ----------------------------------------------------------------------
@@ -421,7 +460,8 @@ def test_the_audit_finds_the_arbiters_where_the_notebooks_save_them():
     assigned = {}
     for c in json.loads((BANK_ROOT / bb).read_text(encoding="utf-8"))["cells"]:
         if c["cell_type"] == "code":
-            for n in ast.walk(ast.parse("".join(c["source"]))):
+            src = "\n".join(l for l in "".join(c["source"]).splitlines() if not l.lstrip().startswith("%"))
+            for n in ast.walk(ast.parse(src)):
                 if isinstance(n, ast.Assign) and isinstance(n.targets[0], ast.Name):
                     assigned.setdefault(n.targets[0].id, []).append(n.value)
     assert [ast.unparse(v) for v in assigned["_XO_DIR"]] == ["BLACKBOX_ROOT / 'models' / 'stage4_crossover'"]

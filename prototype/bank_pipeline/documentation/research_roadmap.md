@@ -102,24 +102,24 @@
 
 #### Step 4A — Regeneration Readiness and Upstream Execution
 
-- [ ] Verify that the Commit 2 and Commit 3 methodology/configuration freezes are complete.
-- [ ] Verify historical artifact identities and initialize the versioned PR 39 regeneration records.
-- [ ] Regenerate Stage 1 artifacts for both arms using the shared calibration and updated feature contracts.
-- [ ] Regenerate affected Stage 2 GLASS/RF artifacts using the final bins and frozen selector design.
-- [ ] Recompute Stage 2 OOF predictions where changed upstream inputs or feature contracts require it.
-- [ ] Preserve nested training, fold isolation, Pass 1 precedence, and Pass 2 remainder eligibility.
-- [ ] Regenerate affected Stage 3 artifacts and OOF predictions under the finalized upstream dependencies.
-- [ ] Reuse unchanged artifacts only when provenance and compatibility checks establish that reuse is valid.
+- [x] Verify that the Commit 2 and Commit 3 methodology/configuration freezes are complete.
+- [x] Verify historical artifact identities and initialize the versioned PR 39 regeneration records.
+- [x] Regenerate Stage 1 artifacts for both arms using the shared calibration and updated feature contracts.
+- [x] Regenerate affected Stage 2 GLASS/RF artifacts using the final bins and frozen selector design.
+- [x] Recompute Stage 2 OOF predictions where changed upstream inputs or feature contracts require it.
+- [x] Preserve nested training, fold isolation, Pass 1 precedence, and Pass 2 remainder eligibility.
+- [x] Regenerate affected Stage 3 artifacts and OOF predictions under the finalized upstream dependencies.
+- [x] Reuse unchanged artifacts only when provenance and compatibility checks establish that reuse is valid.
 
 #### Step 4B — Upstream Acceptance and Artifact Verification
 
-- [ ] Validate fold identities, OOF alignment, feature contracts, upstream fingerprints, and training-side isolation.
-- [ ] Verify both Stage 2 arms against the same frozen shared operating contract.
-- [ ] Record infeasible folds, solver outcomes, constraint compliance, and any deviations or limitations.
-- [ ] Validate serialization/deserialization, versions, metadata, artifact paths, and interface compatibility.
-- [ ] Verify that historical PR 38 results and model artifacts remain unchanged.
-- [ ] Run focused real-data and upstream regression tests.
-- [ ] Record an explicit Stage 1–3 acceptance decision before authorizing Stage 4 regeneration.
+- [x] Validate fold identities, OOF alignment, feature contracts, upstream fingerprints, and training-side isolation.
+- [x] Verify both Stage 2 arms against the same frozen shared operating contract.
+- [x] Record infeasible folds, solver outcomes, constraint compliance, and any deviations or limitations.
+- [x] Validate serialization/deserialization, versions, metadata, artifact paths, and interface compatibility.
+- [x] Verify that historical PR 38 results and model artifacts remain unchanged.
+- [x] Run focused real-data and upstream regression tests.
+- [x] Record an explicit Stage 1–3 acceptance decision before authorizing Stage 4 regeneration.
 
 **Deliverable:** Regenerated and validated Stage 1–3 artifacts and OOF dependencies, accepted for final Stage 4 training.
 
@@ -147,6 +147,16 @@
 - [ ] Revalidate mirrored contracts and identify any remaining integration limitations.
 - [ ] Record final model identities, crossover findings, and the pre-presentation cascade baseline.
 - [ ] Preserve earlier PR 38 comparisons as historical evidence rather than replacing them with PR 39 results.
+
+**Stage 4 abstention metric accounting and interpretation**
+
+- [ ] Audit how Stage 4 computes accuracy, precision, recall, F1, F2, and ROC-AUC with and without abstention.
+- [ ] Verify whether abstained observations are excluded, counted as incorrect, or assigned another outcome in each reported metric.
+- [ ] Reconcile TP, FP, TN, FN, and abstention counts against the reported coverage and evaluation population.
+- [ ] Report retained-only metrics separately from whole-system metrics, including effective recall over all actual positives and per-class retention/abstention rates.
+- [ ] Investigate the observed accuracy decline alongside improvements in precision, recall, and ROC-AUC, accounting for class-prevalence differences and operating thresholds.
+- [ ] Correct any confirmed metric-accounting or labeling errors without altering the frozen Stage 4 training and evaluation protocol.
+- [ ] Document the interpretation and limitations of abstention-conditioned performance in the final cascade baseline.
 
 **Deliverable:** Regenerated Stage 4 arbiters, completed crossover analysis, and the final pre-presentation baseline for both cascades.
 
@@ -186,7 +196,7 @@
 - [x] **Commit 1 complete:** PR 39 roadmap, dependency audit, evaluation rules, and regeneration sequence finalized.
 - [x] **Commit 2 complete:** Shared Stage 1 calibration and feature naming frozen.
 - [x] **Commit 3 complete:** Stage 2 binning and GLASS component naming finalized.
-- [ ] **Commit 4 complete:** Final Stage 1–3 artifacts regenerated and accepted.
+- [x] **Commit 4 complete:** Final Stage 1–3 artifacts regenerated and accepted.
 - [ ] **Commit 5 complete:** Stage 4 arbiters regenerated, 2×2 crossover completed, and cascade baselines established.
 - [ ] **Commit 6 complete:** Final regression, provenance, reproducibility, and clean-kernel notebook validation completed.
 - [ ] **PR 39 complete:** Both cascade implementations and their final Phase 1 artifact contracts frozen, with Phase 2 handoff established.

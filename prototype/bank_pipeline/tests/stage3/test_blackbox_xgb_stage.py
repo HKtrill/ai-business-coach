@@ -506,12 +506,13 @@ def test_the_notebook_imports_stage3_from_the_shared_protocol_only():
 
 
 def test_the_notebook_finds_the_glass_ebm_where_its_config_saves_it_f21():
-    """Cell 33 looks only where GLASS Cell 18 saves the EBM: the artifact_dir
-    and artifact_stem of ``EBMStage3Config`` (models/ebm, ``ebm_stage3_*``; the
-    GLASS notebook builds that config with those defaults, see
-    test_glass_ebm_stage.py). It no longer searches the project for the pre-F21
-    ``stage3_*`` name, and it checks that what it found is the GLASS EBM before
-    comparing it or handing ``_ebm_path`` to the crossover (Cell 37)."""
+    """Cell 33 reads the GLASS EBM the run pinned (PR 39, F9: role ``stage3.ebm``
+    of ``$BANK_UPSTREAM_PINS``, the file GLASS Cell 18 saved where its
+    ``EBMStage3Config`` says, verified by path and SHA-256); it never searches a
+    folder for the newest file or the pre-F21 ``stage3_*`` name. It checks the
+    split (either fingerprint scheme), the shared block and the feature list,
+    and that what it read is the GLASS EBM, before comparing it or handing
+    ``_ebm_path`` to the crossover (Cell 37)."""
     (cell,) = ["".join(c["source"]) for c in json.loads(NOTEBOOK.read_text(encoding="utf-8"))["cells"]
                if c["cell_type"] == "code" and "# CELL 33:" in "".join(c["source"])]
     tree = ast.parse(cell)
@@ -519,17 +520,22 @@ def test_the_notebook_finds_the_glass_ebm_where_its_config_saves_it_f21():
                 if isinstance(n, ast.Assign) and isinstance(n.targets[0], ast.Name)}
     calls = [n for n in ast.walk(tree) if isinstance(n, ast.Call)]
 
-    assert _same(assigned["_EBM_CFG"], "EBMStage3Config()")
-    assert _same(assigned["_EBM_DIRS"], "[BANK_ROOT / _EBM_CFG.artifact_dir]")
-    (find,) = [c for c in calls if ast.unparse(c.func) == "find_stage3_artifact"]
-    assert [ast.unparse(a) for a in find.args] == ["_EBM_DIRS", "_EBM_CFG.artifact_stem"]
-    assert _same(_keywords(find)["block_fingerprint"], "STAGE3_BLOCK.block_fingerprint")
-    assert _same(_keywords(find)["features"], "list(EBM_FEATURES)")
+    assert _same(assigned["_ebm_path"], 'pinned_path("stage3.ebm")')
+    assert _same(assigned["EBM_STAGE3"], "Stage3ArtifactStore.load(str(_ebm_path))")
+    assert not [c for c in calls if ast.unparse(c.func) == "find_stage3_artifact"]
     assert not [c for c in calls if getattr(c.func, "attr", None) in ("rglob", "glob")]
     assert not [n for n in ast.walk(tree) if isinstance(n, ast.Constant)
-                and isinstance(n.value, str) and n.value.startswith("stage3")]
+                and isinstance(n.value, str) and n.value.startswith("stage3_")]
     imports = {(i.module, i.name) for i in project_imports(NOTEBOOK)}
-    assert ("glass_pipeline.ebm", "EBMStage3Config") in imports
+    assert ("shared.pinned_artifacts", "pinned_path") in imports
+    checks = [ast.unparse(n.test) for n in tree.body if isinstance(n, ast.Assert)]
+    for want in ("EBM_STAGE3.split_fingerprint in _FP_CANDIDATES",
+                 "EBM_STAGE3.block_fingerprint == STAGE3_BLOCK.block_fingerprint",
+                 "list(EBM_STAGE3.features) == list(EBM_FEATURES)"):
+        assert ast.unparse(ast.parse(want, mode="eval").body) in checks, want
+    # where the pinned file comes from: the GLASS EBM config's folder and stem
+    assert (EBMStage3Config().artifact_dir, EBMStage3Config().artifact_stem) == ("models/ebm",
+                                                                                 "ebm_stage3")
 
     assert _same(assigned["_ebm_identity"],
                  '(EBM_STAGE3.model_family, (EBM_STAGE3.config or {}).get("arm"))')

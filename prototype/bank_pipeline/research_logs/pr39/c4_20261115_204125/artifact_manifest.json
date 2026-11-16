@@ -1,0 +1,276 @@
+{
+  "accepted_by": "upstream_acceptance.json, written after this file; it names this file's SHA-256",
+  "contract": {
+    "decisions": [
+      "D3",
+      "D7"
+    ],
+    "gates": [
+      "A4.7"
+    ],
+    "record": "documentation/methodology/pr39_execution_contract.md",
+    "sections": [
+      "5.1",
+      "7.1",
+      "7.2",
+      "7.3"
+    ],
+    "version": "1.0.0"
+  },
+  "files": {
+    "stage1.lr": {
+      "bytes": 942344,
+      "consumers": [
+        "black-box Cell 14A (GLASS_S1_PATH)",
+        "GLASS Cell 19",
+        "black-box Cell 37"
+      ],
+      "path": "models/lr/lr_calibrated_20261115_204501.joblib",
+      "producer": "GLASS notebook Cell 8 (train_calibrated_lr_stage)",
+      "sha256": "d3a05760fa7594e34e864b652c26b9158b8fe29df1f90ff7a59a4f530c78949c"
+    },
+    "stage1.mlp": {
+      "bytes": 949675,
+      "consumers": [
+        "black-box Cells 36-37 (MLP_S1_PATH)"
+      ],
+      "path": "models/mlp/stage1_mlp_20261116_094252_602977.joblib",
+      "producer": "black-box notebook Cell 14A (save_stage1_mlp)",
+      "sha256": "dd8922d94bb7370610c237e0f2f07810987a044419758aeda3918d865f109d70"
+    },
+    "stage2.glass_router": {
+      "bytes": 2481389,
+      "consumers": [
+        "GLASS Cell 8B / Cell 19 (glass_path)",
+        "black-box Cell 18 / Cell 37 (GLASS_BUNDLE_PATH)"
+      ],
+      "path": "models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+      "producer": "PR 38 primary run c3_20261112_153333 (stage2_crossfit)",
+      "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+    },
+    "stage2.rf_router": {
+      "bytes": 4158905,
+      "consumers": [
+        "black-box Cell 18 / Cells 35-37 (RF_ROUTER_PATH)"
+      ],
+      "path": "models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+      "producer": "PR 38 primary run c3_20261112_153333 (stage2_crossfit)",
+      "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+    },
+    "stage3.ebm": {
+      "bytes": 8296795,
+      "consumers": [
+        "black-box Cell 33 (_ebm_path)",
+        "GLASS Cell 19",
+        "black-box Cell 37"
+      ],
+      "path": "models/ebm/ebm_stage3_20261116_001529_813890.joblib",
+      "producer": "GLASS notebook Cell 18 (train_ebm_stage)",
+      "sha256": "d886ae5dcbdb077dda934680f8a05902d83a01f254f7d5a5f0667e321e24b631"
+    },
+    "stage3.xgb": {
+      "bytes": 10720121,
+      "consumers": [
+        "black-box Cells 36-37 (XGB_STAGE3_PATH)"
+      ],
+      "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib",
+      "producer": "black-box notebook Cell 31 (train_xgb_stage)",
+      "sha256": "8bf1d66ecd54236cdf7e6ebb10ec18e40f24d95a5b33a1ce122dac48b2dd2780"
+    }
+  },
+  "format": "pr39.upstream_pins/1",
+  "inventory": {
+    "base": "preflight.json inventory",
+    "files": [
+      {
+        "bytes": 10720121,
+        "change": "added",
+        "kind": "role",
+        "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib",
+        "role": "stage3.xgb",
+        "sha256": "8bf1d66ecd54236cdf7e6ebb10ec18e40f24d95a5b33a1ce122dac48b2dd2780"
+      },
+      {
+        "bytes": 14738,
+        "change": "added",
+        "kind": "sidecar",
+        "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.json",
+        "role": null,
+        "sha256": "d48a99ec9c6970b623b96377897ed50bc5bd49d02fdf9568f9109226490d9b3e"
+      },
+      {
+        "bytes": 8296795,
+        "change": "added",
+        "kind": "role",
+        "path": "models/ebm/ebm_stage3_20261116_001529_813890.joblib",
+        "role": "stage3.ebm",
+        "sha256": "d886ae5dcbdb077dda934680f8a05902d83a01f254f7d5a5f0667e321e24b631"
+      },
+      {
+        "bytes": 14534,
+        "change": "added",
+        "kind": "sidecar",
+        "path": "models/ebm/ebm_stage3_20261116_001529_813890.json",
+        "role": null,
+        "sha256": "b024670ddc9be6abf65d72a6439597260ee24fc21197121f82acbf0539e23ce8"
+      },
+      {
+        "bytes": 2805,
+        "change": "added",
+        "kind": "companion",
+        "path": "models/lr/lr_baseline_20261115_204420.joblib",
+        "role": "stage1.lr_baseline",
+        "sha256": "a397998394489220f3e376ab4b3d13d7b3f8d701d1cdb7e424dc246612e77c68"
+      },
+      {
+        "bytes": 942344,
+        "change": "added",
+        "kind": "role",
+        "path": "models/lr/lr_calibrated_20261115_204501.joblib",
+        "role": "stage1.lr",
+        "sha256": "d3a05760fa7594e34e864b652c26b9158b8fe29df1f90ff7a59a4f530c78949c"
+      },
+      {
+        "bytes": 949675,
+        "change": "added",
+        "kind": "role",
+        "path": "models/mlp/stage1_mlp_20261116_094252_602977.joblib",
+        "role": "stage1.mlp",
+        "sha256": "dd8922d94bb7370610c237e0f2f07810987a044419758aeda3918d865f109d70"
+      },
+      {
+        "bytes": 2704,
+        "change": "added",
+        "kind": "sidecar",
+        "path": "models/mlp/stage1_mlp_20261116_094252_602977_metadata.json",
+        "role": null,
+        "sha256": "28d6c284f055621959ea16e0ce33cfe6071164b2d8dfe7db972d1a843262c504"
+      },
+      {
+        "bytes": 2565,
+        "change": "added",
+        "kind": "sidecar",
+        "path": "models/mlp/stage1_mlp_20261116_094252_602977_threshold_sweep.csv",
+        "role": null,
+        "sha256": "c5d816ac412ca3cc0396a07714a1e4d6fbbd95e905b6a0dff5a778ececc4887c"
+      },
+      {
+        "bytes": 1315,
+        "change": "added",
+        "kind": "sidecar",
+        "path": "models/mlp/stage1_mlp_20261116_094252_602977_training_history.csv",
+        "role": null,
+        "sha256": "58b10de205d98e1060f7e051919beac7108216e8edd9578463d863bff1760b62"
+      },
+      {
+        "bytes": 10750,
+        "change": "added",
+        "kind": "sidecar",
+        "path": "models/mlp/stage1_mlp_20261116_094252_602977_tuning_trials.csv",
+        "role": null,
+        "sha256": "ad902565f892d5a9431496fbb649e2026fb10a47a4e262280a5e9258a18c1277"
+      },
+      {
+        "bytes": 920082,
+        "change": "added",
+        "kind": "sidecar",
+        "path": "models/mlp/stage1_mlp_preserved_949c1b36211f.joblib",
+        "role": null,
+        "sha256": "949c1b36211f71e609f92a68cd5775b7a66779108415250cdab3d59bbf8ca3d2"
+      },
+      {
+        "bytes": 2156,
+        "change": "added",
+        "kind": "sidecar",
+        "path": "models/mlp/stage1_mlp_preserved_949c1b36211f_metadata.json",
+        "role": null,
+        "sha256": "15d0a723806f93c606704c882c9563c95c8e2bbebb7cac102f10abdc614cdde3"
+      },
+      {
+        "bytes": 2563,
+        "change": "added",
+        "kind": "sidecar",
+        "path": "models/mlp/stage1_mlp_preserved_949c1b36211f_threshold_sweep.csv",
+        "role": null,
+        "sha256": "cb4bff93e15af5274e835bd93aaa0c21a00b2dfd53b3418f2d81eb1d7edf9249"
+      },
+      {
+        "bytes": 1315,
+        "change": "added",
+        "kind": "sidecar",
+        "path": "models/mlp/stage1_mlp_preserved_949c1b36211f_training_history.csv",
+        "role": null,
+        "sha256": "58b10de205d98e1060f7e051919beac7108216e8edd9578463d863bff1760b62"
+      },
+      {
+        "bytes": 10750,
+        "change": "added",
+        "kind": "sidecar",
+        "path": "models/mlp/stage1_mlp_preserved_949c1b36211f_tuning_trials.csv",
+        "role": null,
+        "sha256": "ad902565f892d5a9431496fbb649e2026fb10a47a4e262280a5e9258a18c1277"
+      },
+      {
+        "bytes": 185921179,
+        "change": "added",
+        "kind": "sidecar",
+        "path": "models/stage3/stage3_block_d6cddadc3439_c950583f1d15.joblib",
+        "role": null,
+        "sha256": "8755876ce20ad3d6595cae2b294438207d4f01e0d631e13c4be7e9dd24917039"
+      },
+      {
+        "bytes": 10720121,
+        "change": "modified",
+        "kind": "mutable_alias",
+        "path": "blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib",
+        "role": null,
+        "sha256": "8bf1d66ecd54236cdf7e6ebb10ec18e40f24d95a5b33a1ce122dac48b2dd2780"
+      },
+      {
+        "bytes": 8296795,
+        "change": "modified",
+        "kind": "mutable_alias",
+        "path": "models/ebm/ebm_stage3_latest.joblib",
+        "role": null,
+        "sha256": "d886ae5dcbdb077dda934680f8a05902d83a01f254f7d5a5f0667e321e24b631"
+      },
+      {
+        "bytes": 949675,
+        "change": "modified",
+        "kind": "mutable_alias",
+        "path": "models/mlp/stage1_mlp.joblib",
+        "role": null,
+        "sha256": "dd8922d94bb7370610c237e0f2f07810987a044419758aeda3918d865f109d70"
+      },
+      {
+        "bytes": 3055,
+        "change": "modified",
+        "kind": "mutable_alias",
+        "path": "models/mlp/stage1_mlp_metadata.json",
+        "role": null,
+        "sha256": "36ec60c6c1ddd67343a7616aca2e146c3eb2d8666b9a399ef0698322d2f83f18"
+      },
+      {
+        "bytes": 2565,
+        "change": "modified",
+        "kind": "mutable_alias",
+        "path": "models/mlp/stage1_mlp_threshold_sweep.csv",
+        "role": null,
+        "sha256": "c5d816ac412ca3cc0396a07714a1e4d6fbbd95e905b6a0dff5a778ececc4887c"
+      }
+    ]
+  },
+  "kind": "pr39.artifact_manifest/1",
+  "notes": [
+    "Stage 4 reads each role by SHA-256: shared.pinned_artifacts.pinned_path(role, pins_file=<this file>) (A5.1)",
+    "A mutable alias is never evidence (section 7.2); records name immutable versions"
+  ],
+  "run_id": "c4_20261115_204125",
+  "run_record_sha256": "86125c55f32147b7ded5ef9ce6c6c99be1101b226c7c8a09d8c3e5d79bc3a18a",
+  "stage2_source": {
+    "decision": "reuse",
+    "manifest": "research_logs/pr38/c3_20261112_153333/primary_MANIFEST.json",
+    "manifest_sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88",
+    "run_id": "c3_20261112_153333"
+  }
+}

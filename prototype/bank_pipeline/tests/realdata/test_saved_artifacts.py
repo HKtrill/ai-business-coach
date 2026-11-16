@@ -83,7 +83,8 @@ def test_the_four_arbiters_of_the_2x2_are_saved(saved):
 
 @pytest.mark.parametrize("key", KEYS)
 def test_each_arbiter_is_its_declared_cell_with_complete_evidence(saved, key):
-    audit.check_arbiter_identity(saved.key(key), saved.arbiter(key))
+    audit.check_arbiter_identity(saved.key(key), saved.arbiter(key),
+                                 generation=saved.roots().generation)
 
 
 @pytest.mark.parametrize("key", KEYS)
