@@ -1,0 +1,164 @@
+{
+  "record_id": "pr39-stage1-calibration",
+  "schema_version": "pr39.stage1.calibration_decision/1",
+  "record_version": "1.0.0",
+  "status": "frozen",
+  "approval": "the owner's approval of the accepted evidence run, recorded by 'python -m stage1_calibration decide' (PR 39, Commit 2, Step 2A); takes effect when Commit 2 is created after local validation",
+  "contract": {
+    "record": "documentation/methodology/pr39_execution_contract.md",
+    "version": "1.0.0",
+    "section": "6.1",
+    "gates": [
+      "A2.2",
+      "A2.3"
+    ],
+    "rule": "C1-C5"
+  },
+  "policy": {
+    "family": "sigmoid",
+    "arms": [
+      "glass_lr",
+      "blackbox_mlp"
+    ],
+    "outer_folds": "the same family in every outer fold; no per-fold or per-arm selection",
+    "auto": "diagnostics only (the evidence run)",
+    "code": "shared.stage1.oof_calibration.STAGE1_CALIBRATION_FAMILY"
+  },
+  "evidence": {
+    "run_id": "c2_20261114_184433",
+    "record": "research_logs/pr39/c2_20261114_184433/stage1_calibration_evidence.json",
+    "record_sha256": "8fa6810f5bd806247c7234af45bd19c4fa9be3ff7c18e0b481aa74bf3b98975f",
+    "record_bytes": 44442,
+    "record_format": "pr39.stage1.calibration_evidence/1",
+    "registered": true,
+    "vectors": {
+      "path": "models/pr39/c2_20261114_184433/stage1_calibration_oof.joblib",
+      "sha256": "a7cd202ec709e07fb465473817c3ba0bd8413cd18e3991a2aa1fb128023f9e8c",
+      "bytes": 608015
+    },
+    "verified": "stage1_calibration check: recomputed exactly from the vectors",
+    "code_head": "fb233f96cd1e2b16a9b11475046415e1fd1da8d3",
+    "uncommitted_tracked_changes": true,
+    "code_state": "the Step 2A evidence code, before the policy change; its files are hashed in the evidence record",
+    "environment": {
+      "python": "3.14.3",
+      "platform": "Windows-11-10.0.26300-SP0",
+      "numpy": "2.5.4",
+      "pandas": "3.0.6",
+      "scipy": "1.18.1",
+      "scikit_learn": "1.9.1",
+      "joblib": "1.6.0",
+      "optuna": "4.9.0"
+    }
+  },
+  "outcome": {
+    "selected_family": "sigmoid",
+    "basis": "C3 does not hold in both arms: the C2 default applies (C4)",
+    "C3": {
+      "glass_lr": {
+        "C3a": {
+          "pooled_delta_brier": -0.0012703331693172597,
+          "interval_upper": -0.0009393632539585662,
+          "passed": true
+        },
+        "C3b": {
+          "folds_isotonic_lower": 10,
+          "folds": 10,
+          "required": 8,
+          "passed": true
+        },
+        "C3c": {
+          "achieved_recall": 0.701239224137931,
+          "maximum": 0.71,
+          "passed": true
+        }
+      },
+      "blackbox_mlp": {
+        "C3a": {
+          "pooled_delta_brier": 3.43873579345892e-05,
+          "interval_upper": 0.00018268568521960846,
+          "passed": false
+        },
+        "C3b": {
+          "folds_isotonic_lower": 5,
+          "folds": 10,
+          "required": 8,
+          "passed": false
+        },
+        "C3c": {
+          "achieved_recall": 0.7120150862068966,
+          "maximum": 0.71,
+          "passed": false
+        }
+      }
+    },
+    "statement": "the family the registered conservative rule selects; not a claim that it is the better-calibrated family"
+  },
+  "summary": {
+    "glass_lr": {
+      "brier": {
+        "sigmoid": 0.08419248740668546,
+        "isotonic": 0.08292215423736819
+      },
+      "ece": {
+        "sigmoid": 0.013828389855897016,
+        "isotonic": 0.001716685474178003
+      },
+      "delta_brier_pooled": -0.0012703331693172597,
+      "delta_brier_interval_95": [
+        -0.0016273246120393219,
+        -0.0009393632539585662
+      ],
+      "folds_isotonic_lower": 10,
+      "stage4_achieved_recall": {
+        "sigmoid": 0.7007004310344828,
+        "isotonic": 0.701239224137931
+      },
+      "stage4_vote_differences": 537
+    },
+    "blackbox_mlp": {
+      "brier": {
+        "sigmoid": 0.08251755429448537,
+        "isotonic": 0.08255194165241996
+      },
+      "ece": {
+        "sigmoid": 0.006010483314465798,
+        "isotonic": 0.00500532078384777
+      },
+      "delta_brier_pooled": 3.43873579345892e-05,
+      "delta_brier_interval_95": [
+        -0.00011123078118113443,
+        0.00018268568521960846
+      ],
+      "folds_isotonic_lower": 5,
+      "stage4_achieved_recall": {
+        "sigmoid": 0.7001616379310345,
+        "isotonic": 0.7120150862068966
+      },
+      "stage4_vote_differences": 1609
+    }
+  },
+  "interpretation": [
+    "sigmoid is the family the registered conservative rule C1-C5 selects. Basis: C3 does not hold in both arms: the C2 default applies (C4). Isotonic replaces the sigmoid default only if it satisfies every C3 condition in both arms. Per arm: glass_lr: passed C3a, C3b, C3c, failed none; blackbox_mlp: passed none, failed C3a, C3b, C3c.",
+    "This is a policy selection, not a finding that sigmoid is the better-calibrated family in either arm.",
+    "In glass_lr the evidence favoured isotonic on every C3 condition. One family for both arms (C1) gives that up: the tradeoff the contract records in section 6.1.",
+    "The neutral alternative (D1) would select isotonic. It is reported for information and does not change the selection (C5)."
+  ],
+  "neutral_alternative": {
+    "definition": "lower mean relative ΔBrier across the arms, sigmoid on ties (D1)",
+    "relative_delta_brier": {
+      "glass_lr": -0.015088438510920945,
+      "blackbox_mlp": 0.00041672778875472927
+    },
+    "mean_relative_delta_brier": -0.007335855361083108,
+    "would_select": "isotonic",
+    "status": "descriptive only (C5); does not change the selection"
+  },
+  "limitations": [
+    "The Optuna hyperparameters are tuned once with all training labels; the out-of-fold probabilities are conditional on that tuning, equally for both families.",
+    "The bootstrap resamples rows with the fitted models held fixed, as in PR 38.",
+    "The historical per-arm selections were visible before the rule was frozen (contract F7); the rule was frozen with that exposure disclosed.",
+    "E-C used training rows only; the test split was not read."
+  ],
+  "created_utc": "2026-11-15T03:54:01+00:00"
+}

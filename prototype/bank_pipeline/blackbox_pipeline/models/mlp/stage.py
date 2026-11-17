@@ -51,7 +51,8 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
 from shared.stage1.crossfit import build_fold_designs, preprocessing_record
-from shared.stage1.oof_calibration import Stage1CalibratedModel, calibrate_oof
+from shared.stage1.oof_calibration import (STAGE1_CALIBRATION_FAMILY, Stage1CalibratedModel,
+                                           calibrate_oof)
 from shared.stage_io import (
     THRESHOLD_SOURCES,
     StageOutput,
@@ -74,7 +75,9 @@ class CalibratedStage1MLP:
 
     Parameters
     ----------
-    calibration_method : {'auto', 'sigmoid', 'isotonic'}, default 'auto'
+    calibration_method : {'sigmoid', 'isotonic', 'auto'}, default 'sigmoid'
+        The shared Stage 1 family by default (PR 39, Step 2A); ``'auto'`` is
+        for diagnostics only.
         See :class:`~.config.Stage1MLPConfig`.
     cv_folds : int, default 10
         Folds for tuning, calibration and the out-of-fold probabilities.
@@ -149,7 +152,7 @@ class CalibratedStage1MLP:
 
     def __init__(
         self,
-        calibration_method: str = "auto",
+        calibration_method: str = STAGE1_CALIBRATION_FAMILY,   # the shared Stage 1 policy
         cv_folds: int = 10,
         n_trials: int = 100,
         random_state: int = 42,
@@ -201,6 +204,9 @@ class CalibratedStage1MLP:
         self.oof_preprocessing_: Optional[Dict] = None
         self.calibration_oof_: Optional[Dict] = None      # family -> OOF Series
         self.calibration_fold_family_: Optional[Dict] = None  # outer fold -> family
+        # The whole OOFCalibration, in memory only (never saved): the PR 39
+        # Step 2A evidence reads its base scores and per-fold inner Briers.
+        self.calibration_result_ = None
         self.feature_names_ = list(STAGE1_FEATURES)
         self.fitted = False
 
@@ -300,6 +306,7 @@ class CalibratedStage1MLP:
         self.calibration_metrics = calibration.metrics
         self.calibration_oof_ = dict(calibration.calibrated_oof)
         self.calibration_fold_family_ = dict(calibration.fold_family)
+        self.calibration_result_ = calibration
         self.calibrated_model = Stage1CalibratedModel(
             self.model, calibration.calibrator, calibration.method)
         self.oof_provenance_ = calibration.provenance

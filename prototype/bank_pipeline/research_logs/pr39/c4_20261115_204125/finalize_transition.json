@@ -1,0 +1,437 @@
+{
+  "artifacts": {
+    "stage1.lr": {
+      "bytes": 942344,
+      "path": "models/lr/lr_calibrated_20261115_204501.joblib",
+      "sha256": "d3a05760fa7594e34e864b652c26b9158b8fe29df1f90ff7a59a4f530c78949c"
+    },
+    "stage1.mlp": {
+      "bytes": 949675,
+      "path": "models/mlp/stage1_mlp_20261116_094252_602977.joblib",
+      "sha256": "dd8922d94bb7370610c237e0f2f07810987a044419758aeda3918d865f109d70"
+    },
+    "stage2.glass_router": {
+      "bytes": 2481389,
+      "path": "models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+      "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+    },
+    "stage2.rf_router": {
+      "bytes": 4158905,
+      "path": "models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+      "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+    },
+    "stage3.ebm": {
+      "bytes": 8296795,
+      "path": "models/ebm/ebm_stage3_20261116_001529_813890.joblib",
+      "sha256": "d886ae5dcbdb077dda934680f8a05902d83a01f254f7d5a5f0667e321e24b631"
+    },
+    "stage3.xgb": {
+      "bytes": 10720121,
+      "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib",
+      "sha256": "8bf1d66ecd54236cdf7e6ebb10ec18e40f24d95a5b33a1ce122dac48b2dd2780"
+    }
+  },
+  "authorization": {
+    "given_by": "the owner, by running finalize-transition",
+    "statement": "Owner authorizes commit4a-t1 for run c4_20261115_204125: validate Stage 3 split identity across the registered stage_io and router fingerprint schemes, preserving all model artifacts and execution evidence without retraining. PR 39 Commit 4A, 2026-11-16."
+  },
+  "code": {
+    "changes": [
+      {
+        "after_lf_sha256": "0b256bef81c34c33386689ad35ae3d4d601bc8029fbd91787424392f1b1c8d69",
+        "before_lf_sha256": null,
+        "path": "tests/upstream_regeneration/test_finalize_transition.py"
+      },
+      {
+        "after_lf_sha256": "9c99e4a19c54a3f54f5e81bec198b2ca31d084d777b4df9abdcec88c1ed66bf7",
+        "before_lf_sha256": null,
+        "path": "tests/upstream_regeneration/test_stage3_split_identity.py"
+      },
+      {
+        "after_lf_sha256": "e3da1f0eaba8eb61eecc85dc94267344dd23af30400115e654eb2313d30b8390",
+        "before_lf_sha256": "8de54fbc9092379d3a8b20b4ca128d8aae1cd54f39f22e602bfc7eaee6cce883",
+        "path": "tests/upstream_regeneration/test_upstream_checks.py"
+      },
+      {
+        "after_lf_sha256": "dd28a8760715078d97ce750304d1d3d058d54a88b10c8d5bd3fe410bdc57249a",
+        "before_lf_sha256": "52756a446f087e11e30f22442e4cd2b3d5c153c52e7b1bf30a9f4abd9b0d7995",
+        "path": "upstream_regeneration/__init__.py"
+      },
+      {
+        "after_lf_sha256": "ae4cd4fe822111028d3c0802fde038819b5369ba88f573c59bf7eb6797b8bbc2",
+        "before_lf_sha256": "c35fba69dc37f26a61b029f64eb425a8b2107ed4e91c3af73af300074a57e3fa",
+        "path": "upstream_regeneration/checks.py"
+      },
+      {
+        "after_lf_sha256": "ca922dc6f6a4bb78f798b3960ce1f6dbc7c2373b815b704f2c30ea0d1000e50a",
+        "before_lf_sha256": "20b175d1da6cd78072bd58417bc2a0acfa8efb6439d0859462f96edc7717f7c6",
+        "path": "upstream_regeneration/runner.py"
+      },
+      {
+        "after_lf_sha256": "4163e42064c7475070587bbf997187f3b2e8db53b82be8d56082195f9e250ba6",
+        "before_lf_sha256": null,
+        "path": "upstream_regeneration/transition.py"
+      }
+    ],
+    "from": {
+      "code_sha256": "863970bc6910a2ac3063ffd29e8af09d992e4ff8298abe45ab2800fc95afa8c0",
+      "files": 428,
+      "head": "5951ee396196240741fba17afe5619eda37f129e"
+    },
+    "restored_identity": {
+      "code_sha256": "863970bc6910a2ac3063ffd29e8af09d992e4ff8298abe45ab2800fc95afa8c0",
+      "files": 428,
+      "head": "5951ee396196240741fba17afe5619eda37f129e"
+    },
+    "to": {
+      "code_sha256": "4ea172a07af5dc658ecdfa6232cca9fe05ca8e31bc09b1d02b187324bb78b80e",
+      "files": 431,
+      "head": "5951ee396196240741fba17afe5619eda37f129e"
+    }
+  },
+  "contract": {
+    "decisions": [
+      "D3",
+      "D4",
+      "D7"
+    ],
+    "gates": [
+      "A4.1",
+      "A4.2",
+      "A4.3",
+      "A4.4",
+      "A4.5",
+      "A4.6"
+    ],
+    "record": "documentation/methodology/pr39_execution_contract.md",
+    "sections": [
+      "5.1",
+      "5.2",
+      "5.3",
+      "5.4",
+      "6.3",
+      "6.4",
+      "7.1",
+      "7.2",
+      "7.3",
+      "7.4",
+      "7.5"
+    ],
+    "version": "1.0.0"
+  },
+  "evidence": {
+    "stage3": {
+      "protocol_allowed": [
+        "search_space",
+        "split_fingerprint"
+      ],
+      "protocol_differences": [
+        [
+          "split_fingerprint",
+          "d6cddadc3439",
+          "fc3e73a5ef91aea4"
+        ],
+        [
+          "search_space",
+          "family-specific",
+          "family-specific"
+        ]
+      ],
+      "split_identity": {
+        "stage3.ebm": {
+          "canonical_stage_io": "d6cddadc3439",
+          "recorded": "d6cddadc3439",
+          "scheme": "stage_io"
+        },
+        "stage3.xgb": {
+          "canonical_stage_io": "d6cddadc3439",
+          "recorded": "fc3e73a5ef91aea4",
+          "scheme": "router"
+        }
+      },
+      "stage3.ebm": {
+        "arm": "glass",
+        "block_fingerprint": "9cc10fa1f5cf8d858a9168a2169372758102d06283592bed024fb06e1040318c",
+        "calibration": {
+          "applied": true,
+          "ece_after": 0.0023216768918064064,
+          "ece_before": 0.27109085167045976,
+          "method": "isotonic",
+          "reason": "OOF ECE 0.2711 > gate 0.05"
+        },
+        "features": [
+          "decay_x_density",
+          "euribor3m_sigmoid_slope",
+          "economic_curvature_intensity",
+          "cons.conf.idx",
+          "age",
+          "dow_month_encoded",
+          "default",
+          "prior_x_stress",
+          "campaign",
+          "overlap_default_clean",
+          "cpi_high_cellular",
+          "behavioral_favorability",
+          "emp_var_rate_sigmoid_slope"
+        ],
+        "fold_fingerprint": "8aea082fcaf371b7",
+        "model_family": "ebm",
+        "split_fingerprint": "d6cddadc3439",
+        "threshold": 0.53
+      },
+      "stage3.xgb": {
+        "arm": "blackbox",
+        "block_fingerprint": "9cc10fa1f5cf8d858a9168a2169372758102d06283592bed024fb06e1040318c",
+        "calibration": {
+          "applied": true,
+          "ece_after": 0.002769137712194383,
+          "ece_before": 0.25699437785873896,
+          "method": "isotonic",
+          "reason": "OOF ECE 0.2570 > gate 0.05"
+        },
+        "features": [
+          "decay_x_density",
+          "euribor3m_sigmoid_slope",
+          "economic_curvature_intensity",
+          "cons.conf.idx",
+          "age",
+          "dow_month_encoded",
+          "default",
+          "prior_x_stress",
+          "campaign",
+          "overlap_default_clean",
+          "cpi_high_cellular",
+          "behavioral_favorability",
+          "emp_var_rate_sigmoid_slope"
+        ],
+        "fold_fingerprint": "8aea082fcaf371b7",
+        "model_family": "xgboost",
+        "split_fingerprint": "fc3e73a5ef91aea4",
+        "threshold": 0.5
+      }
+    }
+  },
+  "finished_utc": "2026-11-16T19:50:43+00:00",
+  "format": "pr39.commit4a.finalize_transition/1",
+  "gates": {
+    "A4.4 (corrected; recorded, not the run's A4.4)": {
+      "checks": [
+        {
+          "check": "stage3.ebm: a Stage3Artifact",
+          "detail": "Stage3Artifact",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: model_family / arm = ebm / glass (F21, F37)",
+          "detail": "('ebm', 'glass')",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: features = EBM_FEATURES, in order",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: per-fold feature fit",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: split fingerprint is this split's (either scheme)",
+          "detail": "d6cddadc3439",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: OOF fold ids = the shared 5-fold plan 8aea082fcaf371b7",
+          "detail": "8aea082fcaf371b7",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: OOF outputs recorded (proba, proba_calibrated, fold_id)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: calibration gate recorded per fold (F22)",
+          "detail": "{'applied': True, 'method': 'isotonic', 'ece_before': 0.27109085167045976, 'fold_applied': [True, True, True, True, True]}",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: operating threshold selected on out-of-fold training predictions",
+          "detail": "out-of-fold training predictions",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: a Stage3Artifact",
+          "detail": "Stage3Artifact",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: model_family / arm = xgboost / blackbox (F21, F37)",
+          "detail": "('xgboost', 'blackbox')",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: features = EBM_FEATURES, in order",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: per-fold feature fit",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: split fingerprint is this split's (either scheme)",
+          "detail": "fc3e73a5ef91aea4",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: OOF fold ids = the shared 5-fold plan 8aea082fcaf371b7",
+          "detail": "8aea082fcaf371b7",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: OOF outputs recorded (proba, proba_calibrated, fold_id)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: calibration gate recorded per fold (F22)",
+          "detail": "{'applied': True, 'method': 'isotonic', 'ece_before': 0.25699437785873896, 'fold_applied': [True, True, True, True, True]}",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: operating threshold selected on out-of-fold training predictions",
+          "detail": "out-of-fold training predictions",
+          "passed": true
+        },
+        {
+          "check": "stage 3: EBM and XGBoost were fitted on one block (block fingerprint)",
+          "detail": "9cc10fa1f5cf8d858a9168a2169372758102d06283592bed024fb06e1040318c",
+          "passed": true
+        },
+        {
+          "check": "stage 3: both arms were fitted on the frozen GLOBAL_SPLIT (each split fingerprint is GLOBAL_SPLIT's under a registered scheme, check_split_identity; its recorded train/test rows, order and labels are GLOBAL_SPLIT's; its canonical stage_io fingerprint is the frozen one)",
+          "detail": "{'stage3.ebm': 'd6cddadc3439 (stage_io)', 'stage3.xgb': 'fc3e73a5ef91aea4 (router)'}",
+          "passed": true
+        },
+        {
+          "check": "stage 3: one shared protocol, family-specific fields only (assert_matched_protocol; split_fingerprint by its canonical identity)",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "21/21 checks passed",
+      "failed": [],
+      "gate": "A4.4",
+      "passed": true
+    },
+    "A4.T": {
+      "checks": [
+        {
+          "check": "A4.1 preflight, A4.2 stage2_reuse (decision reuse), the GLASS and black-box executions passed (sidecars verified)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "a failed finalize attempt of this run is on record (named by path and SHA-256, not read: contract 7.1)",
+          "detail": "run_record_20261116T161550658144Z.json",
+          "passed": true
+        },
+        {
+          "check": "the owner's authorization of this transition is stated",
+          "detail": "Owner authorizes commit4a-t1 for run c4_20261115_204125: validate Stage 3 split identity across the registered stage_io ",
+          "passed": true
+        },
+        {
+          "check": "the transition's changes are confined to upstream_regeneration code and its tests",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "every recorded change is present (new files exist; changed files differ)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "restoring exactly those files reproduces the run's code identity (recovered)",
+          "detail": "{'run': '863970bc6910a2ac3063ffd29e8af09d992e4ff8298abe45ab2800fc95afa8c0', 'restored': '863970bc6910a2ac3063ffd29e8af09d992e4ff8298abe45ab2800fc95afa8c0'}",
+          "passed": true
+        },
+        {
+          "check": "the model folders are byte for byte as the black-box execution left them",
+          "detail": "{'added': [], 'modified': [], 'deleted': []}",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: models/lr/lr_calibrated_20261115_204501.joblib matches its pin (SHA-256, size)",
+          "detail": "d3a05760fa7594e3",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: models/mlp/stage1_mlp_20261116_094252_602977.joblib matches its pin (SHA-256, size)",
+          "detail": "dd8922d94bb73706",
+          "passed": true
+        },
+        {
+          "check": "stage2.glass_router: models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib matches its pin (SHA-256, size)",
+          "detail": "889c8bd572047beb",
+          "passed": true
+        },
+        {
+          "check": "stage2.rf_router: models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib matches its pin (SHA-256, size)",
+          "detail": "aadde1ea93d0e300",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: models/ebm/ebm_stage3_20261116_001529_813890.joblib matches its pin (SHA-256, size)",
+          "detail": "d886ae5dcbdb077d",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib matches its pin (SHA-256, size)",
+          "detail": "8bf1d66ecd54236c",
+          "passed": true
+        },
+        {
+          "check": "the corrected A4.4 passes on the run's pinned EBM and XGBoost (finalize rechecks it with A4.3, A4.5 and A4.6)",
+          "detail": "21/21 checks passed",
+          "passed": true
+        }
+      ],
+      "evidence": "14/14 checks passed",
+      "failed": [],
+      "gate": "A4.T",
+      "passed": true
+    }
+  },
+  "original": {
+    "failed_finalize": {
+      "bytes": 52581,
+      "path": "research_logs/pr39/c4_20261115_204125/failed/run_record_20261116T161550658144Z.json",
+      "read": false,
+      "sha256": "046abbffb1a62f362236d55fbd4501d718abecd88b066451eb6d4d01bbcd3396"
+    }
+  },
+  "passed": true,
+  "records": {
+    "execution_blackbox": "8d02fd383fde73ec99a3f31cc083e573b82f202dd6c63c34f2412358429b33ef",
+    "execution_glass_recovery": "4374fa01650f240ad94e1b4d998b5335bd45fd6a5126f8d496312907de6a2c2a",
+    "preflight": "a5c242a0221903d2c791b744943ea99c1a2127e3a813250a559f87856152511c",
+    "stage2_reuse": "2c6d8f1ad7712620bffc273d1dd3e4924c4c0a94fc7d7bf6676ec91c082ea9b0"
+  },
+  "resolves": {
+    "cause": "assert_matched_protocol compares split_fingerprint as a string; GLASS Cell 17 stamps the stage_io scheme and black-box Cell 30 the router scheme (shared.stage4.FINGERPRINT_SCHEMES). Both are checked against GLOBAL_SPLIT under their own scheme with check_split_identity, the artifacts' recorded rows and labels are compared with GLOBAL_SPLIT's, and only then is split_fingerprint exempt from the string comparison. shared.stage3.protocol is unchanged.",
+    "failed_check": "stage 3: one shared protocol, family-specific fields only (assert_matched_protocol)",
+    "gate": "A4.4",
+    "replaced_by": [
+      "stage 3: both arms were fitted on the frozen GLOBAL_SPLIT (each split fingerprint is GLOBAL_SPLIT's under a registered scheme, check_split_identity; its recorded train/test rows, order and labels are GLOBAL_SPLIT's; its canonical stage_io fingerprint is the frozen one)",
+      "stage 3: one shared protocol, family-specific fields only (assert_matched_protocol; split_fingerprint by its canonical identity)"
+    ]
+  },
+  "run_id": "c4_20261115_204125",
+  "started_utc": "2026-11-16T19:50:38+00:00",
+  "step": "finalize_transition",
+  "transition_id": "commit4a-t1: A4.4 Stage 3 protocol comparison across the two registered split-fingerprint schemes"
+}

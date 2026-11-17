@@ -4,7 +4,7 @@ feature_research/model_training/glass_arbiter/thresholds.py
 Decision-threshold rules. Always called on fit rows only (cross-fit), never
 on the rows being evaluated.
 
-find_recall_threshold is the cascade's rule (glass_pipeline.meta_ebm.
+find_recall_threshold is the cascade's rule (glass_pipeline.glass_arbiter.
 meta_stage.find_recall_threshold), copied exactly.
 
 Public API

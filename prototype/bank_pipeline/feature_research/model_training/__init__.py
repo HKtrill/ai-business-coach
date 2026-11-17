@@ -3,7 +3,7 @@
 #
 #   model_training/
 #     lr/        — Logistic Regression (gate stage, balanced)
-#     rf/        — Random Forest / GLASS-BRW (recall-biased)
+#     rf/        — Random Forest (recall-biased), lift analysis and the Stage 2 binning
 #     ebm/       — EBM (precision-biased, final filter)
 
 from feature_research.model_training.lr import LRResult, evaluate_lr, train_lr, tune_lr

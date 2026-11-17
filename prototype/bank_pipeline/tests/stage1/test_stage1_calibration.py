@@ -10,6 +10,10 @@ final scorer is the full-train model plus one calibrator fitted on
 out-of-fold scores; both arms run the same code; outputs are deterministic,
 aligned and saved in the existing artifact contracts.
 
+Selection tests use ``calibration_method="auto"`` (both families), the
+diagnostic path; the production default is the one shared family of PR 39,
+Step 2A (``STAGE1_CALIBRATION_FAMILY``), checked in its own section.
+
 Independent reference: scikit-learn's ``CalibratedClassifierCV(Pipeline(
 [encoder, scaler, model]), ensemble=False)``, which refits the whole pipeline
 inside every calibration fold, cross-validated over the same outer folds.
@@ -49,8 +53,8 @@ from shared.stage1.feature_engineering import (
     LR_FEATURES, LRFeatureEngineer, engineer_features,
 )
 from shared.stage1.oof_calibration import (
-    CALIBRATION_FAMILIES, PlattCalibrator, Stage1CalibratedModel, base_scores, calibrate_oof,
-    make_calibrator,
+    CALIBRATION_FAMILIES, STAGE1_CALIBRATION_FAMILY, STAGE1_CALIBRATION_POLICY, OOFCalibration,
+    PlattCalibrator, Stage1CalibratedModel, base_scores, calibrate_oof, make_calibrator,
 )
 from shared.stage_io import StageOutput, fold_assignment
 from tests.stage1.conftest import (
@@ -73,22 +77,23 @@ def _quiet(fn, *args, **kwargs):
 
 
 @pytest.fixture
-def lr5(lr_run_5):
-    return lr_run_5
+def lr5(lr_run_5_auto):
+    return lr_run_5_auto
 
 
 @pytest.fixture(scope="module")
-def direct(lr_run_5):
-    """``calibrate_oof`` called directly on the 5-fold GLASS run's data."""
+def direct(lr_run_5_auto):
+    """``calibrate_oof`` called directly on the 5-fold GLASS run's data (auto)."""
+    lr_run_5 = lr_run_5_auto
     X, y, raw = lr_run_5.X_train, lr_run_5.y_train, lr_run_5.split["X_train"]
     designs = _quiet(build_fold_designs, X, y, cv_folds=5, random_state=SEED, X_raw=raw)
     return calibrate_oof(lr_run_5.stage.model, designs, X, y, cv_folds=5, random_state=SEED,
-                         X_raw=raw, n_jobs=1)
+                         method="auto", X_raw=raw, n_jobs=1)
 
 
 @pytest.fixture(params=["glass_lr", "blackbox_mlp"])
 def arm(request):
-    return request.getfixturevalue("lr5" if request.param == "glass_lr" else "mlp_run")
+    return request.getfixturevalue("lr5" if request.param == "glass_lr" else "mlp_run_auto")
 
 
 def _folds(run) -> int:
@@ -297,7 +302,7 @@ def test_a_folds_own_labels_never_reach_its_calibrated_scores_f3_f19(arm_name, f
     def calibrated(y_new):
         data = {**split, "y_train": y_new}
         fit = fit_glass_stage1 if arm_name == "glass_lr" else fit_mlp_stage1
-        run = fit(data, fold_ids=fold_ids, cv_folds=folds)                 # auto: both families
+        run = fit(data, fold_ids=fold_ids, cv_folds=folds, calibration_method="auto")  # both
         out = {f: p.loc[fold0].to_numpy() for f, p in run.stage.calibration_oof_.items()}
         out["final"] = run.stage.proba_train_oof.loc[fold0].to_numpy()     # what Stage 4 reads
         return out
@@ -347,8 +352,9 @@ def test_the_base_model_is_the_unchanged_full_train_fit(lr5):
 # determinism, alignment, parity
 # ----------------------------------------------------------------------
 def test_refits_are_deterministic_and_aligned(arm):
-    again = (fit_glass_stage1(cv_folds=5) if isinstance(arm.stage, CalibratedLRStage)
-             else fit_mlp_stage1())
+    again = (fit_glass_stage1(cv_folds=5, calibration_method="auto")
+             if isinstance(arm.stage, CalibratedLRStage)
+             else fit_mlp_stage1(calibration_method="auto"))
     pd.testing.assert_series_equal(again.stage.proba_train_oof, arm.stage.proba_train_oof)
     pd.testing.assert_series_equal(again.output.test_proba, arm.output.test_proba)
     assert again.stage.calibration_metrics == arm.stage.calibration_metrics
@@ -356,8 +362,8 @@ def test_refits_are_deterministic_and_aligned(arm):
         assert p.index.equals(arm.X_train.index), f
 
 
-def test_both_arms_report_calibration_the_same_way(lr5, mlp_run):
-    lr, mlp = lr5.stage, mlp_run.stage
+def test_both_arms_report_calibration_the_same_way(lr5, mlp_run_auto):
+    lr, mlp = lr5.stage, mlp_run_auto.stage
     assert set(lr.calibration_metrics) == set(mlp.calibration_metrics)
     assert LEGACY_METRIC_KEYS <= set(lr.calibration_metrics)
     assert type(lr.calibrated_model) is type(mlp.calibrated_model) is Stage1CalibratedModel
@@ -365,6 +371,55 @@ def test_both_arms_report_calibration_the_same_way(lr5, mlp_run):
         assert stage.oof_provenance_ == (
             f"refittable (nested cross-fit: {k} outer x {k} inner folds; "
             "encoder, scaler, model and calibrator fitted per fold)")
+
+
+# ----------------------------------------------------------------------
+# the shared Stage 1 policy (PR 39, Commit 2, Step 2A)
+# ----------------------------------------------------------------------
+def _requested(stage) -> str:
+    return (stage.calibration_requested if isinstance(stage, CalibratedLRStage)
+            else stage.config.calibration_method)
+
+
+def test_both_arms_default_to_the_one_shared_family():
+    import inspect
+
+    from blackbox_pipeline.models.mlp import Stage1MLPConfig
+    from glass_pipeline.lr.lr_stage_calibrated import train_lr_stage
+    assert STAGE1_CALIBRATION_FAMILY == STAGE1_CALIBRATION_POLICY["family"] == "sigmoid"
+    assert STAGE1_CALIBRATION_FAMILY in CALIBRATION_FAMILIES
+    assert _requested(CalibratedLRStage()) == STAGE1_CALIBRATION_FAMILY
+    assert inspect.signature(train_lr_stage).parameters["calibration_method"].default == \
+        STAGE1_CALIBRATION_FAMILY
+    assert Stage1MLPConfig().calibration_method == STAGE1_CALIBRATION_FAMILY
+    assert _requested(CalibratedStage1MLP()) == STAGE1_CALIBRATION_FAMILY
+
+
+@pytest.mark.parametrize("fixture", ["lr_run_5", "mlp_run"])
+def test_the_default_fit_uses_the_shared_family_in_every_outer_fold(request, fixture):
+    run = request.getfixturevalue(fixture)
+    stage, out, family = run.stage, run.output, STAGE1_CALIBRATION_FAMILY
+    assert _requested(stage) == stage.calibration_method == stage.calibrated_model.method == family
+    assert out.calibration_requested == out.calibration_method == family
+    assert set(stage.calibration_fold_family_.values()) == {family}
+    assert set(stage.calibration_oof_) == {family}                      # no other family fitted
+    np.testing.assert_array_equal(stage.proba_train_oof.to_numpy(),
+                                  stage.calibration_oof_[family].to_numpy())
+    m = out.calibration_metrics
+    assert (m["selection"], m["oof_selection"]) == ("requested", "requested")
+    assert m["oof_family_by_fold"] == ",".join([family] * _folds(run))
+    assert m["policy"] == f"{STAGE1_CALIBRATION_POLICY['id']}/{STAGE1_CALIBRATION_POLICY['version']}"
+
+
+def test_auto_stays_a_diagnostic_and_claims_no_policy(lr5):
+    assert _requested(lr5.stage) == "auto"
+    assert lr5.stage.calibration_metrics["policy"] is None
+
+
+def _pickles_a(obj, cls) -> bool:
+    """Whether pickling ``obj`` serialises an instance of ``cls`` anywhere inside it."""
+    import pickle
+    return cls.__name__.encode() in pickle.dumps(obj)
 
 
 # ----------------------------------------------------------------------
@@ -429,6 +484,9 @@ def test_lr_artifact_round_trip(plain_split, serial_stage1, tmp_path):
     p = art["calibrated_model"].predict_proba(art["scaler"].transform(X_te))[:, 1]
     np.testing.assert_allclose(p, stage.predict_proba(X_te))
     assert art["calibration_method"] == stage.calibration_method
+    assert art["calibration_requested"] == art["calibration_method"] == STAGE1_CALIBRATION_FAMILY
+    assert isinstance(stage.calibration_result_, OOFCalibration)        # kept in memory ...
+    assert not _pickles_a(art, OOFCalibration)                         # ... never saved
     assert LEGACY_METRIC_KEYS <= set(art["calibration_metrics"])
     assert not art["oof_provenance"].upper().startswith("PREFIT")       # Stage 4's check
     out = StageOutput.from_dict(art["stage_output"])
@@ -448,3 +506,8 @@ def test_mlp_artifact_round_trip(plain_split, serial_stage1, tmp_path):
     meta = json.loads((tmp_path / "stage1_mlp_metadata.json").read_text())
     assert LEGACY_METRIC_KEYS <= set(meta["calibration_metrics"])
     assert StageOutput.from_dict(art["stage_output"]).calibration_method == stage.calibration_method
+    for record in (art, meta):                                          # request and winner
+        assert record["calibration_requested"] == record["calibration_method"] == \
+            STAGE1_CALIBRATION_FAMILY
+    assert isinstance(stage.calibration_result_, OOFCalibration)
+    assert not _pickles_a(art, OOFCalibration)

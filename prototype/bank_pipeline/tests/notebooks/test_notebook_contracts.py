@@ -5,7 +5,10 @@ G4  The black-box notebook looks for upstream artifacts only in the folders the
     current producers write — each folder is checked against the producer's
     own default or the producing call — never in the pre-reorganisation
     locations (``GLASS_ROOT``, ``PROTOTYPE_ROOT``, a project-wide search) and
-    with no fallback to a file no current producer writes.
+    with no fallback to a file no current producer writes. PR 39 (F9): the
+    cross-notebook reads (GLASS LR, GLASS Router bundle, GLASS EBM, GLASS
+    Arbiter) are by pinned path and SHA-256, never a folder search; the only
+    folder left is the legacy Cell 19's RF parameter source.
 G5  Each active notebook is one labelled top-to-bottom path: every code cell
     carries one unique ``CELL`` header, no code cell is a copy of another, no
     cell installs packages, and no cell reads a name that only a later cell
@@ -35,7 +38,7 @@ from glass_pipeline.glass_router.model_saver import ModelSaver
 from glass_pipeline.glass_router.rf import save_rf_artifact
 from glass_pipeline.lr import lr_stage_calibrated
 from glass_pipeline.lr.artifacts import save_artifact
-from glass_pipeline.meta_ebm.meta_stage import train_meta_stage
+from glass_pipeline.glass_arbiter.meta_stage import train_glass_arbiter
 from tests.support.notebooks import ACTIVE_NOTEBOOKS, BANK_ROOT, read_before_bound
 from tests.support.synthetic_bank import make_bank_frame
 
@@ -87,10 +90,11 @@ def _kw(call) -> dict:
 # ----------------------------------------------------------------------
 DISCOVERY = {                      # black-box name -> (folder expression, folder relative to bank_pipeline)
     "RF_ARTIFACT_DIRS": ('[BANK_ROOT / "models" / "rf"]', "models/rf"),
-    "GLASS_ARTIFACT_DIRS": ('[BANK_ROOT / "models" / "glass_router"]', "models/glass_router"),
     "XGB_ARTIFACT_DIRS": ('[BLACKBOX_ROOT / "models" / "xgb"]', "blackbox_pipeline/models/xgb"),
-    "META_EBM_DIRS": ('[BANK_ROOT / "models" / "meta_ebm"]', "models/meta_ebm"),
 }
+#: PR 39 (F9): the cross-notebook reads, each a role of the run's pins file.
+PINNED_READS = {"GLASS_S1_PATH": "stage1.lr", "_ebm_path": "stage3.ebm",
+                "GLASS_ARBITER_PATH": "stage4.glass_arbiter"}
 
 
 def test_the_blackbox_notebook_searches_only_the_folders_current_producers_write():
@@ -105,15 +109,25 @@ def test_the_blackbox_notebook_searches_only_the_folders_current_producers_write
     assert '"./models/glass_router/glass_router_' in inspect.getsource(ModelSaver.save_model)
     assert all(not c.args and "output_path" not in _kw(c)            # its default folder
                for c in _calls(GLASS, "save_model"))
-    assert default(train_meta_stage, "artifact_dir").strip("./") == DISCOVERY["META_EBM_DIRS"][1]
-    assert all("artifact_dir" not in _kw(c) for c in _calls(GLASS, "train_meta_stage"))
+    assert all("artifact_dir" not in _kw(c) for c in _calls(GLASS, "train_glass_arbiter"))
     (xgb_cfg,) = _calls(BLACKBOX, "XGBStage3Config")
     assert _same(_kw(xgb_cfg)["artifact_dir"], 'str(BLACKBOX_ROOT / "models" / "xgb")')
-    # GLASS Stage 1, found by Cell 14A
-    (glob,) = [c for c in _calls(BLACKBOX, "glob") if _same(c.args[0], '"lr_calibrated_*.joblib"')]
-    assert _same(glob.func.value, 'Path("./models/lr")')
     assert default(lr_stage_calibrated.train_lr_stage, "output_dir") == "./models/lr"
     assert 'f"lr_calibrated_{timestamp}.joblib"' in inspect.getsource(save_artifact)
+    # PR 39 (F9): every cross-notebook read is a pinned role, none a folder search
+    assigned = _assigned(BLACKBOX)
+    for name, role in PINNED_READS.items():
+        (value,) = assigned[name]
+        assert _same(value, f'pinned_path("{role}")'), f"{name} = {ast.unparse(value)}"
+    # the one folder search left: Cell 29's ``_newest``, read only by the non-default
+    # XGB_PARAM_SOURCE "artifact" (hyperparameters, re-validated by check_param_reuse)
+    assert [ast.unparse(c.func) for c in _calls(BLACKBOX, "glob")] == ["d.glob"]
+    (xgb_source,) = assigned["XGB_PARAM_SOURCE"]
+    assert ast.literal_eval(xgb_source) == "tune"
+    for finder in ("find_artifact_for_split", "find_stage3_artifact", "find_glass_arbiter_artifact"):
+        assert not _calls(BLACKBOX, finder), finder
+    assert [ast.unparse(c) for c in _calls(BLACKBOX, "load_pinned_stage2")] == [
+        "load_pinned_stage2(GLOBAL_SPLIT)"]
 
 
 def test_the_blackbox_notebook_has_no_legacy_artifact_locations_or_fallbacks():

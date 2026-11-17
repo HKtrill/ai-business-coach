@@ -1,0 +1,622 @@
+{
+  "baseline": {
+    "arbiter_manifest": "research_logs/pr39/c5_20261116_153459/arbiter_manifest.json",
+    "artifacts": {
+      "glass_arbiter": {
+        "bytes": 2412622,
+        "path": "models/glass_arbiter/glass_arbiter_20261116_153618_531148.joblib",
+        "sha256": "dac936b6a4dc5039382563cdc57add6bb2f426a9dec6b84fcb36b676e76cd2b9"
+      },
+      "glass_arbiter_on_blackbox": {
+        "bytes": 2413342,
+        "path": "blackbox_pipeline/models/stage4_crossover/glass_arbiter_on_blackbox/glass_arbiter_20261116_153952_875483.joblib",
+        "sha256": "c41991b04a81623c4732f4ad3c448befdea738e74e88bdb84026ef34fd3d6bba"
+      },
+      "meta_xgb": {
+        "bytes": 7617347,
+        "path": "blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261116_153951_438304.joblib",
+        "sha256": "0ad847703e77baf27e96ba8ab9d41798dd14bf1bbdedbe243fbfec8c1c7099a4"
+      },
+      "meta_xgb_on_glass": {
+        "bytes": 7782339,
+        "path": "blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261116_154259_549994.joblib",
+        "sha256": "73a74d4ba10e6bfbeee36eb65d4f583c1813050e554a6adea9fdb1f9d7a52dbc"
+      },
+      "stage1.lr": {
+        "bytes": 942344,
+        "path": "models/lr/lr_calibrated_20261115_204501.joblib",
+        "sha256": "d3a05760fa7594e34e864b652c26b9158b8fe29df1f90ff7a59a4f530c78949c"
+      },
+      "stage1.mlp": {
+        "bytes": 949675,
+        "path": "models/mlp/stage1_mlp_20261116_094252_602977.joblib",
+        "sha256": "dd8922d94bb7370610c237e0f2f07810987a044419758aeda3918d865f109d70"
+      },
+      "stage2.glass_router": {
+        "bytes": 2481389,
+        "path": "models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+        "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+      },
+      "stage2.rf_router": {
+        "bytes": 4158905,
+        "path": "models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+        "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+      },
+      "stage3.ebm": {
+        "bytes": 8296795,
+        "path": "models/ebm/ebm_stage3_20261116_001529_813890.joblib",
+        "sha256": "d886ae5dcbdb077dda934680f8a05902d83a01f254f7d5a5f0667e321e24b631"
+      },
+      "stage3.xgb": {
+        "bytes": 10720121,
+        "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib",
+        "sha256": "8bf1d66ecd54236cdf7e6ebb10ec18e40f24d95a5b33a1ce122dac48b2dd2780"
+      }
+    },
+    "commit4": {
+      "records": {
+        "artifact_manifest": "c3c95d5b02e75592e49fca80a14788ba48a934b071733caeb5c1b705f8a954c3",
+        "run_record": "86125c55f32147b7ded5ef9ce6c6c99be1101b226c7c8a09d8c3e5d79bc3a18a",
+        "upstream_acceptance": "a2fa2ffd98342e6d1976ea5d70a96b7d63237c24b7f6df57ba45667d9d8aec07"
+      },
+      "run_id": "c4_20261115_204125"
+    },
+    "commit5": {
+      "records": {
+        "arbiter_manifest": "87ab256573d9a2cdd6ef216a1430e2c4735551ae2256fe6fee9d176f22c2351a",
+        "crossover_baseline": "f05e2532dedeeb30f9da257b889f27b943c471a5d69a3f714e6e840dcced1b3c",
+        "execution_blackbox": "d33dd4b99aedd93ca9aca94337c9b1b22468434b2c5a5717b111069ff59af0a2",
+        "execution_glass": "a77f6efed72970093affac3c281128ae6b18eb17bc80fb81a9dde9335e8197e7",
+        "preflight": "7c02a63b6cc700fe82203c6cb702e6a0b4f7f145a8cf7863c91021d80bb9373d",
+        "run_record": "82f40f3d624c330caa1175e9c17f14c937b6c55ea3eaab89ba719d5cafc03f8c"
+      },
+      "run_id": "c5_20261116_153459"
+    },
+    "pr38_stage2_run": "c3_20261112_153333"
+  },
+  "code": {
+    "analysis": {
+      "phase1_reproduction_files": 4,
+      "sha256": "8b6886c79ddb139dff5762692d6c60b330f4bf9b4bc447bffbe8674e1c78b3ad",
+      "tests": [
+        "tests/phase1_reproduction/__init__.py",
+        "tests/phase1_reproduction/test_step6b.py"
+      ]
+    },
+    "head": "830a244d529f53d9bdc43d98b95913be12f5be00",
+    "production": {
+      "code_sha256": "9bcddf74035599f6bc6eb83d914ee6144f77bb616bc6242e6d26ffc1d087347c",
+      "files": 437,
+      "stage4_regeneration_files": 5,
+      "stage4_regeneration_sha256": "6fa0cd82f2b227429db0f24d58dfe6a820ef4b278135d92c0aee536c076e2bac"
+    }
+  },
+  "confidence_room": {
+    "glass_arbiter": {
+      "abstention_cut": 0.038065627580425795,
+      "confidence": "weighted |p - t| of the voters; router: rule rate against the base rate",
+      "cut_above_negative_bound": false,
+      "negative_side_bound": 0.11265553869499241,
+      "positive_side_bound": 0.9286675639300135,
+      "test_retained_share": {
+        "negative decisions": 0.36779324055666,
+        "positive decisions": 0.8960036330608537
+      },
+      "thresholds": {
+        "router_base_rate": 0.11265553869499241,
+        "stage1_slot": 0.08444249560741927,
+        "stage3_slot": 0.07133243606998654
+      }
+    },
+    "glass_arbiter_on_blackbox": {
+      "abstention_cut": 0.03893775752039429,
+      "confidence": "weighted |p - t| of the voters; router: rule rate against the base rate",
+      "cut_above_negative_bound": false,
+      "negative_side_bound": 0.11265553869499241,
+      "positive_side_bound": 0.9314759308862566,
+      "test_retained_share": {
+        "negative decisions": 0.34290328368921585,
+        "positive decisions": 0.7557223264540338
+      },
+      "thresholds": {
+        "router_base_rate": 0.11265553869499241,
+        "stage1_slot": 0.06852406911374345,
+        "stage3_slot": 0.069050894085282
+      }
+    },
+    "meta_xgb": {
+      "abstention_cut": 0.21536994934082032,
+      "confidence": "|p - t| in the raw operating space",
+      "cut_above_negative_bound": false,
+      "negative_side_bound": 0.44000000000000006,
+      "positive_side_bound": 0.5599999999999999,
+      "test_retained_share": {
+        "negative decisions": 0.14079261025029796,
+        "positive decisions": 0.8243774574049804
+      },
+      "thresholds": {
+        "operating": 0.44000000000000006
+      }
+    },
+    "meta_xgb_on_glass": {
+      "abstention_cut": 0.20949414253234866,
+      "confidence": "|p - t| in the raw operating space",
+      "cut_above_negative_bound": false,
+      "negative_side_bound": 0.5,
+      "positive_side_bound": 0.5,
+      "test_retained_share": {
+        "negative decisions": 0.4519499632082414,
+        "positive decisions": 0.841995841995842
+      },
+      "thresholds": {
+        "operating": 0.5
+      }
+    }
+  },
+  "contract": {
+    "decisions": [
+      "D4",
+      "D7",
+      "D8"
+    ],
+    "gates": [
+      "A6.1",
+      "A6.2",
+      "A6.3",
+      "A6.4",
+      "A6.5"
+    ],
+    "record": "documentation/methodology/pr39_execution_contract.md",
+    "roadmap": "documentation/research_roadmap.md, Commit 6, Steps 6A and 6B",
+    "sections": [
+      "5.4",
+      "7.1",
+      "7.2",
+      "7.3",
+      "7.4",
+      "7.5",
+      "12"
+    ],
+    "version": "1.0.0"
+  },
+  "corrections": [
+    {
+      "now_sha256": "f5a72963c875cabc11a853541a84e274f34c7bad626e4d119475aa41c7eea169",
+      "path": "tests/realdata/test_current_artifacts.py",
+      "reason": "the RF Pass 1 candidate test read rf_params_origin only as a GLASS-arm RF result path; a router fitted by the PR 38 cross-fit runner records the frozen RF profile identity instead (PR 37 M8, stage2_crossfit.runner). The test now verifies either origin; the path pathway is unchanged",
+      "step5a_sha256": "a10900f3ed344c17a9f3060e9f3f21dd88c588f3db8f03f405e53182b15fb32a"
+    }
+  ],
+  "decision": {
+    "a6_2_route": "reproduced",
+    "reproduction_class": "Deterministic",
+    "statements": {
+      "decision": "Accept Phase 1 reproduction. Both notebooks executed successfully; comparison classified Deterministic with maximum numerical delta 0.0, identical decisions and abstentions, and identical crossover results. The observed Joblib/Loky resource-tracker KeyError is documented as a process-cleanup issue without observed effect on reproduced results.",
+      "tracked_outputs": "Retained original repository Venn figure; preserved newly generated figure in the external execution directory. Three tracked MLP CSV files remained unchanged."
+    },
+    "statements_file": {
+      "name": "c6_20261116_194111_statements.json",
+      "sha256": "f5a73eb8e78124ff1aae0daa7f27d63a2769644e8343ba6f791a7e08fce452a9"
+    }
+  },
+  "environment": {
+    "executable": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+    "os": "Windows",
+    "packages": {
+      "interpret": "0.7.8",
+      "ipykernel": "6.31.0",
+      "joblib": "1.6.0",
+      "nbclient": "0.11.0",
+      "nbformat": "5.11.1",
+      "numpy": "2.5.4",
+      "optuna": "4.9.0",
+      "pandas": "3.0.6",
+      "pulp": "3.3.2",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1",
+      "xgboost": "3.4.1"
+    },
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.14.3"
+  },
+  "executions": {
+    "blackbox": {
+      "code_cells": {
+        "active": 29,
+        "code": 40,
+        "gated_legacy": 11,
+        "total": 65
+      },
+      "executed_copy": {
+        "path": "C:\\Users\\phill\\projects\\pr39_c6_notebooks\\c6_20261116_194111_blackbox_executed.ipynb",
+        "sha256": "43fcd721a91818bddf4472ababfc63a8c21481360e202bd36fda0d23efc0eedf"
+      },
+      "input_copy": {
+        "path": "C:\\Users\\phill\\projects\\pr39_c6_notebooks\\c6_20261116_194111_blackbox_input.ipynb",
+        "sha256": "28bd6b2d17e44291d04e48c628de303f68f4b1243dc341b8106e4afe9342729c"
+      },
+      "kernel": {
+        "name": "python3",
+        "python": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+        "tool_python": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe"
+      },
+      "order": {
+        "cells_with_error_output": [],
+        "code_cells": 40,
+        "execution_counts_1_to_n": true,
+        "expected_code_cells": 40,
+        "passed": true
+      },
+      "record": "execution_blackbox.json",
+      "sha256": "3d8b8302b9d9c5172d27c9cd3c1df96fcb441cd9661e94b4d45217cb213cf95a",
+      "wall_seconds": 5054.6
+    },
+    "glass": {
+      "code_cells": {
+        "active": 16,
+        "code": 25,
+        "gated_legacy": 9,
+        "total": 48
+      },
+      "executed_copy": {
+        "path": "C:\\Users\\phill\\projects\\pr39_c6_notebooks\\c6_20261116_194111_glass_executed.ipynb",
+        "sha256": "3bdaae772f3328141839beec567611299c212320586efb362b138951212b0180"
+      },
+      "input_copy": {
+        "path": "C:\\Users\\phill\\projects\\pr39_c6_notebooks\\c6_20261116_194111_glass_input.ipynb",
+        "sha256": "fce99fbc874d97c8236e5c2d3670512c93be3df1ca7009310efd435bcec1c760"
+      },
+      "kernel": {
+        "name": "python3",
+        "python": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+        "tool_python": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe"
+      },
+      "order": {
+        "cells_with_error_output": [],
+        "code_cells": 25,
+        "execution_counts_1_to_n": true,
+        "expected_code_cells": 25,
+        "passed": true
+      },
+      "record": "execution_glass.json",
+      "sha256": "c4d9a32487b53ae34b987cd9e6ac234953e829e80d74877bd229801cea307e02",
+      "wall_seconds": 12501.8
+    }
+  },
+  "finished_utc": "2026-11-17T18:36:43+00:00",
+  "format": "pr39.commit6b.phase1_freeze/1",
+  "gates": {
+    "A6.1": {
+      "checks": [
+        {
+          "check": "A6.1 realdata: saved report step6_realdata_pytest.xml (absent at preflight, so run on this code)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.1 realdata: tests ran, no failures or errors, none skipped",
+          "detail": "{'tests': 110, 'failures': 0, 'errors': 0, 'skipped': 0}",
+          "passed": true
+        },
+        {
+          "check": "A6.1 fast: saved report step6_fast_pytest.xml (absent at preflight, so run on this code)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.1 fast: tests ran, no failures or errors",
+          "detail": "{'tests': 3390, 'failures': 0, 'errors': 0, 'skipped': 0}",
+          "passed": true
+        },
+        {
+          "check": "A6.1 slow: saved report step6_slow_pytest.xml (absent at preflight, so run on this code)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.1 slow: tests ran, no failures or errors",
+          "detail": "{'tests': 11, 'failures': 0, 'errors': 0, 'skipped': 0}",
+          "passed": true
+        },
+        {
+          "check": "A6.1 notebook: saved report step6_notebook_pytest.xml (absent at preflight, so run on this code)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.1 notebook: the marker's run is recorded (no failures or errors)",
+          "detail": "{'tests': 0, 'failures': 0, 'errors': 0, 'skipped': 0}",
+          "passed": true
+        }
+      ],
+      "evidence": "8/8 checks passed",
+      "failed": [],
+      "gate": "A6.1",
+      "passed": true
+    },
+    "A6.2": {
+      "checks": [
+        {
+          "check": "A6.2 reproduced: Deterministic",
+          "detail": "Deterministic",
+          "passed": true
+        }
+      ],
+      "evidence": "1/1 checks passed",
+      "failed": [],
+      "gate": "A6.2",
+      "passed": true
+    },
+    "A6.3": {
+      "checks": [
+        {
+          "check": "A6.3 the reproduction record's section 7.5 checks passed",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.3 the model folders are as the black-box execution left them",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.3 the accepted Commit 4 and Commit 5 records are the ones preflight verified",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.3 the superseded Step 6B attempts are as preflight hashed them",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.3 each tracked notebook output is as produced or as before the run (nothing else)",
+          "detail": "{'research_logs/figures/venn_cascade_trace.png': 'restored to HEAD', 'models/mlp/stage1_mlp_threshold_sweep.csv': 'unchanged by the run', 'models/mlp/stage1_mlp_training_history.csv': 'unchanged by the run', 'models/mlp/stage1_mlp_tuning_trials.csv': 'unchanged by the run'}",
+          "passed": true
+        },
+        {
+          "check": "A6.3 git status since preflight: only this run's records and the tracked notebook outputs",
+          "detail": "[]",
+          "passed": true
+        }
+      ],
+      "evidence": "6/6 checks passed",
+      "failed": [],
+      "gate": "A6.3",
+      "passed": true
+    },
+    "A6.4": {
+      "checks": [
+        {
+          "check": "A6.4 both notebooks ran top to bottom from fresh kernels, every code cell once and in order, loading upstream artifacts by pin",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 the reproduced artifacts pass the Stage 1-4 contract checks (reproduction record)",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "2/2 checks passed",
+      "failed": [],
+      "gate": "A6.4",
+      "passed": true
+    },
+    "A6.5": {
+      "checks": [
+        {
+          "check": "A6.5 the freeze record holds the baseline, the regression reports, both executions, the classification, the limitations and the Phase 2 handoff",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "1/1 checks passed",
+      "failed": [],
+      "gate": "A6.5",
+      "passed": true
+    }
+  },
+  "git_status_delta": {
+    "gone": [],
+    "new": [
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/execution_blackbox.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/execution_blackbox.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/execution_glass.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/execution_glass.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/preflight.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/preflight.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/reproduction.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/reproduction.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/step6_fast_pytest.xml",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/step6_notebook_pytest.xml",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/step6_realdata_pytest.xml",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/step6_slow_pytest.xml",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/upstream_pins.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/upstream_pins.json.sha256"
+    ],
+    "unexpected": []
+  },
+  "limitation_correction": {
+    "by": "limitations[2] of this record",
+    "supersedes": "research_logs/pr39/c5_20261116_153459/crossover_baseline.json, limitations[2]"
+  },
+  "limitations": [
+    "The test split is previously exposed (PR 38 protocol section 15; contract L1, section 12). Every Stage 4 and crossover result is descriptive; PR 39 claims only what contract section 12 allows.",
+    "Abstention, both arbiters: the registered cut maximises F2 on retained training rows subject to coverage >= 0.50 (shared.stage4.tune_min_confidence). F2 has no TN term, so retaining a correct negative never raises it, and abstention can fall mostly on correct negatives: retained precision and recall rise while retained accuracy falls, and retained recall overstates effective recall. The Commit 5 accounting reports this per cell; the protocol is unchanged.",
+    "Correction (supersedes the third limitation of the Commit 5 crossover_baseline.json, which is not rewritten). That item attributes the concentration of abstention on negatives in both arbiters to a threshold-relative confidence bound. The bound is structural for the GLASS Arbiter only: a negative vote's confidence is at most its voter's threshold (the Stage 1 and Stage 3 recall cuts, the router's base rate for Pass 1), so a negative decision's weighted confidence cannot exceed the largest of them while a positive decision's can approach one minus the smallest (values: reproduction.json, confidence_room). Meta-XGB's confidence is |p - t| in its raw class-weighted space at one operating threshold t, so its sides have room t and 1 - t (recorded); its abstention pattern needs its own interpretation from its score distribution under the F2 criterion above, and this record makes no claim about its cause.",
+    "The coverage floor binds on training rows only; test coverage is reported against it per cell and can fall below it.",
+    "The GLASS Arbiter's score is a weighted average of upstream probabilities: it ranks (ROC-AUC, PR-AUC) but is not a calibrated probability, and it is not the arbiter's decision function.",
+    "The existing metric code's zero-division conventions (0, and ROC-AUC 0.5 on one class) are reported as undefined by the accounting; no stored value of the accepted arbiters relies on them (A5.4).",
+    "The bootstrap resamples test rows with the models fixed; it does not reflect training variability.",
+    "Stage 2's role in the final cascade is descriptive (F10); the PR 38 Tier 2 results stay tied to the historical upstream. Stage 4 stacking keeps an indirect upstream dependence (L7, F39).",
+    "The pytest 'notebook' marker selects no tests. The notebook evidence is this run's two fresh-kernel, top-to-bottom executions.",
+    "The suites emit recurring scikit-learn MLP fixture warnings; their cleanup is PR 40.",
+    "Tracked notebook outputs (owner disposition): Retained original repository Venn figure; preserved newly generated figure in the external execution directory. Three tracked MLP CSV files remained unchanged."
+  ],
+  "passed": true,
+  "phase2_handoff": [
+    "Notebook restructuring and presentation: condensed outputs and stage summaries, final slicing and organisation, the cascade trace figure (contract section 9, Phase 2).",
+    "Baseline presentation: the frozen Phase 1 baseline is Commit 4's Stage 1-3 artifacts and Commit 5's four arbiters, read by manifest, with the Commit 5 crossover baseline record.",
+    "Research comparisons not registered in PR 39: the 2x2 rows (upstream effect), an interaction estimate, coverage grids and calibrated-space confidence tests (PR 43).",
+    "Stage 4 training and abstention optimisation: an abstention policy and whole-system metrics, test coverage against the training floor, and an analysis of Meta-XGB's abstention pattern.",
+    "Paper preparation: out-of-sample claims need independent validation (Tier 3); PR 39 results are descriptive on a previously exposed split."
+  ],
+  "preservation": {
+    "after": "19/19 checks passed",
+    "before": "15/15 checks passed"
+  },
+  "regression": {
+    "fast": {
+      "file": "step6_fast_pytest.xml",
+      "sha256": "9924db059eb4214e7bffc53fcc26e08407905de3794e1aa57990220d81123eb3",
+      "summary": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 3390
+      }
+    },
+    "notebook": {
+      "file": "step6_notebook_pytest.xml",
+      "sha256": "2e58fe1b8dcb5d9adffd44b4612f36a9c17514f559c78974d5c7ab0d481de02c",
+      "summary": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 0
+      }
+    },
+    "realdata": {
+      "file": "step6_realdata_pytest.xml",
+      "sha256": "f6b4acb3dde6f22d57c4a9a35ad294d0348e32324c9272042d16bafff702e0fd",
+      "summary": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 110
+      }
+    },
+    "slow": {
+      "file": "step6_slow_pytest.xml",
+      "sha256": "357f578652c36077953b6e4f57c47542e829a6fdd369cba7d8b5c121e63c8cf2",
+      "summary": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 11
+      }
+    }
+  },
+  "reproduction": {
+    "artifacts": {
+      "glass_arbiter": {
+        "bytes": 2412478,
+        "path": "models/glass_arbiter/glass_arbiter_20261117_002010_074812.joblib",
+        "sha256": "21c97ed1635e424495a8cd7ba1adec684f9a29d80d25f20043f88761c38f66bf"
+      },
+      "glass_arbiter_on_blackbox": {
+        "bytes": 2413278,
+        "path": "blackbox_pipeline/models/stage4_crossover/glass_arbiter_on_blackbox/glass_arbiter_20261117_023037_274938.joblib",
+        "sha256": "b31cb4fb5e5a0be22e7f8dbc9ec8f4d9cde4483f19a6d1e61e4bc57ae3e7311f"
+      },
+      "meta_xgb": {
+        "bytes": 7617155,
+        "path": "blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261117_023035_844996.joblib",
+        "sha256": "5cfda1b356f9c5a70830473ccfad746c2e1536d017229e7280b9e6e5b58f629b"
+      },
+      "meta_xgb_on_glass": {
+        "bytes": 7782227,
+        "path": "blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261117_023344_546953.joblib",
+        "sha256": "8b1d11df080acd1c49a9e0263941fd38b015921c715c477dc5e3a26f9baebb9c"
+      },
+      "stage1.lr": {
+        "bytes": 942344,
+        "path": "models/lr/lr_calibrated_20261116_205239.joblib",
+        "sha256": "2d789f883ec5b8a383795bf0b5d9217db3f3b479354adcfbbebdf5f48b224dba"
+      },
+      "stage1.mlp": {
+        "bytes": 949675,
+        "path": "models/mlp/stage1_mlp_20261117_093740_719093.joblib",
+        "sha256": "3ac7e20ef9eb2d72f339dab978133ce8e242eb7c37b472f565b0ece16ab203d6"
+      },
+      "stage3.ebm": {
+        "bytes": 8300638,
+        "path": "models/ebm/ebm_stage3_20261117_002008_351463.joblib",
+        "sha256": "1f73a4c0cb0ef820b0c7a0773f9aaa6e9cedf72e49f600d30e1d4885f89cfcf7"
+      },
+      "stage3.xgb": {
+        "bytes": 10720121,
+        "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261117_022745_424608.joblib",
+        "sha256": "4773bd638dde3f89b167a5291a8973f8d67724a3a6c7d64c4e20a8282631113d"
+      }
+    },
+    "class": "Deterministic",
+    "conditions": {
+      "every differing decision within drift of its threshold": true,
+      "every threshold the same or within its vector's drift": true,
+      "every vector comparable": true,
+      "identical Stage 2 inputs (SHA-256)": true,
+      "identical decisions, abstentions and routes": true,
+      "identical fold ids": true,
+      "identical selected configurations": true,
+      "identical thresholds": true,
+      "no registered comparison statement changes": true,
+      "probability vectors within max |delta| 1e-9": true,
+      "same recorded environment (section 7.3 fields)": true
+    },
+    "max_abs_drift": 0.0,
+    "pins_file": {
+      "path": "research_logs/pr39/c6_20261116_194111/upstream_pins.json",
+      "sha256": "020e65db7c96fa8ba04d41851c1939c745ed1da15d760242fb3915cd07cf1d1f"
+    },
+    "record": "reproduction.json",
+    "sha256": "aea6e6cafa8ae7efee506d64353d2a9d6a3da0d80328253a797c6e59cb5159b5"
+  },
+  "run_id": "c6_20261116_194111",
+  "started_utc": "2026-11-17T18:36:42+00:00",
+  "step": "phase1_freeze",
+  "superseded_runs": {
+    "c6_20261116_190848": {
+      "files": {
+        "preflight.json": "e95a8a2bc99970c45e8e92498362f97625505caaa4c3f98417ba5a758397feed",
+        "preflight.json.sha256": "7fc5494ed79dab1bb9e312a013651ab6b46f6ebd83fec5dc25d54b284b79dc0a",
+        "step6_realdata_pytest.xml": "8bd96bd554745790351768e00417106c81d0b60c0368816b3ffd25835bc2323b"
+      },
+      "reason": "preflight passed; the real-data suite stopped at 109 passed, 1 failed (tests/realdata/test_current_artifacts.py::test_the_current_rf_pass1_candidate_is_extracted_and_checked), corrected as STEP6_CORRECTIONS records"
+    }
+  },
+  "tracked_outputs": {
+    "models/mlp/stage1_mlp_threshold_sweep.csv": {
+      "before": "c5d816ac412ca3cc0396a07714a1e4d6fbbd95e905b6a0dff5a778ececc4887c",
+      "copy": null,
+      "now": "c5d816ac412ca3cc0396a07714a1e4d6fbbd95e905b6a0dff5a778ececc4887c",
+      "produced": "c5d816ac412ca3cc0396a07714a1e4d6fbbd95e905b6a0dff5a778ececc4887c",
+      "state": "unchanged by the run"
+    },
+    "models/mlp/stage1_mlp_training_history.csv": {
+      "before": "58b10de205d98e1060f7e051919beac7108216e8edd9578463d863bff1760b62",
+      "copy": null,
+      "now": "58b10de205d98e1060f7e051919beac7108216e8edd9578463d863bff1760b62",
+      "produced": "58b10de205d98e1060f7e051919beac7108216e8edd9578463d863bff1760b62",
+      "state": "unchanged by the run"
+    },
+    "models/mlp/stage1_mlp_tuning_trials.csv": {
+      "before": "ad902565f892d5a9431496fbb649e2026fb10a47a4e262280a5e9258a18c1277",
+      "copy": null,
+      "now": "ad902565f892d5a9431496fbb649e2026fb10a47a4e262280a5e9258a18c1277",
+      "produced": "ad902565f892d5a9431496fbb649e2026fb10a47a4e262280a5e9258a18c1277",
+      "state": "unchanged by the run"
+    },
+    "research_logs/figures/venn_cascade_trace.png": {
+      "before": "1744f7057c7e6d257f4dca0762409564521c58d3a00d7d20b2d8528280935696",
+      "copy": {
+        "path": "C:\\Users\\phill\\projects\\pr39_c6_notebooks\\c6_20261116_194111_glass_venn_cascade_trace.png",
+        "sha256": "5b61f06891c9aeb101a076d36a2cb3c82670cf2ae0395fad1a7418dea12efcb4"
+      },
+      "now": "1744f7057c7e6d257f4dca0762409564521c58d3a00d7d20b2d8528280935696",
+      "produced": "5b61f06891c9aeb101a076d36a2cb3c82670cf2ae0395fad1a7418dea12efcb4",
+      "state": "restored to HEAD"
+    }
+  }
+}

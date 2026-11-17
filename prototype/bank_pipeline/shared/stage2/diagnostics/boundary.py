@@ -688,10 +688,14 @@ def extract_lr_view(artifact, ref: TrainReference, *, expected_arm: str = "glass
 
     rep = ValidationReport()
     chk = lambda name, fn, detail="": rep.check(_SECTION, what, name, fn, detail)  # noqa: E731
-    from shared.stage1.feature_engineering import LR_FEATURES
+    from shared.stage1.feature_engineering import HISTORICAL_LR_FEATURES, LR_FEATURES
     chk("stage is 'stage1'", lambda: stage == "stage1", repr(stage))
     chk(f"arm is {expected_arm!r}", lambda: arm == expected_arm, repr(arm))
-    chk("feature_names = shared.stage1 LR_FEATURES", lambda: _same_list(features, LR_FEATURES),
+    # Either registered Stage 1 feature contract, in its own order: 2.0.0
+    # (current names) or 1.0.0 (the names every artifact saved before the PR 39
+    # rename carries; read as saved, never translated). The label is unchanged.
+    chk("feature_names = shared.stage1 LR_FEATURES",
+        lambda: _same_list(features, LR_FEATURES) or _same_list(features, HISTORICAL_LR_FEATURES),
         _safe(lambda: list(features)))
     for name, s in (("train_proba_oof", proba), ("y_train", y), ("train_fold_id", fold_raw)):
         chk(f"{name} index = X_train index (same order)",

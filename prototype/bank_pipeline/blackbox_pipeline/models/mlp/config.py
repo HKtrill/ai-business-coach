@@ -12,6 +12,8 @@ from __future__ import annotations
 import numbers
 from dataclasses import asdict, dataclass, fields
 
+from shared.stage1.oof_calibration import STAGE1_CALIBRATION_FAMILY
+
 __all__ = ["Stage1MLPConfig"]
 
 
@@ -23,7 +25,8 @@ class Stage1MLPConfig:
     Parameters
     ----------
     calibration_method
-        Calibration method: ``"auto"``, ``"sigmoid"``, or ``"isotonic"``.
+        Calibration method: ``"sigmoid"`` (default: the shared Stage 1 family,
+        PR 39 Step 2A), ``"isotonic"``, or ``"auto"`` (diagnostics only).
     cv_folds
         Cross-validation folds used throughout Stage 1.
     n_trials
@@ -42,7 +45,7 @@ class Stage1MLPConfig:
         Reject prefit calibrators that would invalidate OOF predictions.
     """
 
-    calibration_method: str = "auto"
+    calibration_method: str = STAGE1_CALIBRATION_FAMILY
     cv_folds: int = 10
     n_trials: int = 100
     random_state: int = 42

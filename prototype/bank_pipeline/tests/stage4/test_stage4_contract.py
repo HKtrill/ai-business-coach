@@ -91,9 +91,9 @@ def test_legacy_stage3_dict_refused(w):
         stage3_stream({"train_predictions": [0.1]}, "xgb", "XGB")
 
 
-def test_abstention_protocol_mirrors_meta_ebm():
+def test_abstention_protocol_mirrors_the_glass_arbiter():
     """Both arms: the shared rule, exact search by default (PR 36 F30)."""
-    from glass_pipeline.meta_ebm import meta_stage, tuning
+    from glass_pipeline.glass_arbiter import meta_stage, tuning
     sig = inspect.signature(tuning.tune_arbiter_threshold)
     assert sig.parameters["min_coverage"].default == ABSTENTION_MIN_COVERAGE
     assert sig.parameters["min_confs"].default is None                  # exact search

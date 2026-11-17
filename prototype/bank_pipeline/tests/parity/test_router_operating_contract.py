@@ -17,14 +17,14 @@ Shared by both routers (pinned here)
 Different by design — the F17 question
     Pass 2 population   RF Router: always the OOF Pass 1 remainder
                         (``RFRouter.fit``: remainder = OOF p1 >= t1).
-                        GLASS Router: ``config.pass2_population`` — the
-                        notebook's active "legacy" profile is "full" (Pass 2
-                        rules selected and their precision measured on every
-                        training row, applied to what Pass 1 leaves); the
-                        "recommended" profile is "oof_remainder", the RF
-                        construction. Unchanged here: switching the GLASS
-                        profile is a methodology decision (it changes the
-                        GLASS rules and needs Stage 2 regenerated).
+                        GLASS Router: ``config.pass2_population``. The PR 38
+                        primary (the frozen GLASS profile) is "oof_remainder",
+                        the RF construction; the notebook's legacy profile is
+                        "full" (Pass 2 rules selected and their precision
+                        measured on every training row, applied to what Pass 1
+                        leaves). Since PR 39 Commit 4A (G10) the GLASS notebook
+                        consumes the accepted PR 38 primary by pinned path and
+                        fits the legacy profile only behind RUN_LEGACY_STAGE2.
     Recorded            Stage 4 records each router's Pass 2 population for
                         its cross-fit (train outputs) and full-train router
                         (test outputs) and refuses an artifact whose two
@@ -52,8 +52,8 @@ import pytest
 
 from blackbox_pipeline.models.rf_router import RFRouter
 from blackbox_pipeline.models.rf_router.router.base import apply_cuts
-from glass_pipeline.meta_ebm.loader import load_stage_outputs
-from glass_pipeline.meta_ebm.router_evidence import rule_positive_rate
+from glass_pipeline.glass_arbiter.loader import load_stage_outputs
+from glass_pipeline.glass_arbiter.router_evidence import rule_positive_rate
 import shared.stage4.adapters as adapters
 from shared.stage4 import build_stage4_inputs, router_stream
 from shared.validation import ValidationError
@@ -146,17 +146,42 @@ def _glass_notebook_profiles():
     return src
 
 
+def _glass_code_cells():
+    cells = json.loads((BANK_ROOT / "glass_pipeline" / "glass_cascade.ipynb").read_text(encoding="utf-8"))
+    return ["".join(c["source"]) for c in cells["cells"] if c["cell_type"] == "code"]
+
+
 def test_the_glass_notebook_runs_the_full_population_profile_for_both_fits():
-    """Pins the current choice (F17): changing it is a methodology decision."""
+    """
+    F17 G10 pin, updated deliberately in PR 39 Commit 4A (execution contract section 5.3;
+    G10 clarification v1), in the same change as the audit's GLASS expectation
+    (``tests/support/artifact_audit.PASS2_POPULATION``). The GLASS notebook no longer fits
+    Stage 2: its active Stage 2 is the accepted PR 38 primary GLASS Router, whose Pass 2 is
+    fitted on the OOF Pass 1 remainder in both fits, loaded by pinned path and SHA-256 and
+    checked at run time. The legacy profile, one config object for both legacy fits, runs
+    only behind ``RUN_LEGACY_STAGE2``, off by default. The name is kept because
+    ``stage2_crossfit.acceptance.G10_PIN_TEST`` names this test.
+    """
+    from shared.pinned_artifacts import STAGE2_PINS, STAGE2_RUN_ID
+    cells = _glass_code_cells()
+    (source,) = [c for c in cells if "# CELL 8B:" in c]
+    assert "RUN_LEGACY_STAGE2 = False\n" in source
+    assert 'register_switch("legacy_stage2", "RUN_LEGACY_STAGE2")' in source
+    assert "STAGE2_PINNED = load_pinned_stage2(GLOBAL_SPLIT)" in source
+    assert ('assert STAGE2_PINNED.stage4_contract["glass"]["pass2_population"] == {\n'
+            '        "cross_fit": "oof_remainder", "full_train": "oof_remainder"}') in source
+    assert "glass_path = str(STAGE2_PINNED.glass_path)" in source
+    # every cell that configures, fits or saves a GLASS Router sits behind the switch
+    fitting = ("GlassRouterConfig(", "GlassRouterPipeline(", "crossfit_stage2(", "save_model(")
+    gated = [c for c in cells if any(f in c for f in fitting)]
+    assert gated and all(c.startswith("%%legacy_stage2\n") for c in gated)
+    # the legacy cells themselves are unchanged: one config object drives both legacy fits
     src = _glass_notebook_profiles()
-    assert 'CONFIG_PROFILE = "legacy"' in src
-    legacy = src[src.index('"legacy": dict('):src.index('"recommended": dict(')]
-    recommended = src[src.index('"recommended": dict('):]
-    assert 'pass2_population="full"' in legacy
-    assert 'pass2_population="oof_remainder"' in recommended
-    # one config object drives the full-train fit and the cross-fit
     assert "config = GlassRouterConfig(**_SHARED, **_PROFILES[CONFIG_PROFILE])" in src
     assert "GlassRouterPipeline(\n    config=config," in src and "glass_config=config," in src
+    # the pinned bundle is the accepted run's GLASS Router
+    (glass,) = [p for p in STAGE2_PINS if p.role == "stage2.glass_router"]
+    assert glass.path.endswith(f"/glass_router_pr38_primary_{STAGE2_RUN_ID}.joblib")
 
 
 @pytest.fixture

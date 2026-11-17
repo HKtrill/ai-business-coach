@@ -13,11 +13,11 @@ sklearn's F2. It finds optima between the values of the pre-F30 fixed grid
 floor), never violates the coverage floor, moves tied confidences as one
 unit, abstains on nothing when the confidence is constant, does not depend on
 row order, refuses non-finite confidence, and reads only the arrays it is
-given. Meta-EBM (``tune_arbiter_threshold``) and Meta-XGB both call it with
-the exact search on their own training-side confidence; that the Meta-EBM's
-cut uses training rows only is checked in test_meta_ebm_stage*.py.
+given. The GLASS Arbiter (``tune_arbiter_threshold``) and Meta-XGB both call it with
+the exact search on their own training-side confidence; that the GLASS Arbiter's
+cut uses training rows only is checked in test_glass_arbiter_stage*.py.
 
-Before F30 the fixed grid left the Meta-EBM one eligible value once F25 put
+Before F30 the fixed grid left the GLASS Arbiter one eligible value once F25 put
 the router's confidence on the LR / EBM scale (median weighted confidence
 ~0.04): the cut sat at 0.03 (~68% coverage) whatever the objective said.
 """

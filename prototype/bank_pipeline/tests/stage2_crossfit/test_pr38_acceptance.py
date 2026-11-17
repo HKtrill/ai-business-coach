@@ -339,7 +339,7 @@ def test_the_json_comparison_keeps_floats_within_tolerance_and_everything_else_e
     ("G10:artifact_audit_pins", dict(OK, decision="rejected"), "cannot pass"),
     ("G10:artifact_audit_pins", dict(OK, decision="clarification_approved", record=["x"]),
      "names record"),
-    ("G10:artifact_audit_pins", dict(OK, decision="pins_updated"), "still expects GLASS 'full'"),
+    ("G10:artifact_audit_pins", dict(OK, decision="pins_updated"), "active CONFIG_PROFILE"),
     ("G10:artifact_audit_pins", None, "not recorded"),
 ])
 def test_only_an_explicit_satisfying_decision_counts(ident, entry, match):
@@ -347,11 +347,23 @@ def test_only_an_explicit_satisfying_decision_counts(ident, entry, match):
     assert problems and match in problems[0], problems
 
 
-def test_pins_updated_names_both_g10_pins_while_neither_is_updated():
+def test_pins_updated_on_this_branch_names_only_the_legacy_notebook_profile():
+    """
+    PR 39 Commit 4A updated both G10 pins (execution contract section 5.3): the audit
+    expects GLASS ``oof_remainder`` and the pin test no longer asserts ``full``. The
+    GLASS notebook no longer fits Stage 2: its active Stage 2 is the pinned PR 38
+    primary (``oof_remainder``, checked at run time by Cell 8B), and the
+    ``CONFIG_PROFILE = "legacy"`` this check reads belongs to the legacy cells kept
+    unchanged behind ``RUN_LEGACY_STAGE2``. So ``pins_updated`` names that profile
+    only; the accepted run's G10 disposition is ``clarification_approved``, which
+    does not read the pins.
+    """
     problems = A.disposition_problems("G10:artifact_audit_pins", dict(OK, decision="pins_updated"))
-    assert len(problems) == 1
-    for pin in ("tests/support/artifact_audit.py", A.G10_PIN_TEST[1], A.GLASS_NOTEBOOK):
-        assert pin in problems[0], problems
+    assert len(problems) == 1 and A.GLASS_NOTEBOOK in problems[0], problems
+    for pin in ("tests/support/artifact_audit.py", A.G10_PIN_TEST[1]):
+        assert pin not in problems[0], problems
+    assert A.g10_pin_problems() == [f"{A.GLASS_NOTEBOOK}: the active CONFIG_PROFILE does not "
+                                    'declare pass2_population="oof_remainder"']
 
 
 def _pinned_bank(tmp_path, *, pin_test_full: bool, notebook_profile: str):

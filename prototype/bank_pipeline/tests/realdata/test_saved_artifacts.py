@@ -13,9 +13,12 @@ folder, or the files named in ``$BANK_ARTIFACT_MANIFEST`` — and every Stage
 1-3 file is the one an arbiter recorded consuming (tests.support.artifact_audit
 says where each is saved and what each check reuses).
 
-    upstream     Meta-EBM                Meta-XGB
-    GLASS        meta_ebm (native)       meta_xgb_on_glass
-    black-box    meta_ebm_on_blackbox    meta_xgb (native)
+    upstream     GLASS Arbiter                Meta-XGB
+    GLASS        glass_arbiter (native)       meta_xgb_on_glass
+    black-box    glass_arbiter_on_blackbox    meta_xgb (native)
+
+A PR 36-38 generation (keys ``meta_ebm`` / ``meta_ebm_on_blackbox``, schema
+``meta_ebm/2``) is audited as saved, under its own keys (PR 39, D5).
 """
 
 from __future__ import annotations
@@ -28,7 +31,7 @@ from tests.support.notebooks import BANK_ROOT
 pytestmark = pytest.mark.realdata
 
 KEYS = tuple(audit.ROOTS)
-NATIVE_KEY = {"glass": "meta_ebm", "blackbox": "meta_xgb"}
+NATIVE_KEY = {"glass": "glass_arbiter", "blackbox": "meta_xgb"}
 
 
 class Saved:
@@ -54,14 +57,18 @@ class Saved:
     def roots(self):
         return self._once("roots", lambda: audit.select_roots(BANK_ROOT, audit.manifest_from_env()))
 
+    def key(self, key):
+        """The selection's key for the ``ROOTS`` key ``key`` (its PR 36-38 key, if so selected)."""
+        return audit.key_in(self.roots(), key)
+
     def arbiter(self, key):
         return self._once(("arbiter", key),
-                          lambda: audit.load_arbiter(key, self.roots()[key], self.split()))
+                          lambda: audit.load_arbiter(self.key(key), self.roots()[key], self.split()))
 
     def upstream(self, key):
         """(Stage4Inputs, {stage: path})."""
         return self._once(("upstream", key),
-                          lambda: audit.reload_upstream(key, self.arbiter(key), self.split()))
+                          lambda: audit.reload_upstream(self.key(key), self.arbiter(key), self.split()))
 
 
 @pytest.fixture(scope="module")
@@ -70,12 +77,14 @@ def saved():
 
 
 def test_the_four_arbiters_of_the_2x2_are_saved(saved):
-    assert set(saved.roots()) == set(KEYS)
+    assert set(saved.roots()) in (set(KEYS), set(audit.HISTORICAL_ROOTS))
+    assert {saved.key(k) for k in KEYS} == set(saved.roots())
 
 
 @pytest.mark.parametrize("key", KEYS)
 def test_each_arbiter_is_its_declared_cell_with_complete_evidence(saved, key):
-    audit.check_arbiter_identity(key, saved.arbiter(key))
+    audit.check_arbiter_identity(saved.key(key), saved.arbiter(key),
+                                 generation=saved.roots().generation)
 
 
 @pytest.mark.parametrize("key", KEYS)
@@ -87,7 +96,7 @@ def test_each_arbiters_upstream_files_pass_the_contract_and_are_what_it_consumed
 def test_every_audited_file_reloads_in_a_clean_interpreter_as_recorded(saved):
     expected = {}
     for key in KEYS:
-        expected.update(audit.expected_reload(key, saved.roots()[key], saved.arbiter(key),
+        expected.update(audit.expected_reload(saved.key(key), saved.roots()[key], saved.arbiter(key),
                                               saved.upstream(key)[1]))
     audit.check_fresh_reload(expected)
 
@@ -101,11 +110,11 @@ def test_each_stage3_model_serves_its_saved_test_probabilities(saved, upstream):
 
 @pytest.mark.parametrize("key", [k for k in KEYS if audit.ROOTS[k].arbiter == "meta_xgb"])
 def test_each_meta_xgb_serves_its_saved_test_probabilities(saved, key):
-    audit.check_meta_xgb_serving(key, saved.arbiter(key), saved.upstream(key)[0])
+    audit.check_meta_xgb_serving(saved.key(key), saved.arbiter(key), saved.upstream(key)[0])
 
 
 def test_the_2x2_holds_each_upstream_fixed_and_keeps_the_arms_apart(saved):
-    arts = {key: saved.arbiter(key) for key in KEYS}
+    arts = {saved.key(key): saved.arbiter(key) for key in KEYS}
     for key in KEYS:
         saved.upstream(key)                     # the files each records are the ones on disk
     audit.check_crossover(arts, saved.roots(), saved.split())

@@ -5,7 +5,7 @@ The Stage 4 input boundary shared by BOTH arms: aligned, provenance-carrying
 base-model streams plus every alignment / provenance check.
 
 Arm-agnostic. Artifact-format adapters live in ``shared.stage4.adapters``;
-each arm's loader (``glass_pipeline.meta_ebm.loader``,
+each arm's loader (``glass_pipeline.glass_arbiter.loader``,
 ``blackbox_pipeline.models.meta_xgb.inputs``) only chooses which adapter reads
 which file.
 
@@ -36,9 +36,10 @@ Fingerprint schemes
 The cascade currently writes two split-fingerprint formats:
 
 ``stage_io``  ``shared.stage_io.split_fingerprint(idx_tr, idx_te, y_tr, y_te)``
-              — 12 hex; ``StageOutput`` (Stage 1, both arms).
+              — 12 hex; ``StageOutput`` (Stage 1, both arms) and the GLASS EBM
+              (GLASS Cell 17 stamps the Stage 3 block with it).
 ``router``    ``split_fingerprint(X_train, X_test)`` from the router packages
-              — 16 hex; GLASS Router, RF Router and both Stage 3 artifacts.
+              — 16 hex; GLASS Router, RF Router and XGBoost (black-box Cell 30).
 
 Both are deterministic functions of the current split, so a stream passes if
 its fingerprint equals the value of ANY available scheme recomputed from

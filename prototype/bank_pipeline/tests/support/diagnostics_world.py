@@ -317,7 +317,7 @@ def _ebm(w):
 
 
 def _meta(w) -> dict:
-    from glass_pipeline.meta_ebm.meta_stage import find_recall_threshold
+    from glass_pipeline.glass_arbiter.meta_stage import find_recall_threshold
     y = w["y"]
     lr_p = np.asarray(w["lr"]["stage_output"]["train_proba_oof"], dtype=float)
     ebm_p = np.asarray(w["ebm"].oof["proba_calibrated"], dtype=float)

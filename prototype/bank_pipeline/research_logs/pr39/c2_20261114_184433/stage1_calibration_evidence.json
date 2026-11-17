@@ -1,0 +1,1260 @@
+{
+  "format": "pr39.stage1.calibration_evidence/1",
+  "run_id": "c2_20261114_184433",
+  "contract": {
+    "record": "documentation/methodology/pr39_execution_contract.md",
+    "version": "1.0.0",
+    "section": "6.1",
+    "gates": [
+      "A2.1",
+      "A2.2"
+    ]
+  },
+  "registered": true,
+  "status": "official E-C evidence",
+  "started_utc": "2026-11-15T02:44:34+00:00",
+  "finished_utc": "2026-11-15T03:13:39+00:00",
+  "settings": {
+    "random_state": 42,
+    "engineer": {
+      "n_bins": 20,
+      "smoothing_factor": 100
+    },
+    "glass_lr": {
+      "tune_hyperparameters": true,
+      "calibration_method": "auto",
+      "optimize_threshold": true,
+      "cv_folds": 10,
+      "n_trials": 100,
+      "tune_cv_folds": 10
+    },
+    "blackbox_mlp": {
+      "calibration_method": "auto",
+      "cv_folds": 10,
+      "n_trials": 100
+    }
+  },
+  "population": {
+    "rows": 32950,
+    "positives": 3712,
+    "router_split_fingerprint": "fc3e73a5ef91aea4",
+    "train_label_fingerprint": "b984d2a50527",
+    "frozen_protocol_check": {
+      "passed": true,
+      "checks": {
+        "rows": {
+          "got": 32950,
+          "pinned": 32950,
+          "passed": true
+        },
+        "positives": {
+          "got": 3712,
+          "pinned": 3712,
+          "passed": true
+        },
+        "fold_rows": {
+          "got": [
+            6590,
+            6590,
+            6590,
+            6590,
+            6590
+          ],
+          "pinned": [
+            6590,
+            6590,
+            6590,
+            6590,
+            6590
+          ],
+          "passed": true
+        },
+        "fold_positives": {
+          "got": [
+            742,
+            742,
+            742,
+            743,
+            743
+          ],
+          "pinned": [
+            742,
+            742,
+            742,
+            743,
+            743
+          ],
+          "passed": true
+        },
+        "router_split_fingerprint": {
+          "got": "fc3e73a5ef91aea4",
+          "pinned": "fc3e73a5ef91aea4",
+          "passed": true
+        },
+        "train_label_fingerprint": {
+          "got": "b984d2a50527",
+          "pinned": "b984d2a50527",
+          "passed": true
+        },
+        "fold_fingerprint": {
+          "got": "8aea082fcaf371b7",
+          "pinned": "8aea082fcaf371b7",
+          "passed": true
+        }
+      }
+    },
+    "stage1_outer_folds": {
+      "folds": 10,
+      "random_state": 42,
+      "fold_fingerprint": "e4da0b4442f71ecf"
+    },
+    "test_split": "labels never read; features unused; the test index enters only the row-only router split fingerprint"
+  },
+  "fits": {
+    "glass_lr": {
+      "stage": "CalibratedLRStage",
+      "config": {
+        "tune_hyperparameters": true,
+        "calibration_requested": "auto",
+        "optimize_threshold": true,
+        "cv_folds": 10,
+        "tune_cv_folds": 10,
+        "n_trials": 100,
+        "pruner_startup_trials": 5,
+        "pruner_warmup_steps": 2,
+        "threshold_beta": 2.0,
+        "threshold_grid": [
+          0.05,
+          0.5,
+          0.01
+        ],
+        "random_state": 42,
+        "oof_preprocessing": {
+          "feature_fit_scope": "per_fold",
+          "scaler_fit_scope": "per_fold",
+          "applies_to": "optuna_tuning_folds+oof_probabilities+calibration_inner_folds"
+        }
+      },
+      "best_params": {
+        "C": 0.001756869502269086,
+        "penalty": "elasticnet",
+        "l1_ratio": 0.030576263600358287
+      },
+      "best_cv_roc_auc": 0.7763369154560028,
+      "final_model_family_auto": "isotonic",
+      "oof_family_by_fold": "isotonic,isotonic,isotonic,isotonic,isotonic,isotonic,isotonic,isotonic,isotonic,isotonic",
+      "fold_inner": {
+        "0": {
+          "family": "isotonic",
+          "inner_brier": {
+            "sigmoid": 0.08418093215152707,
+            "isotonic": 0.08293943825956057
+          }
+        },
+        "1": {
+          "family": "isotonic",
+          "inner_brier": {
+            "sigmoid": 0.08401676976976166,
+            "isotonic": 0.08290077313854102
+          }
+        },
+        "2": {
+          "family": "isotonic",
+          "inner_brier": {
+            "sigmoid": 0.0843446313756406,
+            "isotonic": 0.08326915287437331
+          }
+        },
+        "3": {
+          "family": "isotonic",
+          "inner_brier": {
+            "sigmoid": 0.08399840687004262,
+            "isotonic": 0.08297107691287092
+          }
+        },
+        "4": {
+          "family": "isotonic",
+          "inner_brier": {
+            "sigmoid": 0.08422684933277211,
+            "isotonic": 0.08316631141547509
+          }
+        },
+        "5": {
+          "family": "isotonic",
+          "inner_brier": {
+            "sigmoid": 0.0843362612263702,
+            "isotonic": 0.08314664533890755
+          }
+        },
+        "6": {
+          "family": "isotonic",
+          "inner_brier": {
+            "sigmoid": 0.08450511590751787,
+            "isotonic": 0.08318668310459335
+          }
+        },
+        "7": {
+          "family": "isotonic",
+          "inner_brier": {
+            "sigmoid": 0.08385360961396388,
+            "isotonic": 0.08284860812406011
+          }
+        },
+        "8": {
+          "family": "isotonic",
+          "inner_brier": {
+            "sigmoid": 0.08383536893436672,
+            "isotonic": 0.08279947045537422
+          }
+        },
+        "9": {
+          "family": "isotonic",
+          "inner_brier": {
+            "sigmoid": 0.08441824134958166,
+            "isotonic": 0.08343283408490902
+          }
+        }
+      },
+      "oof_brier_by_family": {
+        "sigmoid": 0.08419248740668546,
+        "isotonic": 0.08292215423736819
+      },
+      "oof_provenance": "refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model and calibrator fitted per fold)",
+      "wall_seconds": 40.8
+    },
+    "blackbox_mlp": {
+      "stage": "CalibratedStage1MLP",
+      "config": {
+        "calibration_method": "auto",
+        "cv_folds": 10,
+        "n_trials": 100,
+        "random_state": 42,
+        "max_epochs": 200,
+        "patience": 15,
+        "val_fraction": 0.15,
+        "threshold_beta": 2.0,
+        "threshold_grid": [
+          0.05,
+          0.5,
+          0.01
+        ],
+        "n_jobs": -1,
+        "verbose": true,
+        "strict_oof": true
+      },
+      "best_params": {
+        "n_layers": 2,
+        "width": 16,
+        "activation": "relu",
+        "alpha": 2.2680152706723995e-05,
+        "learning_rate_init": 0.00781430751067939,
+        "batch_size": 128,
+        "pos_ratio": 0.9964492492032411
+      },
+      "best_cv_roc_auc": 0.7811698249121561,
+      "final_model_family_auto": "sigmoid",
+      "oof_family_by_fold": "sigmoid,sigmoid,isotonic,isotonic,isotonic,sigmoid,sigmoid,sigmoid,sigmoid,isotonic",
+      "fold_inner": {
+        "0": {
+          "family": "sigmoid",
+          "inner_brier": {
+            "sigmoid": 0.08272164099874962,
+            "isotonic": 0.08272315630436859
+          }
+        },
+        "1": {
+          "family": "sigmoid",
+          "inner_brier": {
+            "sigmoid": 0.08239991607686882,
+            "isotonic": 0.08243118865559441
+          }
+        },
+        "2": {
+          "family": "isotonic",
+          "inner_brier": {
+            "sigmoid": 0.08241231630367624,
+            "isotonic": 0.08234847712834281
+          }
+        },
+        "3": {
+          "family": "isotonic",
+          "inner_brier": {
+            "sigmoid": 0.08213652203924329,
+            "isotonic": 0.0819672522786113
+          }
+        },
+        "4": {
+          "family": "isotonic",
+          "inner_brier": {
+            "sigmoid": 0.08306044891554477,
+            "isotonic": 0.08305545692119934
+          }
+        },
+        "5": {
+          "family": "sigmoid",
+          "inner_brier": {
+            "sigmoid": 0.08246388064524415,
+            "isotonic": 0.08259763899935234
+          }
+        },
+        "6": {
+          "family": "sigmoid",
+          "inner_brier": {
+            "sigmoid": 0.08295725899607706,
+            "isotonic": 0.08307862273817318
+          }
+        },
+        "7": {
+          "family": "sigmoid",
+          "inner_brier": {
+            "sigmoid": 0.08242498357670212,
+            "isotonic": 0.08255651342207936
+          }
+        },
+        "8": {
+          "family": "sigmoid",
+          "inner_brier": {
+            "sigmoid": 0.08236198310514878,
+            "isotonic": 0.08241028169616012
+          }
+        },
+        "9": {
+          "family": "isotonic",
+          "inner_brier": {
+            "sigmoid": 0.08295470832555951,
+            "isotonic": 0.08284927266682626
+          }
+        }
+      },
+      "oof_brier_by_family": {
+        "sigmoid": 0.08251755429448537,
+        "isotonic": 0.08255194165241996
+      },
+      "oof_provenance": "refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model and calibrator fitted per fold)",
+      "wall_seconds": 1701.0
+    }
+  },
+  "vectors": {
+    "path": "models/pr39/c2_20261114_184433/stage1_calibration_oof.joblib",
+    "sha256": "a7cd202ec709e07fb465473817c3ba0bd8413cd18e3991a2aa1fb128023f9e8c",
+    "bytes": 608015,
+    "rows": 32950,
+    "positives": 3712,
+    "columns": [
+      "fold_id",
+      "y",
+      "glass_lr_base_score",
+      "glass_lr_sigmoid",
+      "glass_lr_isotonic",
+      "blackbox_mlp_base_score",
+      "blackbox_mlp_sigmoid",
+      "blackbox_mlp_isotonic"
+    ],
+    "train_label_fingerprint": "b984d2a50527",
+    "column_sha256": {
+      "index": "92297f3acb594e29b0d951cbbffb7b45c5cf14f6ca2d240f4723ab8f3e2b04b0",
+      "fold_id": "e4da0b4442f71ecfdf4f332db5730c0982a9315f4798b064fed691dcfbeff38e",
+      "y": "892d26d1ae676036c429bdc67779c8312b776dc2a8e5012cdbc7dcab3ff18cc1",
+      "glass_lr_base_score": "0a4dc14440ab838b999ae3822429526bf398973e0bd53d7bed11e2de42442e82",
+      "glass_lr_sigmoid": "2063128f46993d8943e90ce345e2995d3282814ee3ce52bee2575dd2665ac035",
+      "glass_lr_isotonic": "07ed081ff765c40aa90a19f1c6e50d724038b46be690908cb598ddf623925d54",
+      "blackbox_mlp_base_score": "643f2b4413d0f81fecb65c412d9791e3de45c0398c25e5fb3aa487c4aac9e145",
+      "blackbox_mlp_sigmoid": "cc43c80ba02df20fb265b9a21860785659a72f7de06dc0b6dfc3f64764f300c0",
+      "blackbox_mlp_isotonic": "e0b3234b5f42adfe3062a4356142e7dd46836266efcc33424731a68b87aa1d17"
+    }
+  },
+  "evidence": {
+    "glass_lr": {
+      "pooled": {
+        "sigmoid": {
+          "rows": 32950,
+          "positives": 3712,
+          "brier": 0.08419248740668546,
+          "ece": 0.013828389855897016,
+          "reliability": 0.001018622416584538,
+          "resolution": 0.016599630400891564,
+          "uncertainty": 0.09996426829633347,
+          "roc_auc": 0.774950061482636,
+          "pr_auc": 0.35789157869043264,
+          "distinct_values": 2307,
+          "distinct_base_scores": 2307,
+          "largest_tie_share": 0.0030349013657056147
+        },
+        "isotonic": {
+          "rows": 32950,
+          "positives": 3712,
+          "brier": 0.08292215423736819,
+          "ece": 0.001716685474178003,
+          "reliability": 5.527114470775047e-05,
+          "resolution": 0.016871752515568834,
+          "uncertainty": 0.09996426829633347,
+          "roc_auc": 0.7748802890841159,
+          "pr_auc": 0.35581721001189304,
+          "distinct_values": 242,
+          "distinct_base_scores": 2307,
+          "largest_tie_share": 0.04191198786039454
+        }
+      },
+      "folds": [
+        {
+          "fold": 0,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08319372576122387,
+            "ece": 0.01578300225375958,
+            "reliability": 0.002082279785801068,
+            "resolution": 0.018468854617738263,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.767166234637778,
+            "pr_auc": 0.3745752230782643,
+            "distinct_values": 232,
+            "distinct_base_scores": 232,
+            "largest_tie_share": 0.030045523520485583
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08153016665597866,
+            "ece": 0.003489760698551308,
+            "reliability": 6.076547725247611e-05,
+            "resolution": 0.018572295347513992,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7688831346492085,
+            "pr_auc": 0.36001814331691373,
+            "distinct_values": 21,
+            "distinct_base_scores": 232,
+            "largest_tie_share": 0.24582701062215478
+          },
+          "delta_brier": -0.0016635591052451986
+        },
+        {
+          "fold": 1,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08657431116135109,
+            "ece": 0.017497509854807067,
+            "reliability": 0.0015322827139201793,
+            "resolution": 0.014920956523931644,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7600262351540001,
+            "pr_auc": 0.33191135656044135,
+            "distinct_values": 222,
+            "distinct_base_scores": 222,
+            "largest_tie_share": 0.024886191198786038
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08454025944583936,
+            "ece": 0.009543996590381276,
+            "reliability": 0.0007430664838507017,
+            "resolution": 0.015801006855812993,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7665781099627212,
+            "pr_auc": 0.32565553840737727,
+            "distinct_values": 26,
+            "distinct_base_scores": 222,
+            "largest_tie_share": 0.36570561456752654
+          },
+          "delta_brier": -0.002034051715511725
+        },
+        {
+          "fold": 2,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08182597854585905,
+            "ece": 0.01745386389414173,
+            "reliability": 0.0012616477204313674,
+            "resolution": 0.018946253371970572,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7977542486937733,
+            "pr_auc": 0.3719155401832828,
+            "distinct_values": 230,
+            "distinct_base_scores": 230,
+            "largest_tie_share": 0.028831562974203338
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.0807379885404993,
+            "ece": 0.009889407805598405,
+            "reliability": 0.00026170029197747916,
+            "resolution": 0.019190301446231545,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7985064583095196,
+            "pr_auc": 0.36449178961242235,
+            "distinct_values": 19,
+            "distinct_base_scores": 230,
+            "largest_tie_share": 0.35022761760242793
+          },
+          "delta_brier": -0.0010879900053597513
+        },
+        {
+          "fold": 3,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08648585528809984,
+            "ece": 0.014562980080599149,
+            "reliability": 0.0012200868425834553,
+            "resolution": 0.014650576444550582,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7579977581203611,
+            "pr_auc": 0.3382057461993321,
+            "distinct_values": 231,
+            "distinct_base_scores": 231,
+            "largest_tie_share": 0.023975720789074353
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.0854353606749004,
+            "ece": 0.012347909630489469,
+            "reliability": 0.0009603802022259997,
+            "resolution": 0.015233008098439875,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7537559780384291,
+            "pr_auc": 0.32428777190175595,
+            "distinct_values": 25,
+            "distinct_base_scores": 231,
+            "largest_tie_share": 0.39939301972685887
+          },
+          "delta_brier": -0.0010504946131994323
+        },
+        {
+          "fold": 4,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.083502828819017,
+            "ece": 0.017257471123833995,
+            "reliability": 0.00147858500073969,
+            "resolution": 0.01746460255831794,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7813586601819316,
+            "pr_auc": 0.37519982655679773,
+            "distinct_values": 236,
+            "distinct_base_scores": 236,
+            "largest_tie_share": 0.02276176024279211
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08224940800471693,
+            "ece": 0.006298710857685718,
+            "reliability": 0.0003219857556407168,
+            "resolution": 0.017839044687393318,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7796256282240848,
+            "pr_auc": 0.3556668440780331,
+            "distinct_values": 26,
+            "distinct_base_scores": 236,
+            "largest_tie_share": 0.37025796661608495
+          },
+          "delta_brier": -0.001253420814300064
+        },
+        {
+          "fold": 5,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08199813881269785,
+            "ece": 0.016796993972833556,
+            "reliability": 0.0008159918924122973,
+            "resolution": 0.018879078781944884,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7822343944159499,
+            "pr_auc": 0.38186535867225424,
+            "distinct_values": 228,
+            "distinct_base_scores": 228,
+            "largest_tie_share": 0.023975720789074353
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08178956391930128,
+            "ece": 0.009349255531524605,
+            "reliability": 0.00043450265485597806,
+            "resolution": 0.018319642651211998,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7848261068358892,
+            "pr_auc": 0.36645887562925217,
+            "distinct_values": 23,
+            "distinct_base_scores": 228,
+            "largest_tie_share": 0.4191198786039454
+          },
+          "delta_brier": -0.00020857489339655362
+        },
+        {
+          "fold": 6,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08100996821954859,
+            "ece": 0.020478479937919045,
+            "reliability": 0.0012008935958411507,
+            "resolution": 0.02004847924034218,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7996734894045378,
+            "pr_auc": 0.40347454689242623,
+            "distinct_values": 229,
+            "distinct_base_scores": 229,
+            "largest_tie_share": 0.030349013657056147
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.07991242064211275,
+            "ece": 0.013139054634574224,
+            "reliability": 0.000508165083450197,
+            "resolution": 0.020272168720657534,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7984497660406857,
+            "pr_auc": 0.3887409132763261,
+            "distinct_values": 25,
+            "distinct_base_scores": 229,
+            "largest_tie_share": 0.37025796661608495
+          },
+          "delta_brier": -0.0010975475774358423
+        },
+        {
+          "fold": 7,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08734902247865484,
+            "ece": 0.014723897489133757,
+            "reliability": 0.002035374745334668,
+            "resolution": 0.014276028524048698,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7624607763245711,
+            "pr_auc": 0.31603698273534786,
+            "distinct_values": 237,
+            "distinct_base_scores": 237,
+            "largest_tie_share": 0.024886191198786038
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08565033190537595,
+            "ece": 0.008897115246622964,
+            "reliability": 0.0004735976191881396,
+            "resolution": 0.014552528081099228,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7658761398372425,
+            "pr_auc": 0.3156401087463211,
+            "distinct_values": 24,
+            "distinct_base_scores": 237,
+            "largest_tie_share": 0.3062215477996965
+          },
+          "delta_brier": -0.0016986905732788928
+        },
+        {
+          "fold": 8,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 372,
+            "brier": 0.08671502387443211,
+            "ece": 0.014779733973308694,
+            "reliability": 0.0014960473645729523,
+            "resolution": 0.0144587491618246,
+            "uncertainty": 0.10015229770586326,
+            "roc_auc": 0.762491769025048,
+            "pr_auc": 0.3393174554344803,
+            "distinct_values": 228,
+            "distinct_base_scores": 228,
+            "largest_tie_share": 0.025189681335356602
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 372,
+            "brier": 0.08544950964450569,
+            "ece": 0.010470058005186264,
+            "reliability": 0.000438262207276532,
+            "resolution": 0.01477566079180673,
+            "uncertainty": 0.10015229770586326,
+            "roc_auc": 0.7612161978229761,
+            "pr_auc": 0.32876021882245643,
+            "distinct_values": 26,
+            "distinct_base_scores": 228,
+            "largest_tie_share": 0.296206373292868
+          },
+          "delta_brier": -0.001265514229926412
+        },
+        {
+          "fold": 9,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 372,
+            "brier": 0.08327002110597033,
+            "ece": 0.023342319839264238,
+            "reliability": 0.00162840722223995,
+            "resolution": 0.018362386257394742,
+            "uncertainty": 0.10015229770586326,
+            "roc_auc": 0.7922055886020771,
+            "pr_auc": 0.377908814573489,
+            "distinct_values": 234,
+            "distinct_base_scores": 234,
+            "largest_tie_share": 0.025796661608497723
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 372,
+            "brier": 0.08192653294045162,
+            "ece": 0.011918298430426078,
+            "reliability": 0.00042527174384781084,
+            "resolution": 0.018641816979902907,
+            "uncertainty": 0.10015229770586326,
+            "roc_auc": 0.7910601495738285,
+            "pr_auc": 0.3677582825666319,
+            "distinct_values": 28,
+            "distinct_base_scores": 234,
+            "largest_tie_share": 0.34142640364188165
+          },
+          "delta_brier": -0.0013434881655187251
+        }
+      ],
+      "delta_brier": {
+        "definition": "Brier(isotonic) - Brier(sigmoid), per row then averaged",
+        "pooled": -0.0012703331693172597,
+        "bootstrap": {
+          "point": -0.0012703331693172597,
+          "lower": -0.0016273246120393219,
+          "upper": -0.0009393632539585662,
+          "replicates": 2000,
+          "seed": 42,
+          "level": 0.95,
+          "strata": 20
+        },
+        "folds_isotonic_lower": 10,
+        "folds": 10,
+        "fold_sd": 0.0004905560496756926
+      },
+      "stage4": {
+        "target_recall": 0.7,
+        "sigmoid": {
+          "threshold": 0.08444249560741927,
+          "achieved_recall": 0.7007004310344828,
+          "flags": 10217,
+          "distinct_confidences": 2307
+        },
+        "isotonic": {
+          "threshold": 0.06963136337039205,
+          "achieved_recall": 0.701239224137931,
+          "flags": 10280,
+          "distinct_confidences": 242
+        },
+        "vote_differences": {
+          "rows": 537,
+          "positives": 46,
+          "negatives": 491
+        },
+        "spearman": 0.9511326985025338
+      }
+    },
+    "blackbox_mlp": {
+      "pooled": {
+        "sigmoid": {
+          "rows": 32950,
+          "positives": 3712,
+          "brier": 0.08251755429448537,
+          "ece": 0.006010483314465798,
+          "reliability": 0.0001258280990984292,
+          "resolution": 0.017039129751427257,
+          "uncertainty": 0.09996426829633347,
+          "roc_auc": 0.7803916635929034,
+          "pr_auc": 0.368530011122676,
+          "distinct_values": 2287,
+          "distinct_base_scores": 2288,
+          "largest_tie_share": 0.0160546282245827
+        },
+        "isotonic": {
+          "rows": 32950,
+          "positives": 3712,
+          "brier": 0.08255194165241996,
+          "ece": 0.00500532078384777,
+          "reliability": 0.00014920171212953737,
+          "resolution": 0.017197188234930907,
+          "uncertainty": 0.09996426829633347,
+          "roc_auc": 0.7784449146245674,
+          "pr_auc": 0.36515774305979626,
+          "distinct_values": 289,
+          "distinct_base_scores": 2288,
+          "largest_tie_share": 0.04
+        }
+      },
+      "folds": [
+        {
+          "fold": 0,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.0815970714842426,
+            "ece": 0.0069119082330179,
+            "reliability": 0.00037905393029346863,
+            "resolution": 0.018007783909812475,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7733507619809661,
+            "pr_auc": 0.3960582887317252,
+            "distinct_values": 232,
+            "distinct_base_scores": 233,
+            "largest_tie_share": 0.030045523520485583
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08111646021926398,
+            "ece": 0.006611192278835219,
+            "reliability": 0.0006172629964806416,
+            "resolution": 0.019191111053936456,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.771456410558958,
+            "pr_auc": 0.37177063311368236,
+            "distinct_values": 30,
+            "distinct_base_scores": 233,
+            "largest_tie_share": 0.4
+          },
+          "delta_brier": -0.0004806112649786316
+        },
+        {
+          "fold": 1,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08276284807173159,
+            "ece": 0.014580755182659574,
+            "reliability": 0.0009586384790444514,
+            "resolution": 0.017448412068125734,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7704497771025918,
+            "pr_auc": 0.38268396092000423,
+            "distinct_values": 206,
+            "distinct_base_scores": 206,
+            "largest_tie_share": 0.160546282245827
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08336266105837806,
+            "ece": 0.018367146734718766,
+            "reliability": 0.0017403511261791902,
+            "resolution": 0.0180986915707868,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7648672018171024,
+            "pr_auc": 0.3587191707052306,
+            "distinct_values": 29,
+            "distinct_base_scores": 206,
+            "largest_tie_share": 0.31987860394537176
+          },
+          "delta_brier": 0.0005998129866464495
+        },
+        {
+          "fold": 2,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08057077483599893,
+            "ece": 0.011907909237277678,
+            "reliability": 0.0005312102330328719,
+            "resolution": 0.019823844504419964,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7990295942861567,
+            "pr_auc": 0.374881757175888,
+            "distinct_values": 229,
+            "distinct_base_scores": 229,
+            "largest_tie_share": 0.028831562974203338
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08059165649865342,
+            "ece": 0.008354786341672792,
+            "reliability": 0.000354403464065188,
+            "resolution": 0.019350462810443187,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7972997887175932,
+            "pr_auc": 0.3609500163302046,
+            "distinct_values": 26,
+            "distinct_base_scores": 229,
+            "largest_tie_share": 0.23945371775417298
+          },
+          "delta_brier": 2.0881662654490723e-05
+        },
+        {
+          "fold": 3,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08439116921760544,
+            "ece": 0.00904583181442689,
+            "reliability": 0.00018144546307369562,
+            "resolution": 0.014883598187465642,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7636125972986825,
+            "pr_auc": 0.3647801416471214,
+            "distinct_values": 228,
+            "distinct_base_scores": 228,
+            "largest_tie_share": 0.043095599393019726
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08468591395470204,
+            "ece": 0.011160904576664884,
+            "reliability": 0.00045725951075285104,
+            "resolution": 0.015254509424749915,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7625902928086549,
+            "pr_auc": 0.34304698651035553,
+            "distinct_values": 25,
+            "distinct_base_scores": 228,
+            "largest_tie_share": 0.15326251896813353
+          },
+          "delta_brier": 0.0002947447370966197
+        },
+        {
+          "fold": 4,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08219998775468751,
+            "ece": 0.012281716818946796,
+            "reliability": 0.000599936469423798,
+            "resolution": 0.017765815352452398,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7838549636616383,
+            "pr_auc": 0.38437587354433456,
+            "distinct_values": 236,
+            "distinct_base_scores": 236,
+            "largest_tie_share": 0.02276176024279211
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08175791280681184,
+            "ece": 0.006419319749451029,
+            "reliability": 0.00018626671750314637,
+            "resolution": 0.018012599320593542,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7807640827283084,
+            "pr_auc": 0.3705391890752946,
+            "distinct_values": 24,
+            "distinct_base_scores": 236,
+            "largest_tie_share": 0.35690440060698025
+          },
+          "delta_brier": -0.0004420749478756742
+        },
+        {
+          "fold": 5,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08091920482858629,
+            "ece": 0.013173057380401912,
+            "reliability": 0.000685892429316447,
+            "resolution": 0.018780663965611767,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7930612350249446,
+            "pr_auc": 0.3970698239055628,
+            "distinct_values": 228,
+            "distinct_base_scores": 228,
+            "largest_tie_share": 0.023975720789074353
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08086224719348888,
+            "ece": 0.008727748795614172,
+            "reliability": 0.00045348857220164847,
+            "resolution": 0.018846226739463918,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7917126043045564,
+            "pr_auc": 0.38818782010604974,
+            "distinct_values": 40,
+            "distinct_base_scores": 228,
+            "largest_tie_share": 0.1244309559939302
+          },
+          "delta_brier": -5.695763509740257e-05
+        },
+        {
+          "fold": 6,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.0808597825630788,
+            "ece": 0.01682750094544504,
+            "reliability": 0.0016900489668883198,
+            "resolution": 0.020337194405135636,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.8004469010070022,
+            "pr_auc": 0.3963849051785563,
+            "distinct_values": 229,
+            "distinct_base_scores": 229,
+            "largest_tie_share": 0.030349013657056147
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08075616728163779,
+            "ece": 0.015737714305285515,
+            "reliability": 0.0012783446035881068,
+            "resolution": 0.01992956258090309,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7994545558460329,
+            "pr_auc": 0.38286612310891843,
+            "distinct_values": 28,
+            "distinct_base_scores": 229,
+            "largest_tie_share": 0.2949924127465857
+          },
+          "delta_brier": -0.00010361528144101526
+        },
+        {
+          "fold": 7,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08529758305328342,
+            "ece": 0.01640755963061378,
+            "reliability": 0.00046208617753113883,
+            "resolution": 0.014653545774857226,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7657894882393501,
+            "pr_auc": 0.3337569802108945,
+            "distinct_values": 237,
+            "distinct_base_scores": 237,
+            "largest_tie_share": 0.024886191198786038
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 371,
+            "brier": 0.08544466070881336,
+            "ece": 0.01656526980874809,
+            "reliability": 0.0006739372351663007,
+            "resolution": 0.01482538781710553,
+            "uncertainty": 0.09991724252269843,
+            "roc_auc": 0.7645832795601786,
+            "pr_auc": 0.3273681891257678,
+            "distinct_values": 28,
+            "distinct_base_scores": 237,
+            "largest_tie_share": 0.31168437025796664
+          },
+          "delta_brier": 0.00014707765552992937
+        },
+        {
+          "fold": 8,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 372,
+            "brier": 0.0849578758775252,
+            "ece": 0.012292253876119734,
+            "reliability": 0.0008629977868493382,
+            "resolution": 0.015675626996760377,
+            "uncertainty": 0.10015229770586326,
+            "roc_auc": 0.7708855241521636,
+            "pr_auc": 0.3521700074017112,
+            "distinct_values": 228,
+            "distinct_base_scores": 228,
+            "largest_tie_share": 0.025189681335356602
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 372,
+            "brier": 0.08491177351690193,
+            "ece": 0.011715317276100765,
+            "reliability": 0.0010088541432292653,
+            "resolution": 0.0161249536094618,
+            "uncertainty": 0.10015229770586326,
+            "roc_auc": 0.7701631296465923,
+            "pr_auc": 0.34151790385656844,
+            "distinct_values": 34,
+            "distinct_base_scores": 228,
+            "largest_tie_share": 0.19726858877086495
+          },
+          "delta_brier": -4.610236062326249e-05
+        },
+        {
+          "fold": 9,
+          "sigmoid": {
+            "rows": 3295,
+            "positives": 372,
+            "brier": 0.08161924525811387,
+            "ece": 0.007662883690258785,
+            "reliability": 0.0004788037403793204,
+            "resolution": 0.018695338673004023,
+            "uncertainty": 0.10015229770586326,
+            "roc_auc": 0.7912197109318383,
+            "pr_auc": 0.37948805381492545,
+            "distinct_values": 234,
+            "distinct_base_scores": 234,
+            "largest_tie_share": 0.025796661608497723
+          },
+          "isotonic": {
+            "rows": 3295,
+            "positives": 372,
+            "brier": 0.08202996328554825,
+            "ece": 0.012511780357737564,
+            "reliability": 0.0009085947917982103,
+            "resolution": 0.018767693319212714,
+            "uncertainty": 0.10015229770586326,
+            "roc_auc": 0.7908661008906007,
+            "pr_auc": 0.36682369909952794,
+            "distinct_values": 27,
+            "distinct_base_scores": 234,
+            "largest_tie_share": 0.3638846737481032
+          },
+          "delta_brier": 0.000410718027434389
+        }
+      ],
+      "delta_brier": {
+        "definition": "Brier(isotonic) - Brier(sigmoid), per row then averaged",
+        "pooled": 3.43873579345892e-05,
+        "bootstrap": {
+          "point": 3.43873579345892e-05,
+          "lower": -0.00011123078118113443,
+          "upper": 0.00018268568521960846,
+          "replicates": 2000,
+          "seed": 42,
+          "level": 0.95,
+          "strata": 20
+        },
+        "folds_isotonic_lower": 5,
+        "folds": 10,
+        "fold_sd": 0.00034449730328767664
+      },
+      "stage4": {
+        "target_recall": 0.7,
+        "sigmoid": {
+          "threshold": 0.06852406911374345,
+          "achieved_recall": 0.7001616379310345,
+          "flags": 10208,
+          "distinct_confidences": 2287
+        },
+        "isotonic": {
+          "threshold": 0.06478704259148171,
+          "achieved_recall": 0.7120150862068966,
+          "flags": 10927,
+          "distinct_confidences": 289
+        },
+        "vote_differences": {
+          "rows": 1609,
+          "positives": 114,
+          "negatives": 1495
+        },
+        "spearman": 0.9725964791862455
+      }
+    }
+  },
+  "decision": {
+    "rule": "C1-C5, PR 39 execution contract 1.0.0, section 6.1 (conservative)",
+    "C1": "one family for both arms and every outer fold",
+    "C3": {
+      "glass_lr": {
+        "C3a": {
+          "pooled_delta_brier": -0.0012703331693172597,
+          "interval_upper": -0.0009393632539585662,
+          "passed": true
+        },
+        "C3b": {
+          "folds_isotonic_lower": 10,
+          "folds": 10,
+          "required": 8,
+          "passed": true
+        },
+        "C3c": {
+          "achieved_recall": 0.701239224137931,
+          "maximum": 0.71,
+          "passed": true
+        }
+      },
+      "blackbox_mlp": {
+        "C3a": {
+          "pooled_delta_brier": 3.43873579345892e-05,
+          "interval_upper": 0.00018268568521960846,
+          "passed": false
+        },
+        "C3b": {
+          "folds_isotonic_lower": 5,
+          "folds": 10,
+          "required": 8,
+          "passed": false
+        },
+        "C3c": {
+          "achieved_recall": 0.7120150862068966,
+          "maximum": 0.71,
+          "passed": false
+        }
+      }
+    },
+    "selected_family": "sigmoid",
+    "basis": "C3 does not hold in both arms: the C2 default applies (C4)",
+    "statement": "the family the registered conservative rule selects; not a claim that it is the better-calibrated family",
+    "neutral_alternative": {
+      "definition": "lower mean relative ΔBrier across the arms, sigmoid on ties (D1)",
+      "relative_delta_brier": {
+        "glass_lr": -0.015088438510920945,
+        "blackbox_mlp": 0.00041672778875472927
+      },
+      "mean_relative_delta_brier": -0.007335855361083108,
+      "would_select": "isotonic",
+      "status": "descriptive only (C5); does not change the selection"
+    }
+  },
+  "code": {
+    "head": "fb233f96cd1e2b16a9b11475046415e1fd1da8d3",
+    "uncommitted_tracked_changes": true,
+    "files_sha256_lf": {
+      "stage1_calibration/__init__.py": "e2ac51e981004d7c9ac0c50a5ec1b1fb07478e7e67147a243d2269bab50ebba0",
+      "stage1_calibration/__main__.py": "a60b7526de2d6fca45bd3d53d7107a64530f5d3064ca3ca09ef404b1d642359b",
+      "stage1_calibration/evidence.py": "1f7eab6af4f65627decac16665f2bfce53e374e359b79ee63b4f3791fd805c3f",
+      "stage1_calibration/runner.py": "746fa09c69304bec814c6d6d9e615c647299117b18b3055e50b30dfc787c13a6",
+      "shared/stage1/__init__.py": "ad839b54f4d2d19832197c49c94e6728b6b7d28c857da13eee044c7f7a419404",
+      "shared/stage1/calibration_guard.py": "b39d0cdc833aadddcd2843d1723ad9279b2ff31b907679a9b50e065b630ed4d8",
+      "shared/stage1/crossfit.py": "23f048c175b53068d54b66b77c0fd1221c28b2c0933c19f6d1c39b3fe5d65a2f",
+      "shared/stage1/feature_engineering.py": "06f1cfae0a15e35638d74fceec3927aebbe55bc6f242352e51d18b2c8a71429e",
+      "shared/stage1/labels.py": "a8bf171582072d201bda11049b87e6d4f07a6302a090ab4a26bf18783033053d",
+      "shared/stage1/oof_calibration.py": "7f1add295f0db1309c40158396e264111d744b8d3bb885d3d2e99e26bb039091",
+      "shared/metrics.py": "7b694a9cd151b9bf45643909513313efe87cd5d38a6dcb05ed96c8610acbf09e",
+      "shared/thresholds.py": "15094090e3b815c292616f6d3e42d152c70e8561b8f2bac1631e68eae7f3b737",
+      "shared/stage_io.py": "61df4a75e4a86d44acac7632af8342a96eb287e13cf907f4d1d3625467a1da88",
+      "glass_pipeline/lr/__init__.py": "205dc734201e35b0a2763f729c8c834d3c900fcb7521607a236862dbb7df5ab7",
+      "glass_pipeline/lr/artifacts.py": "c8d9ce6a31839f1077989968974b4360c57e80637a5e08d9ed89dd2ff7d6951e",
+      "glass_pipeline/lr/base_stage.py": "5c435db21fb5e7187e7cd418c5442795ad1c53eed36ddf98ac25823df4d0e5f5",
+      "glass_pipeline/lr/calibration.py": "63b91111156e84b77f9cface9b9ce7392f7e71fc5cc751781737ad15164f3c73",
+      "glass_pipeline/lr/correlation_analysis.py": "d78b5f096537d53019fc9e79dec4552b63753a002ff1d22401ebd97ebe310e9c",
+      "glass_pipeline/lr/evaluation.py": "11a29180b38431df2232c30bbc41e95372791640c718f7551f9de9657c85d1a0",
+      "glass_pipeline/lr/lr_stage.py": "a69d4d7fa5fdb7ebe88cf703b68ac7fbbb5735cac6bd738a61435cd588ceb03c",
+      "glass_pipeline/lr/lr_stage_calibrated.py": "4b7fec1d7e30c51e6e72f8f018c6381372436338c0c54cad12c4cdb37d1a64ac",
+      "glass_pipeline/lr/penalty.py": "e27065729c4a2c578e80dcd44f2aef96ff864b3d6997eb1eaaa9083762fc27bd",
+      "glass_pipeline/lr/tuning.py": "79f9a963c7dfcaa9ca912787f773ad2870b5301f84d511b422038a32506511ad",
+      "blackbox_pipeline/models/mlp/__init__.py": "a90c34c5d9eff0213a7f2b4888ad1321fd679fac34039d3ff2b39e81d15747ef",
+      "blackbox_pipeline/models/mlp/artifacts.py": "dedda32259ca816e8ec431cbe20b72c668cf0646a3aac39213bfc311a8038f4f",
+      "blackbox_pipeline/models/mlp/calibration.py": "aadf69cc5e28d4212a380cdb949b2ecc8245f3a109c8458c8457aabcc1c4be22",
+      "blackbox_pipeline/models/mlp/config.py": "dc9eb64119769cffe5258b9c182c6a68ca5c11f7af258d0d4ea7ac56052412a0",
+      "blackbox_pipeline/models/mlp/estimator.py": "e550ab0dd0443a4d3f1a47eeb5547a4fbd3866c51d2d5b5d7595592a13acb0c7",
+      "blackbox_pipeline/models/mlp/features.py": "19cba35873cd144e5b909c4f7de53d27bcbd83ebd97a5ed720a1da68097434cd",
+      "blackbox_pipeline/models/mlp/stage.py": "846b5202e80a7c6e519b3b00243f75eb5b62785effd0b745b26623c17aca90ab",
+      "blackbox_pipeline/models/mlp/stage1_mlp.py": "5763892f75900d3075c6cef1bc675c43e7528e3c9b01140740a5747b157c2234",
+      "blackbox_pipeline/models/mlp/thresholds.py": "5da026710332a96d6367b7fa5bc8fe663aba7fee4c6901edc7c886d2171b090a",
+      "blackbox_pipeline/models/mlp/tuning.py": "af93b74af20f37b6cda75da01fc5b14e5c635b7da6f136ab19b09d688999dd30",
+      "blackbox_pipeline/models/mlp/evaluation/__init__.py": "7a4f0f6b1dfec44cd9d13450472c9f881fd8bcded0782da4a648368b0d69e34a",
+      "blackbox_pipeline/models/mlp/evaluation/metrics.py": "c340548b3179ec2691a7f19f98a015a930e6943e1062140cc6cf74ab1df13d1a",
+      "glass_pipeline/meta_ebm/meta_stage.py": "f9fdd9b0e082b7b8b90e34446c6a44a2bd0a75e130f6a39153a16ec993d80992",
+      "stage2_crossfit/runner.py": "35c7a0c0e63de5d06f11c42c817ef0a31c45210de01545b5167aab7b14792030",
+      "data/preprocessing/bank_preprocessing.py": "250bea912216acf4b5a8be7ea352aa1ccdc1d8d26cb7377e832095ca9baaec5e",
+      "data/global_splits/split_manager.py": "d06c5330edc64194e7d26dcfc43a3d84f21cd54f6ccd8427f0ae5a89d5214150"
+    }
+  },
+  "environment": {
+    "python": "3.14.3",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.5.4",
+    "pandas": "3.0.6",
+    "scipy": "1.18.1",
+    "scikit_learn": "1.9.1",
+    "joblib": "1.6.0",
+    "optuna": "4.9.0"
+  }
+}

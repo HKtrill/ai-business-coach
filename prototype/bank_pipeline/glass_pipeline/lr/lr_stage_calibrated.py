@@ -39,7 +39,8 @@ PR 36 changes (audit F3 / F4 / F18)
   encodings when ``X_train_raw`` is passed (F3), and the ``StandardScaler``
   always (F4). Previously both were fitted once on the whole training split,
   so a held-out row's own label reached its OOF score through
-  ``euribor3m_local_rate`` / ``dow_month_encoded``.
+  the two target encodings (now ``subscribe_rate_by_euribor_bin`` /
+  ``subscribe_rate_by_dow_month``).
 * ``fit`` refuses target-encoded inputs without ``X_train_raw``.
 * The full-train fit (features, scaler, model, calibrator) is unchanged and
   still scores the test split.
@@ -81,7 +82,8 @@ from .artifacts   import save_artifact
 from shared.stage_io import StageOutput, fold_assignment
 from shared.thresholds import optimize_threshold_cv
 from shared.stage1.crossfit import build_fold_designs, preprocessing_record
-from shared.stage1.oof_calibration import Stage1CalibratedModel, calibrate_oof
+from shared.stage1.oof_calibration import (STAGE1_CALIBRATION_FAMILY, Stage1CalibratedModel,
+                                           calibrate_oof)
 from shared.stage1.labels import check_labels
 from shared.metrics import metrics_table as _metrics_table
 
@@ -94,7 +96,7 @@ class CalibratedLRStage(BaseLRStage):
 
     predict_proba() routes through calibrated_model.
     predict() uses optimal_threshold (CV-optimised for F2), not 0.5.
-    save() writes the full calibrated artifact consumed by Meta-EBM loader.
+    save() writes the full calibrated artifact consumed by the GLASS Arbiter loader.
 
     Attributes
     ----------
@@ -115,7 +117,7 @@ class CalibratedLRStage(BaseLRStage):
     def __init__(
         self,
         tune_hyperparameters: bool = True,
-        calibration_method: str = "auto",
+        calibration_method: str = STAGE1_CALIBRATION_FAMILY,   # the shared Stage 1 policy
         optimize_threshold: bool = True,
         cv_folds: int = 10,
         n_trials: int = 100,
@@ -158,6 +160,9 @@ class CalibratedLRStage(BaseLRStage):
         self.oof_preprocessing_: Optional[Dict]       = None
         self.calibration_oof_: Optional[Dict]         = None   # family -> OOF Series
         self.calibration_fold_family_: Optional[Dict] = None   # outer fold -> family
+        # The whole OOFCalibration, in memory only (never saved): the PR 39
+        # Step 2A evidence reads its base scores and per-fold inner Briers.
+        self.calibration_result_ = None
 
         # Cached splits for save() — populated in fit() / evaluate()
         self._X_train_full = None
@@ -282,6 +287,7 @@ class CalibratedLRStage(BaseLRStage):
         self.calibration_metrics = calibration.metrics
         self.calibration_oof_ = dict(calibration.calibrated_oof)
         self.calibration_fold_family_ = dict(calibration.fold_family)
+        self.calibration_result_ = calibration
         self.calibrated_model = Stage1CalibratedModel(
             self.model, calibration.calibrator, calibration.method)
         self.oof_provenance_ = calibration.provenance
@@ -501,6 +507,7 @@ def train_lr_stage(
     save: bool = True,
     output_dir: str = "./models/lr",
     X_train_raw: Optional[pd.DataFrame] = None,
+    calibration_method: str = STAGE1_CALIBRATION_FAMILY,
 ) -> Tuple["CalibratedLRStage", Dict]:
     """
     Train the production calibrated LR stage on GLOBAL_SPLIT data.
@@ -508,6 +515,8 @@ def train_lr_stage(
     No internal train/test splitting — receives the global splits directly.
     ``X_train_raw``: the raw training rows ``X_train`` was engineered from;
     required for the target-encoded LR features (refit per fold, audit F3).
+    ``calibration_method``: the shared Stage 1 family by default (PR 39,
+    Step 2A); ``"auto"`` is for diagnostics only.
 
     Returns
     -------
@@ -522,7 +531,7 @@ def train_lr_stage(
 
     stage = CalibratedLRStage(
         tune_hyperparameters=True,
-        calibration_method="auto",
+        calibration_method=calibration_method,
         optimize_threshold=True,
         cv_folds=10,
     )

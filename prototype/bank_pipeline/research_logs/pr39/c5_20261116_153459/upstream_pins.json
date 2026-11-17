@@ -1,0 +1,49 @@
+{
+  "files": {
+    "stage1.lr": {
+      "bytes": 942344,
+      "path": "models/lr/lr_calibrated_20261115_204501.joblib",
+      "producer": "GLASS notebook Cell 8 (train_calibrated_lr_stage)",
+      "sha256": "d3a05760fa7594e34e864b652c26b9158b8fe29df1f90ff7a59a4f530c78949c"
+    },
+    "stage1.mlp": {
+      "bytes": 949675,
+      "path": "models/mlp/stage1_mlp_20261116_094252_602977.joblib",
+      "producer": "black-box notebook Cell 14A (save_stage1_mlp)",
+      "sha256": "dd8922d94bb7370610c237e0f2f07810987a044419758aeda3918d865f109d70"
+    },
+    "stage2.glass_router": {
+      "bytes": 2481389,
+      "path": "models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+      "producer": "PR 38 primary run c3_20261112_153333 (stage2_crossfit)",
+      "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+    },
+    "stage2.rf_router": {
+      "bytes": 4158905,
+      "path": "models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+      "producer": "PR 38 primary run c3_20261112_153333 (stage2_crossfit)",
+      "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+    },
+    "stage3.ebm": {
+      "bytes": 8296795,
+      "path": "models/ebm/ebm_stage3_20261116_001529_813890.joblib",
+      "producer": "GLASS notebook Cell 18 (train_ebm_stage)",
+      "sha256": "d886ae5dcbdb077dda934680f8a05902d83a01f254f7d5a5f0667e321e24b631"
+    },
+    "stage3.xgb": {
+      "bytes": 10720121,
+      "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib",
+      "producer": "black-box notebook Cell 31 (train_xgb_stage)",
+      "sha256": "8bf1d66ecd54236cdf7e6ebb10ec18e40f24d95a5b33a1ce122dac48b2dd2780"
+    },
+    "stage4.glass_arbiter": {
+      "bytes": 2412622,
+      "path": "models/glass_arbiter/glass_arbiter_20261116_153618_531148.joblib",
+      "producer": "GLASS notebook Cell 19 (train_glass_arbiter)",
+      "sha256": "dac936b6a4dc5039382563cdc57add6bb2f426a9dec6b84fcb36b676e76cd2b9"
+    }
+  },
+  "format": "pr39.upstream_pins/1",
+  "run_id": "c5_20261116_153459",
+  "written_utc": "2026-11-16T23:36:19+00:00"
+}

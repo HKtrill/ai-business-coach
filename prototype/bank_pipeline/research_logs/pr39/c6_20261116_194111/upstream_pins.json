@@ -1,0 +1,37 @@
+{
+  "files": {
+    "stage1.lr": {
+      "bytes": 942344,
+      "path": "models/lr/lr_calibrated_20261116_205239.joblib",
+      "producer": "GLASS notebook Cell 8 (train_calibrated_lr_stage)",
+      "sha256": "2d789f883ec5b8a383795bf0b5d9217db3f3b479354adcfbbebdf5f48b224dba"
+    },
+    "stage2.glass_router": {
+      "bytes": 2481389,
+      "path": "models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+      "producer": "PR 38 primary run c3_20261112_153333 (stage2_crossfit)",
+      "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+    },
+    "stage2.rf_router": {
+      "bytes": 4158905,
+      "path": "models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+      "producer": "PR 38 primary run c3_20261112_153333 (stage2_crossfit)",
+      "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+    },
+    "stage3.ebm": {
+      "bytes": 8300638,
+      "path": "models/ebm/ebm_stage3_20261117_002008_351463.joblib",
+      "producer": "GLASS notebook Cell 18 (train_ebm_stage)",
+      "sha256": "1f73a4c0cb0ef820b0c7a0773f9aaa6e9cedf72e49f600d30e1d4885f89cfcf7"
+    },
+    "stage4.glass_arbiter": {
+      "bytes": 2412478,
+      "path": "models/glass_arbiter/glass_arbiter_20261117_002010_074812.joblib",
+      "producer": "GLASS notebook Cell 19 (train_glass_arbiter)",
+      "sha256": "21c97ed1635e424495a8cd7ba1adec684f9a29d80d25f20043f88761c38f66bf"
+    }
+  },
+  "format": "pr39.upstream_pins/1",
+  "run_id": "c6_20261116_194111",
+  "written_utc": "2026-11-17T08:20:12+00:00"
+}

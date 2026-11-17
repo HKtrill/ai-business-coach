@@ -1,5 +1,5 @@
 """
-GLASS Stage 4 (Meta-EBM) — input contract + behaviour.
+GLASS Stage 4 (GLASS Arbiter) — input contract + behaviour.
 
 Fixtures: ``tests.support.stage4_world`` (real StageOutput / Stage3Artifact
 classes, real router artifact layout). Run from ``prototype/bank_pipeline``:
@@ -19,9 +19,9 @@ from tests.support.stage4_world import (
 )
 from shared.validation import ValidationError
 
-from glass_pipeline.meta_ebm import meta_stage as ms
-from glass_pipeline.meta_ebm.loader import load_stage_outputs
-from glass_pipeline.meta_ebm.meta_stage import find_recall_threshold, train_meta_stage
+from glass_pipeline.glass_arbiter import meta_stage as ms
+from glass_pipeline.glass_arbiter.loader import load_stage_outputs
+from glass_pipeline.glass_arbiter.meta_stage import find_recall_threshold, train_glass_arbiter
 
 
 @pytest.fixture
@@ -47,14 +47,14 @@ def load(w, arts, tmp_path):
 
 def run(w, arts, tmp_path, **kw):
     p = dump(tmp_path, arts)
-    return train_meta_stage(w["GS"], lr_path=p["lr"], glass_path=p["router"],
+    return train_glass_arbiter(w["GS"], lr_path=p["lr"], glass_path=p["router"],
                             ebm_path=p["ebm"], artifact_dir=str(tmp_path / "meta"),
                             verbose=kw.pop("verbose", False), **kw)
 
 
 @pytest.fixture(autouse=True)
 def _router_scheme(monkeypatch):
-    """train_meta_stage has no extra_fingerprints arg: route it via the loader."""
+    """train_glass_arbiter has no extra_fingerprints arg: route it via the loader."""
     real = ms.load_stage_outputs
     monkeypatch.setattr(ms, "load_stage_outputs",
                         lambda *a, **k: real(*a, extra_fingerprints=ROUTER_FP, **k))
@@ -68,9 +68,23 @@ def test_current_contracts_load(world):
     np.testing.assert_array_equal(inp["lr"].train_proba, so["train_proba_oof"].to_numpy())
     np.testing.assert_array_equal(inp["lr"].test_proba, so["test_proba"].to_numpy())
     assert inp["lr"].fingerprint_scheme == "stage_io"
-    assert inp["glass"].fingerprint_scheme == inp["ebm"].fingerprint_scheme == "router"
+    # GLASS Router: the router scheme; GLASS EBM: the stage_io scheme GLASS Cell 17 stamps
+    assert (inp["glass"].fingerprint_scheme, inp["ebm"].fingerprint_scheme) == ("router", "stage_io")
     assert inp["glass"].train_source == "train_proba"            # flag layout
     assert all(r["passed"] for r in inp.validation)
+
+
+def test_the_world_stamps_each_stage3_artifact_as_its_notebook_does():
+    """GLASS Cell 17: ``shared.split_fingerprint`` over rows and labels (stage_io);
+    black-box Cell 30: the router scheme over rows. The GLASS EBM therefore enters
+    Stage 4 under the label-bearing scheme, in this test world as in the notebooks."""
+    from shared import split_fingerprint as glass_cell_17_fp
+    w = build_world()
+    GS = w["GS"]
+    ebm, xgb = make_stage3(w), make_stage3(w, family="xgboost")
+    assert ebm.split_fingerprint == w["fp_io"] == glass_cell_17_fp(
+        GS["X_train"].index, GS["X_test"].index, GS["y_train"], GS["y_test"])
+    assert xgb.split_fingerprint == w["fp_router"] != ebm.split_fingerprint
 
 
 def test_stage_output_file_form_also_loads(world):
@@ -139,7 +153,7 @@ def test_router_semantics_inverted_fails(world):
 def test_end_to_end_and_provenance(world):
     w, arts, tmp = world
     art, path = run(w, arts, tmp)
-    assert joblib.load(path)["schema"] == "meta_ebm/2"
+    assert joblib.load(path)["schema"] == "glass_arbiter/1"
     prov = art["stage4_inputs"]["streams"]
     assert prov["ebm"]["train_source"] == "Stage3Artifact.oof['proba_calibrated']"
     assert art["artifact_thresholds"]["used_by_stage4"] is False

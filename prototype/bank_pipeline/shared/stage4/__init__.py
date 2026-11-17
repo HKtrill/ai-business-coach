@@ -1,7 +1,7 @@
 """
 shared.stage4
 =============
-Stage 4 input contract shared by the GLASS Meta-EBM and the black-box
+Stage 4 input contract shared by the GLASS Arbiter and the black-box
 Meta-XGB: one set of artifact adapters and one set of split / index / fold /
 OOF-honesty / router-semantics checks, so "inputs verified" means the same
 thing in both arms.

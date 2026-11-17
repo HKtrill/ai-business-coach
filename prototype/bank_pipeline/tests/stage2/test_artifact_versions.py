@@ -24,7 +24,7 @@ import joblib
 import pandas as pd
 import pytest
 
-from blackbox_pipeline.models.mlp import load_stage1_mlp, save_stage1_mlp
+from blackbox_pipeline.models.mlp import STAGE1_FEATURES, load_stage1_mlp, save_stage1_mlp
 from blackbox_pipeline.models.rf_router import (find_artifact_for_split, load_rf_router,
                                                 save_rf_router)
 from shared import artifact_versions as av
@@ -63,7 +63,9 @@ def _router(t1=0.2, fingerprint="FP"):
 def _mlp(seed=0):
     frame = pd.DataFrame({"threshold": [0.1, 0.2], "f2": [0.3, 0.4 + seed]})
     return SimpleNamespace(
-        fitted=True, config=_dicty(hidden=8), feature_names_=["a"], scaler={"s": seed},
+        fitted=True, feature_names_=list(STAGE1_FEATURES), scaler={"s": seed},
+        config=SimpleNamespace(calibration_method="isotonic",          # the request
+                               to_dict=lambda: {"hidden": 8, "calibration_method": "isotonic"}),
         model=SimpleNamespace(history_=frame), calibrated_model={"c": seed},
         best_params={"lr": 0.1}, best_cv_roc_auc=0.7, calibration_method="isotonic",
         calibration_metrics={}, optimal_threshold=0.3, cv_f2=0.5,

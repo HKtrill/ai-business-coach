@@ -37,7 +37,8 @@ from glass_pipeline.lr.lr_stage_calibrated import CalibratedLRStage
 from shared.stage1 import calibration_guard
 from shared.stage1.calibration_guard import CalibrationLeakageError, assert_refittable
 from shared.stage1.feature_engineering import LR_FEATURES
-from shared.stage1.oof_calibration import CALIBRATION_FAMILIES, Stage1CalibratedModel
+from shared.stage1.oof_calibration import (CALIBRATION_FAMILIES, STAGE1_CALIBRATION_FAMILY,
+                                           Stage1CalibratedModel)
 from shared.stage_io import THRESHOLD_SOURCES, ThresholdContaminationError, fold_assignment
 from tests.stage1.conftest import (
     LABEL_FREE_FEATURES, fit_glass_stage1, fold_levels, stage1_split, sub_log,
@@ -137,7 +138,7 @@ def test_contaminated_threshold_cannot_produce_train_decisions(lr_run):
 # ----------------------------------------------------------------------
 def test_calibration_records_the_winner_and_the_request(lr_run):
     stage, out = lr_run.stage, lr_run.output
-    assert stage.calibration_requested == out.calibration_requested == "auto"
+    assert stage.calibration_requested == out.calibration_requested == STAGE1_CALIBRATION_FAMILY
     assert stage.calibration_method == out.calibration_method
     assert stage.calibration_method in CALIBRATION_FAMILIES
     assert isinstance(stage.calibrated_model, Stage1CalibratedModel)
@@ -189,7 +190,7 @@ def test_scoring_refuses_a_changed_schema(lr_run, name):
 
 def test_a_dtype_only_change_scores_identically(lr_run):
     X = lr_run.X_test
-    np.testing.assert_allclose(lr_run.stage.predict_proba(mut.cast_column(X, "cellular_crisis")),
+    np.testing.assert_allclose(lr_run.stage.predict_proba(mut.cast_column(X, "cellular_downturn")),
                                lr_run.stage.predict_proba(X))
 
 

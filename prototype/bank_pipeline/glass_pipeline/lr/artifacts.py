@@ -3,7 +3,7 @@ lr.artifacts
 ============
 Save / load LR stage artifacts aligned with GLOBAL_SPLIT.
 
-Artifact key contract (v2.0)
+Artifact key contract (v3.0)
 ----------------------------
     train_proba_oof     OUT-OF-FOLD calibrated train probabilities  (Series)
     train_fold_id       fold each train row was held out in         (Series)
@@ -12,6 +12,17 @@ Artifact key contract (v2.0)
     optimal_threshold   CV-optimised F2 threshold
     threshold_source    HOW that threshold was chosen
     stage_output        the shared StageOutput contract, as a dict
+    feature_contract    Stage 1 feature contract: id, version, ordered
+                        features, fingerprint (v3.0)
+
+v3.0 (PR 39): Stage 1 feature names
+-----------------------------------
+The three Stage 1 features were renamed (values unchanged; see
+``shared.stage1.feature_engineering.STAGE1_FEATURE_RENAMES``). v3.0 artifacts
+carry feature contract 2.0.0 and record it under ``feature_contract``. v2.0
+artifacts keep the names they were saved with (contract 1.0.0) and still load
+as they are; nothing in them is renamed. ``artifact_feature_contract`` reads
+either.
 
 What changed from v1.0, and why
 -------------------------------
@@ -38,8 +49,16 @@ import numpy as np
 import pandas as pd
 import sklearn
 
+from shared.stage1.feature_engineering import (
+    artifact_feature_contract,
+    current_feature_contract_record,
+)
+
 #: Bumped when the artifact layout changes.
-ARTIFACT_VERSION = "2.0"
+ARTIFACT_VERSION = "3.0"
+#: Versions ``load_artifact`` reads without a warning: 2.0 holds the
+#: historical feature names (contract 1.0.0), 3.0 the current ones (2.0.0).
+READABLE_ARTIFACT_VERSIONS = ("2.0", "3.0")
 
 
 def save_artifact(stage, output_dir: str = "./models/lr") -> dict:
@@ -54,6 +73,7 @@ def save_artifact(stage, output_dir: str = "./models/lr") -> dict:
             "current CalibratedLRStage."
         )
 
+    feature_contract = current_feature_contract_record(stage.feature_names, "LR artifact")
     out = stage.to_stage_output()
 
     print(f"\n💾 Saving LR artifact (v{ARTIFACT_VERSION})...")
@@ -78,6 +98,7 @@ def save_artifact(stage, output_dir: str = "./models/lr") -> dict:
         "calibrated_model": stage.calibrated_model,
         "scaler":           stage.scaler,
         "feature_names":    stage.feature_names,
+        "feature_contract": feature_contract,
 
         # ── Predictions (GLOBAL_SPLIT aligned, indexed) ───────────────────────
         # train side is OUT-OF-FOLD; test side is from the full-train model.
@@ -116,12 +137,20 @@ def save_artifact(stage, output_dir: str = "./models/lr") -> dict:
 
 
 def load_artifact(path: str) -> dict:
-    """Load a saved calibrated LR artifact, warning on a version mismatch."""
+    """
+    Load a saved calibrated LR artifact as it was saved.
+
+    v2.0 (historical feature names) and v3.0 load silently; a v3.0 artifact
+    whose ``feature_contract`` disagrees with its feature names is refused.
+    Any other version loads with a warning.
+    """
     artifact = joblib.load(path)
     version = artifact.get("artifact_version")
-    if version != ARTIFACT_VERSION:
+    if version == ARTIFACT_VERSION:
+        artifact_feature_contract(artifact)          # raises on a mismatched record
+    elif version not in READABLE_ARTIFACT_VERSIONS:
         print(
-            f"⚠️  artifact version {version} (expected {ARTIFACT_VERSION}). "
+            f"⚠️  artifact version {version} (expected one of {READABLE_ARTIFACT_VERSIONS}). "
             "v1.0 artifacts carry IN-SAMPLE train predictions under "
             "'train_predictions' — do not feed them to Stage 4."
         )

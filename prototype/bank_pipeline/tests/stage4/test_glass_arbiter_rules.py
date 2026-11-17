@@ -1,6 +1,6 @@
 """
-GLASS Stage 4 Meta-EBM: the weighted-confidence arbiter and the train-side
-pieces that configure it (glass_pipeline.meta_ebm: arbiter, weighting,
+GLASS Stage 4 GLASS Arbiter: the weighted-confidence arbiter and the train-side
+pieces that configure it (glass_pipeline.glass_arbiter: arbiter, weighting,
 calibration, tuning, evaluation).
 
 Contract: the arbiter equals an independent vectorised statement of its rule
@@ -33,16 +33,16 @@ import pytest
 from sklearn.metrics import accuracy_score, brier_score_loss, fbeta_score
 
 from glass_pipeline.glass_router.pipeline.glass_router_pipeline import GlassRouterPipeline
-from glass_pipeline.meta_ebm.arbiter import meta_arbiter
-from glass_pipeline.meta_ebm.calibration import compute_calibration
-from glass_pipeline.meta_ebm.evaluation import (
+from glass_pipeline.glass_arbiter.arbiter import meta_arbiter
+from glass_pipeline.glass_arbiter.calibration import compute_calibration
+from glass_pipeline.glass_arbiter.evaluation import (
     analyze_disagreements, compute_metrics, evaluate_with_abstention,
 )
-from glass_pipeline.meta_ebm.router_evidence import (
+from glass_pipeline.glass_arbiter.router_evidence import (
     directional_confidence, fold_base_rates, glass_blend_mismatch, rule_positive_rate,
 )
-from glass_pipeline.meta_ebm.tuning import tune_arbiter_threshold
-from glass_pipeline.meta_ebm.weighting import compute_hybrid_weights
+from glass_pipeline.glass_arbiter.tuning import tune_arbiter_threshold
+from glass_pipeline.glass_arbiter.weighting import compute_hybrid_weights
 from shared.metrics import calculate_ece
 from shared.stage4 import ABSTENTION_GRID, ABSTENTION_SEARCH, tune_min_confidence
 
@@ -354,7 +354,7 @@ def test_calibration_diagnostic_is_the_shared_ece_and_brier(streams):
 
 
 def test_abstention_cut_is_the_shared_stage4_rule_on_the_arbiters_own_confidence(streams, monkeypatch):
-    """``tune_arbiter_threshold`` (Meta-EBM) and ``tune_min_confidence``
+    """``tune_arbiter_threshold`` (GLASS Arbiter) and ``tune_min_confidence``
     (shared, Meta-XGB) pick the same cut from the arbiter's own confidence,
     searched exactly over its distinct values (F30); the arbiter is run once,
     without abstention."""

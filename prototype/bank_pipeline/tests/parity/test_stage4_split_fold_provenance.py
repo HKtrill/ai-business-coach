@@ -53,7 +53,7 @@ import pytest
 from sklearn.model_selection import KFold
 
 from blackbox_pipeline.models.meta_xgb import load_blackbox_stage4_inputs
-from glass_pipeline.meta_ebm.loader import load_stage_outputs
+from glass_pipeline.glass_arbiter.loader import load_stage_outputs
 import shared.stage4.contract as contract
 from shared.stage4 import build_stage4_inputs, router_stream, stage_output_stream
 from shared.stage_io import fold_assignment

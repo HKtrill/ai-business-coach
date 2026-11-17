@@ -1,16 +1,19 @@
 """
-glass_router.rf.binning
-=======================
-Lift-driven binary encoding of continuous RF features for GLASS Router input.
+shared.stage2.binning
+=====================
+Lift-driven binary encoding of the eight continuous Stage 2 source features
+(``RF_SOURCE_FEATURES``) into the 29 bins both Stage 2 routers read: the
+GLASS Router (rule conjunctions) and the black-box RF Router. (Before the
+move to ``shared``, this module was ``glass_router.rf.binning``.)
 
 Direct port of feature_research.model_training.rf.binning.
 Thresholds locked from Cell 13C lift analysis — source of truth.
 
 Design rationale
 ----------------
-GLASS Router operates on binary conjunctions — it requires binary inputs.
-Multi-bin encoding (rather than simple above/below threshold) lets the RF
-learn interactions between levels of the same feature (e.g. nsd_hot AND
+The GLASS Router operates on binary conjunctions — it requires binary inputs.
+Multi-bin encoding (rather than simple above/below threshold) lets a router
+combine one level of a feature with levels of others (e.g. nsd_hot AND
 jed_cold) without collapsing the signal into a single flag.
 
 Public API
@@ -23,11 +26,18 @@ validate_binary_features(df_binned, target_col, verbose) → bool
     Mutual exclusivity + completeness check across all 7 feature groups.
     Raises AssertionError on first failure.
 
+binning_identity() → dict
+    PR 39 binning identity: SHA-256 of the canonical JSON of
+    BINNING_STRATEGY and RF_FEATURES_BINARY (execution contract §7.3).
+
 RF_FEATURES_BINARY   Canonical 29-feature list (model-ready input).
 BINNING_STRATEGY     Dict of locked threshold definitions (source of truth).
 """
 
 from __future__ import annotations
+
+import hashlib
+import json
 
 import pandas as pd
 
@@ -173,6 +183,26 @@ BINNING_STRATEGY: dict = {
         "passthrough": "cpi_cellular",
     },
 }
+
+
+# ---------------------------------------------------------------------------
+# Binning identity (PR 39 execution contract §7.3, finding F6)
+# ---------------------------------------------------------------------------
+def binning_identity() -> dict:
+    """
+    The Stage 2 binning identity: the SHA-256 of the canonical JSON (sorted
+    keys, no whitespace, tuples as lists) of ``BINNING_STRATEGY`` and
+    ``RF_FEATURES_BINARY``. Any threshold, bin, name or order change gives a
+    new identity. Recorded by the Commit 3A record and by every PR 39 Stage 2
+    run, whether or not the bins change.
+    """
+    canonical = json.dumps(
+        {"BINNING_STRATEGY": BINNING_STRATEGY, "RF_FEATURES_BINARY": RF_FEATURES_BINARY},
+        sort_keys=True, separators=(",", ":"), ensure_ascii=True, allow_nan=False,
+    )
+    digest = hashlib.sha256(canonical.encode("ascii")).hexdigest()
+    return {"id": "stage2-binning", "sha256": digest, "fingerprint": digest[:16],
+            "covers": ["BINNING_STRATEGY", "RF_FEATURES_BINARY"]}
 
 
 # ---------------------------------------------------------------------------

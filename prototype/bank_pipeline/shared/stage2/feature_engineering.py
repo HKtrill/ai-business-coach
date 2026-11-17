@@ -1,7 +1,9 @@
 """
-glass_router.rf.feature_engineering
-===================================
-Stage 2 feature engineering shared by GLASS Router and the RF router.
+shared.stage2.feature_engineering
+=================================
+Stage 2 feature engineering shared by the GLASS Router and the black-box RF
+Router. (Before the move to ``shared``, this module was
+``glass_router.rf.feature_engineering``.)
 
 Produces 8 continuous source features from preprocessed UCI bank data,
 then converts them to 29 mutually-exclusive binary bins via binning.py.

@@ -1,0 +1,1487 @@
+{
+  "accepted": false,
+  "artifacts": {
+    "stage1.lr": {
+      "bytes": 942344,
+      "consumers": [
+        "black-box Cell 14A (GLASS_S1_PATH)",
+        "GLASS Cell 19",
+        "black-box Cell 37"
+      ],
+      "path": "models/lr/lr_calibrated_20261115_204501.joblib",
+      "producer": "GLASS notebook Cell 8 (train_calibrated_lr_stage)",
+      "sha256": "d3a05760fa7594e34e864b652c26b9158b8fe29df1f90ff7a59a4f530c78949c"
+    },
+    "stage1.mlp": {
+      "bytes": 949675,
+      "consumers": [
+        "black-box Cells 36-37 (MLP_S1_PATH)"
+      ],
+      "path": "models/mlp/stage1_mlp_20261116_094252_602977.joblib",
+      "producer": "black-box notebook Cell 14A (save_stage1_mlp)",
+      "sha256": "dd8922d94bb7370610c237e0f2f07810987a044419758aeda3918d865f109d70"
+    },
+    "stage2.glass_router": {
+      "bytes": 2481389,
+      "consumers": [
+        "GLASS Cell 8B / Cell 19 (glass_path)",
+        "black-box Cell 18 / Cell 37 (GLASS_BUNDLE_PATH)"
+      ],
+      "path": "models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+      "producer": "PR 38 primary run c3_20261112_153333 (stage2_crossfit)",
+      "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+    },
+    "stage2.rf_router": {
+      "bytes": 4158905,
+      "consumers": [
+        "black-box Cell 18 / Cells 35-37 (RF_ROUTER_PATH)"
+      ],
+      "path": "models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+      "producer": "PR 38 primary run c3_20261112_153333 (stage2_crossfit)",
+      "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+    },
+    "stage3.ebm": {
+      "bytes": 8296795,
+      "consumers": [
+        "black-box Cell 33 (_ebm_path)",
+        "GLASS Cell 19",
+        "black-box Cell 37"
+      ],
+      "path": "models/ebm/ebm_stage3_20261116_001529_813890.joblib",
+      "producer": "GLASS notebook Cell 18 (train_ebm_stage)",
+      "sha256": "d886ae5dcbdb077dda934680f8a05902d83a01f254f7d5a5f0667e321e24b631"
+    },
+    "stage3.xgb": {
+      "bytes": 10720121,
+      "consumers": [
+        "black-box Cells 36-37 (XGB_STAGE3_PATH)"
+      ],
+      "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib",
+      "producer": "black-box notebook Cell 31 (train_xgb_stage)",
+      "sha256": "8bf1d66ecd54236cdf7e6ebb10ec18e40f24d95a5b33a1ce122dac48b2dd2780"
+    }
+  },
+  "code": {
+    "code_sha256": "4ea172a07af5dc658ecdfa6232cca9fe05ca8e31bc09b1d02b187324bb78b80e",
+    "files": 431,
+    "head": "5951ee396196240741fba17afe5619eda37f129e"
+  },
+  "code_identity_notes": {
+    "after": [
+      "[2E verify] OK: pr37_stage2_pre_correction_v1: 19 files match MANIFEST.json (manifest sha256 905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b)"
+    ],
+    "before": [
+      "[2E verify] OK: pr37_stage2_pre_correction_v1: 19 files match MANIFEST.json (manifest sha256 905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b)"
+    ],
+    "expected": "stage2_baseline_archive.py --check reports the deliberate pin changes (tests/stage2/test_stage2_operating_contract_v2.DELIBERATE_PIN_CHANGES): shared/stage2/diagnostics/boundary.py (2B) and tests/support/artifact_audit.py (3B; 4A G10)"
+  },
+  "code_transition": {
+    "authorization": {
+      "given_by": "the owner, by running finalize-transition",
+      "statement": "Owner authorizes commit4a-t1 for run c4_20261115_204125: validate Stage 3 split identity across the registered stage_io and router fingerprint schemes, preserving all model artifacts and execution evidence without retraining. PR 39 Commit 4A, 2026-11-16."
+    },
+    "code": {
+      "changed_files": [
+        "tests/upstream_regeneration/test_finalize_transition.py",
+        "tests/upstream_regeneration/test_stage3_split_identity.py",
+        "tests/upstream_regeneration/test_upstream_checks.py",
+        "upstream_regeneration/__init__.py",
+        "upstream_regeneration/checks.py",
+        "upstream_regeneration/runner.py",
+        "upstream_regeneration/transition.py"
+      ],
+      "from": {
+        "code_sha256": "863970bc6910a2ac3063ffd29e8af09d992e4ff8298abe45ab2800fc95afa8c0",
+        "files": 428,
+        "head": "5951ee396196240741fba17afe5619eda37f129e"
+      },
+      "to": {
+        "code_sha256": "4ea172a07af5dc658ecdfa6232cca9fe05ca8e31bc09b1d02b187324bb78b80e",
+        "files": 431,
+        "head": "5951ee396196240741fba17afe5619eda37f129e"
+      }
+    },
+    "failed_finalize": {
+      "bytes": 52581,
+      "path": "research_logs/pr39/c4_20261115_204125/failed/run_record_20261116T161550658144Z.json",
+      "read": false,
+      "sha256": "046abbffb1a62f362236d55fbd4501d718abecd88b066451eb6d4d01bbcd3396"
+    },
+    "record": "finalize_transition.json",
+    "resolves": {
+      "cause": "assert_matched_protocol compares split_fingerprint as a string; GLASS Cell 17 stamps the stage_io scheme and black-box Cell 30 the router scheme (shared.stage4.FINGERPRINT_SCHEMES). Both are checked against GLOBAL_SPLIT under their own scheme with check_split_identity, the artifacts' recorded rows and labels are compared with GLOBAL_SPLIT's, and only then is split_fingerprint exempt from the string comparison. shared.stage3.protocol is unchanged.",
+      "failed_check": "stage 3: one shared protocol, family-specific fields only (assert_matched_protocol)",
+      "gate": "A4.4",
+      "replaced_by": [
+        "stage 3: both arms were fitted on the frozen GLOBAL_SPLIT (each split fingerprint is GLOBAL_SPLIT's under a registered scheme, check_split_identity; its recorded train/test rows, order and labels are GLOBAL_SPLIT's; its canonical stage_io fingerprint is the frozen one)",
+        "stage 3: one shared protocol, family-specific fields only (assert_matched_protocol; split_fingerprint by its canonical identity)"
+      ]
+    },
+    "sha256": "bc3b3fa2335e5254c4e8caf554df3184699b2ee77ccba9729fdb47c5b6d6d389",
+    "transition_id": "commit4a-t1: A4.4 Stage 3 protocol comparison across the two registered split-fingerprint schemes"
+  },
+  "contract": {
+    "decisions": [
+      "D3",
+      "D4",
+      "D7"
+    ],
+    "gates": [
+      "A4.1",
+      "A4.2",
+      "A4.3",
+      "A4.4",
+      "A4.5",
+      "A4.6"
+    ],
+    "record": "documentation/methodology/pr39_execution_contract.md",
+    "sections": [
+      "5.1",
+      "5.2",
+      "5.3",
+      "5.4",
+      "6.3",
+      "6.4",
+      "7.1",
+      "7.2",
+      "7.3",
+      "7.4",
+      "7.5"
+    ],
+    "version": "1.0.0"
+  },
+  "environment": {
+    "executable": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+    "os": "Windows",
+    "packages": {
+      "interpret": "0.7.8",
+      "ipykernel": "6.31.0",
+      "joblib": "1.6.0",
+      "nbclient": "0.11.0",
+      "nbformat": "5.11.1",
+      "numpy": "2.5.4",
+      "optuna": "4.9.0",
+      "pandas": "3.0.6",
+      "pulp": "3.3.2",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1",
+      "xgboost": "3.4.1"
+    },
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.14.3"
+  },
+  "evidence": {
+    "preservation_after": {
+      "baseline": {
+        "archive_check": {
+          "command": "python research_logs/baselines/stage2_baseline_archive.py --check --sums C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\SHA256SUMS.txt",
+          "exit_code": 0,
+          "output_tail": [
+            "[archive] sources: C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\bank_pipeline",
+            "[2E check] OK: pr37_stage2_pre_correction_v1 reproduced from the recorded sources (reproduced_with_code_drift; 19 files)",
+            "[2E check] note: the diagnostic code differs from the code recorded at generation, but every frozen output is reproduced exactly",
+            "[2E check] shared/stage2/diagnostics/boundary.py: 0c653b69924b -> a8340178ce64",
+            "[2E check] tests/support/artifact_audit.py: 015a6305af72 -> 39a4d6989525"
+          ],
+          "passed": true
+        },
+        "passed": true,
+        "verify": {
+          "command": "python research_logs/baselines/stage2_baseline.py --verify",
+          "exit_code": 0,
+          "output_tail": [
+            "[2E verify] OK: pr37_stage2_pre_correction_v1: 19 files match MANIFEST.json (manifest sha256 905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b)"
+          ],
+          "passed": true
+        }
+      },
+      "pr38_acceptance": {
+        "accepted": true,
+        "candidate_manifest_sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88",
+        "run_id": "c3_20261112_153333"
+      },
+      "report_check": {
+        "command": "python -m stage2_crossfit report --run-id c3_20261112_153333 --check",
+        "exit_code": 0,
+        "note": null,
+        "output_tail": [
+          "research report IDENTICAL -> C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\research_logs\\pr38\\c3_20261112_153333\\report_v1",
+          "  verification without v1 packages: 64 historical v1 table checksums reproduced from the report; every report file rebuilt"
+        ],
+        "passed": true,
+        "platform": "Windows"
+      },
+      "snapshot": {
+        "checks": {
+          "archived_files": {
+            "passed": true,
+            "problems": []
+          },
+          "entries": {
+            "baseline": 37,
+            "got": 37,
+            "passed": true
+          },
+          "sums_file_sha256": {
+            "baseline": "e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a",
+            "got": "e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a",
+            "passed": true
+          }
+        },
+        "live_counterparts": {
+          "different": [
+            "bank_pipeline/blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib",
+            "bank_pipeline/models/ebm/ebm_stage3_latest.joblib",
+            "bank_pipeline/models/mlp/stage1_blackbox_output.joblib",
+            "bank_pipeline/models/mlp/stage1_mlp.joblib",
+            "bank_pipeline/models/mlp/stage1_mlp_metadata.json",
+            "bank_pipeline/models/mlp/stage1_mlp_threshold_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_single.joblib",
+            "bank_pipeline/models/rf_router/rf_router_single_metadata.json",
+            "bank_pipeline/models/rf_router/rf_router_single_pass1_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_single_pass2_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_two_pass.joblib",
+            "bank_pipeline/models/rf_router/rf_router_two_pass_metadata.json",
+            "bank_pipeline/models/rf_router/rf_router_two_pass_pass1_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_two_pass_pass2_sweep.csv"
+          ],
+          "missing": [],
+          "note": "informational: since 2fc030e/e3e27f6 the live models/ folders hold regenerated files and mutable aliases; the archive is the historical reference",
+          "same": 23
+        },
+        "passed": true,
+        "sums_path": "C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\SHA256SUMS.txt"
+      }
+    },
+    "reload": {
+      "stage1.lr": {
+        "keys": [
+          "artifact_version",
+          "base_model",
+          "best_cv_roc_auc",
+          "best_params",
+          "calibrated_model",
+          "calibration_method",
+          "calibration_metrics",
+          "calibration_requested",
+          "config",
+          "cv_f2",
+          "environment",
+          "feature_contract",
+          "feature_names",
+          "oof_provenance",
+          "optimal_threshold",
+          "performance_metrics",
+          "scaler",
+          "stage_output",
+          "test_proba",
+          "threshold_source",
+          "threshold_sweep",
+          "train_fold_id",
+          "train_proba_oof",
+          "training_date",
+          "tuning_trials",
+          "y_test",
+          "y_train"
+        ],
+        "type": "builtins.dict"
+      },
+      "stage1.mlp": {
+        "keys": [
+          "artifact_version",
+          "best_cv_roc_auc",
+          "best_params",
+          "calibrated_model",
+          "calibration_method",
+          "calibration_metrics",
+          "calibration_requested",
+          "config",
+          "created_utc",
+          "cv_f2",
+          "environment",
+          "feature_contract",
+          "feature_names",
+          "model",
+          "oof_provenance",
+          "optimal_threshold",
+          "scaler",
+          "stage_output",
+          "test_metrics",
+          "threshold_source",
+          "train_fold_id",
+          "train_proba_oof",
+          "y_train"
+        ],
+        "type": "builtins.dict"
+      },
+      "stage2.glass_router": {
+        "keys": [
+          "config",
+          "config_full",
+          "features",
+          "fit_report",
+          "index_test",
+          "oof_protocol",
+          "pr38_evidence",
+          "rules",
+          "split_fingerprint",
+          "test_abstained",
+          "test_confidence",
+          "test_covered",
+          "test_decisions",
+          "test_idx",
+          "test_pred",
+          "test_proba",
+          "timestamp",
+          "train_abstained",
+          "train_confidence",
+          "train_covered",
+          "train_decisions",
+          "train_fold_id",
+          "train_idx",
+          "train_insample_proba_diagnostic",
+          "train_label_fingerprint",
+          "train_outputs_oof",
+          "train_pred",
+          "train_proba",
+          "training_base_rate"
+        ],
+        "type": "builtins.dict"
+      },
+      "stage2.rf_router": {
+        "keys": [
+          "artifact_version",
+          "bands",
+          "config",
+          "constraints",
+          "created_utc",
+          "environment",
+          "extra",
+          "feature_names",
+          "fit_report",
+          "mode",
+          "pass1_model",
+          "pass2_model",
+          "remainder_mask",
+          "split_fingerprint",
+          "test_metrics",
+          "thresholds",
+          "train_label_fingerprint",
+          "training_base_rate"
+        ],
+        "type": "builtins.dict"
+      },
+      "stage3.ebm": {
+        "keys": null,
+        "type": "shared.stage3.artifact.Stage3Artifact"
+      },
+      "stage3.xgb": {
+        "keys": null,
+        "type": "shared.stage3.artifact.Stage3Artifact"
+      }
+    },
+    "stage1": {
+      "stage1.lr": {
+        "artifact_version": "3.0",
+        "calibration_method": "sigmoid",
+        "feature_contract": {
+          "features": [
+            "cellular_downturn",
+            "subscribe_rate_by_euribor_bin",
+            "subscribe_rate_by_dow_month"
+          ],
+          "fingerprint": "d0d8b07f2ca5e81d",
+          "id": "stage1-features",
+          "version": "2.0.0"
+        },
+        "fold_fingerprint": "e4da0b4442f71ecf",
+        "n_folds": 10,
+        "oof_provenance": "refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model and calibrator fitted per fold)",
+        "split_fingerprint": "d6cddadc3439",
+        "threshold": 0.11000000000000001,
+        "threshold_is_cross_fitted": false,
+        "threshold_source": "in_stage_f2_cv"
+      },
+      "stage1.mlp": {
+        "artifact_version": "3.0",
+        "calibration_method": "sigmoid",
+        "feature_contract": {
+          "features": [
+            "cellular_downturn",
+            "subscribe_rate_by_euribor_bin",
+            "subscribe_rate_by_dow_month"
+          ],
+          "fingerprint": "d0d8b07f2ca5e81d",
+          "id": "stage1-features",
+          "version": "2.0.0"
+        },
+        "fold_fingerprint": "e4da0b4442f71ecf",
+        "n_folds": 10,
+        "oof_provenance": "refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model and calibrator fitted per fold)",
+        "split_fingerprint": "d6cddadc3439",
+        "threshold": 0.09000000000000001,
+        "threshold_is_cross_fitted": false,
+        "threshold_source": "in_stage_f2_cv"
+      }
+    },
+    "stage3": {
+      "protocol_allowed": [
+        "search_space",
+        "split_fingerprint"
+      ],
+      "protocol_differences": [
+        [
+          "split_fingerprint",
+          "d6cddadc3439",
+          "fc3e73a5ef91aea4"
+        ],
+        [
+          "search_space",
+          "family-specific",
+          "family-specific"
+        ]
+      ],
+      "split_identity": {
+        "stage3.ebm": {
+          "canonical_stage_io": "d6cddadc3439",
+          "recorded": "d6cddadc3439",
+          "scheme": "stage_io"
+        },
+        "stage3.xgb": {
+          "canonical_stage_io": "d6cddadc3439",
+          "recorded": "fc3e73a5ef91aea4",
+          "scheme": "router"
+        }
+      },
+      "stage3.ebm": {
+        "arm": "glass",
+        "block_fingerprint": "9cc10fa1f5cf8d858a9168a2169372758102d06283592bed024fb06e1040318c",
+        "calibration": {
+          "applied": true,
+          "ece_after": 0.0023216768918064064,
+          "ece_before": 0.27109085167045976,
+          "method": "isotonic",
+          "reason": "OOF ECE 0.2711 > gate 0.05"
+        },
+        "features": [
+          "decay_x_density",
+          "euribor3m_sigmoid_slope",
+          "economic_curvature_intensity",
+          "cons.conf.idx",
+          "age",
+          "dow_month_encoded",
+          "default",
+          "prior_x_stress",
+          "campaign",
+          "overlap_default_clean",
+          "cpi_high_cellular",
+          "behavioral_favorability",
+          "emp_var_rate_sigmoid_slope"
+        ],
+        "fold_fingerprint": "8aea082fcaf371b7",
+        "model_family": "ebm",
+        "split_fingerprint": "d6cddadc3439",
+        "threshold": 0.53
+      },
+      "stage3.xgb": {
+        "arm": "blackbox",
+        "block_fingerprint": "9cc10fa1f5cf8d858a9168a2169372758102d06283592bed024fb06e1040318c",
+        "calibration": {
+          "applied": true,
+          "ece_after": 0.002769137712194383,
+          "ece_before": 0.25699437785873896,
+          "method": "isotonic",
+          "reason": "OOF ECE 0.2570 > gate 0.05"
+        },
+        "features": [
+          "decay_x_density",
+          "euribor3m_sigmoid_slope",
+          "economic_curvature_intensity",
+          "cons.conf.idx",
+          "age",
+          "dow_month_encoded",
+          "default",
+          "prior_x_stress",
+          "campaign",
+          "overlap_default_clean",
+          "cpi_high_cellular",
+          "behavioral_favorability",
+          "emp_var_rate_sigmoid_slope"
+        ],
+        "fold_fingerprint": "8aea082fcaf371b7",
+        "model_family": "xgboost",
+        "split_fingerprint": "fc3e73a5ef91aea4",
+        "threshold": 0.5
+      }
+    },
+    "stage4_inputs": {
+      "glass_arbiter <- blackbox upstream": {
+        "checks": 68,
+        "combination": "blackbox upstream -> glass_arbiter",
+        "streams": [
+          "ebm",
+          "glass",
+          "lr"
+        ]
+      },
+      "glass_arbiter <- glass upstream": {
+        "checks": 66,
+        "combination": "glass upstream -> glass_arbiter",
+        "streams": [
+          "ebm",
+          "glass",
+          "lr"
+        ]
+      },
+      "meta_xgb <- blackbox upstream": {
+        "checks": 65,
+        "combination": "blackbox upstream -> meta_xgb",
+        "streams": [
+          "mlp",
+          "rf_router",
+          "xgb"
+        ]
+      },
+      "meta_xgb <- glass upstream": {
+        "checks": 63,
+        "combination": "glass upstream -> meta_xgb",
+        "streams": [
+          "mlp",
+          "rf_router",
+          "xgb"
+        ]
+      }
+    }
+  },
+  "executions": {
+    "blackbox": {
+      "executed_copy": {
+        "path": "C:\\Users\\phill\\pr39_runs\\c4_20261115_204125_blackbox_executed.ipynb",
+        "sha256": "b723be070ab97cf13df5584d0fc2c0e036dc59290565c3c1cd930d059a2d935f"
+      },
+      "input_copy": {
+        "path": "C:\\Users\\phill\\pr39_runs\\c4_20261115_204125_blackbox_input.ipynb",
+        "sha256": "409b69933996c406bc43d2d04603ce860cedbd0e63428bf5d28cd6d8c7485ef6"
+      },
+      "kernel": {
+        "name": "python3",
+        "python": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+        "tool_python": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe"
+      },
+      "record": "execution_blackbox.json",
+      "removed_code_cells": [
+        "CELL 35",
+        "CELL 36",
+        "CELL 37",
+        "CELL 38"
+      ],
+      "sha256": "8d02fd383fde73ec99a3f31cc083e573b82f202dd6c63c34f2412358429b33ef",
+      "truncated_copy_sha256": "409b69933996c406bc43d2d04603ce860cedbd0e63428bf5d28cd6d8c7485ef6",
+      "wall_seconds": 4895.7
+    },
+    "glass": {
+      "executed_copy": {
+        "path": "C:\\Users\\phill\\pr39_runs\\c4_20261115_204125_glass_executed.ipynb",
+        "sha256": "ef0f46587ad52100776cd263d1ac01ad506b2d87b5709550b132a71fc7a8c256"
+      },
+      "input_copy": {
+        "path": "C:\\Users\\phill\\pr39_runs\\c4_20261115_204125_glass_input.ipynb",
+        "sha256": "d93448e9a98a46c2502ce3a2c8b2f020fb1f3754304ef5e1856abd61465764c7"
+      },
+      "kernel": {
+        "name": "python3",
+        "python": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+        "tool_python": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe"
+      },
+      "record": "execution_glass_recovery.json",
+      "removed_code_cells": [
+        "CELL 19",
+        "CELL 20"
+      ],
+      "sha256": "4374fa01650f240ad94e1b4d998b5335bd45fd6a5126f8d496312907de6a2c2a",
+      "truncated_copy_sha256": "d93448e9a98a46c2502ce3a2c8b2f020fb1f3754304ef5e1856abd61465764c7",
+      "wall_seconds": 12675.7
+    }
+  },
+  "failed_attempts_preserved": [
+    {
+      "by": "execution_glass_recovery",
+      "path": "research_logs/pr39/c4_20261115_204125/failed/execution_glass_20261116T081531857705Z.json",
+      "sha256": "9ff8d3d57a9d7487b9e64ce9fe2e91792b823b80193112e65815760f87a5bd7a"
+    },
+    {
+      "by": "finalize_transition",
+      "path": "research_logs/pr39/c4_20261115_204125/failed/run_record_20261116T161550658144Z.json",
+      "sha256": "046abbffb1a62f362236d55fbd4501d718abecd88b066451eb6d4d01bbcd3396"
+    }
+  ],
+  "finished_utc": "2026-11-16T19:54:00+00:00",
+  "format": "pr39.commit4a.run_record/1",
+  "gates": {
+    "A4.1": {
+      "passed": true,
+      "record": "preflight.json",
+      "sha256": "a5c242a0221903d2c791b744943ea99c1a2127e3a813250a559f87856152511c"
+    },
+    "A4.2": {
+      "decision": "reuse",
+      "passed": true,
+      "record": "stage2_reuse.json",
+      "sha256": "2c6d8f1ad7712620bffc273d1dd3e4924c4c0a94fc7d7bf6676ec91c082ea9b0"
+    },
+    "A4.3": {
+      "checks": [
+        {
+          "check": "stage1.lr: holds a StageOutput that passes its contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: artifact version 3.0",
+          "detail": "3.0",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: Stage 1 feature contract 2.0.0 recorded and consistent",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: ordered feature names = LR_FEATURES",
+          "detail": "['cellular_downturn', 'subscribe_rate_by_euribor_bin', 'subscribe_rate_by_dow_month']",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: stage1 / glass",
+          "detail": "('stage1', 'glass')",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: calibration family sigmoid requested and selected (D1)",
+          "detail": "('sigmoid', 'sigmoid')",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: OOF provenance is the nested cross-fit (F16/F19)",
+          "detail": "refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model and calibrator fitted per fold)",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: Stage 1 fold plan = 10 stratified folds, seed 42, on GLOBAL_SPLIT's training labels",
+          "detail": "e4da0b4442f71ecf",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: split fingerprint = the frozen protocol's stage I/O split",
+          "detail": "d6cddadc3439",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: threshold source is a registered one",
+          "detail": "in_stage_f2_cv",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: holds a StageOutput that passes its contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: artifact version 3.0",
+          "detail": "3.0",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: Stage 1 feature contract 2.0.0 recorded and consistent",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: ordered feature names = LR_FEATURES",
+          "detail": "['cellular_downturn', 'subscribe_rate_by_euribor_bin', 'subscribe_rate_by_dow_month']",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: stage1 / blackbox",
+          "detail": "('stage1', 'blackbox')",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: calibration family sigmoid requested and selected (D1)",
+          "detail": "('sigmoid', 'sigmoid')",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: OOF provenance is the nested cross-fit (F16/F19)",
+          "detail": "refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model and calibrator fitted per fold)",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: Stage 1 fold plan = 10 stratified folds, seed 42, on GLOBAL_SPLIT's training labels",
+          "detail": "e4da0b4442f71ecf",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: split fingerprint = the frozen protocol's stage I/O split",
+          "detail": "d6cddadc3439",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: threshold source is a registered one",
+          "detail": "in_stage_f2_cv",
+          "passed": true
+        },
+        {
+          "check": "stage 1: both arms comparable row for row (assert_comparable: split, features, rows, labels, one fold partition)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "7.4 every artifact reloads in a fresh interpreter",
+          "detail": "6",
+          "passed": true
+        },
+        {
+          "check": "7.4 stage1.lr reloads as builtins.dict",
+          "detail": "builtins.dict",
+          "passed": true
+        },
+        {
+          "check": "7.4 stage1.mlp reloads as builtins.dict",
+          "detail": "builtins.dict",
+          "passed": true
+        },
+        {
+          "check": "7.4 stage3.ebm reloads as shared.stage3.artifact.Stage3Artifact",
+          "detail": "shared.stage3.artifact.Stage3Artifact",
+          "passed": true
+        },
+        {
+          "check": "7.4 stage3.xgb reloads as shared.stage3.artifact.Stage3Artifact",
+          "detail": "shared.stage3.artifact.Stage3Artifact",
+          "passed": true
+        }
+      ],
+      "evidence": "26/26 checks passed",
+      "failed": [],
+      "gate": "A4.3",
+      "passed": true
+    },
+    "A4.4": {
+      "checks": [
+        {
+          "check": "stage3.ebm: a Stage3Artifact",
+          "detail": "Stage3Artifact",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: model_family / arm = ebm / glass (F21, F37)",
+          "detail": "('ebm', 'glass')",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: features = EBM_FEATURES, in order",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: per-fold feature fit",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: split fingerprint is this split's (either scheme)",
+          "detail": "d6cddadc3439",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: OOF fold ids = the shared 5-fold plan 8aea082fcaf371b7",
+          "detail": "8aea082fcaf371b7",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: OOF outputs recorded (proba, proba_calibrated, fold_id)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: calibration gate recorded per fold (F22)",
+          "detail": "{'applied': True, 'method': 'isotonic', 'ece_before': 0.27109085167045976, 'fold_applied': [True, True, True, True, True]}",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: operating threshold selected on out-of-fold training predictions",
+          "detail": "out-of-fold training predictions",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: a Stage3Artifact",
+          "detail": "Stage3Artifact",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: model_family / arm = xgboost / blackbox (F21, F37)",
+          "detail": "('xgboost', 'blackbox')",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: features = EBM_FEATURES, in order",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: per-fold feature fit",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: split fingerprint is this split's (either scheme)",
+          "detail": "fc3e73a5ef91aea4",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: OOF fold ids = the shared 5-fold plan 8aea082fcaf371b7",
+          "detail": "8aea082fcaf371b7",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: OOF outputs recorded (proba, proba_calibrated, fold_id)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: calibration gate recorded per fold (F22)",
+          "detail": "{'applied': True, 'method': 'isotonic', 'ece_before': 0.25699437785873896, 'fold_applied': [True, True, True, True, True]}",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: operating threshold selected on out-of-fold training predictions",
+          "detail": "out-of-fold training predictions",
+          "passed": true
+        },
+        {
+          "check": "stage 3: EBM and XGBoost were fitted on one block (block fingerprint)",
+          "detail": "9cc10fa1f5cf8d858a9168a2169372758102d06283592bed024fb06e1040318c",
+          "passed": true
+        },
+        {
+          "check": "stage 3: both arms were fitted on the frozen GLOBAL_SPLIT (each split fingerprint is GLOBAL_SPLIT's under a registered scheme, check_split_identity; its recorded train/test rows, order and labels are GLOBAL_SPLIT's; its canonical stage_io fingerprint is the frozen one)",
+          "detail": "{'stage3.ebm': 'd6cddadc3439 (stage_io)', 'stage3.xgb': 'fc3e73a5ef91aea4 (router)'}",
+          "passed": true
+        },
+        {
+          "check": "stage 3: one shared protocol, family-specific fields only (assert_matched_protocol; split_fingerprint by its canonical identity)",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "21/21 checks passed",
+      "failed": [],
+      "gate": "A4.4",
+      "passed": true
+    },
+    "A4.5": {
+      "checks": [
+        {
+          "check": "A4.5 glass_arbiter <- glass upstream: build_stage4_inputs passes, train and test side (inputs only, no arbiter fitted)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 glass_arbiter <- glass upstream: every recorded validation check passed",
+          "detail": "66 checks",
+          "passed": true
+        },
+        {
+          "check": "A4.5 glass_arbiter <- glass upstream: the recorded upstream is the glass arm",
+          "detail": "glass upstream -> glass_arbiter",
+          "passed": true
+        },
+        {
+          "check": "A4.5 glass_arbiter <- blackbox upstream: build_stage4_inputs passes, train and test side (inputs only, no arbiter fitted)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 glass_arbiter <- blackbox upstream: every recorded validation check passed",
+          "detail": "68 checks",
+          "passed": true
+        },
+        {
+          "check": "A4.5 glass_arbiter <- blackbox upstream: the recorded upstream is the blackbox arm",
+          "detail": "blackbox upstream -> glass_arbiter",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: build_stage4_inputs passes, train and test side (inputs only, no arbiter fitted)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: every recorded validation check passed",
+          "detail": "63 checks",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: the recorded upstream is the glass arm",
+          "detail": "glass upstream -> meta_xgb",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: index = GLOBAL_SPLIT X_train",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: stage1_proba = stage_output.train_proba_oof",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: stage3_proba = Stage3Artifact.oof['proba_calibrated']",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: train: no other missing values",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: index = GLOBAL_SPLIT X_test",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: stage1_proba = stage_output.test_proba",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: stage3_proba = Stage3Artifact.refit['test_proba_calibrated']",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- glass upstream: Meta-XGB feature block: test: no other missing values",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: build_stage4_inputs passes, train and test side (inputs only, no arbiter fitted)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: every recorded validation check passed",
+          "detail": "65 checks",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: the recorded upstream is the blackbox arm",
+          "detail": "blackbox upstream -> meta_xgb",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: index = GLOBAL_SPLIT X_train",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: stage1_proba = stage_output.train_proba_oof",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: stage3_proba = Stage3Artifact.oof['proba_calibrated']",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: train: no other missing values",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: columns = feature contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: index = GLOBAL_SPLIT X_test",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: stage1_proba = stage_output.test_proba",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: stage3_proba = Stage3Artifact.refit['test_proba_calibrated']",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: stage2_proba = router proba on covered rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: stage2_proba missing exactly on abstain rows",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: route one-hot sums to 1",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A4.5 meta_xgb <- blackbox upstream: Meta-XGB feature block: test: no other missing values",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "no Stage 4 artifact written: the model folders are as the black-box execution left them",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "45/45 checks passed",
+      "failed": [],
+      "gate": "A4.5",
+      "passed": true
+    },
+    "A4.6": {
+      "checks": [
+        {
+          "check": "stage1.lr: models/lr/lr_calibrated_20261115_204501.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "d3a05760fa7594e3",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: models/mlp/stage1_mlp_20261116_094252_602977.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "dd8922d94bb73706",
+          "passed": true
+        },
+        {
+          "check": "stage2.glass_router: models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "889c8bd572047beb",
+          "passed": true
+        },
+        {
+          "check": "stage2.rf_router: models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "aadde1ea93d0e300",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: models/ebm/ebm_stage3_20261116_001529_813890.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "d886ae5dcbdb077d",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "8bf1d66ecd54236c",
+          "passed": true
+        },
+        {
+          "check": "7.5.1 phase0.verify_snapshot passes (37 entries, the baseline's SHA256SUMS)",
+          "detail": "{'entries': {'got': 37, 'baseline': 37, 'passed': True}, 'sums_file_sha256': {'got': 'e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a', 'baseline': 'e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a', 'passed': True}, 'archived_files': {'problems': [], 'passed': True}}",
+          "passed": true
+        },
+        {
+          "check": "7.5.2 phase0.run_baseline_checks passes (stage2_baseline.py --verify, stage2_baseline_archive.py --check)",
+          "detail": "{'verify': ['[2E verify] OK: pr37_stage2_pre_correction_v1: 19 files match MANIFEST.json (manifest sha256 905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b)'], 'archive_check': ['[2E check] OK: pr37_stage2_pre_correction_v1 reproduced from the recorded sources (reproduced_with_code_drift; 19 files)', '[2E check] note: the diagnostic code differs from the code recorded at generation, but every frozen output is reproduced exactly', '[2E check] shared/stage2/diagnostics/boundary.py: 0c653b69924b -> a8340178ce64', '[2E check] tests/support/artifact_audit.py: 015a6305af72 -> 39a4d6989525']}",
+          "passed": true
+        },
+        {
+          "check": "7.5.3 python -m stage2_crossfit report --run-id c3_20261112_153333 --check passes (Windows, F11)",
+          "detail": "['research report IDENTICAL -> C:\\\\Users\\\\phill\\\\projects\\\\ai-business-coach-clean\\\\prototype\\\\bank_pipeline\\\\research_logs\\\\pr38\\\\c3_20261112_153333\\\\report_v1', '  verification without v1 packages: 64 historical v1 table checksums reproduced from the report; every report file rebuilt']",
+          "passed": true
+        },
+        {
+          "check": "7.5.4 acceptance.require_accepted('c3_20261112_153333') passes",
+          "detail": "{'run_id': 'c3_20261112_153333', 'accepted': True, 'candidate_manifest_sha256': 'f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88'}",
+          "passed": true
+        },
+        {
+          "check": "7.5.5 models/ inventory before and after: only the run's registered additions and documented mutable aliases",
+          "detail": "[]",
+          "passed": true
+        },
+        {
+          "check": "7.5.6 git status: only this run's records and the D7 MLP CSVs are new",
+          "detail": "[]",
+          "passed": true
+        },
+        {
+          "check": "7.5.1 the snapshot's live counterparts: only Step 4A's registered mutable aliases changed; every historical artifact and legacy alias is as before the run",
+          "detail": "{'before': {'different': ['bank_pipeline/blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib', 'bank_pipeline/models/ebm/ebm_stage3_latest.joblib', 'bank_pipeline/models/mlp/stage1_blackbox_output.joblib', 'bank_pipeline/models/mlp/stage1_mlp.joblib', 'bank_pipeline/models/mlp/stage1_mlp_metadata.json', 'bank_pipeline/models/rf_router/rf_router_single.joblib', 'bank_pipeline/models/rf_router/rf_router_single_metadata.json', 'bank_pipeline/models/rf_router/rf_router_single_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_single_pass2_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass.joblib', 'bank_pipeline/models/rf_router/rf_router_two_pass_metadata.json', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass2_sweep.csv'], 'missing': [], 'same': 24}, 'after': {'same': 23, 'different': ['bank_pipeline/blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib', 'bank_pipeline/models/ebm/ebm_stage3_latest.joblib', 'bank_pipeline/models/mlp/stage1_blackbox_output.joblib', 'bank_pipeline/models/mlp/stage1_mlp.joblib', 'bank_pipeline/models/mlp/stage1_mlp_metadata.json', 'bank_pipeline/models/mlp/stage1_mlp_threshold_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_single.joblib', 'bank_pipeline/models/rf_router/rf_router_single_metadata.json', 'bank_pipeline/models/rf_router/rf_router_single_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_single_pass2_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass.joblib', 'bank_pipeline/models/rf_router/rf_router_two_pass_metadata.json', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass2_sweep.csv'], 'missing': []}}",
+          "passed": true
+        },
+        {
+          "check": "the two notebook executions are recorded (section 5.4)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "the failed attempts the run's recovery and transition name are preserved (path, SHA-256; hashed, not read)",
+          "detail": "['execution_glass_recovery: 9ff8d3d57a9d7487', 'finalize_transition: 046abbffb1a62f36']",
+          "passed": true
+        }
+      ],
+      "evidence": "15/15 checks passed",
+      "failed": [],
+      "gate": "A4.6",
+      "passed": true
+    }
+  },
+  "git_status_delta": {
+    "gone": [],
+    "new": [
+      " M prototype/bank_pipeline/models/mlp/stage1_mlp_threshold_sweep.csv",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/execution_blackbox.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/execution_blackbox.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/execution_glass_recovery.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/execution_glass_recovery.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/finalize_transition.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/finalize_transition.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/preflight.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/preflight.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/stage2_reuse.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/stage2_reuse.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/upstream_pins.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c4_20261115_204125/upstream_pins.json.sha256",
+      "?? prototype/bank_pipeline/tests/upstream_regeneration/test_finalize_transition.py",
+      "?? prototype/bank_pipeline/tests/upstream_regeneration/test_recovery.py",
+      "?? prototype/bank_pipeline/tests/upstream_regeneration/test_stage3_split_identity.py",
+      "?? prototype/bank_pipeline/upstream_regeneration/recovery.py",
+      "?? prototype/bank_pipeline/upstream_regeneration/transition.py"
+    ],
+    "unexpected": []
+  },
+  "glass_recovery": {
+    "code": {
+      "changed_files": [
+        "tests/upstream_regeneration/test_inventory_and_records.py",
+        "tests/upstream_regeneration/test_recovery.py",
+        "tests/upstream_regeneration/test_runner_orchestration.py",
+        "upstream_regeneration/inventory.py",
+        "upstream_regeneration/records.py",
+        "upstream_regeneration/recovery.py",
+        "upstream_regeneration/runner.py"
+      ],
+      "recovered_under": {
+        "code_sha256": "863970bc6910a2ac3063ffd29e8af09d992e4ff8298abe45ab2800fc95afa8c0",
+        "files": 428,
+        "head": "5951ee396196240741fba17afe5619eda37f129e"
+      },
+      "run": {
+        "code_sha256": "c4ff071c54862f6d217caf194aae0126c600ae279405b397b9a0d4da9bdcce50",
+        "files": 426,
+        "head": "5951ee396196240741fba17afe5619eda37f129e"
+      }
+    },
+    "failed_record": {
+      "failed_checks": [
+        "only the glass notebook's registered outputs and mutable aliases changed"
+      ],
+      "finished_utc": "2026-11-16T08:15:31+00:00",
+      "inventory_problems": [
+        "unregistered addition models/lr/lr_baseline_20261115_204420.joblib"
+      ],
+      "path": "research_logs/pr39/c4_20261115_204125/failed/execution_glass_20261116T081531857705Z.json",
+      "sha256": "9ff8d3d57a9d7487b9e64ce9fe2e91792b823b80193112e65815760f87a5bd7a",
+      "started_utc": "2026-11-16T04:44:14+00:00"
+    },
+    "record": "execution_glass_recovery.json",
+    "recovery_id": "commit4a-r1: GLASS execution, unregistered Cell 6 baseline LR",
+    "sha256": "4374fa01650f240ad94e1b4d998b5335bd45fd6a5126f8d496312907de6a2c2a"
+  },
+  "identities": {
+    "configuration": {
+      "feature_pathway": {
+        "pathway": "fold_label_excluded",
+        "record": [
+          "stage2-inner-fold-feature-isolation",
+          "1.0.0",
+          "0d4953ef34d1d3dc"
+        ]
+      },
+      "frozen_records": {
+        "contract": [
+          "pr37-stage2-primary",
+          "1.0.0",
+          "0817825b9eecbd11"
+        ],
+        "glass_profile": {
+          "fingerprint": "198731d5cdf263f4",
+          "profile_id": "pr37-glass-router-primary",
+          "profile_version": "1.0.0"
+        },
+        "protocol": [
+          "pr38-stage2-evaluation",
+          "1.0.0",
+          "245a1a68fb68cf4e"
+        ],
+        "rf_profile": {
+          "fingerprint": "4e3f9c07e6ecc8ad",
+          "profile_id": "pr37-rf-router-primary",
+          "profile_version": "1.0.0"
+        }
+      },
+      "stage1_calibration_family": "sigmoid"
+    },
+    "feature_contracts": {
+      "stage1": {
+        "contract": {
+          "features": [
+            "cellular_downturn",
+            "subscribe_rate_by_euribor_bin",
+            "subscribe_rate_by_dow_month"
+          ],
+          "fingerprint": "d0d8b07f2ca5e81d",
+          "id": "stage1-features",
+          "version": "2.0.0"
+        },
+        "ordered": [
+          "cellular_downturn",
+          "subscribe_rate_by_euribor_bin",
+          "subscribe_rate_by_dow_month"
+        ],
+        "sha256": "d0d8b07f2ca5e81dad32ba0bdb33e8ddf2671f7a764505ebc76ae11f5d4be513"
+      },
+      "stage2": {
+        "ordered": [
+          "nsd_cold",
+          "nsd_warm",
+          "nsd_elevated",
+          "nsd_hot",
+          "jed_cold",
+          "jed_transition",
+          "jed_warm",
+          "jed_hot",
+          "cci_low",
+          "cci_dead_mid",
+          "cci_hot1",
+          "cci_valley",
+          "cci_hot2",
+          "eci_cold",
+          "eci_mid",
+          "eci_warm",
+          "eci_hot",
+          "dow_cold",
+          "dow_low",
+          "dow_mid",
+          "dow_hot",
+          "behav_cold",
+          "behav_baseline",
+          "behav_warm",
+          "behav_hot",
+          "campaign_fresh",
+          "campaign_moderate",
+          "campaign_heavy",
+          "cpi_cellular"
+        ],
+        "sha256": "7b0d4f507f3becd46be3aee95e9590e94cdbdf2a5a218b82cce5c45afb2e85f5"
+      },
+      "stage3": {
+        "ordered": [
+          "decay_x_density",
+          "euribor3m_sigmoid_slope",
+          "economic_curvature_intensity",
+          "cons.conf.idx",
+          "age",
+          "dow_month_encoded",
+          "default",
+          "prior_x_stress",
+          "campaign",
+          "overlap_default_clean",
+          "cpi_high_cellular",
+          "behavioral_favorability",
+          "emp_var_rate_sigmoid_slope"
+        ],
+        "sha256": "8f1df13bf14ca4722665ca60e0d2b792c6c2148791452c5e9303f1b39c309a83"
+      }
+    },
+    "population": {
+      "frozen_protocol_population": {
+        "fold_fingerprint": "8aea082fcaf371b7",
+        "router_split_fingerprint": "fc3e73a5ef91aea4",
+        "stage_io_split_fingerprint": "d6cddadc3439",
+        "train_label_fingerprint": "b984d2a50527"
+      },
+      "router_split_fingerprint": "fc3e73a5ef91aea4",
+      "shared_fold_fingerprint": "8aea082fcaf371b7",
+      "stage1_fold_plan": {
+        "fingerprint": "e4da0b4442f71ecf",
+        "n_folds": 10,
+        "seed": 42
+      },
+      "stage_io_split_fingerprint": "d6cddadc3439",
+      "test_rows": 8238,
+      "train_label_fingerprint": "b984d2a50527",
+      "train_positives": 3712,
+      "train_rows": 32950
+    },
+    "stage2_binning": {
+      "covers": [
+        "BINNING_STRATEGY",
+        "RF_FEATURES_BINARY"
+      ],
+      "fingerprint": "9cdd79aff9d61101",
+      "id": "stage2-binning",
+      "sha256": "9cdd79aff9d61101949a7e761c6837e13e81036d865c37b5213dca2867912376"
+    }
+  },
+  "inventory_net": {
+    "companions": {
+      "stage1.lr_baseline": "models/lr/lr_baseline_20261115_204420.joblib"
+    },
+    "diff": {
+      "added": 17,
+      "deleted": 0,
+      "modified": 5
+    },
+    "mutable_aliases": [
+      "blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib",
+      "models/ebm/ebm_stage3_latest.joblib",
+      "models/mlp/stage1_mlp.joblib",
+      "models/mlp/stage1_mlp_metadata.json",
+      "models/mlp/stage1_mlp_threshold_sweep.csv"
+    ],
+    "notebook": "run",
+    "passed": true,
+    "problems": [],
+    "produced": {
+      "stage1.lr": "models/lr/lr_calibrated_20261115_204501.joblib",
+      "stage1.mlp": "models/mlp/stage1_mlp_20261116_094252_602977.joblib",
+      "stage3.ebm": "models/ebm/ebm_stage3_20261116_001529_813890.joblib",
+      "stage3.xgb": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib"
+    },
+    "sidecars": [
+      "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.json",
+      "models/ebm/ebm_stage3_20261116_001529_813890.json",
+      "models/mlp/stage1_mlp_20261116_094252_602977_metadata.json",
+      "models/mlp/stage1_mlp_20261116_094252_602977_threshold_sweep.csv",
+      "models/mlp/stage1_mlp_20261116_094252_602977_training_history.csv",
+      "models/mlp/stage1_mlp_20261116_094252_602977_tuning_trials.csv",
+      "models/mlp/stage1_mlp_preserved_949c1b36211f.joblib",
+      "models/mlp/stage1_mlp_preserved_949c1b36211f_metadata.json",
+      "models/mlp/stage1_mlp_preserved_949c1b36211f_threshold_sweep.csv",
+      "models/mlp/stage1_mlp_preserved_949c1b36211f_training_history.csv",
+      "models/mlp/stage1_mlp_preserved_949c1b36211f_tuning_trials.csv",
+      "models/stage3/stage3_block_d6cddadc3439_c950583f1d15.joblib"
+    ]
+  },
+  "passed": true,
+  "run_id": "c4_20261115_204125",
+  "stage2_disposition": {
+    "authorization": {
+      "amends": "PR 38 freeze record section 6 ('new run id')",
+      "approved": "owner, Commit 1 review, 2026-11-14",
+      "decision": "D3",
+      "record": "documentation/methodology/pr39_execution_contract.md 1.0.0 sections 5.2 and 10"
+    },
+    "failed": [],
+    "next": "pinned: the notebooks load Stage 2 by path and SHA-256; no Stage 2 fit",
+    "outcome": "reuse",
+    "pins": "shared.pinned_artifacts.STAGE2_PINS (run c3_20261112_153333)"
+  },
+  "started_utc": "2026-11-16T19:53:36+00:00",
+  "status": "Stage 1-3 regenerated (Stage 2 reused); NOT accepted: Step 4B is the acceptance gate (A4.7)",
+  "step": "run_record",
+  "tracked_aliases_d7": {
+    "models/mlp/stage1_mlp_threshold_sweep.csv": {
+      "after": {
+        "bytes": 2565,
+        "sha256": "c5d816ac412ca3cc0396a07714a1e4d6fbbd95e905b6a0dff5a778ececc4887c"
+      },
+      "before": {
+        "bytes": 2563,
+        "sha256": "cb4bff93e15af5274e835bd93aaa0c21a00b2dfd53b3418f2d81eb1d7edf9249"
+      }
+    },
+    "models/mlp/stage1_mlp_training_history.csv": {
+      "after": {
+        "bytes": 1315,
+        "sha256": "58b10de205d98e1060f7e051919beac7108216e8edd9578463d863bff1760b62"
+      },
+      "before": {
+        "bytes": 1315,
+        "sha256": "58b10de205d98e1060f7e051919beac7108216e8edd9578463d863bff1760b62"
+      }
+    },
+    "models/mlp/stage1_mlp_tuning_trials.csv": {
+      "after": {
+        "bytes": 10750,
+        "sha256": "ad902565f892d5a9431496fbb649e2026fb10a47a4e262280a5e9258a18c1277"
+      },
+      "before": {
+        "bytes": 10750,
+        "sha256": "ad902565f892d5a9431496fbb649e2026fb10a47a4e262280a5e9258a18c1277"
+      }
+    }
+  }
+}

@@ -2,14 +2,14 @@
 blackbox_pipeline.models.meta_xgb.runner
 ========================================
 Stage 4 of the black-box cascade: Meta-XGB, the learned counterpart of the
-GLASS Meta-EBM weighted-confidence arbiter.
+GLASS Arbiter (weighted-confidence arbiter).
 
     meta_xgb_artifact, meta_xgb_path = train_meta_xgb_stage(
         GLOBAL_SPLIT,
         mlp_path=MLP_S1_PATH,
         rf_path=f"{STAGE2_OUT}/rf_router_two_pass.joblib",
         xgb_path=XGB_STAGE3_PATH,
-        meta_ebm_path=META_EBM_PATH,         # optional: held-out comparison
+        glass_arbiter_path=GLASS_ARBITER_PATH,   # optional: held-out comparison
     )
 
 Order of operations (each step reads only what is listed)
@@ -28,7 +28,7 @@ Order of operations (each step reads only what is listed)
               ── configuration frozen ──
                 test          refit model scores the test block once
 4. evaluate   no-abstention + with-abstention on test
-5. compare    (optional) against the saved Meta-EBM on the same test rows
+5. compare    (optional) against the saved GLASS Arbiter on the same test rows
 
 The learner is the same shared runner both Stage 3 arms use; only step 3's
 abstention insert and the test step's position differ (``MetaXGBRunner.fit``).
@@ -129,7 +129,7 @@ class MetaXGBRunner(Stage3Runner):
         }
         self.train_eval_ = {
             "note": "meta OOF; per-row fold-nested thresholds; abstention cut chosen "
-                    "on these same rows (in-selection, as Meta-EBM's)",
+                    "on these same rows (in-selection, as the GLASS Arbiter's)",
             "no_abstain": classification_metrics(y_tr, pred_oof, p_oof),
             "with_abstain": abstention_metrics(y_tr, pred_oof, p_oof,
                                                conf_oof >= self.abstention_["min_confidence"]),
@@ -216,19 +216,22 @@ def train_meta_xgb_stage(
     config: Optional[MetaXGBConfig] = None,
     params: Optional[dict] = None,
     params_source: Optional[str] = None,
-    meta_ebm_path=None,
+    glass_arbiter_path=None,
     artifact_dir: Optional[str] = None,
     save: bool = True,
     verbose: bool = True,
     extra_fingerprints: Optional[dict] = None,
     upstream: Optional[str] = None,
+    meta_ebm_path=None,
 ) -> tuple[MetaXGBArtifact, Optional[str]]:
     """
     Train, cross-fit, calibrate, threshold, evaluate and save Meta-XGB.
 
     ``params``: skip Optuna and use these hyperparameters (recorded as such).
-    ``meta_ebm_path``: saved GLASS Meta-EBM artifact (schema meta_ebm/2) for the
-    held-out comparison; optional.
+    ``glass_arbiter_path``: saved GLASS Arbiter artifact (schema
+    ``glass_arbiter/1``, or a historical ``meta_ebm/2``) for the held-out
+    comparison; optional. ``meta_ebm_path`` is its PR 36-38 name, kept as an
+    alias through PR 39 (D5); give one or the other.
     ``upstream``: arm of the Stage 1–3 artifacts — ``"blackbox"`` (default) or,
     for the 2x2 crossover, ``"glass"`` (GLASS LR, GLASS Router, GLASS EBM in the
     mlp / rf_router / xgb slots; PR 36 F29). Recorded in
@@ -239,6 +242,10 @@ def train_meta_xgb_stage(
     config has no ``operating_space``; an ``XGBStage3Config`` carries the
     Stage 3 search space).
     """
+    if meta_ebm_path is not None:
+        if glass_arbiter_path is not None:
+            raise TypeError("give glass_arbiter_path or its alias meta_ebm_path, not both")
+        glass_arbiter_path = meta_ebm_path
     cfg = config or MetaXGBConfig(verbose=verbose, show_progress_bar=verbose)
     if not isinstance(cfg, MetaXGBConfig):
         raise TypeError(f"config must be a MetaXGBConfig, got {type(cfg).__name__} (audit F37).")
@@ -247,7 +254,7 @@ def train_meta_xgb_stage(
     say = print if cfg.verbose else (lambda *a, **k: None)
 
     say("\n" + "=" * 80)
-    say("🎯 META-XGB — STAGE 4 LEARNED ARBITER (black-box counterpart of Meta-EBM)")
+    say("🎯 META-XGB — STAGE 4 LEARNED ARBITER (black-box counterpart of the GLASS Arbiter)")
     say("=" * 80)
 
     # ---- 1. inputs ------------------------------------------------------
@@ -330,11 +337,11 @@ def train_meta_xgb_stage(
                     "meta": meta_validation},
     )
 
-    if meta_ebm_path is not None:
-        from .comparison import compare_with_meta_ebm
-        say("\n⚖️  5. Meta-EBM vs Meta-XGB (same held-out rows)...")
-        artifact.comparison = compare_with_meta_ebm(
-            GLOBAL_SPLIT, meta_ebm_path, artifact, verbose=cfg.verbose,
+    if glass_arbiter_path is not None:
+        from .comparison import compare_with_glass_arbiter
+        say("\n⚖️  5. GLASS Arbiter vs Meta-XGB (same held-out rows)...")
+        artifact.comparison = compare_with_glass_arbiter(
+            GLOBAL_SPLIT, glass_arbiter_path, artifact, verbose=cfg.verbose,
             extra_fingerprints=extra_fingerprints)
 
     path = save_meta_xgb(artifact, cfg.artifact_dir, cfg.artifact_stem) if save else None

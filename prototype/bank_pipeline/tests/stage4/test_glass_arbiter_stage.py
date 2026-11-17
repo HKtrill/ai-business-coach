@@ -1,5 +1,5 @@
 """
-GLASS Stage 4 Meta-EBM end to end: ``train_meta_stage`` on the shared Stage 4
+GLASS Stage 4 GLASS Arbiter end to end: ``train_glass_arbiter`` on the shared Stage 4
 inputs, the Stage 3 -> Stage 4 handoff, and the saved artifact.
 
 Contract: every configuration value (Stage 4 thresholds, trust weights,
@@ -20,7 +20,8 @@ calibration gate fired), and a Stage 3 artifact whose per-fold and all-rows cali
 disagree is consumed per fold, not refused or switched to raw (F28).
 
 Input-contract basics (formats, router semantics, fingerprints, in-sample
-guards, test-label isolation) are in test_meta_ebm_stage4_inputs.py.
+guards, test-label isolation) are in test_glass_arbiter_stage4_inputs.py; the PR 36-38
+names and artifacts: test_glass_arbiter_compatibility.py.
 """
 
 from __future__ import annotations
@@ -28,6 +29,7 @@ from __future__ import annotations
 import ast
 import contextlib
 import json
+from pathlib import Path
 
 import joblib
 import numpy as np
@@ -36,19 +38,19 @@ import pytest
 
 import glass_pipeline.ebm.ebm_stage as ebm_stage_mod
 from blackbox_pipeline.models.meta_xgb.comparison import (
-    find_meta_ebm_artifact, load_meta_ebm_for_comparison,
+    find_glass_arbiter_artifact, load_glass_arbiter_for_comparison,
 )
 from glass_pipeline.ebm.config import EBMStage3Config
 from glass_pipeline.ebm.ebm_stage import train_ebm_stage
-from glass_pipeline.meta_ebm import meta_stage as ms
-from glass_pipeline.meta_ebm.arbiter import meta_arbiter
-from glass_pipeline.meta_ebm.calibration import compute_calibration
-from glass_pipeline.meta_ebm.evaluation import compute_metrics, evaluate_with_abstention
-from glass_pipeline.meta_ebm.loader import PASS1, PASS2, load_stage_outputs
-from glass_pipeline.meta_ebm.meta_stage import find_recall_threshold, train_meta_stage
-from glass_pipeline.meta_ebm.router_evidence import fold_base_rates
-from glass_pipeline.meta_ebm.tuning import tune_arbiter_threshold
-from glass_pipeline.meta_ebm.weighting import compute_hybrid_weights
+from glass_pipeline.glass_arbiter import meta_stage as ms
+from glass_pipeline.glass_arbiter.arbiter import meta_arbiter
+from glass_pipeline.glass_arbiter.calibration import compute_calibration
+from glass_pipeline.glass_arbiter.evaluation import compute_metrics, evaluate_with_abstention
+from glass_pipeline.glass_arbiter.loader import PASS1, PASS2, load_stage_outputs
+from glass_pipeline.glass_arbiter.meta_stage import find_recall_threshold, train_glass_arbiter
+from glass_pipeline.glass_arbiter.router_evidence import fold_base_rates
+from glass_pipeline.glass_arbiter.tuning import tune_arbiter_threshold
+from glass_pipeline.glass_arbiter.weighting import compute_hybrid_weights
 from shared.stage3.calibration import Stage3Calibrator
 from shared.stage3.data import FoldPlan, PassthroughPipeline, Stage3Block
 from shared.stage4 import ABSTENTION_SEARCH, Stage4InputError
@@ -63,7 +65,7 @@ CONFIG_KEYS = ("thresholds", "weights", "abstention", "calibration", "disagreeme
 
 @pytest.fixture(autouse=True)
 def _router_scheme(monkeypatch):
-    """train_meta_stage has no extra_fingerprints arg: route it via the loader."""
+    """train_glass_arbiter has no extra_fingerprints arg: route it via the loader."""
     real = ms.load_stage_outputs
     monkeypatch.setattr(ms, "load_stage_outputs",
                         lambda *a, **k: real(*a, extra_fingerprints=ROUTER_FP, **k))
@@ -95,7 +97,7 @@ def inputs(world, arts, tmp_path):
 
 def run(world, arts, tmp_path, **kw):
     p = dump(tmp_path, arts)
-    return train_meta_stage(world["GS"], lr_path=p["lr"], glass_path=p["router"],
+    return train_glass_arbiter(world["GS"], lr_path=p["lr"], glass_path=p["router"],
                             ebm_path=p["ebm"], artifact_dir=str(tmp_path / "meta"),
                             verbose=False, **kw)
 
@@ -274,7 +276,9 @@ def test_unrouted_rows_may_store_any_rule_precision(world, arts, tmp_path):
 def test_saved_artifact_round_trips_and_is_matched_to_its_split(world, arts, tmp_path):
     art, path = run(world, arts, tmp_path)
     loaded = joblib.load(path)
-    assert loaded["schema"] == "meta_ebm/2" and loaded["train_probs_are_oof"] is True
+    assert loaded["schema"] == "glass_arbiter/1" and loaded["train_probs_are_oof"] is True
+    assert Path(path).name.startswith("glass_arbiter_")
+    assert loaded["stage4_inputs"]["upstream"]["arbiter"] == "glass_arbiter"
     for key in CONFIG_KEYS + ("no_abstain", "with_abstain", "split_fingerprints"):
         np.testing.assert_equal(loaded[key], art[key], err_msg=key)     # NaN-safe
     GS = world["GS"]
@@ -289,14 +293,15 @@ def test_saved_artifact_round_trips_and_is_matched_to_its_split(world, arts, tmp
     assert loaded["stage4_inputs"]["streams"]["ebm"]["train_is_oof"] is True
 
     # the black-box arm finds it by split, never by recency alone
-    assert load_meta_ebm_for_comparison(GS, path, ROUTER_FP)["schema"] == "meta_ebm/2"
-    found, found_path = find_meta_ebm_artifact([tmp_path / "meta"], GS, ROUTER_FP, verbose=False)
+    assert load_glass_arbiter_for_comparison(GS, path, ROUTER_FP)["schema"] == "glass_arbiter/1"
+    found, found_path = find_glass_arbiter_artifact([tmp_path / "meta"], GS, ROUTER_FP, verbose=False)
     assert found_path == path
     other = build_world(seed=1)["GS"]
     with pytest.raises(Stage4InputError, match="another split"):
-        load_meta_ebm_for_comparison(other, path, ROUTER_FP)
-    with pytest.raises(Stage4InputError, match="meta_ebm/2"):
-        load_meta_ebm_for_comparison(GS, {**loaded, "schema": "meta_ebm/1"}, ROUTER_FP)
+        load_glass_arbiter_for_comparison(other, path, ROUTER_FP)
+    for schema in ("meta_ebm/1", "glass_arbiter/2", None):
+        with pytest.raises(Stage4InputError, match="glass_arbiter/1"):
+            load_glass_arbiter_for_comparison(GS, {**loaded, "schema": schema}, ROUTER_FP)
 
 
 # ----------------------------------------------------------------------
@@ -354,7 +359,7 @@ def test_real_stage3_artifact_hands_over_its_per_fold_calibrated_oof(world, real
     assert folds["streams"]["ebm"]["reproduced_by_shared_fold_assignment"]
     assert all(r["passed"] for r in inp.validation)
 
-    meta, _ = train_meta_stage(world["GS"], lr_path=p["lr"], glass_path=p["router"],
+    meta, _ = train_glass_arbiter(world["GS"], lr_path=p["lr"], glass_path=p["router"],
                                ebm_path=path, artifact_dir=str(tmp_path / "meta"), verbose=False)
     np.testing.assert_array_equal(meta["train_probs"]["ebm"], art.oof["proba_calibrated"])
     assert meta["stage4_inputs"]["streams"]["ebm"]["n_folds"] == 5
@@ -473,8 +478,8 @@ def test_labels_must_be_binary(world, arts, tmp_path):
 GLASS_NOTEBOOK = BANK_ROOT / "glass_pipeline" / "glass_cascade.ipynb"
 
 
-def test_the_glass_notebook_runs_meta_ebm_on_its_own_producers_outputs():
-    """Cell 19 trains the native Meta-EBM on exactly what Cells 8, 16 and 18
+def test_the_glass_notebook_runs_the_glass_arbiter_on_its_own_producers_outputs():
+    """Cell 19 trains the native GLASS Arbiter on exactly what Cells 8, 16 and 18
     saved: the calibrated LR, the GLASS Router bundle (its outer cross-fit as
     the train side, the full-train router's test outputs, the router split
     fingerprint) and the GLASS EBM — the GLASS upstream (no crossover declared),
@@ -498,7 +503,7 @@ def test_the_glass_notebook_runs_meta_ebm_on_its_own_producers_outputs():
     def kw(node):
         return {k.arg: ast.unparse(k.value) for k in node.keywords}
 
-    c19, meta = call("train_meta_stage")
+    c19, meta = call("train_glass_arbiter")
     assert [ast.unparse(a) for a in meta.args] == ["GLOBAL_SPLIT"]
     assert kw(meta) == {"lr_path": "lr_calibrated_path", "glass_path": "glass_path",
                         "ebm_path": "ebm_path", "target_recall": "0.7"}         # no upstream=
@@ -507,7 +512,8 @@ def test_the_glass_notebook_runs_meta_ebm_on_its_own_producers_outputs():
     c8, lr = call("train_calibrated_lr_stage")                        # Stage 1: its saved path
     assert bound(lr) == "(lr_calibrated_artifact, lr_calibrated_path)"
     assert [ast.unparse(a) for a in lr.args] == ["X_train_eng", "X_test_eng", "y_train", "y_test"]
-    assert kw(lr) == {"save": "True", "output_dir": "'./models/lr'", "X_train_raw": "X_train"}
+    assert kw(lr) == {"save": "True", "output_dir": "'./models/lr'", "X_train_raw": "X_train",
+                      "calibration_method": "'sigmoid'"}         # the shared Stage 1 family
 
     c14, crossfit = call("crossfit_stage2")                           # Stage 2: the bundle
     c16, save = call("save_model")

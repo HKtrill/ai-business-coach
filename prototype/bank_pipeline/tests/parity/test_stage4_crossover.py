@@ -2,7 +2,7 @@
 F29 — the 2x2 Stage 4 crossover through an explicit, validated interface
 (PR 36, Commit 3 Step 3C).
 
-                     GLASS Meta-EBM                     black-box Meta-XGB
+                     GLASS Arbiter                      black-box Meta-XGB
     GLASS upstream   native (default)                   upstream="glass"
     black-box        upstream="blackbox"                native (default)
 
@@ -25,7 +25,7 @@ Contract
   arm, arbiter, crossover flag and per stage the slot, family, arm,
   probability space, Pass 2 population, label evidence and a content
   fingerprint of the outputs consumed. The arbiter-effect comparison
-  (``compare_with_meta_ebm(require_same_upstream=True)``) refuses unless both
+  (``compare_with_glass_arbiter(require_same_upstream=True)``) refuses unless both
   arbiters consumed identical upstream outputs.
 
 Synthetic artifacts in the real formats (tests.support.stage4_world; the RF
@@ -50,13 +50,13 @@ import shared.stage4.contract as contract
 from blackbox_pipeline.models.meta_xgb import build_feature_frames, load_blackbox_stage4_inputs
 from blackbox_pipeline.models.meta_xgb.artifact import load_meta_xgb
 from blackbox_pipeline.models.meta_xgb.comparison import (
-    compare_with_meta_ebm, find_meta_ebm_artifact, load_meta_ebm_for_comparison,
+    compare_with_glass_arbiter, find_glass_arbiter_artifact, load_glass_arbiter_for_comparison,
 )
-from glass_pipeline.meta_ebm import meta_stage as ms
-from glass_pipeline.meta_ebm.arbiter import meta_arbiter
-from glass_pipeline.meta_ebm.loader import load_stage_outputs
-from glass_pipeline.meta_ebm.meta_stage import train_meta_stage
-from glass_pipeline.meta_ebm.router_evidence import (
+from glass_pipeline.glass_arbiter import meta_stage as ms
+from glass_pipeline.glass_arbiter.arbiter import meta_arbiter
+from glass_pipeline.glass_arbiter.loader import load_stage_outputs
+from glass_pipeline.glass_arbiter.meta_stage import train_glass_arbiter
+from glass_pipeline.glass_arbiter.router_evidence import (
     directional_confidence, fold_base_rates, rule_positive_rate,
 )
 import shared.stage4 as stage4
@@ -67,10 +67,10 @@ from tests.support.notebooks import BANK_ROOT
 from tests.support.stage4_world import ROUTER_FP, build_world, make_router, make_stage1, make_stage3
 
 RF_REMAINDER = "OOF Pass 1 remainder (RF router design)"
-ARBITERS = ("meta_ebm", "meta_xgb")
+ARBITERS = ("glass_arbiter", "meta_xgb")
 UPSTREAMS = ("glass", "blackbox")
-NATIVE = {"meta_ebm": "glass", "meta_xgb": "blackbox"}
-SLOTS = {"meta_ebm": ("lr", "glass", "ebm"), "meta_xgb": ("mlp", "rf_router", "xgb")}
+NATIVE = {"glass_arbiter": "glass", "meta_xgb": "blackbox"}
+SLOTS = {"glass_arbiter": ("lr", "glass", "ebm"), "meta_xgb": ("mlp", "rf_router", "xgb")}
 FAMILY = {"glass": {"stage1": (None, "glass"), "stage2": ("glass_router", "glass"),
                     "stage3": ("ebm", "glass")},
           "blackbox": {"stage1": (None, "blackbox"), "stage2": ("rf_router", "blackbox"),
@@ -88,24 +88,24 @@ def blackbox_upstream(w, **kw):
 
 
 def _with_router_scheme(mp):
-    """train_meta_stage has no extra_fingerprints argument: route it via the loader."""
+    """train_glass_arbiter has no extra_fingerprints argument: route it via the loader."""
     real = ms.load_stage_outputs
     mp.setattr(ms, "load_stage_outputs", lambda *a, **k: real(*a, extra_fingerprints=ROUTER_FP, **k))
 
 
 def run_arbiter(arbiter, w, arts, out, upstream=None, verbose=False):
     """(artifact, path). ``arts``: [stage1, stage2, stage3] objects or paths."""
-    if arbiter == "meta_ebm":
+    if arbiter == "glass_arbiter":
         with pytest.MonkeyPatch.context() as mp:
             _with_router_scheme(mp)
-            return train_meta_stage(w["GS"], lr_path=arts[0], glass_path=arts[1], ebm_path=arts[2],
+            return train_glass_arbiter(w["GS"], lr_path=arts[0], glass_path=arts[1], ebm_path=arts[2],
                                     artifact_dir=str(out), verbose=verbose, upstream=upstream)
     kw = {} if upstream is None else {"upstream": upstream}
     return run_meta(w, dict(zip(("mlp", "rf", "xgb"), arts)), out, save=True, **kw)
 
 
 def load_inputs(arbiter, w, arts, upstream=None):
-    loader = load_stage_outputs if arbiter == "meta_ebm" else load_blackbox_stage4_inputs
+    loader = load_stage_outputs if arbiter == "glass_arbiter" else load_blackbox_stage4_inputs
     return loader(w["GS"], *arts, verbose=False, extra_fingerprints=ROUTER_FP, upstream=upstream)
 
 
@@ -155,11 +155,11 @@ def test_every_cell_records_the_combination_it_ran(grid, arbiter, arm):
 
 @pytest.mark.parametrize("arm", UPSTREAMS)
 def test_both_arbiters_on_one_upstream_consumed_identical_outputs(grid, arm):
-    ebm, xgb = upstream_of(grid.runs[(arm, "meta_ebm")]), upstream_of(grid.runs[(arm, "meta_xgb")])
+    ebm, xgb = upstream_of(grid.runs[(arm, "glass_arbiter")]), upstream_of(grid.runs[(arm, "meta_xgb")])
     for stage in ("stage1", "stage2", "stage3"):
         for key in ("content_fingerprint", "probability_space", "label_evidence", "model_family", "arm"):
             assert ebm["stages"][stage][key] == xgb["stages"][stage][key], (stage, key)
-    other = upstream_of(grid.runs[("blackbox" if arm == "glass" else "glass", "meta_ebm")])
+    other = upstream_of(grid.runs[("blackbox" if arm == "glass" else "glass", "glass_arbiter")])
     assert all(ebm["stages"][s]["content_fingerprint"] != other["stages"][s]["content_fingerprint"]
                for s in ("stage1", "stage2", "stage3"))
 
@@ -186,7 +186,7 @@ def test_meta_xgb_on_the_glass_upstream_reads_the_glass_outputs_unchanged(grid):
 
 
 def test_the_glass_arbiter_on_the_blackbox_upstream_reads_the_blackbox_outputs(grid):
-    art, _ = grid.runs[("blackbox", "meta_ebm")]
+    art, _ = grid.runs[("blackbox", "glass_arbiter")]
     mlp, rf, xgb = (joblib.load(p) for p in grid.files["blackbox"])
     e = rf["extra"]
     np.testing.assert_array_equal(art["train_probs"]["lr"],
@@ -204,7 +204,7 @@ def test_the_glass_arbiter_on_the_blackbox_upstream_reads_the_blackbox_outputs(g
 def test_the_glass_arbiter_reads_the_rf_routers_band_rate_as_its_router_evidence(grid):
     """F25 on the RF Router: the recovered rate is the band's (1 - NPV, precision),
     against the producing router's base rate (fold router for OOF rows)."""
-    art, _ = grid.runs[("blackbox", "meta_ebm")]
+    art, _ = grid.runs[("blackbox", "glass_arbiter")]
     rf = joblib.load(grid.files["blackbox"][1])
     e, y = rf["extra"], np.asarray(grid.GS["y_train"], int)
     dec, conf = np.asarray(e["train_decisions"]), np.asarray(e["train_confidence"], float)
@@ -217,13 +217,13 @@ def test_the_glass_arbiter_reads_the_rf_routers_band_rate_as_its_router_evidence
     np.testing.assert_allclose(ev[p1], np.maximum(0, base[p1] - (1 - conf[p1])), atol=1e-12)
     np.testing.assert_allclose(ev[p2], np.maximum(0, conf[p2] - base[p2]), atol=1e-12)
     assert art["thresholds"]["router_confidence"].startswith("RF Router band positive rate")
-    assert grid.runs[("glass", "meta_ebm")][0]["thresholds"]["router_confidence"].startswith(
+    assert grid.runs[("glass", "glass_arbiter")][0]["thresholds"]["router_confidence"].startswith(
         "rule positive rate")
 
 
 @pytest.mark.parametrize("arm", UPSTREAMS)
-def test_meta_ebm_decisions_reconstruct_from_its_saved_artifact(grid, arm):
-    art, path = grid.runs[(arm, "meta_ebm")]
+def test_glass_arbiter_decisions_reconstruct_from_its_saved_artifact(grid, arm):
+    art, path = grid.runs[(arm, "glass_arbiter")]
     loaded = joblib.load(path)
     t, tp = loaded["thresholds"], loaded["test_probs"]
     dec = np.asarray(loaded["glass_decisions_test"])
@@ -272,13 +272,13 @@ def test_split_fold_and_label_provenance_hold_in_every_cell(grid, arbiter, arm):
 
 
 def test_a_crossover_run_is_deterministic_and_its_artifact_reloads(grid, tmp_path):
-    art, path = grid.runs[("blackbox", "meta_ebm")]
-    again, _ = run_arbiter("meta_ebm", grid.w, grid.files["blackbox"], tmp_path, "blackbox")
+    art, path = grid.runs[("blackbox", "glass_arbiter")]
+    again, _ = run_arbiter("glass_arbiter", grid.w, grid.files["blackbox"], tmp_path, "blackbox")
     for key in ("no_abstain", "with_abstain"):
         np.testing.assert_array_equal(again["test_preds"][key], art["test_preds"][key])
     assert again["weights"] == art["weights"] and again["thresholds"] == art["thresholds"]
     assert again["stage4_inputs"]["upstream"] == art["stage4_inputs"]["upstream"]
-    found = load_meta_ebm_for_comparison(grid.GS, path, ROUTER_FP)
+    found = load_glass_arbiter_for_comparison(grid.GS, path, ROUTER_FP)
     assert found["stage4_inputs"]["upstream"]["crossover"] is True
 
 
@@ -366,7 +366,7 @@ def test_the_glass_arbiter_refuses_an_rf_router_it_cannot_read_as_a_band_blend(g
         c[np.asarray(e["test_decisions"]) == "pass2"] -= 0.05
         e["test_confidence"] = c
     with pytest.raises(ValidationError, match=message):
-        load_inputs("meta_ebm", w, arts, upstream="blackbox")
+        load_inputs("glass_arbiter", w, arts, upstream="blackbox")
 
 
 # ----------------------------------------------------------------------
@@ -374,22 +374,22 @@ def test_the_glass_arbiter_refuses_an_rf_router_it_cannot_read_as_a_band_blend(g
 # ----------------------------------------------------------------------
 @pytest.mark.parametrize("arm", UPSTREAMS)
 def test_the_arbiter_effect_comparison_verifies_the_upstream_was_held_fixed(grid, arm):
-    out = compare_with_meta_ebm(grid.GS, grid.runs[(arm, "meta_ebm")][1], grid.runs[(arm, "meta_xgb")][0],
+    out = compare_with_glass_arbiter(grid.GS, grid.runs[(arm, "glass_arbiter")][1], grid.runs[(arm, "meta_xgb")][0],
                                 n_boot=20, verbose=False, extra_fingerprints=ROUTER_FP,
                                 require_same_upstream=True)
     up = out["protocol"]["upstream"]
     assert (up["held_fixed"], up["required"], up["why_not"]) == (True, True, None)
-    assert (up["meta_ebm"], up["meta_xgb"]) == (f"{arm} upstream -> meta_ebm", f"{arm} upstream -> meta_xgb")
+    assert (up["glass_arbiter"], up["meta_xgb"]) == (f"{arm} upstream -> glass_arbiter", f"{arm} upstream -> meta_xgb")
 
 
 def test_a_cascade_comparison_records_that_the_upstreams_differ(grid):
-    ebm_path, xgb = grid.runs[("glass", "meta_ebm")][1], grid.runs[("blackbox", "meta_xgb")][0]
-    out = compare_with_meta_ebm(grid.GS, ebm_path, xgb, n_boot=20, verbose=False,
+    ebm_path, xgb = grid.runs[("glass", "glass_arbiter")][1], grid.runs[("blackbox", "meta_xgb")][0]
+    out = compare_with_glass_arbiter(grid.GS, ebm_path, xgb, n_boot=20, verbose=False,
                                 extra_fingerprints=ROUTER_FP)                 # Cell 36: allowed
     assert out["protocol"]["upstream"]["held_fixed"] is False
     assert "upstream arms differ" in out["protocol"]["upstream"]["why_not"]
     with pytest.raises(Stage4InputError, match="upstream held fixed: upstream arms differ"):
-        compare_with_meta_ebm(grid.GS, ebm_path, xgb, n_boot=20, verbose=False,
+        compare_with_glass_arbiter(grid.GS, ebm_path, xgb, n_boot=20, verbose=False,
                               extra_fingerprints=ROUTER_FP, require_same_upstream=True)
 
 
@@ -408,34 +408,34 @@ def test_an_arbiter_comparison_over_different_upstream_outputs_is_refused(grid, 
     arts[1] = router
     xgb, _ = run_arbiter("meta_xgb", grid.w, arts, tmp_path, "glass")
     with pytest.raises(Stage4InputError, match="stage2 outputs differ"):
-        compare_with_meta_ebm(grid.GS, grid.runs[("glass", "meta_ebm")][1], xgb, n_boot=20, verbose=False,
+        compare_with_glass_arbiter(grid.GS, grid.runs[("glass", "glass_arbiter")][1], xgb, n_boot=20, verbose=False,
                               extra_fingerprints=ROUTER_FP, require_same_upstream=True)
 
 
 def test_an_artifact_written_before_the_upstream_record_cannot_prove_it(grid):
-    legacy = copy.deepcopy(joblib.load(grid.runs[("glass", "meta_ebm")][1]))
+    legacy = copy.deepcopy(joblib.load(grid.runs[("glass", "glass_arbiter")][1]))
     del legacy["stage4_inputs"]["upstream"]
     xgb = grid.runs[("glass", "meta_xgb")][0]
-    out = compare_with_meta_ebm(grid.GS, legacy, xgb, n_boot=20, verbose=False,
+    out = compare_with_glass_arbiter(grid.GS, legacy, xgb, n_boot=20, verbose=False,
                                 extra_fingerprints=ROUTER_FP)
     assert out["protocol"]["upstream"]["held_fixed"] is False
     with pytest.raises(Stage4InputError, match="records no upstream"):
-        compare_with_meta_ebm(grid.GS, legacy, xgb, n_boot=20, verbose=False, extra_fingerprints=ROUTER_FP,
+        compare_with_glass_arbiter(grid.GS, legacy, xgb, n_boot=20, verbose=False, extra_fingerprints=ROUTER_FP,
                               require_same_upstream=True)
 
 
-def test_the_meta_ebm_finder_returns_the_upstream_it_is_asked_for(grid, tmp_path):
-    """A newer crossover Meta-EBM in the same folder is not "the GLASS Meta-EBM"."""
-    native, crossover = (grid.runs[(arm, "meta_ebm")][1] for arm in UPSTREAMS)
+def test_the_glass_arbiter_finder_returns_the_upstream_it_is_asked_for(grid, tmp_path):
+    """A newer crossover GLASS Arbiter in the same folder is not "the native GLASS Arbiter"."""
+    native, crossover = (grid.runs[(arm, "glass_arbiter")][1] for arm in UPSTREAMS)
     for i, src in enumerate((native, crossover)):                    # crossover saved last
-        dst = tmp_path / f"meta_ebm_{i}.joblib"
+        dst = tmp_path / f"glass_arbiter_{i}.joblib"
         shutil.copy(src, dst)
         os.utime(dst, (1_700_000_000 + i, 1_700_000_000 + i))
-    found, path = find_meta_ebm_artifact([tmp_path], grid.GS, ROUTER_FP, verbose=False)
-    assert path.endswith("meta_ebm_0.joblib") and found["stage4_inputs"]["upstream"]["arm"] == "glass"
-    found, path = find_meta_ebm_artifact([tmp_path], grid.GS, ROUTER_FP, verbose=False,
-                                         upstream="blackbox")
-    assert path.endswith("meta_ebm_1.joblib") and found["stage4_inputs"]["upstream"]["crossover"]
+    found, path = find_glass_arbiter_artifact([tmp_path], grid.GS, ROUTER_FP, verbose=False)
+    assert path.endswith("glass_arbiter_0.joblib") and found["stage4_inputs"]["upstream"]["arm"] == "glass"
+    found, path = find_glass_arbiter_artifact([tmp_path], grid.GS, ROUTER_FP, verbose=False,
+                                              upstream="blackbox")
+    assert path.endswith("glass_arbiter_1.joblib") and found["stage4_inputs"]["upstream"]["crossover"]
 
 
 # ----------------------------------------------------------------------
@@ -455,16 +455,17 @@ def _kw(call):
 
 def test_the_notebook_declares_both_crossovers_and_compares_with_the_upstream_held_fixed():
     calls = _calls("CELL 37: STAGE 4 — 2×2 ARBITER CROSSOVER")
-    (glass_arbiter,) = [c for c in calls if ast.unparse(c.func) == "train_meta_stage"]
+    (glass_arbiter,) = [c for c in calls if ast.unparse(c.func) == "train_glass_arbiter"]
     (meta_xgb,) = [c for c in calls if ast.unparse(c.func) == "train_meta_xgb_stage"]
     assert _kw(glass_arbiter)["upstream"] == "'blackbox'"
+    assert _kw(glass_arbiter)["artifact_dir"] == "str(_XO_DIR / 'glass_arbiter_on_blackbox')"
     assert {k: _kw(glass_arbiter)[k] for k in ("lr_path", "glass_path", "ebm_path")} == {
         "lr_path": "MLP_S1_PATH", "glass_path": "RF_ROUTER_PATH", "ebm_path": "XGB_STAGE3_PATH"}
     assert _kw(meta_xgb)["upstream"] == "'glass'"
     assert {k: _kw(meta_xgb)[k] for k in ("mlp_path", "rf_path", "xgb_path")} == {
         "mlp_path": "GLASS_S1_PATH", "rf_path": "GLASS_BUNDLE_PATH", "xgb_path": "_ebm_path"}
     comparisons = [c for c in _calls("CELL 38: STAGE 4 — CROSSOVER RESULTS")
-                   if ast.unparse(c.func) == "compare_with_meta_ebm"]
+                   if ast.unparse(c.func) == "compare_with_glass_arbiter"]
     assert [ast.unparse(c.args[1]) + " vs " + ast.unparse(c.args[2]) for c in comparisons] == [
-        "META_EBM_PATH vs XO_XGB_ON_GLASS", "XO_ARB_ON_BB_PATH vs META_XGB"]
+        "GLASS_ARBITER_PATH vs XO_XGB_ON_GLASS", "XO_ARB_ON_BB_PATH vs META_XGB"]
     assert all(_kw(c)["require_same_upstream"] == "True" for c in comparisons)

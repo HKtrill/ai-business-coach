@@ -310,6 +310,18 @@ def _notebook():
     return named, value, consts
 
 
+def _assignments(name: str) -> list:
+    """Every single-name assignment to ``name`` in the notebook's code cells."""
+    out = []
+    for c in json.loads(NOTEBOOK.read_text(encoding="utf-8"))["cells"]:
+        if c["cell_type"] == "code":
+            tree = ast.parse("\n".join(line for line in "".join(c["source"]).splitlines()
+                                       if not line.lstrip().startswith(("%", "!"))))
+            out += [n for n in ast.walk(tree) if isinstance(n, ast.Assign) and len(n.targets) == 1
+                    and isinstance(n.targets[0], ast.Name) and n.targets[0].id == name]
+    return out
+
+
 def _same(node, source: str) -> bool:
     """``node`` is the expression ``source`` (compared after normalising both)."""
     return ast.unparse(node) == ast.unparse(ast.parse(source, mode="eval").body)
@@ -331,7 +343,13 @@ def test_the_notebook_runs_stage2_under_the_tested_protocol():
     loads = [c for c in named("load_rf_router")
              if any(k.arg == "expected_split_fingerprint" for k in c.keywords)]
     assert loads, "the saved router is reloaded with its split fingerprint checked"
-    assert _same(consts["RF_ROUTER_PATH"], 'f"{STAGE2_OUT}/rf_router_two_pass.joblib"')
+    # PR 39 (execution contract section 5.3, F9): Stage 4 reads the RF Router by path, never
+    # the latest alias: the accepted PR 38 run's pinned version (Cell 18), or, with the
+    # legacy switch on, the immutable version the legacy Cell 24 saved
+    rf_paths = sorted(ast.unparse(n.value) for n in _assignments("RF_ROUTER_PATH"))
+    assert len(rf_paths) == 2 and rf_paths[0].startswith("save_rf_router(router, STAGE2_OUT")
+    assert rf_paths[1] == "str(STAGE2_PINNED.rf_path)"
+    assert not [c for c in named("load_rf_router") if "rf_router_two_pass.joblib" in ast.unparse(c)]
     meta_xgb = [c for c in named("train_meta_xgb_stage") if any(
         k.arg == "rf_path" and ast.unparse(k.value) == "RF_ROUTER_PATH" for k in c.keywords)]
     assert len(meta_xgb) == 1
@@ -340,9 +358,13 @@ def test_the_notebook_runs_stage2_under_the_tested_protocol():
 def test_the_notebook_validates_the_glass_bundle_before_taking_constraints_from_it():
     """Cell 18 runs the Stage 4 router contract — label fingerprints for both
     sides (F12), declared Pass 2 populations (F17), split and fold provenance —
-    on the GLASS bundle it found, in the same cell, before Cell 19 reads that
-    bundle's out-of-fold metrics into the RF Router's operating constraints."""
-    cells = [(i, ast.parse("".join(c["source"])))
+    on the GLASS bundle it loaded, in the same cell, before Cell 19 reads that
+    bundle's out-of-fold metrics into the RF Router's operating constraints.
+    PR 39 (section 5.3, F9): the bundle is the accepted PR 38 run's, loaded by
+    pinned path (``load_pinned_stage2``), or with the legacy switch on the
+    bundle named by ``LEGACY_GLASS_BUNDLE_PATH``; it is never searched for."""
+    cells = [(i, ast.parse("\n".join(line for line in "".join(c["source"]).splitlines()
+                                     if not line.lstrip().startswith(("%", "!")))))
              for i, c in enumerate(json.loads(NOTEBOOK.read_text(encoding="utf-8"))["cells"])
              if c["cell_type"] == "code"]
 
@@ -350,9 +372,11 @@ def test_the_notebook_validates_the_glass_bundle_before_taking_constraints_from_
         return [(i, n) for i, t in cells for n in ast.walk(t) if isinstance(n, ast.Call)
                 and (getattr(n.func, "id", None) or getattr(n.func, "attr", None)) == name]
 
-    (found_in, find), = calls("find_artifact_for_split")
-    assert [ast.unparse(a) for a in find.args] == ["GLASS_ARTIFACT_DIRS", "'glass_router_*.joblib'",
-                                                   "SPLIT_FP"]
+    assert not calls("find_artifact_for_split")
+    (found_in, find), = calls("load_pinned_stage2")
+    assert [ast.unparse(a) for a in find.args] == ["GLOBAL_SPLIT"] and not find.keywords
+    (legacy,) = [c for i, c in calls("load") if i == found_in and ast.unparse(c.func) == "joblib.load"]
+    assert [ast.unparse(a) for a in legacy.args] == ["GLASS_BUNDLE_PATH"]
     (stream_in, stream), = calls("router_stream")
     assert [ast.unparse(a) for a in stream.args] == ["GLASS_BUNDLE", "'glass'", "'GLASS Router'",
                                                      "STAGE2['y_train'].to_numpy()"]
