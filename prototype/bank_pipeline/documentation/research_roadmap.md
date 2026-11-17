@@ -168,24 +168,24 @@
 
 #### Step 6A — Final Regression and Reproducibility Validation
 
-- [ ] Run the relevant targeted, regression, real-data, and end-to-end validation suites against the final implementation.
-- [ ] Verify shared and arm-specific contracts across Stages 1–4.
-- [ ] Validate training/test isolation, OOF provenance, model versions, serialization, fingerprints, and configuration identities.
-- [ ] Verify the final GLASS/RF Stage 2 constraints and three-state routing semantics.
-- [ ] Confirm the 2×2 crossover results and final baseline references remain reproducible.
-- [ ] Check historical baseline preservation and confirm no unexpected artifact or model-family changes.
-- [ ] Resolve material failures before freezing Phase 1; record any limitations that do not block acceptance.
+- [x] Run the relevant targeted, regression, real-data, and end-to-end validation suites against the final implementation.
+- [x] Verify shared and arm-specific contracts across Stages 1–4.
+- [x] Validate training/test isolation, OOF provenance, model versions, serialization, fingerprints, and configuration identities.
+- [x] Verify the final GLASS/RF Stage 2 constraints and three-state routing semantics.
+- [x] Confirm the 2×2 crossover results and final baseline references remain reproducible.
+- [x] Check historical baseline preservation and confirm no unexpected artifact or model-family changes.
+- [x] Resolve material failures before freezing Phase 1; record any limitations that do not block acceptance.
 
 #### Step 6B — Clean-Kernel Notebook Runs and Phase 1 Handoff
 
-- [ ] Execute the relevant cascade notebooks from fresh kernels using the finalized implementation and artifact contracts.
-- [ ] Verify that notebook cells run in order without relying on stale kernel state or undocumented local variables.
-- [ ] Validate notebook references, artifact loading, output consistency, and integration with the finalized pipeline.
-- [ ] Resolve execution-breaking notebook issues without undertaking the Phase 2 presentation redesign.
-- [ ] Record final artifact identities, accepted baselines, test results, notebook execution outcomes, and known limitations.
-- [ ] Freeze the Phase 1 cascade implementations and validated research baseline.
-- [ ] Document the Phase 2 handoff, including notebook restructuring, baseline presentation, and remaining research deliverables.
-- [ ] Reconcile the PR 39 roadmap and confirm final acceptance.
+- [x] Execute the relevant cascade notebooks from fresh kernels using the finalized implementation and artifact contracts.
+- [x] Verify that notebook cells run in order without relying on stale kernel state or undocumented local variables.
+- [x] Validate notebook references, artifact loading, output consistency, and integration with the finalized pipeline.
+- [x] Resolve execution-breaking notebook issues without undertaking the Phase 2 presentation redesign.
+- [x] Record final artifact identities, accepted baselines, test results, notebook execution outcomes, and known limitations.
+- [x] Freeze the Phase 1 cascade implementations and validated research baseline.
+- [x] Document the Phase 2 handoff, including notebook restructuring, baseline presentation, and remaining research deliverables.
+- [x] Reconcile the PR 39 roadmap and confirm final acceptance.
 
 **Deliverable:** Validated, reproducible GLASS and black-box cascades, finalized artifact contracts, clean-kernel execution evidence, and an approved Phase 1 baseline.
 
@@ -198,8 +198,8 @@
 - [x] **Commit 3 complete:** Stage 2 binning and GLASS component naming finalized.
 - [x] **Commit 4 complete:** Final Stage 1–3 artifacts regenerated and accepted.
 - [x] **Commit 5 complete:** Stage 4 arbiters regenerated, 2×2 crossover completed, and cascade baselines established.
-- [ ] **Commit 6 complete:** Final regression, provenance, reproducibility, and clean-kernel notebook validation completed.
-- [ ] **PR 39 complete:** Both cascade implementations and their final Phase 1 artifact contracts frozen, with Phase 2 handoff established.
+- [x] **Commit 6 complete:** Final regression, provenance, reproducibility, and clean-kernel notebook validation completed.
+- [x] **PR 39 complete:** Both cascade implementations and their final Phase 1 artifact contracts frozen, with Phase 2 handoff established.
 
 
 **Out of scope:** Complementarity-aware selector redesign, additional Stage 2 training-objective experiments, notebook presentation restructuring, final notebook slicing and organization, paper-level independent validation, and new research extensions. These belong to later phases.

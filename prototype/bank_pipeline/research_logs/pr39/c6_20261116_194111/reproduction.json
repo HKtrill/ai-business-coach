@@ -1,0 +1,2947 @@
+{
+  "accepted": {
+    "glass_arbiter": {
+      "bytes": 2412622,
+      "path": "models/glass_arbiter/glass_arbiter_20261116_153618_531148.joblib",
+      "sha256": "dac936b6a4dc5039382563cdc57add6bb2f426a9dec6b84fcb36b676e76cd2b9"
+    },
+    "glass_arbiter_on_blackbox": {
+      "bytes": 2413342,
+      "path": "blackbox_pipeline/models/stage4_crossover/glass_arbiter_on_blackbox/glass_arbiter_20261116_153952_875483.joblib",
+      "sha256": "c41991b04a81623c4732f4ad3c448befdea738e74e88bdb84026ef34fd3d6bba"
+    },
+    "meta_xgb": {
+      "bytes": 7617347,
+      "path": "blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261116_153951_438304.joblib",
+      "sha256": "0ad847703e77baf27e96ba8ab9d41798dd14bf1bbdedbe243fbfec8c1c7099a4"
+    },
+    "meta_xgb_on_glass": {
+      "bytes": 7782339,
+      "path": "blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261116_154259_549994.joblib",
+      "sha256": "73a74d4ba10e6bfbeee36eb65d4f583c1813050e554a6adea9fdb1f9d7a52dbc"
+    },
+    "stage1.lr": {
+      "bytes": 942344,
+      "path": "models/lr/lr_calibrated_20261115_204501.joblib",
+      "sha256": "d3a05760fa7594e34e864b652c26b9158b8fe29df1f90ff7a59a4f530c78949c"
+    },
+    "stage1.mlp": {
+      "bytes": 949675,
+      "path": "models/mlp/stage1_mlp_20261116_094252_602977.joblib",
+      "sha256": "dd8922d94bb7370610c237e0f2f07810987a044419758aeda3918d865f109d70"
+    },
+    "stage2.glass_router": {
+      "bytes": 2481389,
+      "path": "models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+      "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+    },
+    "stage2.rf_router": {
+      "bytes": 4158905,
+      "path": "models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+      "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+    },
+    "stage3.ebm": {
+      "bytes": 8296795,
+      "path": "models/ebm/ebm_stage3_20261116_001529_813890.joblib",
+      "sha256": "d886ae5dcbdb077dda934680f8a05902d83a01f254f7d5a5f0667e321e24b631"
+    },
+    "stage3.xgb": {
+      "bytes": 10720121,
+      "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib",
+      "sha256": "8bf1d66ecd54236cdf7e6ebb10ec18e40f24d95a5b33a1ce122dac48b2dd2780"
+    }
+  },
+  "analysis_code": {
+    "changed_since_preflight": false,
+    "now": {
+      "phase1_reproduction_files": 4,
+      "sha256": "8b6886c79ddb139dff5762692d6c60b330f4bf9b4bc447bffbe8674e1c78b3ad",
+      "tests": [
+        "tests/phase1_reproduction/__init__.py",
+        "tests/phase1_reproduction/test_step6b.py"
+      ]
+    },
+    "preflight": {
+      "phase1_reproduction_files": 4,
+      "sha256": "8b6886c79ddb139dff5762692d6c60b330f4bf9b4bc447bffbe8674e1c78b3ad",
+      "tests": [
+        "tests/phase1_reproduction/__init__.py",
+        "tests/phase1_reproduction/test_step6b.py"
+      ]
+    }
+  },
+  "baseline": {
+    "commit4": "c4_20261115_204125",
+    "commit5": "c5_20261116_153459"
+  },
+  "code": {
+    "analysis": {
+      "phase1_reproduction_files": 4,
+      "sha256": "8b6886c79ddb139dff5762692d6c60b330f4bf9b4bc447bffbe8674e1c78b3ad",
+      "tests": [
+        "tests/phase1_reproduction/__init__.py",
+        "tests/phase1_reproduction/test_step6b.py"
+      ]
+    },
+    "head": "830a244d529f53d9bdc43d98b95913be12f5be00",
+    "production": {
+      "code_sha256": "9bcddf74035599f6bc6eb83d914ee6144f77bb616bc6242e6d26ffc1d087347c",
+      "files": 437,
+      "stage4_regeneration_files": 5,
+      "stage4_regeneration_sha256": "6fa0cd82f2b227429db0f24d58dfe6a820ef4b278135d92c0aee536c076e2bac"
+    }
+  },
+  "contract": {
+    "decisions": [
+      "D4",
+      "D7",
+      "D8"
+    ],
+    "gates": [
+      "A6.1",
+      "A6.2",
+      "A6.3",
+      "A6.4",
+      "A6.5"
+    ],
+    "record": "documentation/methodology/pr39_execution_contract.md",
+    "roadmap": "documentation/research_roadmap.md, Commit 6, Steps 6A and 6B",
+    "sections": [
+      "5.4",
+      "7.1",
+      "7.2",
+      "7.3",
+      "7.4",
+      "7.5",
+      "12"
+    ],
+    "version": "1.0.0"
+  },
+  "evidence": {
+    "preservation_after": {
+      "baseline": {
+        "archive_check": {
+          "command": "python research_logs/baselines/stage2_baseline_archive.py --check --sums C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\SHA256SUMS.txt",
+          "exit_code": 0,
+          "output_tail": [
+            "[archive] sources: C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\bank_pipeline",
+            "[2E check] OK: pr37_stage2_pre_correction_v1 reproduced from the recorded sources (reproduced_with_code_drift; 19 files)",
+            "[2E check] note: the diagnostic code differs from the code recorded at generation, but every frozen output is reproduced exactly",
+            "[2E check] shared/stage2/diagnostics/boundary.py: 0c653b69924b -> a8340178ce64",
+            "[2E check] tests/support/artifact_audit.py: 015a6305af72 -> 39a4d6989525"
+          ],
+          "passed": true
+        },
+        "passed": true,
+        "verify": {
+          "command": "python research_logs/baselines/stage2_baseline.py --verify",
+          "exit_code": 0,
+          "output_tail": [
+            "[2E verify] OK: pr37_stage2_pre_correction_v1: 19 files match MANIFEST.json (manifest sha256 905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b)"
+          ],
+          "passed": true
+        }
+      },
+      "pr38_acceptance": {
+        "accepted": true,
+        "candidate_manifest_sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88",
+        "run_id": "c3_20261112_153333"
+      },
+      "report_check": {
+        "command": "python -m stage2_crossfit report --run-id c3_20261112_153333 --check",
+        "exit_code": 0,
+        "note": null,
+        "output_tail": [
+          "research report IDENTICAL -> C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\research_logs\\pr38\\c3_20261112_153333\\report_v1",
+          "  verification without v1 packages: 64 historical v1 table checksums reproduced from the report; every report file rebuilt"
+        ],
+        "passed": true,
+        "platform": "Windows"
+      },
+      "snapshot": {
+        "checks": {
+          "archived_files": {
+            "passed": true,
+            "problems": []
+          },
+          "entries": {
+            "baseline": 37,
+            "got": 37,
+            "passed": true
+          },
+          "sums_file_sha256": {
+            "baseline": "e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a",
+            "got": "e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a",
+            "passed": true
+          }
+        },
+        "live_counterparts": {
+          "different": [
+            "bank_pipeline/blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib",
+            "bank_pipeline/models/ebm/ebm_stage3_latest.joblib",
+            "bank_pipeline/models/mlp/stage1_blackbox_output.joblib",
+            "bank_pipeline/models/mlp/stage1_mlp.joblib",
+            "bank_pipeline/models/mlp/stage1_mlp_metadata.json",
+            "bank_pipeline/models/mlp/stage1_mlp_threshold_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_single.joblib",
+            "bank_pipeline/models/rf_router/rf_router_single_metadata.json",
+            "bank_pipeline/models/rf_router/rf_router_single_pass1_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_single_pass2_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_two_pass.joblib",
+            "bank_pipeline/models/rf_router/rf_router_two_pass_metadata.json",
+            "bank_pipeline/models/rf_router/rf_router_two_pass_pass1_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_two_pass_pass2_sweep.csv"
+          ],
+          "missing": [],
+          "note": "informational: since 2fc030e/e3e27f6 the live models/ folders hold regenerated files and mutable aliases; the archive is the historical reference",
+          "same": 23
+        },
+        "passed": true,
+        "sums_path": "C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\SHA256SUMS.txt"
+      }
+    }
+  },
+  "finished_utc": "2026-11-17T18:34:05+00:00",
+  "format": "pr39.commit6b.reproduction/1",
+  "gates": {
+    "A6.2": {
+      "checks": [
+        {
+          "check": "A6.2 the section 7.4 evaluation covers every reproduced artifact (Stages 1, 3 and 4; Stage 2 by its pinned inputs and routes), the environment, and every registered comparison statement",
+          "detail": "58 vectors, 38 thresholds, 26 decision sets, 39 statements",
+          "passed": true
+        }
+      ],
+      "evidence": "1/1 checks passed",
+      "failed": [],
+      "gate": "A6.2",
+      "passed": true
+    },
+    "A6.3": {
+      "checks": [
+        {
+          "check": "A6.3 accepted glass_arbiter: models/glass_arbiter/glass_arbiter_20261116_153618_531148.joblib unchanged (SHA-256, size)",
+          "detail": "dac936b6a4dc5039",
+          "passed": true
+        },
+        {
+          "check": "A6.3 accepted glass_arbiter_on_blackbox: blackbox_pipeline/models/stage4_crossover/glass_arbiter_on_blackbox/glass_arbiter_20261116_153952_875483.joblib unchanged (SHA-256, size)",
+          "detail": "c41991b04a81623c",
+          "passed": true
+        },
+        {
+          "check": "A6.3 accepted meta_xgb: blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261116_153951_438304.joblib unchanged (SHA-256, size)",
+          "detail": "0ad847703e77baf2",
+          "passed": true
+        },
+        {
+          "check": "A6.3 accepted meta_xgb_on_glass: blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261116_154259_549994.joblib unchanged (SHA-256, size)",
+          "detail": "73a74d4ba10e6bfb",
+          "passed": true
+        },
+        {
+          "check": "A6.3 accepted stage1.lr: models/lr/lr_calibrated_20261115_204501.joblib unchanged (SHA-256, size)",
+          "detail": "d3a05760fa7594e3",
+          "passed": true
+        },
+        {
+          "check": "A6.3 accepted stage1.mlp: models/mlp/stage1_mlp_20261116_094252_602977.joblib unchanged (SHA-256, size)",
+          "detail": "dd8922d94bb73706",
+          "passed": true
+        },
+        {
+          "check": "A6.3 accepted stage2.glass_router: models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib unchanged (SHA-256, size)",
+          "detail": "889c8bd572047beb",
+          "passed": true
+        },
+        {
+          "check": "A6.3 accepted stage2.rf_router: models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib unchanged (SHA-256, size)",
+          "detail": "aadde1ea93d0e300",
+          "passed": true
+        },
+        {
+          "check": "A6.3 accepted stage3.ebm: models/ebm/ebm_stage3_20261116_001529_813890.joblib unchanged (SHA-256, size)",
+          "detail": "d886ae5dcbdb077d",
+          "passed": true
+        },
+        {
+          "check": "A6.3 accepted stage3.xgb: blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib unchanged (SHA-256, size)",
+          "detail": "8bf1d66ecd54236c",
+          "passed": true
+        },
+        {
+          "check": "7.5.1 phase0.verify_snapshot passes (37 entries, the baseline's SHA256SUMS)",
+          "detail": "{'entries': {'got': 37, 'baseline': 37, 'passed': True}, 'sums_file_sha256': {'got': 'e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a', 'baseline': 'e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a', 'passed': True}, 'archived_files': {'problems': [], 'passed': True}}",
+          "passed": true
+        },
+        {
+          "check": "7.5.2 phase0.run_baseline_checks passes (stage2_baseline.py --verify, stage2_baseline_archive.py --check)",
+          "detail": "{'verify': ['[2E verify] OK: pr37_stage2_pre_correction_v1: 19 files match MANIFEST.json (manifest sha256 905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b)'], 'archive_check': ['[2E check] OK: pr37_stage2_pre_correction_v1 reproduced from the recorded sources (reproduced_with_code_drift; 19 files)', '[2E check] note: the diagnostic code differs from the code recorded at generation, but every frozen output is reproduced exactly', '[2E check] shared/stage2/diagnostics/boundary.py: 0c653b69924b -> a8340178ce64', '[2E check] tests/support/artifact_audit.py: 015a6305af72 -> 39a4d6989525']}",
+          "passed": true
+        },
+        {
+          "check": "7.5.3 python -m stage2_crossfit report --run-id c3_20261112_153333 --check passes (Windows, F11)",
+          "detail": "['research report IDENTICAL -> C:\\\\Users\\\\phill\\\\projects\\\\ai-business-coach-clean\\\\prototype\\\\bank_pipeline\\\\research_logs\\\\pr38\\\\c3_20261112_153333\\\\report_v1', '  verification without v1 packages: 64 historical v1 table checksums reproduced from the report; every report file rebuilt']",
+          "passed": true
+        },
+        {
+          "check": "7.5.4 acceptance.require_accepted('c3_20261112_153333') passes",
+          "detail": "{'run_id': 'c3_20261112_153333', 'accepted': True, 'candidate_manifest_sha256': 'f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88'}",
+          "passed": true
+        },
+        {
+          "check": "nothing written to the model folders since the black-box execution",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "7.5.5 models/ before and after: only the reproduction's registered versions, sidecars and mutable aliases; every existing version unchanged",
+          "detail": "[]",
+          "passed": true
+        },
+        {
+          "check": "7.5.1 the snapshot's live counterparts are as before the run",
+          "detail": "{'before': {'different': ['bank_pipeline/blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib', 'bank_pipeline/models/ebm/ebm_stage3_latest.joblib', 'bank_pipeline/models/mlp/stage1_blackbox_output.joblib', 'bank_pipeline/models/mlp/stage1_mlp.joblib', 'bank_pipeline/models/mlp/stage1_mlp_metadata.json', 'bank_pipeline/models/mlp/stage1_mlp_threshold_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_single.joblib', 'bank_pipeline/models/rf_router/rf_router_single_metadata.json', 'bank_pipeline/models/rf_router/rf_router_single_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_single_pass2_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass.joblib', 'bank_pipeline/models/rf_router/rf_router_two_pass_metadata.json', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass2_sweep.csv'], 'missing': [], 'same': 23}, 'after': {'same': 23, 'different': ['bank_pipeline/blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib', 'bank_pipeline/models/ebm/ebm_stage3_latest.joblib', 'bank_pipeline/models/mlp/stage1_blackbox_output.joblib', 'bank_pipeline/models/mlp/stage1_mlp.joblib', 'bank_pipeline/models/mlp/stage1_mlp_metadata.json', 'bank_pipeline/models/mlp/stage1_mlp_threshold_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_single.joblib', 'bank_pipeline/models/rf_router/rf_router_single_metadata.json', 'bank_pipeline/models/rf_router/rf_router_single_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_single_pass2_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass.joblib', 'bank_pipeline/models/rf_router/rf_router_two_pass_metadata.json', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass2_sweep.csv'], 'missing': []}}",
+          "passed": true
+        },
+        {
+          "check": "the accepted Commit 4 and Commit 5 records are the ones preflight verified",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "7.5.6 git status since preflight: only this run's records and the registered tracked notebook outputs",
+          "detail": "[]",
+          "passed": true
+        }
+      ],
+      "evidence": "19/19 checks passed",
+      "failed": [],
+      "gate": "A6.3",
+      "passed": true
+    },
+    "A6.4": {
+      "checks": [
+        {
+          "check": "A6.4 reproduced glass_arbiter: models/glass_arbiter/glass_arbiter_20261117_002010_074812.joblib unchanged (SHA-256, size)",
+          "detail": "21c97ed1635e4244",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced glass_arbiter_on_blackbox: blackbox_pipeline/models/stage4_crossover/glass_arbiter_on_blackbox/glass_arbiter_20261117_023037_274938.joblib unchanged (SHA-256, size)",
+          "detail": "b31cb4fb5e5a0be2",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced meta_xgb: blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261117_023035_844996.joblib unchanged (SHA-256, size)",
+          "detail": "5cfda1b356f9c5a7",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced meta_xgb_on_glass: blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261117_023344_546953.joblib unchanged (SHA-256, size)",
+          "detail": "8b1d11df080acd1c",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced stage1.lr: models/lr/lr_calibrated_20261116_205239.joblib unchanged (SHA-256, size)",
+          "detail": "2d789f883ec5b8a3",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced stage1.mlp: models/mlp/stage1_mlp_20261117_093740_719093.joblib unchanged (SHA-256, size)",
+          "detail": "3ac7e20ef9eb2d72",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced stage3.ebm: models/ebm/ebm_stage3_20261117_002008_351463.joblib unchanged (SHA-256, size)",
+          "detail": "1f73a4c0cb0ef820",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced stage3.xgb: blackbox_pipeline/models/xgb/xgb_stage3_20261117_022745_424608.joblib unchanged (SHA-256, size)",
+          "detail": "4773bd638dde3f89",
+          "passed": true
+        },
+        {
+          "check": "A6.4 both notebooks ran top to bottom in fresh kernels, every code cell once and in order",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 the black-box notebook read this run's GLASS LR, EBM and GLASS Arbiter by pin",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: holds a StageOutput that passes its contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: artifact version 3.0",
+          "detail": "3.0",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: Stage 1 feature contract 2.0.0 recorded and consistent",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: ordered feature names = LR_FEATURES",
+          "detail": "['cellular_downturn', 'subscribe_rate_by_euribor_bin', 'subscribe_rate_by_dow_month']",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: stage1 / glass",
+          "detail": "('stage1', 'glass')",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: calibration family sigmoid requested and selected (D1)",
+          "detail": "('sigmoid', 'sigmoid')",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: OOF provenance is the nested cross-fit (F16/F19)",
+          "detail": "refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model and calibrator fitted per fold)",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: Stage 1 fold plan = 10 stratified folds, seed 42, on GLOBAL_SPLIT's training labels",
+          "detail": "e4da0b4442f71ecf",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: split fingerprint = the frozen protocol's stage I/O split",
+          "detail": "d6cddadc3439",
+          "passed": true
+        },
+        {
+          "check": "stage1.lr: threshold source is a registered one",
+          "detail": "in_stage_f2_cv",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: holds a StageOutput that passes its contract",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: artifact version 3.0",
+          "detail": "3.0",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: Stage 1 feature contract 2.0.0 recorded and consistent",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: ordered feature names = LR_FEATURES",
+          "detail": "['cellular_downturn', 'subscribe_rate_by_euribor_bin', 'subscribe_rate_by_dow_month']",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: stage1 / blackbox",
+          "detail": "('stage1', 'blackbox')",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: calibration family sigmoid requested and selected (D1)",
+          "detail": "('sigmoid', 'sigmoid')",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: OOF provenance is the nested cross-fit (F16/F19)",
+          "detail": "refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model and calibrator fitted per fold)",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: Stage 1 fold plan = 10 stratified folds, seed 42, on GLOBAL_SPLIT's training labels",
+          "detail": "e4da0b4442f71ecf",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: split fingerprint = the frozen protocol's stage I/O split",
+          "detail": "d6cddadc3439",
+          "passed": true
+        },
+        {
+          "check": "stage1.mlp: threshold source is a registered one",
+          "detail": "in_stage_f2_cv",
+          "passed": true
+        },
+        {
+          "check": "stage 1: both arms comparable row for row (assert_comparable: split, features, rows, labels, one fold partition)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: a Stage3Artifact",
+          "detail": "Stage3Artifact",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: model_family / arm = ebm / glass (F21, F37)",
+          "detail": "('ebm', 'glass')",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: features = EBM_FEATURES, in order",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: per-fold feature fit",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: split fingerprint is this split's (either scheme)",
+          "detail": "d6cddadc3439",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: OOF fold ids = the shared 5-fold plan 8aea082fcaf371b7",
+          "detail": "8aea082fcaf371b7",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: OOF outputs recorded (proba, proba_calibrated, fold_id)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: calibration gate recorded per fold (F22)",
+          "detail": "{'applied': True, 'method': 'isotonic', 'ece_before': 0.27109085167045976, 'fold_applied': [True, True, True, True, True]}",
+          "passed": true
+        },
+        {
+          "check": "stage3.ebm: operating threshold selected on out-of-fold training predictions",
+          "detail": "out-of-fold training predictions",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: a Stage3Artifact",
+          "detail": "Stage3Artifact",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: model_family / arm = xgboost / blackbox (F21, F37)",
+          "detail": "('xgboost', 'blackbox')",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: features = EBM_FEATURES, in order",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: per-fold feature fit",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: split fingerprint is this split's (either scheme)",
+          "detail": "fc3e73a5ef91aea4",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: OOF fold ids = the shared 5-fold plan 8aea082fcaf371b7",
+          "detail": "8aea082fcaf371b7",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: OOF outputs recorded (proba, proba_calibrated, fold_id)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: calibration gate recorded per fold (F22)",
+          "detail": "{'applied': True, 'method': 'isotonic', 'ece_before': 0.25699437785873896, 'fold_applied': [True, True, True, True, True]}",
+          "passed": true
+        },
+        {
+          "check": "stage3.xgb: operating threshold selected on out-of-fold training predictions",
+          "detail": "out-of-fold training predictions",
+          "passed": true
+        },
+        {
+          "check": "stage 3: EBM and XGBoost were fitted on one block (block fingerprint)",
+          "detail": "9cc10fa1f5cf8d858a9168a2169372758102d06283592bed024fb06e1040318c",
+          "passed": true
+        },
+        {
+          "check": "stage 3: both arms were fitted on the frozen GLOBAL_SPLIT (each split fingerprint is GLOBAL_SPLIT's under a registered scheme, check_split_identity; its recorded train/test rows, order and labels are GLOBAL_SPLIT's; its canonical stage_io fingerprint is the frozen one)",
+          "detail": "{'stage3.ebm': 'd6cddadc3439 (stage_io)', 'stage3.xgb': 'fc3e73a5ef91aea4 (router)'}",
+          "passed": true
+        },
+        {
+          "check": "stage 3: one shared protocol, family-specific fields only (assert_matched_protocol; split_fingerprint by its canonical identity)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "7.4 every artifact reloads in a fresh interpreter",
+          "detail": "8",
+          "passed": true
+        },
+        {
+          "check": "7.4 stage1.lr reloads as builtins.dict",
+          "detail": "builtins.dict",
+          "passed": true
+        },
+        {
+          "check": "7.4 stage1.mlp reloads as builtins.dict",
+          "detail": "builtins.dict",
+          "passed": true
+        },
+        {
+          "check": "7.4 stage3.ebm reloads as shared.stage3.artifact.Stage3Artifact",
+          "detail": "shared.stage3.artifact.Stage3Artifact",
+          "passed": true
+        },
+        {
+          "check": "7.4 stage3.xgb reloads as shared.stage3.artifact.Stage3Artifact",
+          "detail": "shared.stage3.artifact.Stage3Artifact",
+          "passed": true
+        },
+        {
+          "check": "A6.4 the section 7.3 identities (population, split and label fingerprints, fold plans, feature contracts per stage, binning, configuration) are the Commit 5 run record's, value for value",
+          "detail": "None",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced glass_arbiter loads on this split (schema, split identity, test index)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced glass_arbiter is the glass-upstream cell it records (artifact_audit.check_arbiter_identity)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced glass_arbiter: every Stage 1-3 file it consumed is this run's (Stages 1 and 3: this reproduction's versions; Stage 2: the accepted pins)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced meta_xgb loads on this split (schema, split identity, test index)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced meta_xgb is the blackbox-upstream cell it records (artifact_audit.check_arbiter_identity)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced meta_xgb: every Stage 1-3 file it consumed is this run's (Stages 1 and 3: this reproduction's versions; Stage 2: the accepted pins)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced glass_arbiter_on_blackbox loads on this split (schema, split identity, test index)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced glass_arbiter_on_blackbox is the blackbox-upstream cell it records (artifact_audit.check_arbiter_identity)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced glass_arbiter_on_blackbox: every Stage 1-3 file it consumed is this run's (Stages 1 and 3: this reproduction's versions; Stage 2: the accepted pins)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced meta_xgb_on_glass loads on this split (schema, split identity, test index)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced meta_xgb_on_glass is the glass-upstream cell it records (artifact_audit.check_arbiter_identity)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced meta_xgb_on_glass: every Stage 1-3 file it consumed is this run's (Stages 1 and 3: this reproduction's versions; Stage 2: the accepted pins)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 the reproduced 2x2 holds each upstream fixed within a column and keeps the arms apart within a row (artifact_audit.check_crossover)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced glass_arbiter: accounting identities hold, abstention never changes a retained decision, its saved test metrics are the recount's",
+          "detail": "all hold",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced meta_xgb: accounting identities hold, abstention never changes a retained decision, its saved test metrics are the recount's",
+          "detail": "all hold",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced glass_arbiter_on_blackbox: accounting identities hold, abstention never changes a retained decision, its saved test metrics are the recount's",
+          "detail": "all hold",
+          "passed": true
+        },
+        {
+          "check": "A6.4 reproduced meta_xgb_on_glass: accounting identities hold, abstention never changes a retained decision, its saved test metrics are the recount's",
+          "detail": "all hold",
+          "passed": true
+        },
+        {
+          "check": "A6.4 the reproduced cascade comparison is the one black-box Cell 36 saved in the reproduced Meta-XGB, value for value",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "76/76 checks passed",
+      "failed": [],
+      "gate": "A6.4",
+      "passed": true
+    }
+  },
+  "git_status_delta": {
+    "gone": [],
+    "new": [
+      " M prototype/bank_pipeline/research_logs/figures/venn_cascade_trace.png",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/execution_blackbox.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/execution_blackbox.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/execution_glass.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/execution_glass.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/preflight.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/preflight.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/step6_fast_pytest.xml",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/step6_notebook_pytest.xml",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/step6_realdata_pytest.xml",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/step6_slow_pytest.xml",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/upstream_pins.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/upstream_pins.json.sha256"
+    ],
+    "unexpected": []
+  },
+  "inventory_net": {
+    "notebook": "run",
+    "passed": true,
+    "problems": [],
+    "produced": {
+      "glass_arbiter": "models/glass_arbiter/glass_arbiter_20261117_002010_074812.joblib",
+      "glass_arbiter_on_blackbox": "blackbox_pipeline/models/stage4_crossover/glass_arbiter_on_blackbox/glass_arbiter_20261117_023037_274938.joblib",
+      "meta_xgb": "blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261117_023035_844996.joblib",
+      "meta_xgb_on_glass": "blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261117_023344_546953.joblib",
+      "stage1.lr": "models/lr/lr_calibrated_20261116_205239.joblib",
+      "stage1.mlp": "models/mlp/stage1_mlp_20261117_093740_719093.joblib",
+      "stage3.ebm": "models/ebm/ebm_stage3_20261117_002008_351463.joblib",
+      "stage3.xgb": "blackbox_pipeline/models/xgb/xgb_stage3_20261117_022745_424608.joblib"
+    },
+    "stage4": {
+      "diff": {
+        "added": 6,
+        "deleted": 0,
+        "modified": 0
+      },
+      "notebook": "run",
+      "passed": true,
+      "problems": [],
+      "produced": {
+        "glass_arbiter": "models/glass_arbiter/glass_arbiter_20261117_002010_074812.joblib",
+        "glass_arbiter_on_blackbox": "blackbox_pipeline/models/stage4_crossover/glass_arbiter_on_blackbox/glass_arbiter_20261117_023037_274938.joblib",
+        "meta_xgb": "blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261117_023035_844996.joblib",
+        "meta_xgb_on_glass": "blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261117_023344_546953.joblib"
+      },
+      "sidecars": [
+        "blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261117_023035_844996.json",
+        "blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261117_023344_546953.json"
+      ]
+    },
+    "stages_1_3": {
+      "companions": {
+        "stage1.lr_baseline": "models/lr/lr_baseline_20261116_205155.joblib"
+      },
+      "diff": {
+        "added": 11,
+        "deleted": 0,
+        "modified": 4
+      },
+      "mutable_aliases": [
+        "blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib",
+        "models/ebm/ebm_stage3_latest.joblib",
+        "models/mlp/stage1_mlp.joblib",
+        "models/mlp/stage1_mlp_metadata.json"
+      ],
+      "notebook": "run",
+      "passed": true,
+      "problems": [],
+      "produced": {
+        "stage1.lr": "models/lr/lr_calibrated_20261116_205239.joblib",
+        "stage1.mlp": "models/mlp/stage1_mlp_20261117_093740_719093.joblib",
+        "stage3.ebm": "models/ebm/ebm_stage3_20261117_002008_351463.joblib",
+        "stage3.xgb": "blackbox_pipeline/models/xgb/xgb_stage3_20261117_022745_424608.joblib"
+      },
+      "sidecars": [
+        "blackbox_pipeline/models/xgb/xgb_stage3_20261117_022745_424608.json",
+        "models/ebm/ebm_stage3_20261117_002008_351463.json",
+        "models/mlp/stage1_mlp_20261117_093740_719093_metadata.json",
+        "models/mlp/stage1_mlp_20261117_093740_719093_threshold_sweep.csv",
+        "models/mlp/stage1_mlp_20261117_093740_719093_training_history.csv",
+        "models/mlp/stage1_mlp_20261117_093740_719093_tuning_trials.csv"
+      ]
+    }
+  },
+  "passed": true,
+  "pins_file": {
+    "path": "research_logs/pr39/c6_20261116_194111/upstream_pins.json",
+    "sha256": "020e65db7c96fa8ba04d41851c1939c745ed1da15d760242fb3915cd07cf1d1f"
+  },
+  "records": {
+    "execution_blackbox": "3d8b8302b9d9c5172d27c9cd3c1df96fcb441cd9661e94b4d45217cb213cf95a",
+    "execution_glass": "c4d9a32487b53ae34b987cd9e6ac234953e829e80d74877bd229801cea307e02",
+    "preflight": "8eb0cee74ee91a6c9af5d92d70beb7305d7b8ea7adc30c37bd1e60d16536d080"
+  },
+  "reproduced": {
+    "glass_arbiter": {
+      "bytes": 2412478,
+      "path": "models/glass_arbiter/glass_arbiter_20261117_002010_074812.joblib",
+      "sha256": "21c97ed1635e424495a8cd7ba1adec684f9a29d80d25f20043f88761c38f66bf"
+    },
+    "glass_arbiter_on_blackbox": {
+      "bytes": 2413278,
+      "path": "blackbox_pipeline/models/stage4_crossover/glass_arbiter_on_blackbox/glass_arbiter_20261117_023037_274938.joblib",
+      "sha256": "b31cb4fb5e5a0be22e7f8dbc9ec8f4d9cde4483f19a6d1e61e4bc57ae3e7311f"
+    },
+    "meta_xgb": {
+      "bytes": 7617155,
+      "path": "blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261117_023035_844996.joblib",
+      "sha256": "5cfda1b356f9c5a70830473ccfad746c2e1536d017229e7280b9e6e5b58f629b"
+    },
+    "meta_xgb_on_glass": {
+      "bytes": 7782227,
+      "path": "blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261117_023344_546953.joblib",
+      "sha256": "8b1d11df080acd1c49a9e0263941fd38b015921c715c477dc5e3a26f9baebb9c"
+    },
+    "stage1.lr": {
+      "bytes": 942344,
+      "path": "models/lr/lr_calibrated_20261116_205239.joblib",
+      "sha256": "2d789f883ec5b8a383795bf0b5d9217db3f3b479354adcfbbebdf5f48b224dba"
+    },
+    "stage1.mlp": {
+      "bytes": 949675,
+      "path": "models/mlp/stage1_mlp_20261117_093740_719093.joblib",
+      "sha256": "3ac7e20ef9eb2d72f339dab978133ce8e242eb7c37b472f565b0ece16ab203d6"
+    },
+    "stage3.ebm": {
+      "bytes": 8300638,
+      "path": "models/ebm/ebm_stage3_20261117_002008_351463.joblib",
+      "sha256": "1f73a4c0cb0ef820b0c7a0773f9aaa6e9cedf72e49f600d30e1d4885f89cfcf7"
+    },
+    "stage3.xgb": {
+      "bytes": 10720121,
+      "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261117_022745_424608.joblib",
+      "sha256": "4773bd638dde3f89b167a5291a8973f8d67724a3a6c7d64c4e20a8282631113d"
+    }
+  },
+  "reproduction": {
+    "accounting_changes": {
+      "glass_arbiter": "identical counts (no abstention and retained rows)",
+      "glass_arbiter_on_blackbox": "identical counts (no abstention and retained rows)",
+      "meta_xgb": "identical counts (no abstention and retained rows)",
+      "meta_xgb_on_glass": "identical counts (no abstention and retained rows)"
+    },
+    "classification": {
+      "class": "Deterministic",
+      "conditions": {
+        "every differing decision within drift of its threshold": {
+          "failing": [],
+          "holds": true,
+          "n_failing": 0
+        },
+        "every threshold the same or within its vector's drift": {
+          "failing": [],
+          "holds": true,
+          "n_failing": 0
+        },
+        "every vector comparable": {
+          "failing": [],
+          "holds": true,
+          "n_failing": 0
+        },
+        "identical Stage 2 inputs (SHA-256)": {
+          "failing": [],
+          "holds": true,
+          "n_failing": 0
+        },
+        "identical decisions, abstentions and routes": {
+          "failing": [],
+          "holds": true,
+          "n_failing": 0
+        },
+        "identical fold ids": {
+          "failing": [],
+          "holds": true,
+          "n_failing": 0
+        },
+        "identical selected configurations": {
+          "failing": [],
+          "holds": true,
+          "n_failing": 0
+        },
+        "identical thresholds": {
+          "failing": [],
+          "holds": true,
+          "n_failing": 0
+        },
+        "no registered comparison statement changes": {
+          "failing": [],
+          "holds": true,
+          "n_failing": 0
+        },
+        "probability vectors within max |delta| 1e-9": {
+          "failing": [],
+          "holds": true,
+          "n_failing": 0
+        },
+        "same recorded environment (section 7.3 fields)": {
+          "failing": [],
+          "holds": true,
+          "n_failing": 0
+        }
+      },
+      "decision_sets_compared": 26,
+      "deterministic_requires": [
+        "same recorded environment (section 7.3 fields)",
+        "identical selected configurations",
+        "identical fold ids",
+        "identical Stage 2 inputs (SHA-256)",
+        "every vector comparable",
+        "probability vectors within max |delta| 1e-9",
+        "identical thresholds",
+        "identical decisions, abstentions and routes",
+        "no registered comparison statement changes"
+      ],
+      "max_abs_drift": 0.0,
+      "numerically_equivalent_requires": [
+        "identical selected configurations",
+        "identical fold ids",
+        "identical Stage 2 inputs (SHA-256)",
+        "every vector comparable",
+        "every threshold the same or within its vector's drift",
+        "every differing decision within drift of its threshold",
+        "no registered comparison statement changes"
+      ],
+      "thresholds_compared": 38,
+      "vectors_compared": 58
+    },
+    "confidence_room": {
+      "glass_arbiter": {
+        "abstention_cut": 0.038065627580425795,
+        "confidence": "weighted |p - t| of the voters; router: rule rate against the base rate",
+        "cut_above_negative_bound": false,
+        "negative_side_bound": 0.11265553869499241,
+        "positive_side_bound": 0.9286675639300135,
+        "test_retained_share": {
+          "negative decisions": 0.36779324055666,
+          "positive decisions": 0.8960036330608537
+        },
+        "thresholds": {
+          "router_base_rate": 0.11265553869499241,
+          "stage1_slot": 0.08444249560741927,
+          "stage3_slot": 0.07133243606998654
+        }
+      },
+      "glass_arbiter_on_blackbox": {
+        "abstention_cut": 0.03893775752039429,
+        "confidence": "weighted |p - t| of the voters; router: rule rate against the base rate",
+        "cut_above_negative_bound": false,
+        "negative_side_bound": 0.11265553869499241,
+        "positive_side_bound": 0.9314759308862566,
+        "test_retained_share": {
+          "negative decisions": 0.34290328368921585,
+          "positive decisions": 0.7557223264540338
+        },
+        "thresholds": {
+          "router_base_rate": 0.11265553869499241,
+          "stage1_slot": 0.06852406911374345,
+          "stage3_slot": 0.069050894085282
+        }
+      },
+      "meta_xgb": {
+        "abstention_cut": 0.21536994934082032,
+        "confidence": "|p - t| in the raw operating space",
+        "cut_above_negative_bound": false,
+        "negative_side_bound": 0.44000000000000006,
+        "positive_side_bound": 0.5599999999999999,
+        "test_retained_share": {
+          "negative decisions": 0.14079261025029796,
+          "positive decisions": 0.8243774574049804
+        },
+        "thresholds": {
+          "operating": 0.44000000000000006
+        }
+      },
+      "meta_xgb_on_glass": {
+        "abstention_cut": 0.20949414253234866,
+        "confidence": "|p - t| in the raw operating space",
+        "cut_above_negative_bound": false,
+        "negative_side_bound": 0.5,
+        "positive_side_bound": 0.5,
+        "test_retained_share": {
+          "negative decisions": 0.4519499632082414,
+          "positive decisions": 0.841995841995842
+        },
+        "thresholds": {
+          "operating": 0.5
+        }
+      }
+    },
+    "contract": {
+      "reload": {
+        "glass_arbiter": {
+          "keys": [
+            "abstention",
+            "artifact_thresholds",
+            "calibration",
+            "disagreement",
+            "explanations",
+            "glass_decisions_test",
+            "glass_decisions_train",
+            "index_test",
+            "index_train",
+            "no_abstain",
+            "schema",
+            "split_fingerprint",
+            "split_fingerprints",
+            "stage4_inputs",
+            "test_preds",
+            "test_probs",
+            "thresholds",
+            "timestamp",
+            "train_fold_ids",
+            "train_probs",
+            "train_probs_are_oof",
+            "weights",
+            "weights_details",
+            "with_abstain"
+          ],
+          "type": "builtins.dict"
+        },
+        "glass_arbiter_on_blackbox": {
+          "keys": [
+            "abstention",
+            "artifact_thresholds",
+            "calibration",
+            "disagreement",
+            "explanations",
+            "glass_decisions_test",
+            "glass_decisions_train",
+            "index_test",
+            "index_train",
+            "no_abstain",
+            "schema",
+            "split_fingerprint",
+            "split_fingerprints",
+            "stage4_inputs",
+            "test_preds",
+            "test_probs",
+            "thresholds",
+            "timestamp",
+            "train_fold_ids",
+            "train_probs",
+            "train_probs_are_oof",
+            "weights",
+            "weights_details",
+            "with_abstain"
+          ],
+          "type": "builtins.dict"
+        },
+        "meta_xgb": {
+          "keys": null,
+          "type": "blackbox_pipeline.models.meta_xgb.artifact.MetaXGBArtifact"
+        },
+        "meta_xgb_on_glass": {
+          "keys": null,
+          "type": "blackbox_pipeline.models.meta_xgb.artifact.MetaXGBArtifact"
+        },
+        "stage1.lr": {
+          "keys": [
+            "artifact_version",
+            "base_model",
+            "best_cv_roc_auc",
+            "best_params",
+            "calibrated_model",
+            "calibration_method",
+            "calibration_metrics",
+            "calibration_requested",
+            "config",
+            "cv_f2",
+            "environment",
+            "feature_contract",
+            "feature_names",
+            "oof_provenance",
+            "optimal_threshold",
+            "performance_metrics",
+            "scaler",
+            "stage_output",
+            "test_proba",
+            "threshold_source",
+            "threshold_sweep",
+            "train_fold_id",
+            "train_proba_oof",
+            "training_date",
+            "tuning_trials",
+            "y_test",
+            "y_train"
+          ],
+          "type": "builtins.dict"
+        },
+        "stage1.mlp": {
+          "keys": [
+            "artifact_version",
+            "best_cv_roc_auc",
+            "best_params",
+            "calibrated_model",
+            "calibration_method",
+            "calibration_metrics",
+            "calibration_requested",
+            "config",
+            "created_utc",
+            "cv_f2",
+            "environment",
+            "feature_contract",
+            "feature_names",
+            "model",
+            "oof_provenance",
+            "optimal_threshold",
+            "scaler",
+            "stage_output",
+            "test_metrics",
+            "threshold_source",
+            "train_fold_id",
+            "train_proba_oof",
+            "y_train"
+          ],
+          "type": "builtins.dict"
+        },
+        "stage3.ebm": {
+          "keys": null,
+          "type": "shared.stage3.artifact.Stage3Artifact"
+        },
+        "stage3.xgb": {
+          "keys": null,
+          "type": "shared.stage3.artifact.Stage3Artifact"
+        }
+      },
+      "stage1": {
+        "stage1.lr": {
+          "artifact_version": "3.0",
+          "calibration_method": "sigmoid",
+          "feature_contract": {
+            "features": [
+              "cellular_downturn",
+              "subscribe_rate_by_euribor_bin",
+              "subscribe_rate_by_dow_month"
+            ],
+            "fingerprint": "d0d8b07f2ca5e81d",
+            "id": "stage1-features",
+            "version": "2.0.0"
+          },
+          "fold_fingerprint": "e4da0b4442f71ecf",
+          "n_folds": 10,
+          "oof_provenance": "refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model and calibrator fitted per fold)",
+          "split_fingerprint": "d6cddadc3439",
+          "threshold": 0.11000000000000001,
+          "threshold_is_cross_fitted": false,
+          "threshold_source": "in_stage_f2_cv"
+        },
+        "stage1.mlp": {
+          "artifact_version": "3.0",
+          "calibration_method": "sigmoid",
+          "feature_contract": {
+            "features": [
+              "cellular_downturn",
+              "subscribe_rate_by_euribor_bin",
+              "subscribe_rate_by_dow_month"
+            ],
+            "fingerprint": "d0d8b07f2ca5e81d",
+            "id": "stage1-features",
+            "version": "2.0.0"
+          },
+          "fold_fingerprint": "e4da0b4442f71ecf",
+          "n_folds": 10,
+          "oof_provenance": "refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model and calibrator fitted per fold)",
+          "split_fingerprint": "d6cddadc3439",
+          "threshold": 0.09000000000000001,
+          "threshold_is_cross_fitted": false,
+          "threshold_source": "in_stage_f2_cv"
+        }
+      },
+      "stage3": {
+        "protocol_allowed": [
+          "search_space",
+          "split_fingerprint"
+        ],
+        "protocol_differences": [
+          [
+            "split_fingerprint",
+            "d6cddadc3439",
+            "fc3e73a5ef91aea4"
+          ],
+          [
+            "search_space",
+            "family-specific",
+            "family-specific"
+          ]
+        ],
+        "split_identity": {
+          "stage3.ebm": {
+            "canonical_stage_io": "d6cddadc3439",
+            "recorded": "d6cddadc3439",
+            "scheme": "stage_io"
+          },
+          "stage3.xgb": {
+            "canonical_stage_io": "d6cddadc3439",
+            "recorded": "fc3e73a5ef91aea4",
+            "scheme": "router"
+          }
+        },
+        "stage3.ebm": {
+          "arm": "glass",
+          "block_fingerprint": "9cc10fa1f5cf8d858a9168a2169372758102d06283592bed024fb06e1040318c",
+          "calibration": {
+            "applied": true,
+            "ece_after": 0.0023216768918064064,
+            "ece_before": 0.27109085167045976,
+            "method": "isotonic",
+            "reason": "OOF ECE 0.2711 > gate 0.05"
+          },
+          "features": [
+            "decay_x_density",
+            "euribor3m_sigmoid_slope",
+            "economic_curvature_intensity",
+            "cons.conf.idx",
+            "age",
+            "dow_month_encoded",
+            "default",
+            "prior_x_stress",
+            "campaign",
+            "overlap_default_clean",
+            "cpi_high_cellular",
+            "behavioral_favorability",
+            "emp_var_rate_sigmoid_slope"
+          ],
+          "fold_fingerprint": "8aea082fcaf371b7",
+          "model_family": "ebm",
+          "split_fingerprint": "d6cddadc3439",
+          "threshold": 0.53
+        },
+        "stage3.xgb": {
+          "arm": "blackbox",
+          "block_fingerprint": "9cc10fa1f5cf8d858a9168a2169372758102d06283592bed024fb06e1040318c",
+          "calibration": {
+            "applied": true,
+            "ece_after": 0.002769137712194383,
+            "ece_before": 0.25699437785873896,
+            "method": "isotonic",
+            "reason": "OOF ECE 0.2570 > gate 0.05"
+          },
+          "features": [
+            "decay_x_density",
+            "euribor3m_sigmoid_slope",
+            "economic_curvature_intensity",
+            "cons.conf.idx",
+            "age",
+            "dow_month_encoded",
+            "default",
+            "prior_x_stress",
+            "campaign",
+            "overlap_default_clean",
+            "cpi_high_cellular",
+            "behavioral_favorability",
+            "emp_var_rate_sigmoid_slope"
+          ],
+          "fold_fingerprint": "8aea082fcaf371b7",
+          "model_family": "xgboost",
+          "split_fingerprint": "fc3e73a5ef91aea4",
+          "threshold": 0.5
+        }
+      }
+    },
+    "crossover_results": {
+      "accepted_record": "research_logs/pr39/c5_20261116_153459/crossover_baseline.json",
+      "accepted_sha256": "f05e2532dedeeb30f9da257b889f27b943c471a5d69a3f714e6e840dcced1b3c",
+      "first_difference": null,
+      "identical": true,
+      "reproduced": null
+    },
+    "environment": {
+      "differences": {
+        "c4_20261115_204125": {
+          "class_fields": {},
+          "other": {}
+        },
+        "c5_20261116_153459": {
+          "class_fields": {},
+          "other": {}
+        }
+      },
+      "now": {
+        "executable": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+        "os": "Windows",
+        "packages": {
+          "interpret": "0.7.8",
+          "ipykernel": "6.31.0",
+          "joblib": "1.6.0",
+          "nbclient": "0.11.0",
+          "nbformat": "5.11.1",
+          "numpy": "2.5.4",
+          "optuna": "4.9.0",
+          "pandas": "3.0.6",
+          "pulp": "3.3.2",
+          "scikit-learn": "1.9.1",
+          "scipy": "1.18.1",
+          "xgboost": "3.4.1"
+        },
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.14.3"
+      }
+    },
+    "identities": {
+      "configuration": {
+        "feature_pathway": {
+          "pathway": "fold_label_excluded",
+          "record": [
+            "stage2-inner-fold-feature-isolation",
+            "1.0.0",
+            "0d4953ef34d1d3dc"
+          ]
+        },
+        "frozen_records": {
+          "contract": [
+            "pr37-stage2-primary",
+            "1.0.0",
+            "0817825b9eecbd11"
+          ],
+          "glass_profile": {
+            "fingerprint": "198731d5cdf263f4",
+            "profile_id": "pr37-glass-router-primary",
+            "profile_version": "1.0.0"
+          },
+          "protocol": [
+            "pr38-stage2-evaluation",
+            "1.0.0",
+            "245a1a68fb68cf4e"
+          ],
+          "rf_profile": {
+            "fingerprint": "4e3f9c07e6ecc8ad",
+            "profile_id": "pr37-rf-router-primary",
+            "profile_version": "1.0.0"
+          }
+        },
+        "stage1_calibration_family": "sigmoid"
+      },
+      "feature_contracts": {
+        "stage1": {
+          "contract": {
+            "features": [
+              "cellular_downturn",
+              "subscribe_rate_by_euribor_bin",
+              "subscribe_rate_by_dow_month"
+            ],
+            "fingerprint": "d0d8b07f2ca5e81d",
+            "id": "stage1-features",
+            "version": "2.0.0"
+          },
+          "ordered": [
+            "cellular_downturn",
+            "subscribe_rate_by_euribor_bin",
+            "subscribe_rate_by_dow_month"
+          ],
+          "sha256": "d0d8b07f2ca5e81dad32ba0bdb33e8ddf2671f7a764505ebc76ae11f5d4be513"
+        },
+        "stage2": {
+          "ordered": [
+            "nsd_cold",
+            "nsd_warm",
+            "nsd_elevated",
+            "nsd_hot",
+            "jed_cold",
+            "jed_transition",
+            "jed_warm",
+            "jed_hot",
+            "cci_low",
+            "cci_dead_mid",
+            "cci_hot1",
+            "cci_valley",
+            "cci_hot2",
+            "eci_cold",
+            "eci_mid",
+            "eci_warm",
+            "eci_hot",
+            "dow_cold",
+            "dow_low",
+            "dow_mid",
+            "dow_hot",
+            "behav_cold",
+            "behav_baseline",
+            "behav_warm",
+            "behav_hot",
+            "campaign_fresh",
+            "campaign_moderate",
+            "campaign_heavy",
+            "cpi_cellular"
+          ],
+          "sha256": "7b0d4f507f3becd46be3aee95e9590e94cdbdf2a5a218b82cce5c45afb2e85f5"
+        },
+        "stage3": {
+          "ordered": [
+            "decay_x_density",
+            "euribor3m_sigmoid_slope",
+            "economic_curvature_intensity",
+            "cons.conf.idx",
+            "age",
+            "dow_month_encoded",
+            "default",
+            "prior_x_stress",
+            "campaign",
+            "overlap_default_clean",
+            "cpi_high_cellular",
+            "behavioral_favorability",
+            "emp_var_rate_sigmoid_slope"
+          ],
+          "sha256": "8f1df13bf14ca4722665ca60e0d2b792c6c2148791452c5e9303f1b39c309a83"
+        },
+        "stage4_meta_xgb": {
+          "ordered": [
+            "stage1_proba",
+            "stage2_proba",
+            "stage2_pass1",
+            "stage2_pass2",
+            "stage2_abstain",
+            "stage3_proba"
+          ],
+          "sha256": "6e2be2c81f71c82e03cdbe1e78513d04f61e601863b5109a2018103a61c7a777"
+        }
+      },
+      "population": {
+        "frozen_protocol_population": {
+          "fold_fingerprint": "8aea082fcaf371b7",
+          "router_split_fingerprint": "fc3e73a5ef91aea4",
+          "stage_io_split_fingerprint": "d6cddadc3439",
+          "train_label_fingerprint": "b984d2a50527"
+        },
+        "router_split_fingerprint": "fc3e73a5ef91aea4",
+        "shared_fold_fingerprint": "8aea082fcaf371b7",
+        "stage1_fold_plan": {
+          "fingerprint": "e4da0b4442f71ecf",
+          "n_folds": 10,
+          "seed": 42
+        },
+        "stage_io_split_fingerprint": "d6cddadc3439",
+        "test_rows": 8238,
+        "train_label_fingerprint": "b984d2a50527",
+        "train_positives": 3712,
+        "train_rows": 32950
+      },
+      "stage2_binning": {
+        "covers": [
+          "BINNING_STRATEGY",
+          "RF_FEATURES_BINARY"
+        ],
+        "fingerprint": "9cdd79aff9d61101",
+        "id": "stage2-binning",
+        "sha256": "9cdd79aff9d61101949a7e761c6837e13e81036d865c37b5213dca2867912376"
+      }
+    },
+    "registered_statements": {
+      "accepted": {
+        "blackbox_column: McNemar no_abstain": "Meta-XGB more often correct alone (exact p < 0.05)",
+        "blackbox_column: McNemar with_abstain_both_retained": "not distinguished (exact p >= 0.05)",
+        "blackbox_column: no_abstain.accuracy": "Meta-XGB higher",
+        "blackbox_column: no_abstain.f2": "Meta-XGB higher",
+        "blackbox_column: no_abstain.pr_auc": "not distinguished (95% CI includes 0)",
+        "blackbox_column: no_abstain.precision": "Meta-XGB higher",
+        "blackbox_column: no_abstain.recall": "GLASS Arbiter higher",
+        "blackbox_column: no_abstain.roc_auc": "Meta-XGB higher",
+        "blackbox_column: with_abstain.accuracy": "Meta-XGB higher",
+        "blackbox_column: with_abstain.coverage": "GLASS Arbiter higher",
+        "blackbox_column: with_abstain.f2": "Meta-XGB higher",
+        "blackbox_column: with_abstain.precision": "Meta-XGB higher",
+        "blackbox_column: with_abstain.recall": "Meta-XGB higher",
+        "cascade: McNemar no_abstain": "Meta-XGB more often correct alone (exact p < 0.05)",
+        "cascade: McNemar with_abstain_both_retained": "not distinguished (exact p >= 0.05)",
+        "cascade: no_abstain.accuracy": "Meta-XGB higher",
+        "cascade: no_abstain.f2": "Meta-XGB higher",
+        "cascade: no_abstain.pr_auc": "not distinguished (95% CI includes 0)",
+        "cascade: no_abstain.precision": "Meta-XGB higher",
+        "cascade: no_abstain.recall": "GLASS Arbiter higher",
+        "cascade: no_abstain.roc_auc": "Meta-XGB higher",
+        "cascade: with_abstain.accuracy": "Meta-XGB higher",
+        "cascade: with_abstain.coverage": "GLASS Arbiter higher",
+        "cascade: with_abstain.f2": "Meta-XGB higher",
+        "cascade: with_abstain.precision": "Meta-XGB higher",
+        "cascade: with_abstain.recall": "Meta-XGB higher",
+        "glass_column: McNemar no_abstain": "Meta-XGB more often correct alone (exact p < 0.05)",
+        "glass_column: McNemar with_abstain_both_retained": "Meta-XGB more often correct alone (exact p < 0.05)",
+        "glass_column: no_abstain.accuracy": "Meta-XGB higher",
+        "glass_column: no_abstain.f2": "not distinguished (95% CI includes 0)",
+        "glass_column: no_abstain.pr_auc": "not distinguished (95% CI includes 0)",
+        "glass_column: no_abstain.precision": "Meta-XGB higher",
+        "glass_column: no_abstain.recall": "GLASS Arbiter higher",
+        "glass_column: no_abstain.roc_auc": "Meta-XGB higher",
+        "glass_column: with_abstain.accuracy": "Meta-XGB higher",
+        "glass_column: with_abstain.coverage": "Meta-XGB higher",
+        "glass_column: with_abstain.f2": "Meta-XGB higher",
+        "glass_column: with_abstain.precision": "Meta-XGB higher",
+        "glass_column: with_abstain.recall": "GLASS Arbiter higher"
+      },
+      "changes": [],
+      "reproduced": {
+        "blackbox_column: McNemar no_abstain": "Meta-XGB more often correct alone (exact p < 0.05)",
+        "blackbox_column: McNemar with_abstain_both_retained": "not distinguished (exact p >= 0.05)",
+        "blackbox_column: no_abstain.accuracy": "Meta-XGB higher",
+        "blackbox_column: no_abstain.f2": "Meta-XGB higher",
+        "blackbox_column: no_abstain.pr_auc": "not distinguished (95% CI includes 0)",
+        "blackbox_column: no_abstain.precision": "Meta-XGB higher",
+        "blackbox_column: no_abstain.recall": "GLASS Arbiter higher",
+        "blackbox_column: no_abstain.roc_auc": "Meta-XGB higher",
+        "blackbox_column: with_abstain.accuracy": "Meta-XGB higher",
+        "blackbox_column: with_abstain.coverage": "GLASS Arbiter higher",
+        "blackbox_column: with_abstain.f2": "Meta-XGB higher",
+        "blackbox_column: with_abstain.precision": "Meta-XGB higher",
+        "blackbox_column: with_abstain.recall": "Meta-XGB higher",
+        "cascade: McNemar no_abstain": "Meta-XGB more often correct alone (exact p < 0.05)",
+        "cascade: McNemar with_abstain_both_retained": "not distinguished (exact p >= 0.05)",
+        "cascade: no_abstain.accuracy": "Meta-XGB higher",
+        "cascade: no_abstain.f2": "Meta-XGB higher",
+        "cascade: no_abstain.pr_auc": "not distinguished (95% CI includes 0)",
+        "cascade: no_abstain.precision": "Meta-XGB higher",
+        "cascade: no_abstain.recall": "GLASS Arbiter higher",
+        "cascade: no_abstain.roc_auc": "Meta-XGB higher",
+        "cascade: with_abstain.accuracy": "Meta-XGB higher",
+        "cascade: with_abstain.coverage": "GLASS Arbiter higher",
+        "cascade: with_abstain.f2": "Meta-XGB higher",
+        "cascade: with_abstain.precision": "Meta-XGB higher",
+        "cascade: with_abstain.recall": "Meta-XGB higher",
+        "glass_column: McNemar no_abstain": "Meta-XGB more often correct alone (exact p < 0.05)",
+        "glass_column: McNemar with_abstain_both_retained": "Meta-XGB more often correct alone (exact p < 0.05)",
+        "glass_column: no_abstain.accuracy": "Meta-XGB higher",
+        "glass_column: no_abstain.f2": "not distinguished (95% CI includes 0)",
+        "glass_column: no_abstain.pr_auc": "not distinguished (95% CI includes 0)",
+        "glass_column: no_abstain.precision": "Meta-XGB higher",
+        "glass_column: no_abstain.recall": "GLASS Arbiter higher",
+        "glass_column: no_abstain.roc_auc": "Meta-XGB higher",
+        "glass_column: with_abstain.accuracy": "Meta-XGB higher",
+        "glass_column: with_abstain.coverage": "Meta-XGB higher",
+        "glass_column: with_abstain.f2": "Meta-XGB higher",
+        "glass_column: with_abstain.precision": "Meta-XGB higher",
+        "glass_column: with_abstain.recall": "GLASS Arbiter higher"
+      }
+    },
+    "roles": {
+      "glass_arbiter": {
+        "accepted_routes": {
+          "test": {
+            "pass1": 3264,
+            "pass2": 1269
+          },
+          "train": {
+            "pass1": 11659,
+            "pass2": 6663
+          }
+        },
+        "configuration": {
+          "compared": [
+            "abstention rule (selected_by, min_coverage, search)",
+            "index_train / index_test",
+            "router_confidence rule",
+            "schema",
+            "target_recall",
+            "upstream combination"
+          ],
+          "differences": {},
+          "identical": true
+        },
+        "decisions": {
+          "Stage 2 routes, test": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "Stage 2 routes, training OOF": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 32950
+          },
+          "test: arbiter decision without abstention": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "test: retained (abstention)": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "test: stage 1 slot vote": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "test: stage 3 slot vote": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          }
+        },
+        "fold_ids": {
+          "ebm": {
+            "differ": 0,
+            "identical": true,
+            "n": 32950
+          },
+          "glass": {
+            "differ": 0,
+            "identical": true,
+            "n": 32950
+          },
+          "lr": {
+            "differ": 0,
+            "identical": true,
+            "n": 32950
+          }
+        },
+        "recomputed_confidences": {
+          "accepted": {
+            "checks": {
+              "test decisions = (conf1 > conf0)": true,
+              "test retained = (max(conf1, conf0) >= cut)": true,
+              "the cut is one of the training confidences": true
+            },
+            "valid": true
+          },
+          "reproduced": {
+            "checks": {
+              "test decisions = (conf1 > conf0)": true,
+              "test retained = (max(conf1, conf0) >= cut)": true,
+              "the cut is one of the training confidences": true
+            },
+            "valid": true
+          }
+        },
+        "thresholds": {
+          "Stage 1 recall cut (stage 1 slot)": {
+            "abs_delta": 0.0,
+            "accepted": 0.08444249560741927,
+            "chosen_on": "train_probs.lr",
+            "flag_count": {
+              "accepted": 2522,
+              "change": 0,
+              "reproduced": 2522
+            },
+            "reproduced": 0.08444249560741927,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "Stage 3 recall cut (stage 3 slot)": {
+            "abs_delta": 0.0,
+            "accepted": 0.07133243606998654,
+            "chosen_on": "train_probs.ebm",
+            "flag_count": {
+              "accepted": 1912,
+              "change": 0,
+              "reproduced": 1912
+            },
+            "reproduced": 0.07133243606998654,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "abstention cut (min_weighted_confidence)": {
+            "abs_delta": 0.0,
+            "accepted": 0.038065627580425795,
+            "chosen_on": "train.weighted_confidence",
+            "reproduced": 0.038065627580425795,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "router base rate (training labels)": {
+            "abs_delta": 0.0,
+            "accepted": 0.11265553869499241,
+            "chosen_on": null,
+            "reproduced": 0.11265553869499241,
+            "same_value": true,
+            "vector_max_abs": null,
+            "within_vector_drift": true
+          },
+          "router fold base rate, fold 0": {
+            "abs_delta": 0.0,
+            "accepted": 0.11267071320182094,
+            "chosen_on": null,
+            "reproduced": 0.11267071320182094,
+            "same_value": true,
+            "vector_max_abs": null,
+            "within_vector_drift": true
+          },
+          "router fold base rate, fold 1": {
+            "abs_delta": 0.0,
+            "accepted": 0.11267071320182094,
+            "chosen_on": null,
+            "reproduced": 0.11267071320182094,
+            "same_value": true,
+            "vector_max_abs": null,
+            "within_vector_drift": true
+          },
+          "router fold base rate, fold 2": {
+            "abs_delta": 0.0,
+            "accepted": 0.11267071320182094,
+            "chosen_on": null,
+            "reproduced": 0.11267071320182094,
+            "same_value": true,
+            "vector_max_abs": null,
+            "within_vector_drift": true
+          },
+          "router fold base rate, fold 3": {
+            "abs_delta": 0.0,
+            "accepted": 0.11263277693474961,
+            "chosen_on": null,
+            "reproduced": 0.11263277693474961,
+            "same_value": true,
+            "vector_max_abs": null,
+            "within_vector_drift": true
+          },
+          "router fold base rate, fold 4": {
+            "abs_delta": 0.0,
+            "accepted": 0.11263277693474961,
+            "chosen_on": null,
+            "reproduced": 0.11263277693474961,
+            "same_value": true,
+            "vector_max_abs": null,
+            "within_vector_drift": true
+          }
+        },
+        "vectors": {
+          "test.margin (conf1 - conf0)": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test.weighted_confidence": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test_probs.ebm": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test_probs.glass": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test_probs.lr": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test_probs.meta": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "train.weighted_confidence": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 0.9999999999999998
+          },
+          "train_probs.ebm": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "train_probs.glass": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "train_probs.lr": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "weights (lr, ebm, glass)": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 3,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          }
+        }
+      },
+      "glass_arbiter_on_blackbox": {
+        "accepted_routes": {
+          "test": {
+            "pass1": 3321,
+            "pass2": 1929
+          },
+          "train": {
+            "pass1": 13842,
+            "pass2": 8269
+          }
+        },
+        "configuration": {
+          "compared": [
+            "abstention rule (selected_by, min_coverage, search)",
+            "index_train / index_test",
+            "router_confidence rule",
+            "schema",
+            "target_recall",
+            "upstream combination"
+          ],
+          "differences": {},
+          "identical": true
+        },
+        "decisions": {
+          "Stage 2 routes, test": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "Stage 2 routes, training OOF": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 32950
+          },
+          "test: arbiter decision without abstention": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "test: retained (abstention)": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "test: stage 1 slot vote": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "test: stage 3 slot vote": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          }
+        },
+        "fold_ids": {
+          "ebm": {
+            "differ": 0,
+            "identical": true,
+            "n": 32950
+          },
+          "glass": {
+            "differ": 0,
+            "identical": true,
+            "n": 32950
+          },
+          "lr": {
+            "differ": 0,
+            "identical": true,
+            "n": 32950
+          }
+        },
+        "recomputed_confidences": {
+          "accepted": {
+            "checks": {
+              "test decisions = (conf1 > conf0)": true,
+              "test retained = (max(conf1, conf0) >= cut)": true,
+              "the cut is one of the training confidences": true
+            },
+            "valid": true
+          },
+          "reproduced": {
+            "checks": {
+              "test decisions = (conf1 > conf0)": true,
+              "test retained = (max(conf1, conf0) >= cut)": true,
+              "the cut is one of the training confidences": true
+            },
+            "valid": true
+          }
+        },
+        "thresholds": {
+          "Stage 1 recall cut (stage 1 slot)": {
+            "abs_delta": 0.0,
+            "accepted": 0.06852406911374345,
+            "chosen_on": "train_probs.lr",
+            "flag_count": {
+              "accepted": 2834,
+              "change": 0,
+              "reproduced": 2834
+            },
+            "reproduced": 0.06852406911374345,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "Stage 3 recall cut (stage 3 slot)": {
+            "abs_delta": 0.0,
+            "accepted": 0.069050894085282,
+            "chosen_on": "train_probs.ebm",
+            "flag_count": {
+              "accepted": 2007,
+              "change": 0,
+              "reproduced": 2007
+            },
+            "reproduced": 0.069050894085282,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "abstention cut (min_weighted_confidence)": {
+            "abs_delta": 0.0,
+            "accepted": 0.03893775752039429,
+            "chosen_on": "train.weighted_confidence",
+            "reproduced": 0.03893775752039429,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "router base rate (training labels)": {
+            "abs_delta": 0.0,
+            "accepted": 0.11265553869499241,
+            "chosen_on": null,
+            "reproduced": 0.11265553869499241,
+            "same_value": true,
+            "vector_max_abs": null,
+            "within_vector_drift": true
+          },
+          "router fold base rate, fold 0": {
+            "abs_delta": 0.0,
+            "accepted": 0.11267071320182094,
+            "chosen_on": null,
+            "reproduced": 0.11267071320182094,
+            "same_value": true,
+            "vector_max_abs": null,
+            "within_vector_drift": true
+          },
+          "router fold base rate, fold 1": {
+            "abs_delta": 0.0,
+            "accepted": 0.11267071320182094,
+            "chosen_on": null,
+            "reproduced": 0.11267071320182094,
+            "same_value": true,
+            "vector_max_abs": null,
+            "within_vector_drift": true
+          },
+          "router fold base rate, fold 2": {
+            "abs_delta": 0.0,
+            "accepted": 0.11267071320182094,
+            "chosen_on": null,
+            "reproduced": 0.11267071320182094,
+            "same_value": true,
+            "vector_max_abs": null,
+            "within_vector_drift": true
+          },
+          "router fold base rate, fold 3": {
+            "abs_delta": 0.0,
+            "accepted": 0.11263277693474961,
+            "chosen_on": null,
+            "reproduced": 0.11263277693474961,
+            "same_value": true,
+            "vector_max_abs": null,
+            "within_vector_drift": true
+          },
+          "router fold base rate, fold 4": {
+            "abs_delta": 0.0,
+            "accepted": 0.11263277693474961,
+            "chosen_on": null,
+            "reproduced": 0.11263277693474961,
+            "same_value": true,
+            "vector_max_abs": null,
+            "within_vector_drift": true
+          }
+        },
+        "vectors": {
+          "test.margin (conf1 - conf0)": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test.weighted_confidence": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 0.9999999999999998
+          },
+          "test_probs.ebm": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 0.9999999999999998
+          },
+          "test_probs.glass": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test_probs.lr": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test_probs.meta": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "train.weighted_confidence": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "train_probs.ebm": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 0.9999999999999998
+          },
+          "train_probs.glass": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 0.9999999999999998
+          },
+          "train_probs.lr": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "weights (lr, ebm, glass)": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 3,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          }
+        }
+      },
+      "meta_xgb": {
+        "configuration": {
+          "compared": [
+            "abstention rule",
+            "best_params",
+            "calibration family",
+            "feature_names",
+            "index_train / index_test",
+            "operating rule (space, threshold key, train-side thresholds)",
+            "schema / model_family / arm",
+            "upstream combination"
+          ],
+          "differences": {},
+          "identical": true
+        },
+        "decisions": {
+          "test: decision without abstention": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "test: retained (abstention)": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          }
+        },
+        "fold_ids": {
+          "differ": 0,
+          "identical": true,
+          "n": 32950
+        },
+        "thresholds": {
+          "abstention cut (min |p - t|)": {
+            "abs_delta": 0.0,
+            "accepted": 0.21536994934082032,
+            "chosen_on": "train |p - t| (abstention search)",
+            "reproduced": 0.21536994934082032,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "operating threshold (F2, meta OOF)": {
+            "abs_delta": 0.0,
+            "accepted": 0.44000000000000006,
+            "chosen_on": "learner.oof.proba",
+            "flag_count": {
+              "accepted": 1526,
+              "change": 0,
+              "reproduced": 1526
+            },
+            "reproduced": 0.44000000000000006,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          }
+        },
+        "vectors": {
+          "learner.oof.proba": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 0.9999999999999998
+          },
+          "learner.oof.proba_calibrated": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "learner.oof.threshold_per_row": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test |p - t|": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test.proba": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test.proba_calibrated": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test.proba_raw": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "train |p - t| (abstention search)": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 0.9999999999999998
+          }
+        }
+      },
+      "meta_xgb_on_glass": {
+        "configuration": {
+          "compared": [
+            "abstention rule",
+            "best_params",
+            "calibration family",
+            "feature_names",
+            "index_train / index_test",
+            "operating rule (space, threshold key, train-side thresholds)",
+            "schema / model_family / arm",
+            "upstream combination"
+          ],
+          "differences": {},
+          "identical": true
+        },
+        "decisions": {
+          "test: decision without abstention": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "test: retained (abstention)": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          }
+        },
+        "fold_ids": {
+          "differ": 0,
+          "identical": true,
+          "n": 32950
+        },
+        "thresholds": {
+          "abstention cut (min |p - t|)": {
+            "abs_delta": 0.0,
+            "accepted": 0.20949414253234866,
+            "chosen_on": "train |p - t| (abstention search)",
+            "reproduced": 0.20949414253234866,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "operating threshold (F2, meta OOF)": {
+            "abs_delta": 0.0,
+            "accepted": 0.5,
+            "chosen_on": "learner.oof.proba",
+            "flag_count": {
+              "accepted": 1443,
+              "change": 0,
+              "reproduced": 1443
+            },
+            "reproduced": 0.5,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          }
+        },
+        "vectors": {
+          "learner.oof.proba": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "learner.oof.proba_calibrated": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "learner.oof.threshold_per_row": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test |p - t|": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test.proba": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test.proba_calibrated": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "test.proba_raw": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "train |p - t| (abstention search)": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          }
+        }
+      },
+      "stage1.lr": {
+        "configuration": {
+          "compared": [
+            "artifact_version",
+            "best_params",
+            "calibration_method",
+            "calibration_requested",
+            "feature_contract",
+            "feature_names",
+            "stage / arm / model",
+            "test_index",
+            "threshold_source",
+            "train_index"
+          ],
+          "differences": {},
+          "identical": true
+        },
+        "decisions": {
+          "test at the operating threshold": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "train OOF at the operating threshold": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 32950
+          }
+        },
+        "fold_ids": {
+          "differ": 0,
+          "identical": true,
+          "n": 32950
+        },
+        "thresholds": {
+          "operating (F2, on training OOF)": {
+            "abs_delta": 0.0,
+            "accepted": 0.11000000000000001,
+            "chosen_on": "train_proba_oof",
+            "flag_count": {
+              "accepted": 1879,
+              "change": 0,
+              "reproduced": 1879
+            },
+            "reproduced": 0.11000000000000001,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          }
+        },
+        "vectors": {
+          "test_proba": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "train_proba_oof": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          }
+        }
+      },
+      "stage1.mlp": {
+        "configuration": {
+          "compared": [
+            "artifact_version",
+            "best_params",
+            "calibration_method",
+            "calibration_requested",
+            "feature_contract",
+            "feature_names",
+            "stage / arm / model",
+            "test_index",
+            "threshold_source",
+            "train_index"
+          ],
+          "differences": {},
+          "identical": true
+        },
+        "decisions": {
+          "test at the operating threshold": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "train OOF at the operating threshold": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 32950
+          }
+        },
+        "fold_ids": {
+          "differ": 0,
+          "identical": true,
+          "n": 32950
+        },
+        "thresholds": {
+          "operating (F2, on training OOF)": {
+            "abs_delta": 0.0,
+            "accepted": 0.09000000000000001,
+            "chosen_on": "train_proba_oof",
+            "flag_count": {
+              "accepted": 2029,
+              "change": 0,
+              "reproduced": 2029
+            },
+            "reproduced": 0.09000000000000001,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          }
+        },
+        "vectors": {
+          "test_proba": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "train_proba_oof": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          }
+        }
+      },
+      "stage3.ebm": {
+        "configuration": {
+          "compared": [
+            "best_params",
+            "block_fingerprint",
+            "calibration family (applied, method, per fold)",
+            "class_weights",
+            "feature_fit_scope",
+            "features",
+            "index_train / index_test",
+            "model_family / arm",
+            "split_fingerprint"
+          ],
+          "differences": {},
+          "identical": true
+        },
+        "decisions": {
+          "test (fold mean)": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "test (full-train refit)": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "train OOF": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 32950
+          }
+        },
+        "fold_ids": {
+          "differ": 0,
+          "identical": true,
+          "n": 32950
+        },
+        "thresholds": {
+          "OOF (F2)": {
+            "abs_delta": 0.0,
+            "accepted": 0.53,
+            "chosen_on": "oof.proba",
+            "flag_count": {
+              "accepted": 1443,
+              "change": 0,
+              "reproduced": 1443
+            },
+            "reproduced": 0.53,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "OOF fold-nested, fold 0": {
+            "abs_delta": 0.0,
+            "accepted": 0.56,
+            "chosen_on": "oof.proba",
+            "reproduced": 0.56,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "OOF fold-nested, fold 1": {
+            "abs_delta": 0.0,
+            "accepted": 0.56,
+            "chosen_on": "oof.proba",
+            "reproduced": 0.56,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "OOF fold-nested, fold 2": {
+            "abs_delta": 0.0,
+            "accepted": 0.54,
+            "chosen_on": "oof.proba",
+            "reproduced": 0.54,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "OOF fold-nested, fold 3": {
+            "abs_delta": 0.0,
+            "accepted": 0.49,
+            "chosen_on": "oof.proba",
+            "reproduced": 0.49,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "OOF fold-nested, fold 4": {
+            "abs_delta": 0.0,
+            "accepted": 0.49,
+            "chosen_on": "oof.proba",
+            "reproduced": 0.49,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "OOF, calibrated space": {
+            "abs_delta": 0.0,
+            "accepted": 0.11,
+            "chosen_on": "oof.proba_calibrated",
+            "reproduced": 0.11,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          }
+        },
+        "vectors": {
+          "fold_mean.test_margin": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "fold_mean.test_proba": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "oof.margin": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "oof.proba": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "oof.proba_calibrated": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "refit.test_margin": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "refit.test_proba": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "refit.test_proba_calibrated": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          }
+        }
+      },
+      "stage3.xgb": {
+        "configuration": {
+          "compared": [
+            "best_params",
+            "block_fingerprint",
+            "calibration family (applied, method, per fold)",
+            "class_weights",
+            "feature_fit_scope",
+            "features",
+            "index_train / index_test",
+            "model_family / arm",
+            "split_fingerprint"
+          ],
+          "differences": {},
+          "identical": true
+        },
+        "decisions": {
+          "test (fold mean)": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "test (full-train refit)": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 8238
+          },
+          "train OOF": {
+            "all_within_drift": true,
+            "comparable": true,
+            "differ": 0,
+            "n": 32950
+          }
+        },
+        "fold_ids": {
+          "differ": 0,
+          "identical": true,
+          "n": 32950
+        },
+        "thresholds": {
+          "OOF (F2)": {
+            "abs_delta": 0.0,
+            "accepted": 0.5,
+            "chosen_on": "oof.proba",
+            "flag_count": {
+              "accepted": 1514,
+              "change": 0,
+              "reproduced": 1514
+            },
+            "reproduced": 0.5,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "OOF fold-nested, fold 0": {
+            "abs_delta": 0.0,
+            "accepted": 0.54,
+            "chosen_on": "oof.proba",
+            "reproduced": 0.54,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "OOF fold-nested, fold 1": {
+            "abs_delta": 0.0,
+            "accepted": 0.55,
+            "chosen_on": "oof.proba",
+            "reproduced": 0.55,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "OOF fold-nested, fold 2": {
+            "abs_delta": 0.0,
+            "accepted": 0.53,
+            "chosen_on": "oof.proba",
+            "reproduced": 0.53,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "OOF fold-nested, fold 3": {
+            "abs_delta": 0.0,
+            "accepted": 0.54,
+            "chosen_on": "oof.proba",
+            "reproduced": 0.54,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "OOF fold-nested, fold 4": {
+            "abs_delta": 0.0,
+            "accepted": 0.52,
+            "chosen_on": "oof.proba",
+            "reproduced": 0.52,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          },
+          "OOF, calibrated space": {
+            "abs_delta": 0.0,
+            "accepted": 0.11,
+            "chosen_on": "oof.proba_calibrated",
+            "reproduced": 0.11,
+            "same_value": true,
+            "vector_max_abs": 0.0,
+            "within_vector_drift": true
+          }
+        },
+        "vectors": {
+          "fold_mean.test_margin": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 0.9999999999999998
+          },
+          "fold_mean.test_proba": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 0.9999999999999998
+          },
+          "oof.margin": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "oof.proba": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 0.9999999999999998
+          },
+          "oof.proba_calibrated": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 32950,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 0.9999999999999998
+          },
+          "refit.test_margin": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "refit.test_proba": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 1.0
+          },
+          "refit.test_proba_calibrated": {
+            "comparable": true,
+            "identical": true,
+            "max_abs": 0.0,
+            "n": 8238,
+            "nan_mismatch": 0,
+            "p999_abs": 0.0,
+            "spearman": 0.9999999999999998
+          }
+        }
+      }
+    },
+    "stage2_inputs": {
+      "glass_arbiter": {
+        "accepted": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\models\\pr38\\c3_20261112_153333\\primary\\glass_router\\glass_router_pr38_primary_c3_20261112_153333.joblib",
+        "identical": true,
+        "pinned": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\models\\pr38\\c3_20261112_153333\\primary\\glass_router\\glass_router_pr38_primary_c3_20261112_153333.joblib",
+        "reproduced": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\models\\pr38\\c3_20261112_153333\\primary\\glass_router\\glass_router_pr38_primary_c3_20261112_153333.joblib"
+      },
+      "glass_arbiter_on_blackbox": {
+        "accepted": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\models\\pr38\\c3_20261112_153333\\primary\\rf_router\\rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+        "identical": true,
+        "pinned": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\models\\pr38\\c3_20261112_153333\\primary\\rf_router\\rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+        "reproduced": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\models\\pr38\\c3_20261112_153333\\primary\\rf_router\\rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib"
+      },
+      "meta_xgb": {
+        "accepted": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\models\\pr38\\c3_20261112_153333\\primary\\rf_router\\rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+        "identical": true,
+        "pinned": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\models\\pr38\\c3_20261112_153333\\primary\\rf_router\\rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+        "reproduced": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\models\\pr38\\c3_20261112_153333\\primary\\rf_router\\rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib"
+      },
+      "meta_xgb_on_glass": {
+        "accepted": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\models\\pr38\\c3_20261112_153333\\primary\\glass_router\\glass_router_pr38_primary_c3_20261112_153333.joblib",
+        "identical": true,
+        "pinned": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\models\\pr38\\c3_20261112_153333\\primary\\glass_router\\glass_router_pr38_primary_c3_20261112_153333.joblib",
+        "reproduced": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\models\\pr38\\c3_20261112_153333\\primary\\glass_router\\glass_router_pr38_primary_c3_20261112_153333.joblib"
+      }
+    }
+  },
+  "run_id": "c6_20261116_194111",
+  "started_utc": "2026-11-17T18:32:56+00:00",
+  "step": "reproduction"
+}

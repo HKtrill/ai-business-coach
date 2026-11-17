@@ -27,6 +27,12 @@ existing record is never replaced, and a new attempt gets a new run id.
 | Commit 5, Step 5A: the PR 39 arbiter manifest (§7.1): exactly the four `artifact_audit.ROOTS` keys, the file `$BANK_ARTIFACT_MANIFEST` names for every real-data check of the PR 39 arbiters | `arbiter_manifest.json` | written by `execute --notebook blackbox` |
 | Commit 5, Step 5A: A5.1–A5.3 and §7.5 after the run: each arbiter's path, size and SHA-256, and the pinned Stage 1–3 files it read; the real-data audit under the arbiter manifest, with its JUnit report; the §7.3 identities. Not the Commit 5 baseline, which Step 5B records (A5.4, A5.5) | `run_record.json`, `stage4_audit_pytest.xml` | `python -m stage4_regeneration finalize` |
 | Commit 5, Step 5B: the pre-presentation cascade baseline (A5.4, A5.5). It holds the registered 2×2 (§6.5): both columns with the upstream held fixed, and cascade against cascade, which must reproduce black-box Cell 36. Per cell, the abstention accounting keeps three populations apart: no abstention, retained rows only, and the whole system (coverage, retention per class, effective recall). It adds the exact accuracy decomposition, calibration as recorded, Stage 2's descriptive role and the limitations. Every Step 5A record and arbiter is pinned by SHA-256 | `crossover_baseline.json` | `python -m stage4_regeneration.crossover record` / `check --run-id <run_id>` |
+| Commit 6, Step 6B: before any write, the accepted baseline re-verified (the Commit 4 acceptance and manifest; the Commit 5 baseline, every result recomputed), the notebooks and production code shown to be Step 5A's, the §7.5 checks, the `models/` inventory, the Git-tracked files the notebooks write, both full copies and the environment against the accepted runs' | `preflight.json` | `python -m phase1_reproduction preflight` |
+| Commit 6, Step 6A: the saved suite reports (A6.1): real data under the Commit 5 arbiter manifest, run before the notebooks; fast default; `slow`; the empty `notebook` marker | `step6_realdata_pytest.xml`, `step6_fast_pytest.xml`, `step6_slow_pytest.xml`, `step6_notebook_pytest.xml` | `pytest --junitxml`, after `preflight` |
+| Commit 6, Step 6B: each committed notebook run top to bottom in a fresh kernel (§5.4, D4): every cell's hash, the executed copy's hash and execution order, the inventory change, the new versions produced, and the tracked files it rewrote (copied out, never restored) | `execution_glass.json`, `execution_blackbox.json` | `python -m phase1_reproduction execute` |
+| Commit 6, Step 6B: the run's pins: the GLASS execution's Stage 1 LR, EBM and GLASS Arbiter and the two Stage 2 pins, read by black-box Cells 14A, 33 and 35 | `upstream_pins.json` | written by `execute --notebook glass` |
+| Commit 6, Step 6B: the §7.4 reproduction evaluation (D8), recorded whatever the class: per artifact the configuration, fold ids, drift of every vector, every operating threshold, every differing decision, abstention and route; the registered statements; the 2×2 recomputed on the reproduced arbiters; the reproduced artifacts' Stage 1–4 contract checks; §7.5 after the run (A6.3, A6.4) | `reproduction.json` | `python -m phase1_reproduction compare` |
+| Commit 6, Step 6B: the Phase 1 freeze (A6.1, A6.2, A6.5): the accepted baseline, the suite reports, both executions, the reproduction class and A6.2 route, the tracked outputs' disposition, the limitations (correcting the third limitation of the Commit 5 baseline, which is not rewritten), the Phase 2 handoff and the owner's statements verbatim | `phase1_freeze.json` | `python -m phase1_reproduction freeze` |
 
 The Step 2B records go in their own run folder; the Step 2A folder is not reopened.
 
@@ -44,7 +50,14 @@ instead, which `.gitignore` keeps local; the run then stops and a new attempt ge
 run id. The two registered continuations, `recover-glass` and `finalize-transition`, are
 the exceptions: each is written once for its registered cause and code change, and
 `finalize` checks that the failed attempts they name are unchanged. The Commit 5 Step 5A
-records (`stage4_regeneration`) follow the same rules, with no continuations.
+records (`stage4_regeneration`) follow the same rules, with no continuations. So do the Commit 6
+records (`phase1_reproduction`), with one difference: `compare` and `freeze` require
+the production code the notebooks ran on, and record (rather than refuse) a correction to
+`phase1_reproduction` itself made after the executions. A Commit 6 attempt that stops
+before `freeze` keeps its folder as it is; the next run names it in `SUPERSEDED_RUNS`, and
+the freeze record lists its files with their SHA-256. A code file corrected after Step 5A
+is registered in `STEP6_CORRECTIONS` with its Step 5A digest, so `preflight` still proves
+every other file is the code Step 5A ran.
 
 `.gitattributes` turns off line-ending conversion inside run folders, so the records'
 bytes, and the hashes that pin them, are the same on every checkout.
