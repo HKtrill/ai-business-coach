@@ -9,8 +9,6 @@ existing record is never replaced, and a new attempt gets a new run id.
 |---|---|---|
 | Commit 2, Step 2A: Stage 1 calibration evidence E-C and the C1–C5 decision | `stage1_calibration_evidence.json` | `python -m stage1_calibration run` / `check --run-id <run_id>` |
 | Commit 2, Step 2A: the owner's approval of that decision, pinning the evidence by SHA-256 | `stage1_calibration_decision.json` | `python -m stage1_calibration decide --run-id <run_id>`; re-verified by `check` |
-| Commit 2, Step 2B: the Stage 1 rename's baseline re-check and its code-identity note (contract §7.5) | `stage2_baseline_check.txt` | `python research_logs/baselines/stage2_baseline.py --check`, output saved verbatim |
-| Commit 2, Step 2B: test evidence for gates A2.4–A2.5 | `step2b_pytest.xml` | `pytest --junitxml` over the focused suites and the real-data rename and freeze tests |
 | Commit 3, Step 3A: NSD/ECI binning evidence E-B and E-B2, triggers T1–T4, the retain-or-revise decision and the Stage 2 binning identity (gates A3.1–A3.3) | `stage2_binning_evidence.json` | `python -m stage2_binning run` / `check --run-id <run_id>` |
 | Commit 4, Step 4A: §7.5 checks before any write, the `models/` inventory, the run id and output layout (A4.1) | `preflight.json` | `python -m upstream_regeneration preflight` |
 | Commit 4, Step 4A: the §5.2 Stage 2 decision, reuse or regenerate (A4.2) | `stage2_reuse.json` | `python -m upstream_regeneration stage2-reuse` |
@@ -34,7 +32,14 @@ existing record is never replaced, and a new attempt gets a new run id.
 | Commit 6, Step 6B: the §7.4 reproduction evaluation (D8), recorded whatever the class: per artifact the configuration, fold ids, drift of every vector, every operating threshold, every differing decision, abstention and route; the registered statements; the 2×2 recomputed on the reproduced arbiters; the reproduced artifacts' Stage 1–4 contract checks; §7.5 after the run (A6.3, A6.4) | `reproduction.json` | `python -m phase1_reproduction compare` |
 | Commit 6, Step 6B: the Phase 1 freeze (A6.1, A6.2, A6.5): the accepted baseline, the suite reports, both executions, the reproduction class and A6.2 route, the tracked outputs' disposition, the limitations (correcting the third limitation of the Commit 5 baseline, which is not rewritten), the Phase 2 handoff and the owner's statements verbatim | `phase1_freeze.json` | `python -m phase1_reproduction freeze` |
 
-The Step 2B records go in their own run folder; the Step 2A folder is not reopened.
+Commit 2, Step 2B (the Stage 1 renames, gates A2.4–A2.5) has no run folder: its focused
+test and baseline re-check reports were not retained. Its outcome is recorded in
+`commit3_readiness.md` (D2), its deliberate change to baseline-pinned code in
+`DELIBERATE_PIN_CHANGES` (`tests/stage2/test_stage2_operating_contract_v2.py`), and its
+tests (`tests/stage1/test_stage1_fold_isolation.py` and the real-data
+`tests/stage1/test_stage1_feature_rename_realdata.py` and
+`tests/realdata/test_stage2_freeze_artifacts.py`) pass in the Commit 6 suite reports in
+`c6_20261116_194111/`.
 
 Row-level vectors stay local and Git-ignored under `models/pr39/<run_id>/`. The record
 pins them by SHA-256 and size, and `check` recomputes every number in the record from them.
