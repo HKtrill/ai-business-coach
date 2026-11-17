@@ -131,32 +131,32 @@
 
 #### Step 5A — Final Stage 4 Integration
 
-- [ ] Verify accepted Stage 1–3 artifacts and OOF inputs from Commit 4.
-- [ ] Regenerate the GLASS and black-box Stage 4 arbiters using leakage-safe finalized upstream OOF evidence.
-- [ ] Verify input alignment, model-family ownership, routing conventions, and calibration dependencies.
-- [ ] Validate Stage 4 artifact provenance, metadata, versioning, and serialization.
-- [ ] Confirm both complete cascade arms execute under their finalized contracts.
-- [ ] Run focused Stage 4 integration tests before comparative evaluation.
+- [x] Verify accepted Stage 1–3 artifacts and OOF inputs from Commit 4.
+- [x] Regenerate the GLASS and black-box Stage 4 arbiters using leakage-safe finalized upstream OOF evidence.
+- [x] Verify input alignment, model-family ownership, routing conventions, and calibration dependencies.
+- [x] Validate Stage 4 artifact provenance, metadata, versioning, and serialization.
+- [x] Confirm both complete cascade arms execute under their finalized contracts.
+- [x] Run focused Stage 4 integration tests before comparative evaluation.
 
 #### Step 5B — 2×2 Crossover and Final Baseline
 
-- [ ] Re-run the registered 2×2 arbiter crossover using the finalized upstream artifacts.
-- [ ] Evaluate the registered combinations under consistent data splits, operating points, and comparison procedures.
-- [ ] Report predictive performance, calibration, abstention/coverage where applicable, and comparative uncertainty.
-- [ ] Examine Stage 2 contributions and GLASS/black-box differences without changing the frozen selector based on these results.
-- [ ] Revalidate mirrored contracts and identify any remaining integration limitations.
-- [ ] Record final model identities, crossover findings, and the pre-presentation cascade baseline.
-- [ ] Preserve earlier PR 38 comparisons as historical evidence rather than replacing them with PR 39 results.
+- [x] Re-run the registered 2×2 arbiter crossover using the finalized upstream artifacts.
+- [x] Evaluate the registered combinations under consistent data splits, operating points, and comparison procedures.
+- [x] Report predictive performance, calibration, abstention/coverage where applicable, and comparative uncertainty.
+- [x] Examine Stage 2 contributions and GLASS/black-box differences without changing the frozen selector based on these results.
+- [x] Revalidate mirrored contracts and identify any remaining integration limitations.
+- [x] Record final model identities, crossover findings, and the pre-presentation cascade baseline.
+- [x] Preserve earlier PR 38 comparisons as historical evidence rather than replacing them with PR 39 results.
 
 **Stage 4 abstention metric accounting and interpretation**
 
-- [ ] Audit how Stage 4 computes accuracy, precision, recall, F1, F2, and ROC-AUC with and without abstention.
-- [ ] Verify whether abstained observations are excluded, counted as incorrect, or assigned another outcome in each reported metric.
-- [ ] Reconcile TP, FP, TN, FN, and abstention counts against the reported coverage and evaluation population.
-- [ ] Report retained-only metrics separately from whole-system metrics, including effective recall over all actual positives and per-class retention/abstention rates.
-- [ ] Investigate the observed accuracy decline alongside improvements in precision, recall, and ROC-AUC, accounting for class-prevalence differences and operating thresholds.
-- [ ] Correct any confirmed metric-accounting or labeling errors without altering the frozen Stage 4 training and evaluation protocol.
-- [ ] Document the interpretation and limitations of abstention-conditioned performance in the final cascade baseline.
+- [x] Audit how Stage 4 computes accuracy, precision, recall, F1, F2, and ROC-AUC with and without abstention.
+- [x] Verify whether abstained observations are excluded, counted as incorrect, or assigned another outcome in each reported metric.
+- [x] Reconcile TP, FP, TN, FN, and abstention counts against the reported coverage and evaluation population.
+- [x] Report retained-only metrics separately from whole-system metrics, including effective recall over all actual positives and per-class retention/abstention rates.
+- [x] Investigate the observed accuracy decline alongside improvements in precision, recall, and ROC-AUC, accounting for class-prevalence differences and operating thresholds.
+- [x] Correct any confirmed metric-accounting or labeling errors without altering the frozen Stage 4 training and evaluation protocol.
+- [x] Document the interpretation and limitations of abstention-conditioned performance in the final cascade baseline.
 
 **Deliverable:** Regenerated Stage 4 arbiters, completed crossover analysis, and the final pre-presentation baseline for both cascades.
 
@@ -197,7 +197,7 @@
 - [x] **Commit 2 complete:** Shared Stage 1 calibration and feature naming frozen.
 - [x] **Commit 3 complete:** Stage 2 binning and GLASS component naming finalized.
 - [x] **Commit 4 complete:** Final Stage 1–3 artifacts regenerated and accepted.
-- [ ] **Commit 5 complete:** Stage 4 arbiters regenerated, 2×2 crossover completed, and cascade baselines established.
+- [x] **Commit 5 complete:** Stage 4 arbiters regenerated, 2×2 crossover completed, and cascade baselines established.
 - [ ] **Commit 6 complete:** Final regression, provenance, reproducibility, and clean-kernel notebook validation completed.
 - [ ] **PR 39 complete:** Both cascade implementations and their final Phase 1 artifact contracts frozen, with Phase 2 handoff established.
 

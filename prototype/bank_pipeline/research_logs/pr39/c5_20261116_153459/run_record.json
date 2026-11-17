@@ -1,0 +1,668 @@
+{
+  "arbiter_manifest": {
+    "env": "set BANK_ARTIFACT_MANIFEST to this file for every real-data check of the PR 39 arbiters",
+    "path": "research_logs/pr39/c5_20261116_153459/arbiter_manifest.json",
+    "sha256": "87ab256573d9a2cdd6ef216a1430e2c4735551ae2256fe6fee9d176f22c2351a"
+  },
+  "arbiters": {
+    "glass_arbiter": {
+      "bytes": 2412622,
+      "combination": "glass upstream -> glass_arbiter",
+      "crossover": false,
+      "path": "models/glass_arbiter/glass_arbiter_20261116_153618_531148.joblib",
+      "producer": "GLASS notebook Cell 19 (train_glass_arbiter)",
+      "schema": "glass_arbiter/1",
+      "sha256": "dac936b6a4dc5039382563cdc57add6bb2f426a9dec6b84fcb36b676e76cd2b9",
+      "upstream": "glass",
+      "upstream_resolution": {
+        "stage1": "stage1.lr d3a05760fa7594e3",
+        "stage2": "stage2.glass_router 889c8bd572047beb",
+        "stage3": "stage3.ebm d886ae5dcbdb077d"
+      }
+    },
+    "glass_arbiter_on_blackbox": {
+      "bytes": 2413342,
+      "combination": "blackbox upstream -> glass_arbiter",
+      "crossover": true,
+      "path": "blackbox_pipeline/models/stage4_crossover/glass_arbiter_on_blackbox/glass_arbiter_20261116_153952_875483.joblib",
+      "producer": "black-box notebook Cell 37 (train_glass_arbiter, upstream='blackbox')",
+      "schema": "glass_arbiter/1",
+      "sha256": "c41991b04a81623c4732f4ad3c448befdea738e74e88bdb84026ef34fd3d6bba",
+      "upstream": "blackbox",
+      "upstream_resolution": {
+        "stage1": "stage1.mlp dd8922d94bb73706",
+        "stage2": "stage2.rf_router aadde1ea93d0e300",
+        "stage3": "stage3.xgb 8bf1d66ecd54236c"
+      }
+    },
+    "meta_xgb": {
+      "bytes": 7617347,
+      "combination": "blackbox upstream -> meta_xgb",
+      "crossover": false,
+      "path": "blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261116_153951_438304.joblib",
+      "producer": "black-box notebook Cell 36 (train_meta_xgb_stage)",
+      "schema": "meta_xgb/1",
+      "sha256": "0ad847703e77baf27e96ba8ab9d41798dd14bf1bbdedbe243fbfec8c1c7099a4",
+      "upstream": "blackbox",
+      "upstream_resolution": {
+        "stage1": "stage1.mlp dd8922d94bb73706",
+        "stage2": "stage2.rf_router aadde1ea93d0e300",
+        "stage3": "stage3.xgb 8bf1d66ecd54236c"
+      }
+    },
+    "meta_xgb_on_glass": {
+      "bytes": 7782339,
+      "combination": "glass upstream -> meta_xgb",
+      "crossover": true,
+      "path": "blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261116_154259_549994.joblib",
+      "producer": "black-box notebook Cell 37 (train_meta_xgb_stage, upstream='glass')",
+      "schema": "meta_xgb/1",
+      "sha256": "73a74d4ba10e6bfbeee36eb65d4f583c1813050e554a6adea9fdb1f9d7a52dbc",
+      "upstream": "glass",
+      "upstream_resolution": {
+        "stage1": "stage1.lr d3a05760fa7594e3",
+        "stage2": "stage2.glass_router 889c8bd572047beb",
+        "stage3": "stage3.ebm d886ae5dcbdb077d"
+      }
+    }
+  },
+  "audit": {
+    "command": "python -m pytest -m realdata tests/realdata/test_saved_artifacts.py -q -p no:cacheprovider --junitxml=<run>/stage4_audit_pytest.xml",
+    "env": {
+      "BANK_ARTIFACT_MANIFEST": "research_logs/pr39/c5_20261116_153459/arbiter_manifest.json"
+    },
+    "exit_code": 0,
+    "output_tail": [
+      "................                                                         [100%]",
+      "16 passed in 16.00s"
+    ],
+    "passed": true,
+    "record": "stage4_audit_pytest.xml",
+    "sha256": "192d2d82bdbe52065e3c9490415b87af0d80aeaa5a59fd3f93f819918d2b66e4",
+    "summary": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 16
+    }
+  },
+  "code": {
+    "code_sha256": "ad5826b214b8575de31b3212a7578dccc280a7e154d3e7c292ba5872e8deb837",
+    "files": 436,
+    "head": "2869800ac1a00d50165a907f0d230d7767ad74c3",
+    "stage4_regeneration_files": 4,
+    "stage4_regeneration_sha256": "8f8ca748111eb3a071664eb76779cff7f0a805aae2e05741f0ed8eadbb08f360"
+  },
+  "contract": {
+    "decisions": [
+      "D4",
+      "D5"
+    ],
+    "gates": [
+      "A5.1",
+      "A5.2",
+      "A5.3"
+    ],
+    "record": "documentation/methodology/pr39_execution_contract.md",
+    "sections": [
+      "5.1",
+      "5.4",
+      "6.3",
+      "6.4",
+      "6.5",
+      "7.1",
+      "7.2",
+      "7.3",
+      "7.4",
+      "7.5"
+    ],
+    "version": "1.0.0"
+  },
+  "environment": {
+    "executable": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+    "os": "Windows",
+    "packages": {
+      "interpret": "0.7.8",
+      "ipykernel": "6.31.0",
+      "joblib": "1.6.0",
+      "nbclient": "0.11.0",
+      "nbformat": "5.11.1",
+      "numpy": "2.5.4",
+      "optuna": "4.9.0",
+      "pandas": "3.0.6",
+      "pulp": "3.3.2",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1",
+      "xgboost": "3.4.1"
+    },
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.14.3"
+  },
+  "evidence": {
+    "preservation_after": {
+      "baseline": {
+        "archive_check": {
+          "command": "python research_logs/baselines/stage2_baseline_archive.py --check --sums C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\SHA256SUMS.txt",
+          "exit_code": 0,
+          "output_tail": [
+            "[archive] sources: C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\bank_pipeline",
+            "[2E check] OK: pr37_stage2_pre_correction_v1 reproduced from the recorded sources (reproduced_with_code_drift; 19 files)",
+            "[2E check] note: the diagnostic code differs from the code recorded at generation, but every frozen output is reproduced exactly",
+            "[2E check] shared/stage2/diagnostics/boundary.py: 0c653b69924b -> a8340178ce64",
+            "[2E check] tests/support/artifact_audit.py: 015a6305af72 -> 39a4d6989525"
+          ],
+          "passed": true
+        },
+        "passed": true,
+        "verify": {
+          "command": "python research_logs/baselines/stage2_baseline.py --verify",
+          "exit_code": 0,
+          "output_tail": [
+            "[2E verify] OK: pr37_stage2_pre_correction_v1: 19 files match MANIFEST.json (manifest sha256 905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b)"
+          ],
+          "passed": true
+        }
+      },
+      "pr38_acceptance": {
+        "accepted": true,
+        "candidate_manifest_sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88",
+        "run_id": "c3_20261112_153333"
+      },
+      "report_check": {
+        "command": "python -m stage2_crossfit report --run-id c3_20261112_153333 --check",
+        "exit_code": 0,
+        "note": null,
+        "output_tail": [
+          "research report IDENTICAL -> C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\research_logs\\pr38\\c3_20261112_153333\\report_v1",
+          "  verification without v1 packages: 64 historical v1 table checksums reproduced from the report; every report file rebuilt"
+        ],
+        "passed": true,
+        "platform": "Windows"
+      },
+      "snapshot": {
+        "checks": {
+          "archived_files": {
+            "passed": true,
+            "problems": []
+          },
+          "entries": {
+            "baseline": 37,
+            "got": 37,
+            "passed": true
+          },
+          "sums_file_sha256": {
+            "baseline": "e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a",
+            "got": "e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a",
+            "passed": true
+          }
+        },
+        "live_counterparts": {
+          "different": [
+            "bank_pipeline/blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib",
+            "bank_pipeline/models/ebm/ebm_stage3_latest.joblib",
+            "bank_pipeline/models/mlp/stage1_blackbox_output.joblib",
+            "bank_pipeline/models/mlp/stage1_mlp.joblib",
+            "bank_pipeline/models/mlp/stage1_mlp_metadata.json",
+            "bank_pipeline/models/mlp/stage1_mlp_threshold_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_single.joblib",
+            "bank_pipeline/models/rf_router/rf_router_single_metadata.json",
+            "bank_pipeline/models/rf_router/rf_router_single_pass1_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_single_pass2_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_two_pass.joblib",
+            "bank_pipeline/models/rf_router/rf_router_two_pass_metadata.json",
+            "bank_pipeline/models/rf_router/rf_router_two_pass_pass1_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_two_pass_pass2_sweep.csv"
+          ],
+          "missing": [],
+          "note": "informational: since 2fc030e/e3e27f6 the live models/ folders hold regenerated files and mutable aliases; the archive is the historical reference",
+          "same": 23
+        },
+        "passed": true,
+        "sums_path": "C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\SHA256SUMS.txt"
+      }
+    }
+  },
+  "executions": {
+    "blackbox": {
+      "copy_sha256": "96db6a4a91615a6d7f001a9934ee574ad4ff2f09cfa239a66f5d1797144becb0",
+      "executed_copy": {
+        "path": "C:\\Users\\phill\\projects\\bank_runs\\c5_20261116_153459\\c5_20261116_153459_blackbox_executed.ipynb",
+        "sha256": "3b01df33640bc2fffeeacd779d5bfd216e2a90ada2c8777b8192a91334b17698"
+      },
+      "input_copy": {
+        "path": "C:\\Users\\phill\\projects\\bank_runs\\c5_20261116_153459\\c5_20261116_153459_blackbox_input.ipynb",
+        "sha256": "96db6a4a91615a6d7f001a9934ee574ad4ff2f09cfa239a66f5d1797144becb0"
+      },
+      "kernel": {
+        "name": "python3",
+        "python": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+        "tool_python": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe"
+      },
+      "not_run": [
+        "CELL 38"
+      ],
+      "record": "execution_blackbox.json",
+      "sha256": "d33dd4b99aedd93ca9aca94337c9b1b22468434b2c5a5717b111069ff59af0a2",
+      "stage4_cells": [
+        "CELL 35",
+        "CELL 36",
+        "CELL 37"
+      ],
+      "wall_seconds": 338.2
+    },
+    "glass": {
+      "copy_sha256": "a744f8454901a92cbfcfa60c8b08da7a3e9c6277523c7dda011254ea439fc1eb",
+      "executed_copy": {
+        "path": "C:\\Users\\phill\\projects\\bank_runs\\c5_20261116_153459\\c5_20261116_153459_glass_executed.ipynb",
+        "sha256": "bb0f49dd70bf8bf085b26bd8c2850751302e4809fe4f320f0194a215a351dd00"
+      },
+      "input_copy": {
+        "path": "C:\\Users\\phill\\projects\\bank_runs\\c5_20261116_153459\\c5_20261116_153459_glass_input.ipynb",
+        "sha256": "a744f8454901a92cbfcfa60c8b08da7a3e9c6277523c7dda011254ea439fc1eb"
+      },
+      "kernel": {
+        "name": "python3",
+        "python": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+        "tool_python": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe"
+      },
+      "not_run": [
+        "CELL 20"
+      ],
+      "record": "execution_glass.json",
+      "sha256": "a77f6efed72970093affac3c281128ae6b18eb17bc80fb81a9dde9335e8197e7",
+      "stage4_cells": [
+        "CELL 19"
+      ],
+      "wall_seconds": 7.0
+    }
+  },
+  "finished_utc": "2026-11-16T23:48:58+00:00",
+  "format": "pr39.commit5a.run_record/1",
+  "gates": {
+    "7.5": {
+      "checks": [
+        {
+          "check": "7.5.1 phase0.verify_snapshot passes (37 entries, the baseline's SHA256SUMS)",
+          "detail": "{'entries': {'got': 37, 'baseline': 37, 'passed': True}, 'sums_file_sha256': {'got': 'e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a', 'baseline': 'e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a', 'passed': True}, 'archived_files': {'problems': [], 'passed': True}}",
+          "passed": true
+        },
+        {
+          "check": "7.5.2 phase0.run_baseline_checks passes (stage2_baseline.py --verify, stage2_baseline_archive.py --check)",
+          "detail": "{'verify': ['[2E verify] OK: pr37_stage2_pre_correction_v1: 19 files match MANIFEST.json (manifest sha256 905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b)'], 'archive_check': ['[2E check] OK: pr37_stage2_pre_correction_v1 reproduced from the recorded sources (reproduced_with_code_drift; 19 files)', '[2E check] note: the diagnostic code differs from the code recorded at generation, but every frozen output is reproduced exactly', '[2E check] shared/stage2/diagnostics/boundary.py: 0c653b69924b -> a8340178ce64', '[2E check] tests/support/artifact_audit.py: 015a6305af72 -> 39a4d6989525']}",
+          "passed": true
+        },
+        {
+          "check": "7.5.3 python -m stage2_crossfit report --run-id c3_20261112_153333 --check passes (Windows, F11)",
+          "detail": "['research report IDENTICAL -> C:\\\\Users\\\\phill\\\\projects\\\\ai-business-coach-clean\\\\prototype\\\\bank_pipeline\\\\research_logs\\\\pr38\\\\c3_20261112_153333\\\\report_v1', '  verification without v1 packages: 64 historical v1 table checksums reproduced from the report; every report file rebuilt']",
+          "passed": true
+        },
+        {
+          "check": "7.5.4 acceptance.require_accepted('c3_20261112_153333') passes",
+          "detail": "{'run_id': 'c3_20261112_153333', 'accepted': True, 'candidate_manifest_sha256': 'f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88'}",
+          "passed": true
+        },
+        {
+          "check": "nothing written to the model folders since the black-box execution",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "7.5.5 models/ inventory before and after: only the four arbiters and the two Meta-XGB summary sidecars added",
+          "detail": "[]",
+          "passed": true
+        },
+        {
+          "check": "7.5.1 the snapshot's live counterparts are as before the run",
+          "detail": "{'before': {'different': ['bank_pipeline/blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib', 'bank_pipeline/models/ebm/ebm_stage3_latest.joblib', 'bank_pipeline/models/mlp/stage1_blackbox_output.joblib', 'bank_pipeline/models/mlp/stage1_mlp.joblib', 'bank_pipeline/models/mlp/stage1_mlp_metadata.json', 'bank_pipeline/models/mlp/stage1_mlp_threshold_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_single.joblib', 'bank_pipeline/models/rf_router/rf_router_single_metadata.json', 'bank_pipeline/models/rf_router/rf_router_single_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_single_pass2_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass.joblib', 'bank_pipeline/models/rf_router/rf_router_two_pass_metadata.json', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass2_sweep.csv'], 'missing': [], 'same': 23}, 'after': {'same': 23, 'different': ['bank_pipeline/blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib', 'bank_pipeline/models/ebm/ebm_stage3_latest.joblib', 'bank_pipeline/models/mlp/stage1_blackbox_output.joblib', 'bank_pipeline/models/mlp/stage1_mlp.joblib', 'bank_pipeline/models/mlp/stage1_mlp_metadata.json', 'bank_pipeline/models/mlp/stage1_mlp_threshold_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_single.joblib', 'bank_pipeline/models/rf_router/rf_router_single_metadata.json', 'bank_pipeline/models/rf_router/rf_router_single_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_single_pass2_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass.joblib', 'bank_pipeline/models/rf_router/rf_router_two_pass_metadata.json', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass1_sweep.csv', 'bank_pipeline/models/rf_router/rf_router_two_pass_pass2_sweep.csv'], 'missing': []}}",
+          "passed": true
+        },
+        {
+          "check": "7.5.6 git status: only this run's records are new",
+          "detail": "[]",
+          "passed": true
+        },
+        {
+          "check": "the two Stage 4 executions are recorded (section 5.4)",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "9/9 checks passed",
+      "failed": [],
+      "gate": "7.5",
+      "passed": true
+    },
+    "A5.1": {
+      "checks": [
+        {
+          "check": "A5.1 the Commit 4 acceptance of c4_20261115_204125 and its artifact manifest re-verify (acceptance.check: sidecars, links, every role on disk by SHA-256)",
+          "detail": "c3c95d5b02e75592e49fca80a14788ba48a934b071733caeb5c1b705f8a954c3",
+          "passed": true
+        },
+        {
+          "check": "A5.1 the manifest pins exactly the six Stage 1-3 roles (no Stage 4 role)",
+          "detail": "['stage1.lr', 'stage1.mlp', 'stage2.glass_router', 'stage2.rf_router', 'stage3.ebm', 'stage3.xgb']",
+          "passed": true
+        },
+        {
+          "check": "A5.1 the run's pins file holds the manifest's six roles verbatim and the GLASS Arbiter this run produced, nothing else",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.1 glass_arbiter: each Stage 1-3 file it recorded consuming is the manifest's pin (same file, size and SHA-256); no newest-file selection",
+          "detail": "{'stage1': 'stage1.lr d3a05760fa7594e3', 'stage2': 'stage2.glass_router 889c8bd572047beb', 'stage3': 'stage3.ebm d886ae5dcbdb077d'}",
+          "passed": true
+        },
+        {
+          "check": "A5.1 glass_arbiter_on_blackbox: each Stage 1-3 file it recorded consuming is the manifest's pin (same file, size and SHA-256); no newest-file selection",
+          "detail": "{'stage1': 'stage1.mlp dd8922d94bb73706', 'stage2': 'stage2.rf_router aadde1ea93d0e300', 'stage3': 'stage3.xgb 8bf1d66ecd54236c'}",
+          "passed": true
+        },
+        {
+          "check": "A5.1 meta_xgb: each Stage 1-3 file it recorded consuming is the manifest's pin (same file, size and SHA-256); no newest-file selection",
+          "detail": "{'stage1': 'stage1.mlp dd8922d94bb73706', 'stage2': 'stage2.rf_router aadde1ea93d0e300', 'stage3': 'stage3.xgb 8bf1d66ecd54236c'}",
+          "passed": true
+        },
+        {
+          "check": "A5.1 meta_xgb_on_glass: each Stage 1-3 file it recorded consuming is the manifest's pin (same file, size and SHA-256); no newest-file selection",
+          "detail": "{'stage1': 'stage1.lr d3a05760fa7594e3', 'stage2': 'stage2.glass_router 889c8bd572047beb', 'stage3': 'stage3.ebm d886ae5dcbdb077d'}",
+          "passed": true
+        }
+      ],
+      "evidence": "7/7 checks passed",
+      "failed": [],
+      "gate": "A5.1",
+      "passed": true
+    },
+    "A5.2": {
+      "checks": [
+        {
+          "check": "A5.2 four arbiters built, one per 2x2 cell (artifact_audit.ROOTS keys)",
+          "detail": "['glass_arbiter', 'glass_arbiter_on_blackbox', 'meta_xgb', 'meta_xgb_on_glass']",
+          "passed": true
+        },
+        {
+          "check": "A5.2 glass_arbiter: models/glass_arbiter/glass_arbiter_20261116_153618_531148.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "dac936b6a4dc5039",
+          "passed": true
+        },
+        {
+          "check": "A5.2 glass_arbiter_on_blackbox: blackbox_pipeline/models/stage4_crossover/glass_arbiter_on_blackbox/glass_arbiter_20261116_153952_875483.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "c41991b04a81623c",
+          "passed": true
+        },
+        {
+          "check": "A5.2 meta_xgb: blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261116_153951_438304.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "0ad847703e77baf2",
+          "passed": true
+        },
+        {
+          "check": "A5.2 meta_xgb_on_glass: blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261116_154259_549994.joblib unchanged since it was produced (SHA-256, size)",
+          "detail": "73a74d4ba10e6bfb",
+          "passed": true
+        }
+      ],
+      "evidence": "5/5 checks passed",
+      "failed": [],
+      "gate": "A5.2",
+      "passed": true
+    },
+    "A5.3": {
+      "checks": [
+        {
+          "check": "A5.3 the arbiter manifest matches its sidecar and names exactly the four versions this run produced",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.2-A5.3 the real-data audit (tests/realdata/test_saved_artifacts.py) passes under the PR 39 arbiter manifest: each 2x2 cell's identity and evidence, its upstream reloaded through its own loader, fresh-interpreter reload, serving, and both columns compared with the upstream held fixed (require_same_upstream=True)",
+          "detail": "{'tests': 16, 'failures': 0, 'errors': 0, 'skipped': 0}",
+          "passed": true
+        }
+      ],
+      "evidence": "2/2 checks passed",
+      "failed": [],
+      "gate": "A5.3",
+      "passed": true
+    },
+    "preflight": {
+      "passed": true,
+      "record": "preflight.json",
+      "sha256": "7c02a63b6cc700fe82203c6cb702e6a0b4f7f145a8cf7863c91021d80bb9373d"
+    }
+  },
+  "git_status_delta": {
+    "gone": [],
+    "new": [
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/arbiter_manifest.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/arbiter_manifest.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/execution_blackbox.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/execution_blackbox.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/execution_glass.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/execution_glass.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/preflight.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/preflight.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/upstream_pins.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/upstream_pins.json.sha256"
+    ],
+    "unexpected": []
+  },
+  "identities": {
+    "configuration": {
+      "feature_pathway": {
+        "pathway": "fold_label_excluded",
+        "record": [
+          "stage2-inner-fold-feature-isolation",
+          "1.0.0",
+          "0d4953ef34d1d3dc"
+        ]
+      },
+      "frozen_records": {
+        "contract": [
+          "pr37-stage2-primary",
+          "1.0.0",
+          "0817825b9eecbd11"
+        ],
+        "glass_profile": {
+          "fingerprint": "198731d5cdf263f4",
+          "profile_id": "pr37-glass-router-primary",
+          "profile_version": "1.0.0"
+        },
+        "protocol": [
+          "pr38-stage2-evaluation",
+          "1.0.0",
+          "245a1a68fb68cf4e"
+        ],
+        "rf_profile": {
+          "fingerprint": "4e3f9c07e6ecc8ad",
+          "profile_id": "pr37-rf-router-primary",
+          "profile_version": "1.0.0"
+        }
+      },
+      "stage1_calibration_family": "sigmoid"
+    },
+    "feature_contracts": {
+      "stage1": {
+        "contract": {
+          "features": [
+            "cellular_downturn",
+            "subscribe_rate_by_euribor_bin",
+            "subscribe_rate_by_dow_month"
+          ],
+          "fingerprint": "d0d8b07f2ca5e81d",
+          "id": "stage1-features",
+          "version": "2.0.0"
+        },
+        "ordered": [
+          "cellular_downturn",
+          "subscribe_rate_by_euribor_bin",
+          "subscribe_rate_by_dow_month"
+        ],
+        "sha256": "d0d8b07f2ca5e81dad32ba0bdb33e8ddf2671f7a764505ebc76ae11f5d4be513"
+      },
+      "stage2": {
+        "ordered": [
+          "nsd_cold",
+          "nsd_warm",
+          "nsd_elevated",
+          "nsd_hot",
+          "jed_cold",
+          "jed_transition",
+          "jed_warm",
+          "jed_hot",
+          "cci_low",
+          "cci_dead_mid",
+          "cci_hot1",
+          "cci_valley",
+          "cci_hot2",
+          "eci_cold",
+          "eci_mid",
+          "eci_warm",
+          "eci_hot",
+          "dow_cold",
+          "dow_low",
+          "dow_mid",
+          "dow_hot",
+          "behav_cold",
+          "behav_baseline",
+          "behav_warm",
+          "behav_hot",
+          "campaign_fresh",
+          "campaign_moderate",
+          "campaign_heavy",
+          "cpi_cellular"
+        ],
+        "sha256": "7b0d4f507f3becd46be3aee95e9590e94cdbdf2a5a218b82cce5c45afb2e85f5"
+      },
+      "stage3": {
+        "ordered": [
+          "decay_x_density",
+          "euribor3m_sigmoid_slope",
+          "economic_curvature_intensity",
+          "cons.conf.idx",
+          "age",
+          "dow_month_encoded",
+          "default",
+          "prior_x_stress",
+          "campaign",
+          "overlap_default_clean",
+          "cpi_high_cellular",
+          "behavioral_favorability",
+          "emp_var_rate_sigmoid_slope"
+        ],
+        "sha256": "8f1df13bf14ca4722665ca60e0d2b792c6c2148791452c5e9303f1b39c309a83"
+      },
+      "stage4_meta_xgb": {
+        "ordered": [
+          "stage1_proba",
+          "stage2_proba",
+          "stage2_pass1",
+          "stage2_pass2",
+          "stage2_abstain",
+          "stage3_proba"
+        ],
+        "sha256": "6e2be2c81f71c82e03cdbe1e78513d04f61e601863b5109a2018103a61c7a777"
+      }
+    },
+    "population": {
+      "frozen_protocol_population": {
+        "fold_fingerprint": "8aea082fcaf371b7",
+        "router_split_fingerprint": "fc3e73a5ef91aea4",
+        "stage_io_split_fingerprint": "d6cddadc3439",
+        "train_label_fingerprint": "b984d2a50527"
+      },
+      "router_split_fingerprint": "fc3e73a5ef91aea4",
+      "shared_fold_fingerprint": "8aea082fcaf371b7",
+      "stage1_fold_plan": {
+        "fingerprint": "e4da0b4442f71ecf",
+        "n_folds": 10,
+        "seed": 42
+      },
+      "stage_io_split_fingerprint": "d6cddadc3439",
+      "test_rows": 8238,
+      "train_label_fingerprint": "b984d2a50527",
+      "train_positives": 3712,
+      "train_rows": 32950
+    },
+    "stage2_binning": {
+      "covers": [
+        "BINNING_STRATEGY",
+        "RF_FEATURES_BINARY"
+      ],
+      "fingerprint": "9cdd79aff9d61101",
+      "id": "stage2-binning",
+      "sha256": "9cdd79aff9d61101949a7e761c6837e13e81036d865c37b5213dca2867912376"
+    }
+  },
+  "inventory_net": {
+    "diff": {
+      "added": 6,
+      "deleted": 0,
+      "modified": 0
+    },
+    "notebook": "run",
+    "passed": true,
+    "problems": [],
+    "produced": {
+      "glass_arbiter": "models/glass_arbiter/glass_arbiter_20261116_153618_531148.joblib",
+      "glass_arbiter_on_blackbox": "blackbox_pipeline/models/stage4_crossover/glass_arbiter_on_blackbox/glass_arbiter_20261116_153952_875483.joblib",
+      "meta_xgb": "blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261116_153951_438304.joblib",
+      "meta_xgb_on_glass": "blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261116_154259_549994.joblib"
+    },
+    "sidecars": [
+      "blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261116_153951_438304.json",
+      "blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261116_154259_549994.json"
+    ]
+  },
+  "passed": true,
+  "pins_file": {
+    "path": "research_logs/pr39/c5_20261116_153459/upstream_pins.json",
+    "sha256": "48701e40d2af63962c63c5cd1deb73b51754867b2e0d0d28c109bf012cd0b106"
+  },
+  "run_id": "c5_20261116_153459",
+  "started_utc": "2026-11-16T23:48:22+00:00",
+  "status": "Stage 4 arbiters regenerated on the accepted Commit 4 upstream (Step 5A). Not the Commit 5 baseline: Step 5B records the registered comparisons (A5.4) and the baseline (A5.5)",
+  "step": "run_record",
+  "upstream": {
+    "acceptance_sha256": "a2fa2ffd98342e6d1976ea5d70a96b7d63237c24b7f6df57ba45667d9d8aec07",
+    "artifact_manifest": {
+      "path": "research_logs/pr39/c4_20261115_204125/artifact_manifest.json",
+      "sha256": "c3c95d5b02e75592e49fca80a14788ba48a934b071733caeb5c1b705f8a954c3"
+    },
+    "roles": {
+      "stage1.lr": {
+        "bytes": 942344,
+        "path": "models/lr/lr_calibrated_20261115_204501.joblib",
+        "sha256": "d3a05760fa7594e34e864b652c26b9158b8fe29df1f90ff7a59a4f530c78949c"
+      },
+      "stage1.mlp": {
+        "bytes": 949675,
+        "path": "models/mlp/stage1_mlp_20261116_094252_602977.joblib",
+        "sha256": "dd8922d94bb7370610c237e0f2f07810987a044419758aeda3918d865f109d70"
+      },
+      "stage2.glass_router": {
+        "bytes": 2481389,
+        "path": "models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+        "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+      },
+      "stage2.rf_router": {
+        "bytes": 4158905,
+        "path": "models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+        "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+      },
+      "stage3.ebm": {
+        "bytes": 8296795,
+        "path": "models/ebm/ebm_stage3_20261116_001529_813890.joblib",
+        "sha256": "d886ae5dcbdb077dda934680f8a05902d83a01f254f7d5a5f0667e321e24b631"
+      },
+      "stage3.xgb": {
+        "bytes": 10720121,
+        "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib",
+        "sha256": "8bf1d66ecd54236cdf7e6ebb10ec18e40f24d95a5b33a1ce122dac48b2dd2780"
+      }
+    },
+    "run_id": "c4_20261115_204125"
+  },
+  "upstream_run": "c4_20261115_204125"
+}

@@ -68,9 +68,23 @@ def test_current_contracts_load(world):
     np.testing.assert_array_equal(inp["lr"].train_proba, so["train_proba_oof"].to_numpy())
     np.testing.assert_array_equal(inp["lr"].test_proba, so["test_proba"].to_numpy())
     assert inp["lr"].fingerprint_scheme == "stage_io"
-    assert inp["glass"].fingerprint_scheme == inp["ebm"].fingerprint_scheme == "router"
+    # GLASS Router: the router scheme; GLASS EBM: the stage_io scheme GLASS Cell 17 stamps
+    assert (inp["glass"].fingerprint_scheme, inp["ebm"].fingerprint_scheme) == ("router", "stage_io")
     assert inp["glass"].train_source == "train_proba"            # flag layout
     assert all(r["passed"] for r in inp.validation)
+
+
+def test_the_world_stamps_each_stage3_artifact_as_its_notebook_does():
+    """GLASS Cell 17: ``shared.split_fingerprint`` over rows and labels (stage_io);
+    black-box Cell 30: the router scheme over rows. The GLASS EBM therefore enters
+    Stage 4 under the label-bearing scheme, in this test world as in the notebooks."""
+    from shared import split_fingerprint as glass_cell_17_fp
+    w = build_world()
+    GS = w["GS"]
+    ebm, xgb = make_stage3(w), make_stage3(w, family="xgboost")
+    assert ebm.split_fingerprint == w["fp_io"] == glass_cell_17_fp(
+        GS["X_train"].index, GS["X_test"].index, GS["y_train"], GS["y_test"])
+    assert xgb.split_fingerprint == w["fp_router"] != ebm.split_fingerprint
 
 
 def test_stage_output_file_form_also_loads(world):

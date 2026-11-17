@@ -1,0 +1,2804 @@
+{
+  "arbiters": {
+    "glass_arbiter": {
+      "bytes": 2412622,
+      "combination": "glass upstream -> glass_arbiter",
+      "crossover": false,
+      "path": "models/glass_arbiter/glass_arbiter_20261116_153618_531148.joblib",
+      "producer": "GLASS notebook Cell 19 (train_glass_arbiter)",
+      "schema": "glass_arbiter/1",
+      "sha256": "dac936b6a4dc5039382563cdc57add6bb2f426a9dec6b84fcb36b676e76cd2b9",
+      "upstream": "glass",
+      "upstream_files": {
+        "stage1": {
+          "bytes": 942344,
+          "consumers": [
+            "black-box Cell 14A (GLASS_S1_PATH)",
+            "GLASS Cell 19",
+            "black-box Cell 37"
+          ],
+          "path": "models/lr/lr_calibrated_20261115_204501.joblib",
+          "producer": "GLASS notebook Cell 8 (train_calibrated_lr_stage)",
+          "role": "stage1.lr",
+          "sha256": "d3a05760fa7594e34e864b652c26b9158b8fe29df1f90ff7a59a4f530c78949c"
+        },
+        "stage2": {
+          "bytes": 2481389,
+          "consumers": [
+            "GLASS Cell 8B / Cell 19 (glass_path)",
+            "black-box Cell 18 / Cell 37 (GLASS_BUNDLE_PATH)"
+          ],
+          "path": "models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+          "producer": "PR 38 primary run c3_20261112_153333 (stage2_crossfit)",
+          "role": "stage2.glass_router",
+          "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+        },
+        "stage3": {
+          "bytes": 8296795,
+          "consumers": [
+            "black-box Cell 33 (_ebm_path)",
+            "GLASS Cell 19",
+            "black-box Cell 37"
+          ],
+          "path": "models/ebm/ebm_stage3_20261116_001529_813890.joblib",
+          "producer": "GLASS notebook Cell 18 (train_ebm_stage)",
+          "role": "stage3.ebm",
+          "sha256": "d886ae5dcbdb077dda934680f8a05902d83a01f254f7d5a5f0667e321e24b631"
+        }
+      },
+      "upstream_resolution": {
+        "stage1": "stage1.lr d3a05760fa7594e3",
+        "stage2": "stage2.glass_router 889c8bd572047beb",
+        "stage3": "stage3.ebm d886ae5dcbdb077d"
+      }
+    },
+    "glass_arbiter_on_blackbox": {
+      "bytes": 2413342,
+      "combination": "blackbox upstream -> glass_arbiter",
+      "crossover": true,
+      "path": "blackbox_pipeline/models/stage4_crossover/glass_arbiter_on_blackbox/glass_arbiter_20261116_153952_875483.joblib",
+      "producer": "black-box notebook Cell 37 (train_glass_arbiter, upstream='blackbox')",
+      "schema": "glass_arbiter/1",
+      "sha256": "c41991b04a81623c4732f4ad3c448befdea738e74e88bdb84026ef34fd3d6bba",
+      "upstream": "blackbox",
+      "upstream_files": {
+        "stage1": {
+          "bytes": 949675,
+          "consumers": [
+            "black-box Cells 36-37 (MLP_S1_PATH)"
+          ],
+          "path": "models/mlp/stage1_mlp_20261116_094252_602977.joblib",
+          "producer": "black-box notebook Cell 14A (save_stage1_mlp)",
+          "role": "stage1.mlp",
+          "sha256": "dd8922d94bb7370610c237e0f2f07810987a044419758aeda3918d865f109d70"
+        },
+        "stage2": {
+          "bytes": 4158905,
+          "consumers": [
+            "black-box Cell 18 / Cells 35-37 (RF_ROUTER_PATH)"
+          ],
+          "path": "models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+          "producer": "PR 38 primary run c3_20261112_153333 (stage2_crossfit)",
+          "role": "stage2.rf_router",
+          "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+        },
+        "stage3": {
+          "bytes": 10720121,
+          "consumers": [
+            "black-box Cells 36-37 (XGB_STAGE3_PATH)"
+          ],
+          "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib",
+          "producer": "black-box notebook Cell 31 (train_xgb_stage)",
+          "role": "stage3.xgb",
+          "sha256": "8bf1d66ecd54236cdf7e6ebb10ec18e40f24d95a5b33a1ce122dac48b2dd2780"
+        }
+      },
+      "upstream_resolution": {
+        "stage1": "stage1.mlp dd8922d94bb73706",
+        "stage2": "stage2.rf_router aadde1ea93d0e300",
+        "stage3": "stage3.xgb 8bf1d66ecd54236c"
+      }
+    },
+    "meta_xgb": {
+      "bytes": 7617347,
+      "combination": "blackbox upstream -> meta_xgb",
+      "crossover": false,
+      "path": "blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261116_153951_438304.joblib",
+      "producer": "black-box notebook Cell 36 (train_meta_xgb_stage)",
+      "schema": "meta_xgb/1",
+      "sha256": "0ad847703e77baf27e96ba8ab9d41798dd14bf1bbdedbe243fbfec8c1c7099a4",
+      "upstream": "blackbox",
+      "upstream_files": {
+        "stage1": {
+          "bytes": 949675,
+          "consumers": [
+            "black-box Cells 36-37 (MLP_S1_PATH)"
+          ],
+          "path": "models/mlp/stage1_mlp_20261116_094252_602977.joblib",
+          "producer": "black-box notebook Cell 14A (save_stage1_mlp)",
+          "role": "stage1.mlp",
+          "sha256": "dd8922d94bb7370610c237e0f2f07810987a044419758aeda3918d865f109d70"
+        },
+        "stage2": {
+          "bytes": 4158905,
+          "consumers": [
+            "black-box Cell 18 / Cells 35-37 (RF_ROUTER_PATH)"
+          ],
+          "path": "models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+          "producer": "PR 38 primary run c3_20261112_153333 (stage2_crossfit)",
+          "role": "stage2.rf_router",
+          "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+        },
+        "stage3": {
+          "bytes": 10720121,
+          "consumers": [
+            "black-box Cells 36-37 (XGB_STAGE3_PATH)"
+          ],
+          "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib",
+          "producer": "black-box notebook Cell 31 (train_xgb_stage)",
+          "role": "stage3.xgb",
+          "sha256": "8bf1d66ecd54236cdf7e6ebb10ec18e40f24d95a5b33a1ce122dac48b2dd2780"
+        }
+      },
+      "upstream_resolution": {
+        "stage1": "stage1.mlp dd8922d94bb73706",
+        "stage2": "stage2.rf_router aadde1ea93d0e300",
+        "stage3": "stage3.xgb 8bf1d66ecd54236c"
+      }
+    },
+    "meta_xgb_on_glass": {
+      "bytes": 7782339,
+      "combination": "glass upstream -> meta_xgb",
+      "crossover": true,
+      "path": "blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261116_154259_549994.joblib",
+      "producer": "black-box notebook Cell 37 (train_meta_xgb_stage, upstream='glass')",
+      "schema": "meta_xgb/1",
+      "sha256": "73a74d4ba10e6bfbeee36eb65d4f583c1813050e554a6adea9fdb1f9d7a52dbc",
+      "upstream": "glass",
+      "upstream_files": {
+        "stage1": {
+          "bytes": 942344,
+          "consumers": [
+            "black-box Cell 14A (GLASS_S1_PATH)",
+            "GLASS Cell 19",
+            "black-box Cell 37"
+          ],
+          "path": "models/lr/lr_calibrated_20261115_204501.joblib",
+          "producer": "GLASS notebook Cell 8 (train_calibrated_lr_stage)",
+          "role": "stage1.lr",
+          "sha256": "d3a05760fa7594e34e864b652c26b9158b8fe29df1f90ff7a59a4f530c78949c"
+        },
+        "stage2": {
+          "bytes": 2481389,
+          "consumers": [
+            "GLASS Cell 8B / Cell 19 (glass_path)",
+            "black-box Cell 18 / Cell 37 (GLASS_BUNDLE_PATH)"
+          ],
+          "path": "models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+          "producer": "PR 38 primary run c3_20261112_153333 (stage2_crossfit)",
+          "role": "stage2.glass_router",
+          "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+        },
+        "stage3": {
+          "bytes": 8296795,
+          "consumers": [
+            "black-box Cell 33 (_ebm_path)",
+            "GLASS Cell 19",
+            "black-box Cell 37"
+          ],
+          "path": "models/ebm/ebm_stage3_20261116_001529_813890.joblib",
+          "producer": "GLASS notebook Cell 18 (train_ebm_stage)",
+          "role": "stage3.ebm",
+          "sha256": "d886ae5dcbdb077dda934680f8a05902d83a01f254f7d5a5f0667e321e24b631"
+        }
+      },
+      "upstream_resolution": {
+        "stage1": "stage1.lr d3a05760fa7594e3",
+        "stage2": "stage2.glass_router 889c8bd572047beb",
+        "stage3": "stage3.ebm d886ae5dcbdb077d"
+      }
+    }
+  },
+  "code": {
+    "step5a_recorded": {
+      "code_sha256": "ad5826b214b8575de31b3212a7578dccc280a7e154d3e7c292ba5872e8deb837",
+      "head": "2869800ac1a00d50165a907f0d230d7767ad74c3",
+      "stage4_regeneration_sha256": "8f8ca748111eb3a071664eb76779cff7f0a805aae2e05741f0ed8eadbb08f360"
+    },
+    "step5a_rederived": {
+      "code_sha256": "ad5826b214b8575de31b3212a7578dccc280a7e154d3e7c292ba5872e8deb837",
+      "files": 436,
+      "head": "2869800ac1a00d50165a907f0d230d7767ad74c3",
+      "stage4_regeneration_files": 4,
+      "stage4_regeneration_sha256": "8f8ca748111eb3a071664eb76779cff7f0a805aae2e05741f0ed8eadbb08f360"
+    },
+    "step5b": {
+      "code_sha256": "bfa2587c1346b6b099eb473aedf9ea6dbd5013e046fe9a82628d3fc0d228aa32",
+      "files": 437,
+      "head": "2869800ac1a00d50165a907f0d230d7767ad74c3",
+      "stage4_regeneration_files": 5,
+      "stage4_regeneration_sha256": "6fa0cd82f2b227429db0f24d58dfe6a820ef4b278135d92c0aee536c076e2bac"
+    },
+    "step5b_files": [
+      "stage4_regeneration/crossover.py",
+      "tests/stage4_regeneration/test_step5b.py"
+    ]
+  },
+  "contract": {
+    "gates": [
+      "A5.4",
+      "A5.5"
+    ],
+    "record": "documentation/methodology/pr39_execution_contract.md",
+    "roadmap": "documentation/research_roadmap.md, Commit 5, Step 5B and Stage 4 abstention metric accounting",
+    "sections": [
+      "6.3",
+      "6.4",
+      "6.5",
+      "7.1",
+      "7.3",
+      "7.5",
+      "12"
+    ],
+    "version": "1.0.0"
+  },
+  "environment": {
+    "executable": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+    "os": "Windows",
+    "packages": {
+      "interpret": "0.7.8",
+      "ipykernel": "6.31.0",
+      "joblib": "1.6.0",
+      "nbclient": "0.11.0",
+      "nbformat": "5.11.1",
+      "numpy": "2.5.4",
+      "optuna": "4.9.0",
+      "pandas": "3.0.6",
+      "pulp": "3.3.2",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1",
+      "xgboost": "3.4.1"
+    },
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.14.3"
+  },
+  "evidence": {
+    "preservation": {
+      "baseline": {
+        "archive_check": {
+          "command": "python research_logs/baselines/stage2_baseline_archive.py --check --sums C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\SHA256SUMS.txt",
+          "exit_code": 0,
+          "output_tail": [
+            "[archive] sources: C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\bank_pipeline",
+            "[2E check] OK: pr37_stage2_pre_correction_v1 reproduced from the recorded sources (reproduced_with_code_drift; 19 files)",
+            "[2E check] note: the diagnostic code differs from the code recorded at generation, but every frozen output is reproduced exactly",
+            "[2E check] shared/stage2/diagnostics/boundary.py: 0c653b69924b -> a8340178ce64",
+            "[2E check] tests/support/artifact_audit.py: 015a6305af72 -> 39a4d6989525"
+          ],
+          "passed": true
+        },
+        "passed": true,
+        "verify": {
+          "command": "python research_logs/baselines/stage2_baseline.py --verify",
+          "exit_code": 0,
+          "output_tail": [
+            "[2E verify] OK: pr37_stage2_pre_correction_v1: 19 files match MANIFEST.json (manifest sha256 905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b)"
+          ],
+          "passed": true
+        }
+      },
+      "pr38_acceptance": {
+        "accepted": true,
+        "candidate_manifest_sha256": "f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88",
+        "run_id": "c3_20261112_153333"
+      },
+      "report_check": {
+        "command": "python -m stage2_crossfit report --run-id c3_20261112_153333 --check",
+        "exit_code": 0,
+        "note": null,
+        "output_tail": [
+          "research report IDENTICAL -> C:\\Users\\phill\\projects\\ai-business-coach-clean\\prototype\\bank_pipeline\\research_logs\\pr38\\c3_20261112_153333\\report_v1",
+          "  verification without v1 packages: 64 historical v1 table checksums reproduced from the report; every report file rebuilt"
+        ],
+        "passed": true,
+        "platform": "Windows"
+      },
+      "snapshot": {
+        "checks": {
+          "archived_files": {
+            "passed": true,
+            "problems": []
+          },
+          "entries": {
+            "baseline": 37,
+            "got": 37,
+            "passed": true
+          },
+          "sums_file_sha256": {
+            "baseline": "e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a",
+            "got": "e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a",
+            "passed": true
+          }
+        },
+        "live_counterparts": {
+          "different": [
+            "bank_pipeline/blackbox_pipeline/models/xgb/xgb_stage3_latest.joblib",
+            "bank_pipeline/models/ebm/ebm_stage3_latest.joblib",
+            "bank_pipeline/models/mlp/stage1_blackbox_output.joblib",
+            "bank_pipeline/models/mlp/stage1_mlp.joblib",
+            "bank_pipeline/models/mlp/stage1_mlp_metadata.json",
+            "bank_pipeline/models/mlp/stage1_mlp_threshold_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_single.joblib",
+            "bank_pipeline/models/rf_router/rf_router_single_metadata.json",
+            "bank_pipeline/models/rf_router/rf_router_single_pass1_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_single_pass2_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_two_pass.joblib",
+            "bank_pipeline/models/rf_router/rf_router_two_pass_metadata.json",
+            "bank_pipeline/models/rf_router/rf_router_two_pass_pass1_sweep.csv",
+            "bank_pipeline/models/rf_router/rf_router_two_pass_pass2_sweep.csv"
+          ],
+          "missing": [],
+          "note": "informational: since 2fc030e/e3e27f6 the live models/ folders hold regenerated files and mutable aliases; the archive is the historical reference",
+          "same": 23
+        },
+        "passed": true,
+        "sums_path": "C:\\Users\\phill\\projects\\bank_baselines\\pr36_regen_2026-10-23\\SHA256SUMS.txt"
+      }
+    }
+  },
+  "finished_utc": "2026-11-17T00:45:15+00:00",
+  "format": "pr39.commit5b.crossover_baseline/1",
+  "gates": {
+    "A5.4": {
+      "checks": [
+        {
+          "check": "A5.4 the Step 5A records (preflight, both executions, run record) passed and match their sidecars; the pins file, arbiter manifest and audit report are the files the run record names",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 Step 5A's code identity is re-derived with this step's files omitted: the arbiters were fitted by the code in this tree",
+          "detail": "{'head': ('2869800ac1a00d50165a907f0d230d7767ad74c3', '2869800ac1a00d50165a907f0d230d7767ad74c3'), 'code_sha256': ('ad5826b214b8575de31b3212a7578dccc280a7e154d3e7c292ba5872e8deb837', 'ad5826b214b8575de31b3212a7578dccc280a7e154d3e7c292ba5872e8deb837'), 'stage4_regeneration_sha256': ('8f8ca748111eb3a071664eb76779cff7f0a805aae2e05741f0ed8eadbb08f360', '8f8ca748111eb3a071664eb76779cff7f0a805aae2e05741f0ed8eadbb08f360')}",
+          "passed": true
+        },
+        {
+          "check": "A5.1 the Commit 4 acceptance of c4_20261115_204125 and its artifact manifest re-verify (acceptance.check: sidecars, links, every role on disk by SHA-256)",
+          "detail": "c3c95d5b02e75592e49fca80a14788ba48a934b071733caeb5c1b705f8a954c3",
+          "passed": true
+        },
+        {
+          "check": "A5.1 the manifest pins exactly the six Stage 1-3 roles (no Stage 4 role)",
+          "detail": "['stage1.lr', 'stage1.mlp', 'stage2.glass_router', 'stage2.rf_router', 'stage3.ebm', 'stage3.xgb']",
+          "passed": true
+        },
+        {
+          "check": "A5.4 the arbiter manifest names the four versions the run record names",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 glass_arbiter: models/glass_arbiter/glass_arbiter_20261116_153618_531148.joblib is the version Step 5A produced (size, SHA-256) and loads on this split (schema, split identity, test index)",
+          "detail": "dac936b6a4dc5039",
+          "passed": true
+        },
+        {
+          "check": "A5.4 meta_xgb: blackbox_pipeline/models/meta_xgb/meta_xgb_stage4_20261116_153951_438304.joblib is the version Step 5A produced (size, SHA-256) and loads on this split (schema, split identity, test index)",
+          "detail": "0ad847703e77baf2",
+          "passed": true
+        },
+        {
+          "check": "A5.4 glass_arbiter_on_blackbox: blackbox_pipeline/models/stage4_crossover/glass_arbiter_on_blackbox/glass_arbiter_20261116_153952_875483.joblib is the version Step 5A produced (size, SHA-256) and loads on this split (schema, split identity, test index)",
+          "detail": "c41991b04a81623c",
+          "passed": true
+        },
+        {
+          "check": "A5.4 meta_xgb_on_glass: blackbox_pipeline/models/stage4_crossover/meta_xgb_on_glass/meta_xgb_stage4_20261116_154259_549994.joblib is the version Step 5A produced (size, SHA-256) and loads on this split (schema, split identity, test index)",
+          "detail": "73a74d4ba10e6bfb",
+          "passed": true
+        },
+        {
+          "check": "A5.4 glass_arbiter: it is the glass-upstream cell it records (artifact_audit.check_arbiter_identity, PR 39 generation)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 glass_arbiter: every Stage 1-3 file it consumed is the Commit 4 manifest's pin",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 meta_xgb: it is the blackbox-upstream cell it records (artifact_audit.check_arbiter_identity, PR 39 generation)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 meta_xgb: every Stage 1-3 file it consumed is the Commit 4 manifest's pin",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 glass_arbiter_on_blackbox: it is the blackbox-upstream cell it records (artifact_audit.check_arbiter_identity, PR 39 generation)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 glass_arbiter_on_blackbox: every Stage 1-3 file it consumed is the Commit 4 manifest's pin",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 meta_xgb_on_glass: it is the glass-upstream cell it records (artifact_audit.check_arbiter_identity, PR 39 generation)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 meta_xgb_on_glass: every Stage 1-3 file it consumed is the Commit 4 manifest's pin",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 the 2x2 holds each upstream fixed within a column and keeps the arms apart within a row (artifact_audit.check_crossover)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 glass_arbiter: population accounting identities hold",
+          "detail": "all",
+          "passed": true
+        },
+        {
+          "check": "A5.4 glass_arbiter: abstention never changes a retained row's decision",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 glass_arbiter: its saved test metrics are the recount's (same populations and denominators; no substituted value)",
+          "detail": "all equal",
+          "passed": true
+        },
+        {
+          "check": "A5.4 meta_xgb: population accounting identities hold",
+          "detail": "all",
+          "passed": true
+        },
+        {
+          "check": "A5.4 meta_xgb: abstention never changes a retained row's decision",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 meta_xgb: its saved test metrics are the recount's (same populations and denominators; no substituted value)",
+          "detail": "all equal",
+          "passed": true
+        },
+        {
+          "check": "A5.4 meta_xgb: test Brier and ECE recounted (shared.metrics.calculate_ece) equal the recorded values",
+          "detail": "equal",
+          "passed": true
+        },
+        {
+          "check": "A5.4 glass_arbiter_on_blackbox: population accounting identities hold",
+          "detail": "all",
+          "passed": true
+        },
+        {
+          "check": "A5.4 glass_arbiter_on_blackbox: abstention never changes a retained row's decision",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 glass_arbiter_on_blackbox: its saved test metrics are the recount's (same populations and denominators; no substituted value)",
+          "detail": "all equal",
+          "passed": true
+        },
+        {
+          "check": "A5.4 meta_xgb_on_glass: population accounting identities hold",
+          "detail": "all",
+          "passed": true
+        },
+        {
+          "check": "A5.4 meta_xgb_on_glass: abstention never changes a retained row's decision",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 meta_xgb_on_glass: its saved test metrics are the recount's (same populations and denominators; no substituted value)",
+          "detail": "all equal",
+          "passed": true
+        },
+        {
+          "check": "A5.4 meta_xgb_on_glass: test Brier and ECE recounted (shared.metrics.calculate_ece) equal the recorded values",
+          "detail": "equal",
+          "passed": true
+        },
+        {
+          "check": "A5.4 the glass column is compared with the upstream held fixed (require_same_upstream=True)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 the blackbox column is compared with the upstream held fixed (require_same_upstream=True)",
+          "detail": "",
+          "passed": true
+        },
+        {
+          "check": "A5.4 the cascade comparison reproduces the one black-box Cell 36 saved in the native Meta-XGB, value for value",
+          "detail": "None",
+          "passed": true
+        }
+      ],
+      "evidence": "35/35 checks passed",
+      "failed": [],
+      "gate": "A5.4",
+      "passed": true
+    },
+    "A5.5": {
+      "checks": [
+        {
+          "check": "7.5.1 phase0.verify_snapshot passes (37 entries, the baseline's SHA256SUMS)",
+          "detail": "{'entries': {'got': 37, 'baseline': 37, 'passed': True}, 'sums_file_sha256': {'got': 'e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a', 'baseline': 'e82c6a845b4754e60a7d038e5b8da38bbef8fd310e03431387abe3e48b2ce01a', 'passed': True}, 'archived_files': {'problems': [], 'passed': True}}",
+          "passed": true
+        },
+        {
+          "check": "7.5.2 phase0.run_baseline_checks passes (stage2_baseline.py --verify, stage2_baseline_archive.py --check)",
+          "detail": "{'verify': ['[2E verify] OK: pr37_stage2_pre_correction_v1: 19 files match MANIFEST.json (manifest sha256 905a0b4865a41cb7d6d9eece9c143fe57da993d133f8f5e79a396f26a2fb827b)'], 'archive_check': ['[2E check] OK: pr37_stage2_pre_correction_v1 reproduced from the recorded sources (reproduced_with_code_drift; 19 files)', '[2E check] note: the diagnostic code differs from the code recorded at generation, but every frozen output is reproduced exactly', '[2E check] shared/stage2/diagnostics/boundary.py: 0c653b69924b -> a8340178ce64', '[2E check] tests/support/artifact_audit.py: 015a6305af72 -> 39a4d6989525']}",
+          "passed": true
+        },
+        {
+          "check": "7.5.3 python -m stage2_crossfit report --run-id c3_20261112_153333 --check passes (Windows, F11)",
+          "detail": "['research report IDENTICAL -> C:\\\\Users\\\\phill\\\\projects\\\\ai-business-coach-clean\\\\prototype\\\\bank_pipeline\\\\research_logs\\\\pr38\\\\c3_20261112_153333\\\\report_v1', '  verification without v1 packages: 64 historical v1 table checksums reproduced from the report; every report file rebuilt']",
+          "passed": true
+        },
+        {
+          "check": "7.5.4 acceptance.require_accepted('c3_20261112_153333') passes",
+          "detail": "{'run_id': 'c3_20261112_153333', 'accepted': True, 'candidate_manifest_sha256': 'f70f12dc0380221563ced5f77e3caa5c156fa4d85dd4a3fca855260e77362a88'}",
+          "passed": true
+        },
+        {
+          "check": "A5.5 no model file changed since the Step 5A black-box execution",
+          "detail": "{'added': [], 'modified': [], 'deleted': []}",
+          "passed": true
+        },
+        {
+          "check": "A5.5 git status since the Step 5A preflight: only this run's records and this step's files are new",
+          "detail": "[]",
+          "passed": true
+        },
+        {
+          "check": "A5.5 the record holds all four cells, both columns, the cascade and Stage 2 for both upstreams",
+          "detail": "",
+          "passed": true
+        }
+      ],
+      "evidence": "7/7 checks passed",
+      "failed": [],
+      "gate": "A5.5",
+      "passed": true
+    }
+  },
+  "git_status_delta": {
+    "gone": [],
+    "new": [
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/arbiter_manifest.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/arbiter_manifest.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/execution_blackbox.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/execution_blackbox.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/execution_glass.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/execution_glass.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/preflight.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/preflight.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/run_record.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/run_record.json.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/stage4_audit_pytest.xml",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/stage4_audit_pytest.xml.sha256",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/upstream_pins.json",
+      "?? prototype/bank_pipeline/research_logs/pr39/c5_20261116_153459/upstream_pins.json.sha256",
+      "?? prototype/bank_pipeline/stage4_regeneration/crossover.py",
+      "?? prototype/bank_pipeline/tests/stage4_regeneration/test_step5b.py"
+    ],
+    "unexpected": []
+  },
+  "historical": "The PR 36-38 Stage 4 comparisons are the committed outputs of black-box Cells 36-38 (arbiters of 2026-11-06, meta_ebm/2). They are neither re-read nor replaced; their upstream (the legacy notebook Stage 2, isotonic Stage 1 LR) differs from PR 39's, so no number is compared across the two.",
+  "limitations": [
+    "The test split is previously exposed (PR 38 protocol section 15; contract L1, section 12). Every result is descriptive and informs no calibration, bin, selector, threshold or Stage 4 setting.",
+    "Retained-only metrics are conditional on each arbiter's own confidence rule. Two arbiters retain different rows, so the registered with-abstention differences compare different populations.",
+    "The registered abstention cut maximises F2 on retained training rows subject to retained coverage >= 0.50 (shared.stage4.tune_min_confidence). F2 = 5TP / (5TP + 4FN + FP) has no TN term, so retaining a true negative never raises it. Both confidences are threshold-relative (|p - t|, or the GLASS Arbiter's weighted |p - t|), so with t below 0.5 a negative decision's confidence is bounded by t and a positive one's by 1 - t. Abstention can therefore fall mostly on correct negatives. Retained recall and precision then rise while retained accuracy falls, and retained recall overstates the share of all positives found (effective recall). The accounting block and its decomposition report this per cell. The protocol is not changed.",
+    "The coverage floor binds on training rows only. Test coverage is reported against it per cell and can fall below it.",
+    "The GLASS Arbiter's score is a weighted average of upstream probabilities, not a calibrated probability: it supports ROC-AUC and PR-AUC as a ranking, not calibration metrics. Meta-XGB decides and abstains in its raw, class-weighted space; its calibrated probability is reported separately.",
+    "The existing metric code reports a zero-denominator precision, recall or F-score as 0 (zero_division=0, the bootstrap's _prf). The GLASS Arbiter's own stored metrics (compute_metrics) store ROC-AUC 0.5 on a one-class population. The accounting block reports both as undefined, and the record checks that no stored value of the four arbiters relies on either convention.",
+    "The bootstrap resamples test rows with the models fixed: it does not reflect training variability.",
+    "Stage 2's role is descriptive (F10). Test-side route rates are not checks of the obligations, which bind at fit on training OOF. The PR 38 Tier 2 complementarity results remain tied to the historical upstream and are not compared with these.",
+    "Stage 4 stacking keeps an indirect upstream dependence (contract L7, F39)."
+  ],
+  "passed": true,
+  "references": {
+    "commit4": {
+      "acceptance_sha256": "a2fa2ffd98342e6d1976ea5d70a96b7d63237c24b7f6df57ba45667d9d8aec07",
+      "artifact_manifest": {
+        "path": "research_logs/pr39/c4_20261115_204125/artifact_manifest.json",
+        "sha256": "c3c95d5b02e75592e49fca80a14788ba48a934b071733caeb5c1b705f8a954c3"
+      },
+      "roles": {
+        "stage1.lr": {
+          "bytes": 942344,
+          "path": "models/lr/lr_calibrated_20261115_204501.joblib",
+          "sha256": "d3a05760fa7594e34e864b652c26b9158b8fe29df1f90ff7a59a4f530c78949c"
+        },
+        "stage1.mlp": {
+          "bytes": 949675,
+          "path": "models/mlp/stage1_mlp_20261116_094252_602977.joblib",
+          "sha256": "dd8922d94bb7370610c237e0f2f07810987a044419758aeda3918d865f109d70"
+        },
+        "stage2.glass_router": {
+          "bytes": 2481389,
+          "path": "models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+          "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753"
+        },
+        "stage2.rf_router": {
+          "bytes": 4158905,
+          "path": "models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+          "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e"
+        },
+        "stage3.ebm": {
+          "bytes": 8296795,
+          "path": "models/ebm/ebm_stage3_20261116_001529_813890.joblib",
+          "sha256": "d886ae5dcbdb077dda934680f8a05902d83a01f254f7d5a5f0667e321e24b631"
+        },
+        "stage3.xgb": {
+          "bytes": 10720121,
+          "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib",
+          "sha256": "8bf1d66ecd54236cdf7e6ebb10ec18e40f24d95a5b33a1ce122dac48b2dd2780"
+        }
+      },
+      "run_id": "c4_20261115_204125"
+    },
+    "pr38_stage2_run": "c3_20261112_153333",
+    "step5a": {
+      "files": {
+        "arbiter_manifest.json": "87ab256573d9a2cdd6ef216a1430e2c4735551ae2256fe6fee9d176f22c2351a",
+        "stage4_audit_pytest.xml": "192d2d82bdbe52065e3c9490415b87af0d80aeaa5a59fd3f93f819918d2b66e4",
+        "upstream_pins.json": "48701e40d2af63962c63c5cd1deb73b51754867b2e0d0d28c109bf012cd0b106"
+      },
+      "records": {
+        "execution_blackbox.json": "d33dd4b99aedd93ca9aca94337c9b1b22468434b2c5a5717b111069ff59af0a2",
+        "execution_glass.json": "a77f6efed72970093affac3c281128ae6b18eb17bc80fb81a9dde9335e8197e7",
+        "preflight.json": "7c02a63b6cc700fe82203c6cb702e6a0b4f7f145a8cf7863c91021d80bb9373d",
+        "run_record.json": "82f40f3d624c330caa1175e9c17f14c937b6c55ea3eaab89ba719d5cafc03f8c"
+      },
+      "run_id": "c5_20261116_153459"
+    }
+  },
+  "results": {
+    "cells": {
+      "glass_arbiter": {
+        "arbiter": "glass_arbiter",
+        "calibration": {
+          "applicable": false,
+          "reason": "the GLASS Arbiter's weighted score is not a calibrated probability (contract section 6.5)",
+          "upstream_train_oof_as_recorded": {
+            "computed_on": "train OOF (GLASS: covered rows)",
+            "ebm": {
+              "brier": 0.07954116961553505,
+              "ece": 0.0023216768918064064
+            },
+            "glass": {
+              "brier": 0.1069358184992049,
+              "ece": 0.061019788826755475
+            },
+            "lr": {
+              "brier": 0.08419248740668546,
+              "ece": 0.013828389855897016
+            }
+          }
+        },
+        "combination": "glass upstream -> glass_arbiter",
+        "configuration": {
+          "abstention": {
+            "min_coverage": 0.5,
+            "min_weighted_confidence": 0.038065627580425795,
+            "search": "exact: every distinct training confidence value; abstain where confidence < cut (PR 36 F30)",
+            "selected_by": "F2 on train OOF retained rows, exact search over distinct weighted confidences, coverage ≥ 50%",
+            "train_coverage": 0.5009408194233688,
+            "train_f2": 0.6442708333333333
+          },
+          "score": "weighted probability (a ranking score, not a calibrated probability)",
+          "thresholds": {
+            "ebm": 0.07133243606998654,
+            "glass": 0.11265553869499241,
+            "lr": 0.08444249560741927,
+            "min_weighted_confidence": 0.038065627580425795,
+            "target_recall": 0.7
+          },
+          "weights": {
+            "ebm": 0.3545832795427238,
+            "glass": 0.3021315069666846,
+            "lr": 0.34328521349059166
+          }
+        },
+        "crossover": false,
+        "decomposition_all_rows_to_retained": {
+          "accuracy_change": -0.11704249101975595,
+          "changes": {
+            "precision": 0.02115641081945041,
+            "prevalence": 0.055727163395077994,
+            "recall": 0.18573251440851812,
+            "specificity": -0.1731905922211756
+          },
+          "formula": "acc_o - acc_b = (pi_o - pi_b)(R_b - S_b) + pi_o (R_o - R_b) + (1 - pi_o)(S_o - S_b)",
+          "from": "every test row: the decision without abstention",
+          "prevalence_mix_term": -0.004285887179349098,
+          "recall_term": 0.03127287268600377,
+          "residual": -6.938893903907228e-17,
+          "specificity_term": -0.14402947652641054,
+          "to": "retained rows only: the rows classified with abstention (what the existing 'with abstention' metrics report)"
+        },
+        "findings": {
+          "abstention_falls_more_on_negatives": true,
+          "effective_recall_below_no_abstention_recall": true,
+          "min_coverage": 0.5,
+          "retained_accuracy_below_all_rows": true,
+          "retained_precision_above_all_rows": true,
+          "retained_prevalence_above_overall": true,
+          "retained_recall_above_all_rows": true,
+          "retained_roc_auc_above_all_rows": true,
+          "retained_specificity_below_all_rows": true,
+          "test_coverage_below_training_floor": false,
+          "train_coverage": 0.5009408194233688
+        },
+        "identities": {
+          "N_retained = TP + FP + TN + FN (retained)": true,
+          "N_total = N_retained + N_abstained": true,
+          "N_total = TP + FP + TN + FN (no abstention)": true,
+          "accuracy decomposition is exact": true,
+          "effective recall = retained recall x positive retention": true,
+          "negatives = retained + abstained negatives": true,
+          "positives = retained + abstained positives": true,
+          "retained positives = TP + FN; retained negatives = TN + FP": true
+        },
+        "no_abstention": {
+          "accuracy": {
+            "den": 8238,
+            "num": 6430,
+            "value": 0.7805292546734645
+          },
+          "confusion": {
+            "fn": 267,
+            "fp": 1541,
+            "tn": 5769,
+            "tp": 661
+          },
+          "f1": {
+            "den": 3130,
+            "num": 1322,
+            "value": 0.42236421725239615
+          },
+          "f2": {
+            "den": 5914,
+            "num": 3305,
+            "value": 0.5588434223875549
+          },
+          "n": 8238,
+          "negatives": 7310,
+          "npv": {
+            "den": 6036,
+            "num": 5769,
+            "value": 0.955765407554672
+          },
+          "population": "every test row: the decision without abstention",
+          "positive_prediction_rate": {
+            "den": 8238,
+            "num": 2202,
+            "value": 0.2672978878368536
+          },
+          "positives": 928,
+          "pr_auc": {
+            "value": 0.43080368110476597
+          },
+          "precision": {
+            "den": 2202,
+            "num": 661,
+            "value": 0.30018165304268846
+          },
+          "prevalence": {
+            "den": 8238,
+            "num": 928,
+            "value": 0.11264870114105366
+          },
+          "recall": {
+            "den": 928,
+            "num": 661,
+            "value": 0.7122844827586207
+          },
+          "roc_auc": {
+            "value": 0.8050918527996603
+          },
+          "specificity": {
+            "den": 7310,
+            "num": 5769,
+            "value": 0.7891928864569083
+          }
+        },
+        "retained_decisions_unchanged": true,
+        "retained_only": {
+          "accuracy": {
+            "den": 4193,
+            "num": 2782,
+            "value": 0.6634867636537085
+          },
+          "confusion": {
+            "fn": 72,
+            "fp": 1339,
+            "tn": 2148,
+            "tp": 634
+          },
+          "f1": {
+            "den": 2679,
+            "num": 1268,
+            "value": 0.47331093691675996
+          },
+          "f2": {
+            "den": 4797,
+            "num": 3170,
+            "value": 0.6608296852199291
+          },
+          "n": 4193,
+          "negatives": 3487,
+          "npv": {
+            "den": 2220,
+            "num": 2148,
+            "value": 0.9675675675675676
+          },
+          "population": "retained rows only: the rows classified with abstention (what the existing 'with abstention' metrics report)",
+          "positive_prediction_rate": {
+            "den": 4193,
+            "num": 1973,
+            "value": 0.47054614834247555
+          },
+          "positives": 706,
+          "pr_auc": {
+            "value": 0.507690088514566
+          },
+          "precision": {
+            "den": 1973,
+            "num": 634,
+            "value": 0.32133806386213887
+          },
+          "prevalence": {
+            "den": 4193,
+            "num": 706,
+            "value": 0.16837586453613165
+          },
+          "recall": {
+            "den": 706,
+            "num": 634,
+            "value": 0.8980169971671388
+          },
+          "roc_auc": {
+            "value": 0.842269262359342
+          },
+          "specificity": {
+            "den": 3487,
+            "num": 2148,
+            "value": 0.6160022942357327
+          }
+        },
+        "stored_metric_problems": [],
+        "upstream": "glass",
+        "whole_system": {
+          "abstained_prevalence": {
+            "den": 4045,
+            "num": 222,
+            "value": 0.05488257107540173
+          },
+          "abstention_rate": {
+            "den": 8238,
+            "num": 4045,
+            "value": 0.49101723719349355
+          },
+          "correct_positives_share": {
+            "den": 8238,
+            "num": 634,
+            "value": 0.07696042728817674
+          },
+          "coverage": {
+            "den": 8238,
+            "num": 4193,
+            "value": 0.5089827628065065
+          },
+          "effective_recall": {
+            "den": 928,
+            "num": 634,
+            "value": 0.6831896551724138
+          },
+          "issued_positive_precision": {
+            "den": 1973,
+            "note": "TP / (TP + FP) over the positive decisions issued; an abstention issues none, so this is the retained precision",
+            "num": 634,
+            "value": 0.32133806386213887
+          },
+          "negative_abstention": {
+            "den": 7310,
+            "num": 3823,
+            "value": 0.5229822161422709
+          },
+          "negative_retention": {
+            "den": 7310,
+            "num": 3487,
+            "value": 0.47701778385772914
+          },
+          "population": "every test row; an abstention issues neither a positive nor a negative decision",
+          "positive_abstention": {
+            "den": 928,
+            "num": 222,
+            "value": 0.23922413793103448
+          },
+          "positive_retention": {
+            "den": 928,
+            "num": 706,
+            "value": 0.7607758620689655
+          },
+          "retained_prevalence": {
+            "den": 4193,
+            "num": 706,
+            "value": 0.16837586453613165
+          },
+          "roc_auc_populations": "no_abstention.roc_auc ranks the score of every test row (the score exists whether or not the row is retained); retained_only.roc_auc ranks the retained rows only, which the confidence rule selected from the score",
+          "undefined_without_an_abstention_policy": {
+            "accuracy": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "f1": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "f2": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "pr_auc": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "roc_auc": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered"
+          }
+        }
+      },
+      "glass_arbiter_on_blackbox": {
+        "arbiter": "glass_arbiter",
+        "calibration": {
+          "applicable": false,
+          "reason": "the GLASS Arbiter's weighted score is not a calibrated probability (contract section 6.5)",
+          "upstream_train_oof_as_recorded": {
+            "computed_on": "train OOF (GLASS: covered rows)",
+            "ebm": {
+              "brier": 0.07879445529590841,
+              "ece": 0.002769137712194383
+            },
+            "glass": {
+              "brier": 0.1059164176585239,
+              "ece": 0.05310414656207148
+            },
+            "lr": {
+              "brier": 0.08251755429448537,
+              "ece": 0.006010483314465798
+            }
+          }
+        },
+        "combination": "blackbox upstream -> glass_arbiter",
+        "configuration": {
+          "abstention": {
+            "min_coverage": 0.5,
+            "min_weighted_confidence": 0.03893775752039429,
+            "search": "exact: every distinct training confidence value; abstain where confidence < cut (PR 36 F30)",
+            "selected_by": "F2 on train OOF retained rows, exact search over distinct weighted confidences, coverage ≥ 50%",
+            "train_coverage": 0.5020030349013657,
+            "train_f2": 0.6396767307105825
+          },
+          "score": "weighted probability (a ranking score, not a calibrated probability)",
+          "thresholds": {
+            "ebm": 0.069050894085282,
+            "glass": 0.11265553869499241,
+            "lr": 0.06852406911374345,
+            "min_weighted_confidence": 0.03893775752039429,
+            "target_recall": 0.7
+          },
+          "weights": {
+            "ebm": 0.3543483146374546,
+            "glass": 0.3006268023606378,
+            "lr": 0.34502488300190765
+          }
+        },
+        "crossover": true,
+        "decomposition_all_rows_to_retained": {
+          "accuracy_change": -0.10126714325256736,
+          "changes": {
+            "precision": 0.05277280425390002,
+            "prevalence": 0.06442136255321385,
+            "recall": 0.15970757876457453,
+            "specificity": -0.1587155302757578
+          },
+          "formula": "acc_o - acc_b = (pi_o - pi_b)(R_b - S_b) + pi_o (R_o - R_b) + (1 - pi_o)(S_o - S_b)",
+          "from": "every test row: the decision without abstention",
+          "prevalence_mix_term": 0.0010651868236921241,
+          "recall_term": 0.028279431144300458,
+          "residual": -1.3877787807814457e-17,
+          "specificity_term": -0.13061176122055992,
+          "to": "retained rows only: the rows classified with abstention (what the existing 'with abstention' metrics report)"
+        },
+        "findings": {
+          "abstention_falls_more_on_negatives": true,
+          "effective_recall_below_no_abstention_recall": true,
+          "min_coverage": 0.5,
+          "retained_accuracy_below_all_rows": true,
+          "retained_precision_above_all_rows": true,
+          "retained_prevalence_above_overall": true,
+          "retained_recall_above_all_rows": true,
+          "retained_roc_auc_above_all_rows": true,
+          "retained_specificity_below_all_rows": true,
+          "test_coverage_below_training_floor": true,
+          "train_coverage": 0.5020030349013657
+        },
+        "identities": {
+          "N_retained = TP + FP + TN + FN (retained)": true,
+          "N_total = N_retained + N_abstained": true,
+          "N_total = TP + FP + TN + FN (no abstention)": true,
+          "accuracy decomposition is exact": true,
+          "effective recall = retained recall x positive retention": true,
+          "negatives = retained + abstained negatives": true,
+          "positives = retained + abstained positives": true,
+          "retained positives = TP + FN; retained negatives = TN + FP": true
+        },
+        "no_abstention": {
+          "accuracy": {
+            "den": 8238,
+            "num": 6031,
+            "value": 0.7320951687302744
+          },
+          "confusion": {
+            "fn": 235,
+            "fp": 1972,
+            "tn": 5338,
+            "tp": 693
+          },
+          "f1": {
+            "den": 3593,
+            "num": 1386,
+            "value": 0.3857500695797384
+          },
+          "f2": {
+            "den": 6377,
+            "num": 3465,
+            "value": 0.5433589462129528
+          },
+          "n": 8238,
+          "negatives": 7310,
+          "npv": {
+            "den": 5573,
+            "num": 5338,
+            "value": 0.9578324062443926
+          },
+          "population": "every test row: the decision without abstention",
+          "positive_prediction_rate": {
+            "den": 8238,
+            "num": 2665,
+            "value": 0.323500849720806
+          },
+          "positives": 928,
+          "pr_auc": {
+            "value": 0.44234754474333754
+          },
+          "precision": {
+            "den": 2665,
+            "num": 693,
+            "value": 0.2600375234521576
+          },
+          "prevalence": {
+            "den": 8238,
+            "num": 928,
+            "value": 0.11264870114105366
+          },
+          "recall": {
+            "den": 928,
+            "num": 693,
+            "value": 0.7467672413793104
+          },
+          "roc_auc": {
+            "value": 0.8073304607528656
+          },
+          "specificity": {
+            "den": 7310,
+            "num": 5338,
+            "value": 0.7302325581395349
+          }
+        },
+        "retained_decisions_unchanged": true,
+        "retained_only": {
+          "accuracy": {
+            "den": 3925,
+            "num": 2476,
+            "value": 0.630828025477707
+          },
+          "confusion": {
+            "fn": 65,
+            "fp": 1384,
+            "tn": 1846,
+            "tp": 630
+          },
+          "f1": {
+            "den": 2709,
+            "num": 1260,
+            "value": 0.46511627906976744
+          },
+          "f2": {
+            "den": 4794,
+            "num": 3150,
+            "value": 0.6570713391739674
+          },
+          "n": 3925,
+          "negatives": 3230,
+          "npv": {
+            "den": 1911,
+            "num": 1846,
+            "value": 0.9659863945578231
+          },
+          "population": "retained rows only: the rows classified with abstention (what the existing 'with abstention' metrics report)",
+          "positive_prediction_rate": {
+            "den": 3925,
+            "num": 2014,
+            "value": 0.5131210191082802
+          },
+          "positives": 695,
+          "pr_auc": {
+            "value": 0.5280292392076524
+          },
+          "precision": {
+            "den": 2014,
+            "num": 630,
+            "value": 0.3128103277060576
+          },
+          "prevalence": {
+            "den": 3925,
+            "num": 695,
+            "value": 0.1770700636942675
+          },
+          "recall": {
+            "den": 695,
+            "num": 630,
+            "value": 0.9064748201438849
+          },
+          "roc_auc": {
+            "value": 0.8445239102835378
+          },
+          "specificity": {
+            "den": 3230,
+            "num": 1846,
+            "value": 0.5715170278637771
+          }
+        },
+        "stored_metric_problems": [],
+        "upstream": "blackbox",
+        "whole_system": {
+          "abstained_prevalence": {
+            "den": 4313,
+            "num": 233,
+            "value": 0.054022722003246
+          },
+          "abstention_rate": {
+            "den": 8238,
+            "num": 4313,
+            "value": 0.5235494051954358
+          },
+          "correct_positives_share": {
+            "den": 8238,
+            "num": 630,
+            "value": 0.0764748725418791
+          },
+          "coverage": {
+            "den": 8238,
+            "num": 3925,
+            "value": 0.4764505948045642
+          },
+          "effective_recall": {
+            "den": 928,
+            "num": 630,
+            "value": 0.6788793103448276
+          },
+          "issued_positive_precision": {
+            "den": 2014,
+            "note": "TP / (TP + FP) over the positive decisions issued; an abstention issues none, so this is the retained precision",
+            "num": 630,
+            "value": 0.3128103277060576
+          },
+          "negative_abstention": {
+            "den": 7310,
+            "num": 4080,
+            "value": 0.5581395348837209
+          },
+          "negative_retention": {
+            "den": 7310,
+            "num": 3230,
+            "value": 0.4418604651162791
+          },
+          "population": "every test row; an abstention issues neither a positive nor a negative decision",
+          "positive_abstention": {
+            "den": 928,
+            "num": 233,
+            "value": 0.2510775862068966
+          },
+          "positive_retention": {
+            "den": 928,
+            "num": 695,
+            "value": 0.7489224137931034
+          },
+          "retained_prevalence": {
+            "den": 3925,
+            "num": 695,
+            "value": 0.1770700636942675
+          },
+          "roc_auc_populations": "no_abstention.roc_auc ranks the score of every test row (the score exists whether or not the row is retained); retained_only.roc_auc ranks the retained rows only, which the confidence rule selected from the score",
+          "undefined_without_an_abstention_policy": {
+            "accuracy": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "f1": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "f2": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "pr_auc": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "roc_auc": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered"
+          }
+        }
+      },
+      "meta_xgb": {
+        "arbiter": "meta_xgb",
+        "calibration": {
+          "applicable": true,
+          "as_recorded": {
+            "applied": true,
+            "brier_after": 0.07908248139323004,
+            "brier_before": 0.1626117243581581,
+            "calibrator_fitted_on": "all OOF rows (test); per outer fold, the inner OOF scores of its training rows (train, F22)",
+            "ece_after": 0.002495981831580421,
+            "ece_before": 0.28096604755190685,
+            "ece_bins": 10,
+            "ece_threshold": 0.05,
+            "method": "isotonic",
+            "reason": "OOF ECE 0.2810 > gate 0.05",
+            "test_brier_calibrated": 0.07625236162819037,
+            "test_brier_raw": 0.1609739482434699,
+            "test_ece_calibrated": 0.008961102299500213,
+            "test_ece_raw": 0.28398161327037225
+          },
+          "operating_space": "raw",
+          "test_recount": {
+            "calibrated": {
+              "brier": 0.07625236162819037,
+              "ece": 0.008961102299500213,
+              "ece_bins": 10,
+              "recorded_brier": 0.07625236162819037,
+              "recorded_ece": 0.008961102299500213
+            },
+            "raw": {
+              "brier": 0.1609739482434699,
+              "ece": 0.28398161327037225,
+              "ece_bins": 10,
+              "recorded_brier": 0.1609739482434699,
+              "recorded_ece": 0.28398161327037225
+            }
+          }
+        },
+        "combination": "blackbox upstream -> meta_xgb",
+        "configuration": {
+          "abstention": {
+            "confidence": "|p − t|, p = meta probability in the operating space, t = operating threshold (fold-nested on train rows)",
+            "min_confidence": 0.21536994934082032,
+            "min_coverage": 0.5,
+            "search": "exact: every distinct training confidence value; abstain where confidence < cut (PR 36 F30)",
+            "selected_by": "F2 on meta OOF retained rows, exact search, coverage ≥ 50% (shared Stage 4 rule)",
+            "train_coverage": 0.5015174506828528,
+            "train_f2": 0.7013023191030016
+          },
+          "operating": {
+            "space": "raw",
+            "threshold": 0.44000000000000006,
+            "threshold_key": "oof",
+            "threshold_source": "learner.threshold['oof'] — F2 grid on meta OOF train predictions",
+            "train_side_thresholds": "fold-nested per row"
+          },
+          "score": "Meta-XGB probability in its operating space (raw)"
+        },
+        "crossover": false,
+        "decomposition_all_rows_to_retained": {
+          "accuracy_change": -0.1696757065146658,
+          "changes": {
+            "precision": 0.06206360550667084,
+            "prevalence": 0.16016110367056688,
+            "recall": 0.3075405932641001,
+            "specificity": -0.2995892617128726
+          },
+          "formula": "acc_o - acc_b = (pi_o - pi_b)(R_b - S_b) + pi_o (R_o - R_b) + (1 - pi_o)(S_o - S_b)",
+          "from": "every test row: the decision without abstention",
+          "prevalence_mix_term": -0.03571742203336856,
+          "recall_term": 0.08390008922002913,
+          "residual": -5.551115123125783e-17,
+          "specificity_term": -0.21785837370132632,
+          "to": "retained rows only: the rows classified with abstention (what the existing 'with abstention' metrics report)"
+        },
+        "findings": {
+          "abstention_falls_more_on_negatives": true,
+          "effective_recall_below_no_abstention_recall": true,
+          "min_coverage": 0.5,
+          "retained_accuracy_below_all_rows": true,
+          "retained_precision_above_all_rows": true,
+          "retained_prevalence_above_overall": true,
+          "retained_recall_above_all_rows": true,
+          "retained_roc_auc_above_all_rows": true,
+          "retained_specificity_below_all_rows": true,
+          "test_coverage_below_training_floor": true,
+          "train_coverage": 0.5015174506828528
+        },
+        "identities": {
+          "N_retained = TP + FP + TN + FN (retained)": true,
+          "N_total = N_retained + N_abstained": true,
+          "N_total = TP + FP + TN + FN (no abstention)": true,
+          "accuracy decomposition is exact": true,
+          "effective recall = retained recall x positive retention": true,
+          "negatives = retained + abstained negatives": true,
+          "positives = retained + abstained positives": true,
+          "retained positives = TP + FN; retained negatives = TN + FP": true
+        },
+        "no_abstention": {
+          "accuracy": {
+            "den": 8238,
+            "num": 6992,
+            "value": 0.8487496965282836
+          },
+          "confusion": {
+            "fn": 324,
+            "fp": 922,
+            "tn": 6388,
+            "tp": 604
+          },
+          "f1": {
+            "den": 2454,
+            "num": 1208,
+            "value": 0.49225753871230643
+          },
+          "f2": {
+            "den": 5238,
+            "num": 3020,
+            "value": 0.5765559373806797
+          },
+          "n": 8238,
+          "negatives": 7310,
+          "npv": {
+            "den": 6712,
+            "num": 6388,
+            "value": 0.9517282479141835
+          },
+          "population": "every test row: the decision without abstention",
+          "positive_prediction_rate": {
+            "den": 8238,
+            "num": 1526,
+            "value": 0.1852391357125516
+          },
+          "positives": 928,
+          "pr_auc": {
+            "value": 0.4461969380044154
+          },
+          "precision": {
+            "den": 1526,
+            "num": 604,
+            "value": 0.39580602883355176
+          },
+          "prevalence": {
+            "den": 8238,
+            "num": 928,
+            "value": 0.11264870114105366
+          },
+          "recall": {
+            "den": 928,
+            "num": 604,
+            "value": 0.6508620689655172
+          },
+          "roc_auc": {
+            "value": 0.8134447674418606
+          },
+          "specificity": {
+            "den": 7310,
+            "num": 6388,
+            "value": 0.8738714090287277
+          }
+        },
+        "retained_decisions_unchanged": true,
+        "retained_only": {
+          "accuracy": {
+            "den": 2203,
+            "num": 1496,
+            "value": 0.6790739900136178
+          },
+          "confusion": {
+            "fn": 25,
+            "fp": 682,
+            "tn": 920,
+            "tp": 576
+          },
+          "f1": {
+            "den": 1859,
+            "num": 1152,
+            "value": 0.6196880043033889
+          },
+          "f2": {
+            "den": 3662,
+            "num": 2880,
+            "value": 0.7864554888039322
+          },
+          "n": 2203,
+          "negatives": 1602,
+          "npv": {
+            "den": 945,
+            "num": 920,
+            "value": 0.9735449735449735
+          },
+          "population": "retained rows only: the rows classified with abstention (what the existing 'with abstention' metrics report)",
+          "positive_prediction_rate": {
+            "den": 2203,
+            "num": 1258,
+            "value": 0.5710394916023604
+          },
+          "positives": 601,
+          "pr_auc": {
+            "value": 0.5660934210184813
+          },
+          "precision": {
+            "den": 1258,
+            "num": 576,
+            "value": 0.4578696343402226
+          },
+          "prevalence": {
+            "den": 2203,
+            "num": 601,
+            "value": 0.27280980481162054
+          },
+          "recall": {
+            "den": 601,
+            "num": 576,
+            "value": 0.9584026622296173
+          },
+          "roc_auc": {
+            "value": 0.8239825010749874
+          },
+          "specificity": {
+            "den": 1602,
+            "num": 920,
+            "value": 0.5742821473158551
+          }
+        },
+        "stored_metric_problems": [],
+        "upstream": "blackbox",
+        "whole_system": {
+          "abstained_prevalence": {
+            "den": 6035,
+            "num": 327,
+            "value": 0.05418392709196355
+          },
+          "abstention_rate": {
+            "den": 8238,
+            "num": 6035,
+            "value": 0.732580723476572
+          },
+          "correct_positives_share": {
+            "den": 8238,
+            "num": 576,
+            "value": 0.06991988346686089
+          },
+          "coverage": {
+            "den": 8238,
+            "num": 2203,
+            "value": 0.267419276523428
+          },
+          "effective_recall": {
+            "den": 928,
+            "num": 576,
+            "value": 0.6206896551724138
+          },
+          "issued_positive_precision": {
+            "den": 1258,
+            "note": "TP / (TP + FP) over the positive decisions issued; an abstention issues none, so this is the retained precision",
+            "num": 576,
+            "value": 0.4578696343402226
+          },
+          "negative_abstention": {
+            "den": 7310,
+            "num": 5708,
+            "value": 0.7808481532147743
+          },
+          "negative_retention": {
+            "den": 7310,
+            "num": 1602,
+            "value": 0.21915184678522573
+          },
+          "population": "every test row; an abstention issues neither a positive nor a negative decision",
+          "positive_abstention": {
+            "den": 928,
+            "num": 327,
+            "value": 0.35237068965517243
+          },
+          "positive_retention": {
+            "den": 928,
+            "num": 601,
+            "value": 0.6476293103448276
+          },
+          "retained_prevalence": {
+            "den": 2203,
+            "num": 601,
+            "value": 0.27280980481162054
+          },
+          "roc_auc_populations": "no_abstention.roc_auc ranks the score of every test row (the score exists whether or not the row is retained); retained_only.roc_auc ranks the retained rows only, which the confidence rule selected from the score",
+          "undefined_without_an_abstention_policy": {
+            "accuracy": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "f1": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "f2": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "pr_auc": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "roc_auc": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered"
+          }
+        }
+      },
+      "meta_xgb_on_glass": {
+        "arbiter": "meta_xgb",
+        "calibration": {
+          "applicable": true,
+          "as_recorded": {
+            "applied": true,
+            "brier_after": 0.08004106415991472,
+            "brier_before": 0.16270983883181303,
+            "calibrator_fitted_on": "all OOF rows (test); per outer fold, the inner OOF scores of its training rows (train, F22)",
+            "ece_after": 0.0031013300043387614,
+            "ece_before": 0.27418925899746566,
+            "ece_bins": 10,
+            "ece_threshold": 0.05,
+            "method": "isotonic",
+            "reason": "OOF ECE 0.2742 > gate 0.05",
+            "test_brier_calibrated": 0.07736001888606253,
+            "test_brier_raw": 0.1583568476687774,
+            "test_ece_calibrated": 0.010015504155527214,
+            "test_ece_raw": 0.2747852761794942
+          },
+          "operating_space": "raw",
+          "test_recount": {
+            "calibrated": {
+              "brier": 0.07736001888606253,
+              "ece": 0.010015504155527214,
+              "ece_bins": 10,
+              "recorded_brier": 0.07736001888606253,
+              "recorded_ece": 0.010015504155527214
+            },
+            "raw": {
+              "brier": 0.1583568476687774,
+              "ece": 0.2747852761794942,
+              "ece_bins": 10,
+              "recorded_brier": 0.1583568476687774,
+              "recorded_ece": 0.2747852761794942
+            }
+          }
+        },
+        "combination": "glass upstream -> meta_xgb",
+        "configuration": {
+          "abstention": {
+            "confidence": "|p − t|, p = meta probability in the operating space, t = operating threshold (fold-nested on train rows)",
+            "min_confidence": 0.20949414253234866,
+            "min_coverage": 0.5,
+            "search": "exact: every distinct training confidence value; abstain where confidence < cut (PR 36 F30)",
+            "selected_by": "F2 on meta OOF retained rows, exact search, coverage ≥ 50% (shared Stage 4 rule)",
+            "train_coverage": 0.5004855842185129,
+            "train_f2": 0.6996473484596447
+          },
+          "operating": {
+            "space": "raw",
+            "threshold": 0.5,
+            "threshold_key": "oof",
+            "threshold_source": "learner.threshold['oof'] — F2 grid on meta OOF train predictions",
+            "train_side_thresholds": "fold-nested per row"
+          },
+          "score": "Meta-XGB probability in its operating space (raw)"
+        },
+        "crossover": true,
+        "decomposition_all_rows_to_retained": {
+          "accuracy_change": -0.030881043958564947,
+          "changes": {
+            "precision": 0.05203494092382982,
+            "prevalence": 0.04064107954023424,
+            "recall": 0.2165833464546265,
+            "specificity": -0.06380102676456079
+          },
+          "formula": "acc_o - acc_b = (pi_o - pi_b)(R_b - S_b) + pi_o (R_o - R_b) + (1 - pi_o)(S_o - S_b)",
+          "from": "every test row: the decision without abstention",
+          "prevalence_mix_term": -0.010060076271233781,
+          "recall_term": 0.03320001367724909,
+          "residual": 2.7755575615628914e-17,
+          "specificity_term": -0.054020981364580285,
+          "to": "retained rows only: the rows classified with abstention (what the existing 'with abstention' metrics report)"
+        },
+        "findings": {
+          "abstention_falls_more_on_negatives": true,
+          "effective_recall_below_no_abstention_recall": true,
+          "min_coverage": 0.5,
+          "retained_accuracy_below_all_rows": true,
+          "retained_precision_above_all_rows": true,
+          "retained_prevalence_above_overall": true,
+          "retained_recall_above_all_rows": true,
+          "retained_roc_auc_above_all_rows": true,
+          "retained_specificity_below_all_rows": true,
+          "test_coverage_below_training_floor": false,
+          "train_coverage": 0.5004855842185129
+        },
+        "identities": {
+          "N_retained = TP + FP + TN + FN (retained)": true,
+          "N_total = N_retained + N_abstained": true,
+          "N_total = TP + FP + TN + FN (no abstention)": true,
+          "accuracy decomposition is exact": true,
+          "effective recall = retained recall x positive retention": true,
+          "negatives = retained + abstained negatives": true,
+          "positives = retained + abstained positives": true,
+          "retained positives = TP + FN; retained negatives = TN + FP": true
+        },
+        "no_abstention": {
+          "accuracy": {
+            "den": 8238,
+            "num": 7047,
+            "value": 0.8554260742898762
+          },
+          "confusion": {
+            "fn": 338,
+            "fp": 853,
+            "tn": 6457,
+            "tp": 590
+          },
+          "f1": {
+            "den": 2371,
+            "num": 1180,
+            "value": 0.49768030366933785
+          },
+          "f2": {
+            "den": 5155,
+            "num": 2950,
+            "value": 0.5722599418040737
+          },
+          "n": 8238,
+          "negatives": 7310,
+          "npv": {
+            "den": 6795,
+            "num": 6457,
+            "value": 0.9502575423105224
+          },
+          "population": "every test row: the decision without abstention",
+          "positive_prediction_rate": {
+            "den": 8238,
+            "num": 1443,
+            "value": 0.17516387472687545
+          },
+          "positives": 928,
+          "pr_auc": {
+            "value": 0.43036508153180814
+          },
+          "precision": {
+            "den": 1443,
+            "num": 590,
+            "value": 0.4088704088704089
+          },
+          "prevalence": {
+            "den": 8238,
+            "num": 928,
+            "value": 0.11264870114105366
+          },
+          "recall": {
+            "den": 928,
+            "num": 590,
+            "value": 0.6357758620689655
+          },
+          "roc_auc": {
+            "value": 0.8110694342893532
+          },
+          "specificity": {
+            "den": 7310,
+            "num": 6457,
+            "value": 0.8833105335157319
+          }
+        },
+        "retained_decisions_unchanged": true,
+        "retained_only": {
+          "accuracy": {
+            "den": 4286,
+            "num": 3534,
+            "value": 0.8245450303313112
+          },
+          "confusion": {
+            "fn": 97,
+            "fp": 655,
+            "tn": 2974,
+            "tp": 560
+          },
+          "f1": {
+            "den": 1872,
+            "num": 1120,
+            "value": 0.5982905982905983
+          },
+          "f2": {
+            "den": 3843,
+            "num": 2800,
+            "value": 0.7285974499089253
+          },
+          "n": 4286,
+          "negatives": 3629,
+          "npv": {
+            "den": 3071,
+            "num": 2974,
+            "value": 0.96841419732986
+          },
+          "population": "retained rows only: the rows classified with abstention (what the existing 'with abstention' metrics report)",
+          "positive_prediction_rate": {
+            "den": 4286,
+            "num": 1215,
+            "value": 0.283481101259916
+          },
+          "positives": 657,
+          "pr_auc": {
+            "value": 0.5077515451754565
+          },
+          "precision": {
+            "den": 1215,
+            "num": 560,
+            "value": 0.4609053497942387
+          },
+          "prevalence": {
+            "den": 4286,
+            "num": 657,
+            "value": 0.1532897806812879
+          },
+          "recall": {
+            "den": 657,
+            "num": 560,
+            "value": 0.852359208523592
+          },
+          "roc_auc": {
+            "value": 0.8539972477752992
+          },
+          "specificity": {
+            "den": 3629,
+            "num": 2974,
+            "value": 0.8195095067511711
+          }
+        },
+        "stored_metric_problems": [],
+        "upstream": "glass",
+        "whole_system": {
+          "abstained_prevalence": {
+            "den": 3952,
+            "num": 271,
+            "value": 0.06857287449392713
+          },
+          "abstention_rate": {
+            "den": 8238,
+            "num": 3952,
+            "value": 0.47972808934207334
+          },
+          "correct_positives_share": {
+            "den": 8238,
+            "num": 560,
+            "value": 0.06797766448167031
+          },
+          "coverage": {
+            "den": 8238,
+            "num": 4286,
+            "value": 0.5202719106579267
+          },
+          "effective_recall": {
+            "den": 928,
+            "num": 560,
+            "value": 0.603448275862069
+          },
+          "issued_positive_precision": {
+            "den": 1215,
+            "note": "TP / (TP + FP) over the positive decisions issued; an abstention issues none, so this is the retained precision",
+            "num": 560,
+            "value": 0.4609053497942387
+          },
+          "negative_abstention": {
+            "den": 7310,
+            "num": 3681,
+            "value": 0.5035567715458277
+          },
+          "negative_retention": {
+            "den": 7310,
+            "num": 3629,
+            "value": 0.4964432284541724
+          },
+          "population": "every test row; an abstention issues neither a positive nor a negative decision",
+          "positive_abstention": {
+            "den": 928,
+            "num": 271,
+            "value": 0.2920258620689655
+          },
+          "positive_retention": {
+            "den": 928,
+            "num": 657,
+            "value": 0.7079741379310345
+          },
+          "retained_prevalence": {
+            "den": 4286,
+            "num": 657,
+            "value": 0.1532897806812879
+          },
+          "roc_auc_populations": "no_abstention.roc_auc ranks the score of every test row (the score exists whether or not the row is retained); retained_only.roc_auc ranks the retained rows only, which the confidence rule selected from the score",
+          "undefined_without_an_abstention_policy": {
+            "accuracy": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "f1": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "f2": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "pr_auc": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered",
+            "roc_auc": "needs a policy for abstained rows (counted wrong, right or excluded); none is registered"
+          }
+        }
+      }
+    },
+    "comparisons": {
+      "blackbox_column": {
+        "accuracy_decomposition": {
+          "no_abstention": {
+            "accuracy_change": 0.11665452779800922,
+            "changes": {
+              "precision": 0.13576850538139418,
+              "prevalence": 0.0,
+              "recall": -0.09590517241379315,
+              "specificity": 0.14363885088919282
+            },
+            "formula": "acc_o - acc_b = (pi_o - pi_b)(R_b - S_b) + pi_o (R_o - R_b) + (1 - pi_o)(S_o - S_b)",
+            "from": "every test row: the decision without abstention",
+            "prevalence_mix_term": 0.0,
+            "recall_term": -0.010803593105122609,
+            "residual": 5.551115123125783e-17,
+            "specificity_term": 0.12745812090313177,
+            "to": "every test row: the decision without abstention"
+          },
+          "retained_only": {
+            "accuracy_change": 0.04824596453591079,
+            "changes": {
+              "precision": 0.145059306634165,
+              "prevalence": 0.09573974111735303,
+              "recall": 0.05192784208573242,
+              "specificity": 0.0027651194520780242
+            },
+            "formula": "acc_o - acc_b = (pi_o - pi_b)(R_b - S_b) + pi_o (R_o - R_b) + (1 - pi_o)(S_o - S_b)",
+            "from": "retained rows only: the rows classified with abstention (what the existing 'with abstention' metrics report)",
+            "prevalence_mix_term": 0.03206877231813764,
+            "recall_term": 0.014166424463697317,
+            "residual": 3.469446951953614e-17,
+            "specificity_term": 0.002010767754075803,
+            "to": "retained rows only: the rows classified with abstention (what the existing 'with abstention' metrics report)"
+          }
+        },
+        "bootstrap": [
+          {
+            "95% CI high": 0.149134,
+            "95% CI low": 0.122423,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.260038,
+            "Meta-XGB": 0.395806,
+            "P(Δ > 0)": 1.0,
+            "metric": "no_abstain.precision",
+            "Δ (XGB−Arbiter)": 0.135769
+          },
+          {
+            "95% CI high": -0.078175,
+            "95% CI low": -0.115387,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.746767,
+            "Meta-XGB": 0.650862,
+            "P(Δ > 0)": 0.0,
+            "metric": "no_abstain.recall",
+            "Δ (XGB−Arbiter)": -0.095905
+          },
+          {
+            "95% CI high": 0.0483,
+            "95% CI low": 0.016937,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.543359,
+            "Meta-XGB": 0.576556,
+            "P(Δ > 0)": 1.0,
+            "metric": "no_abstain.f2",
+            "Δ (XGB−Arbiter)": 0.033197
+          },
+          {
+            "95% CI high": 0.123938,
+            "95% CI low": 0.109007,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.732095,
+            "Meta-XGB": 0.84875,
+            "P(Δ > 0)": 1.0,
+            "metric": "no_abstain.accuracy",
+            "Δ (XGB−Arbiter)": 0.116655
+          },
+          {
+            "95% CI high": 0.008884,
+            "95% CI low": 0.00323,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.80733,
+            "Meta-XGB": 0.813445,
+            "P(Δ > 0)": 1.0,
+            "metric": "no_abstain.roc_auc",
+            "Δ (XGB−Arbiter)": 0.006114
+          },
+          {
+            "95% CI high": 0.011768,
+            "95% CI low": -0.006025,
+            "CI excludes 0": false,
+            "GLASS Arbiter": 0.442348,
+            "Meta-XGB": 0.446197,
+            "P(Δ > 0)": 0.752,
+            "metric": "no_abstain.pr_auc",
+            "Δ (XGB−Arbiter)": 0.003849
+          },
+          {
+            "95% CI high": -0.199806,
+            "95% CI low": -0.217774,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.476451,
+            "Meta-XGB": 0.267419,
+            "P(Δ > 0)": 0.0,
+            "metric": "with_abstain.coverage",
+            "Δ (XGB−Arbiter)": -0.209031
+          },
+          {
+            "95% CI high": 0.160451,
+            "95% CI low": 0.130115,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.31281,
+            "Meta-XGB": 0.45787,
+            "P(Δ > 0)": 1.0,
+            "metric": "with_abstain.precision",
+            "Δ (XGB−Arbiter)": 0.145059
+          },
+          {
+            "95% CI high": 0.069282,
+            "95% CI low": 0.035641,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.906475,
+            "Meta-XGB": 0.958403,
+            "P(Δ > 0)": 1.0,
+            "metric": "with_abstain.recall",
+            "Δ (XGB−Arbiter)": 0.051928
+          },
+          {
+            "95% CI high": 0.141992,
+            "95% CI low": 0.116786,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.657071,
+            "Meta-XGB": 0.786455,
+            "P(Δ > 0)": 1.0,
+            "metric": "with_abstain.f2",
+            "Δ (XGB−Arbiter)": 0.129384
+          },
+          {
+            "95% CI high": 0.061883,
+            "95% CI low": 0.03465,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.630828,
+            "Meta-XGB": 0.679074,
+            "P(Δ > 0)": 1.0,
+            "metric": "with_abstain.accuracy",
+            "Δ (XGB−Arbiter)": 0.048246
+          }
+        ],
+        "glass_arbiter": "glass_arbiter_on_blackbox",
+        "meta_xgb": "meta_xgb",
+        "paired": {
+          "no_abstain": {
+            "agreement": 0.8617382859917456,
+            "both_correct": 5942,
+            "both_wrong": 1157,
+            "glass_arbiter_only_correct": 89,
+            "mcnemar_exact_p": 5.56887527931362e-209,
+            "meta_xgb_only_correct": 1050,
+            "n": 8238
+          },
+          "retention": {
+            "both": 2203,
+            "glass_arbiter_only": 1722,
+            "meta_xgb_only": 0,
+            "neither": 4313
+          },
+          "with_abstain_both_retained": {
+            "agreement": 1.0,
+            "both_correct": 1496,
+            "both_wrong": 707,
+            "glass_arbiter_only_correct": 0,
+            "mcnemar_exact_p": 1.0,
+            "meta_xgb_only_correct": 0,
+            "n": 2203
+          }
+        },
+        "protocol": {
+          "glass_arbiter_score": "arbiter weighted probability (ranking score, not calibrated)",
+          "n_boot": 2000,
+          "n_test": 8238,
+          "seed": 42,
+          "selection": "each model at its own train-selected configuration; no test-based tuning of either",
+          "upstream": {
+            "glass_arbiter": "blackbox upstream -> glass_arbiter",
+            "held_fixed": true,
+            "meta_xgb": "blackbox upstream -> meta_xgb",
+            "required": true,
+            "why_not": null
+          }
+        },
+        "question": "the arbiter effect with the upstream held fixed (registered; black-box Cell 38)",
+        "table": [
+          {
+            "accuracy": 0.732095,
+            "coverage": 1.0,
+            "f1": 0.38575,
+            "f2": 0.543359,
+            "level_0": "GLASS Arbiter",
+            "level_1": "no abstention",
+            "pr_auc": 0.442348,
+            "precision": 0.260038,
+            "recall": 0.746767,
+            "roc_auc": 0.80733
+          },
+          {
+            "accuracy": 0.630828,
+            "coverage": 0.476451,
+            "f1": 0.465116,
+            "f2": 0.657071,
+            "level_0": "GLASS Arbiter",
+            "level_1": "with abstention",
+            "pr_auc": 0.528029,
+            "precision": 0.31281,
+            "recall": 0.906475,
+            "roc_auc": 0.844524
+          },
+          {
+            "accuracy": 0.84875,
+            "coverage": 1.0,
+            "f1": 0.492258,
+            "f2": 0.576556,
+            "level_0": "Meta-XGB",
+            "level_1": "no abstention",
+            "pr_auc": 0.446197,
+            "precision": 0.395806,
+            "recall": 0.650862,
+            "roc_auc": 0.813445
+          },
+          {
+            "accuracy": 0.679074,
+            "coverage": 0.267419,
+            "f1": 0.619688,
+            "f2": 0.786455,
+            "level_0": "Meta-XGB",
+            "level_1": "with abstention",
+            "pr_auc": 0.566093,
+            "precision": 0.45787,
+            "recall": 0.958403,
+            "roc_auc": 0.823983
+          }
+        ]
+      },
+      "cascade": {
+        "bootstrap": [
+          {
+            "95% CI high": 0.10789,
+            "95% CI low": 0.084189,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.300182,
+            "Meta-XGB": 0.395806,
+            "P(Δ > 0)": 1.0,
+            "metric": "no_abstain.precision",
+            "Δ (XGB−Arbiter)": 0.095624
+          },
+          {
+            "95% CI high": -0.04575,
+            "95% CI low": -0.077438,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.712284,
+            "Meta-XGB": 0.650862,
+            "P(Δ > 0)": 0.0,
+            "metric": "no_abstain.recall",
+            "Δ (XGB−Arbiter)": -0.061422
+          },
+          {
+            "95% CI high": 0.031074,
+            "95% CI low": 0.004099,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.558843,
+            "Meta-XGB": 0.576556,
+            "P(Δ > 0)": 0.9935,
+            "metric": "no_abstain.f2",
+            "Δ (XGB−Arbiter)": 0.017713
+          },
+          {
+            "95% CI high": 0.074775,
+            "95% CI low": 0.061908,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.780529,
+            "Meta-XGB": 0.84875,
+            "P(Δ > 0)": 1.0,
+            "metric": "no_abstain.accuracy",
+            "Δ (XGB−Arbiter)": 0.06822
+          },
+          {
+            "95% CI high": 0.013398,
+            "95% CI low": 0.003449,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.805092,
+            "Meta-XGB": 0.813445,
+            "P(Δ > 0)": 1.0,
+            "metric": "no_abstain.roc_auc",
+            "Δ (XGB−Arbiter)": 0.008353
+          },
+          {
+            "95% CI high": 0.031703,
+            "95% CI low": -0.002921,
+            "CI excludes 0": false,
+            "GLASS Arbiter": 0.430804,
+            "Meta-XGB": 0.446197,
+            "P(Δ > 0)": 0.943,
+            "metric": "no_abstain.pr_auc",
+            "Δ (XGB−Arbiter)": 0.015393
+          },
+          {
+            "95% CI high": -0.232095,
+            "95% CI low": -0.251275,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.508983,
+            "Meta-XGB": 0.267419,
+            "P(Δ > 0)": 0.0,
+            "metric": "with_abstain.coverage",
+            "Δ (XGB−Arbiter)": -0.241563
+          },
+          {
+            "95% CI high": 0.151961,
+            "95% CI low": 0.122355,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.321338,
+            "Meta-XGB": 0.45787,
+            "P(Δ > 0)": 1.0,
+            "metric": "with_abstain.precision",
+            "Δ (XGB−Arbiter)": 0.136532
+          },
+          {
+            "95% CI high": 0.07885,
+            "95% CI low": 0.042794,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.898017,
+            "Meta-XGB": 0.958403,
+            "P(Δ > 0)": 1.0,
+            "metric": "with_abstain.recall",
+            "Δ (XGB−Arbiter)": 0.060386
+          },
+          {
+            "95% CI high": 0.139387,
+            "95% CI low": 0.112352,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.66083,
+            "Meta-XGB": 0.786455,
+            "P(Δ > 0)": 1.0,
+            "metric": "with_abstain.f2",
+            "Δ (XGB−Arbiter)": 0.125626
+          },
+          {
+            "95% CI high": 0.029238,
+            "95% CI low": 0.001895,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.663487,
+            "Meta-XGB": 0.679074,
+            "P(Δ > 0)": 0.9855,
+            "metric": "with_abstain.accuracy",
+            "Δ (XGB−Arbiter)": 0.015587
+          }
+        ],
+        "glass_arbiter": "glass_arbiter",
+        "meta_xgb": "meta_xgb",
+        "paired": {
+          "no_abstain": {
+            "agreement": 0.9104151493080845,
+            "both_correct": 6342,
+            "both_wrong": 1158,
+            "glass_arbiter_only_correct": 88,
+            "mcnemar_exact_p": 9.486155361022838e-107,
+            "meta_xgb_only_correct": 650,
+            "n": 8238
+          },
+          "retention": {
+            "both": 2193,
+            "glass_arbiter_only": 2000,
+            "meta_xgb_only": 10,
+            "neither": 4035
+          },
+          "with_abstain_both_retained": {
+            "agreement": 1.0,
+            "both_correct": 1494,
+            "both_wrong": 699,
+            "glass_arbiter_only_correct": 0,
+            "mcnemar_exact_p": 1.0,
+            "meta_xgb_only_correct": 0,
+            "n": 2193
+          }
+        },
+        "protocol": {
+          "glass_arbiter_score": "arbiter weighted probability (ranking score, not calibrated)",
+          "n_boot": 2000,
+          "n_test": 8238,
+          "seed": 42,
+          "selection": "each model at its own train-selected configuration; no test-based tuning of either",
+          "upstream": {
+            "glass_arbiter": "glass upstream -> glass_arbiter",
+            "held_fixed": false,
+            "meta_xgb": "blackbox upstream -> meta_xgb",
+            "required": false,
+            "why_not": "upstream arms differ (glass vs blackbox)"
+          }
+        },
+        "question": "cascade against cascade, native against native (registered, reported separately; black-box Cell 36). The upstreams differ by design",
+        "table": [
+          {
+            "accuracy": 0.780529,
+            "coverage": 1.0,
+            "f1": 0.422364,
+            "f2": 0.558843,
+            "level_0": "GLASS Arbiter",
+            "level_1": "no abstention",
+            "pr_auc": 0.430804,
+            "precision": 0.300182,
+            "recall": 0.712284,
+            "roc_auc": 0.805092
+          },
+          {
+            "accuracy": 0.663487,
+            "coverage": 0.508983,
+            "f1": 0.473311,
+            "f2": 0.66083,
+            "level_0": "GLASS Arbiter",
+            "level_1": "with abstention",
+            "pr_auc": 0.50769,
+            "precision": 0.321338,
+            "recall": 0.898017,
+            "roc_auc": 0.842269
+          },
+          {
+            "accuracy": 0.84875,
+            "coverage": 1.0,
+            "f1": 0.492258,
+            "f2": 0.576556,
+            "level_0": "Meta-XGB",
+            "level_1": "no abstention",
+            "pr_auc": 0.446197,
+            "precision": 0.395806,
+            "recall": 0.650862,
+            "roc_auc": 0.813445
+          },
+          {
+            "accuracy": 0.679074,
+            "coverage": 0.267419,
+            "f1": 0.619688,
+            "f2": 0.786455,
+            "level_0": "Meta-XGB",
+            "level_1": "with abstention",
+            "pr_auc": 0.566093,
+            "precision": 0.45787,
+            "recall": 0.958403,
+            "roc_auc": 0.823983
+          }
+        ]
+      },
+      "glass_column": {
+        "accuracy_decomposition": {
+          "no_abstention": {
+            "accuracy_change": 0.0748968196164117,
+            "changes": {
+              "precision": 0.10868875582772042,
+              "prevalence": 0.0,
+              "recall": -0.07650862068965514,
+              "specificity": 0.09411764705882353
+            },
+            "formula": "acc_o - acc_b = (pi_o - pi_b)(R_b - S_b) + pi_o (R_o - R_b) + (1 - pi_o)(S_o - S_b)",
+            "from": "every test row: the decision without abstention",
+            "prevalence_mix_term": -0.0,
+            "recall_term": -0.008618596746783197,
+            "residual": -5.551115123125783e-17,
+            "specificity_term": 0.08351541636319496,
+            "to": "every test row: the decision without abstention"
+          },
+          "retained_only": {
+            "accuracy_change": 0.1610582666776027,
+            "changes": {
+              "precision": 0.13956728593209983,
+              "prevalence": -0.015086083854843751,
+              "recall": -0.04565778864354675,
+              "specificity": 0.20350721251543835
+            },
+            "formula": "acc_o - acc_b = (pi_o - pi_b)(R_b - S_b) + pi_o (R_o - R_b) + (1 - pi_o)(S_o - S_b)",
+            "from": "retained rows only: the rows classified with abstention (what the existing 'with abstention' metrics report)",
+            "prevalence_mix_term": -0.004254497456722042,
+            "recall_term": -0.006998872407561878,
+            "residual": 2.7755575615628914e-17,
+            "specificity_term": 0.17231163654188658,
+            "to": "retained rows only: the rows classified with abstention (what the existing 'with abstention' metrics report)"
+          }
+        },
+        "bootstrap": [
+          {
+            "95% CI high": 0.121867,
+            "95% CI low": 0.096643,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.300182,
+            "Meta-XGB": 0.40887,
+            "P(Δ > 0)": 1.0,
+            "metric": "no_abstain.precision",
+            "Δ (XGB−Arbiter)": 0.108689
+          },
+          {
+            "95% CI high": -0.059815,
+            "95% CI low": -0.093946,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.712284,
+            "Meta-XGB": 0.635776,
+            "P(Δ > 0)": 0.0,
+            "metric": "no_abstain.recall",
+            "Δ (XGB−Arbiter)": -0.076509
+          },
+          {
+            "95% CI high": 0.027688,
+            "95% CI low": -0.001341,
+            "CI excludes 0": false,
+            "GLASS Arbiter": 0.558843,
+            "Meta-XGB": 0.57226,
+            "P(Δ > 0)": 0.9605,
+            "metric": "no_abstain.f2",
+            "Δ (XGB−Arbiter)": 0.013417
+          },
+          {
+            "95% CI high": 0.081088,
+            "95% CI low": 0.068703,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.780529,
+            "Meta-XGB": 0.855426,
+            "P(Δ > 0)": 1.0,
+            "metric": "no_abstain.accuracy",
+            "Δ (XGB−Arbiter)": 0.074897
+          },
+          {
+            "95% CI high": 0.011352,
+            "95% CI low": 0.000556,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.805092,
+            "Meta-XGB": 0.811069,
+            "P(Δ > 0)": 0.983,
+            "metric": "no_abstain.roc_auc",
+            "Δ (XGB−Arbiter)": 0.005978
+          },
+          {
+            "95% CI high": 0.017658,
+            "95% CI low": -0.018982,
+            "CI excludes 0": false,
+            "GLASS Arbiter": 0.430804,
+            "Meta-XGB": 0.430365,
+            "P(Δ > 0)": 0.455,
+            "metric": "no_abstain.pr_auc",
+            "Δ (XGB−Arbiter)": -0.000439
+          },
+          {
+            "95% CI high": 0.021122,
+            "95% CI low": 0.002061,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.508983,
+            "Meta-XGB": 0.520272,
+            "P(Δ > 0)": 0.99,
+            "metric": "with_abstain.coverage",
+            "Δ (XGB−Arbiter)": 0.011289
+          },
+          {
+            "95% CI high": 0.155012,
+            "95% CI low": 0.124122,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.321338,
+            "Meta-XGB": 0.460905,
+            "P(Δ > 0)": 1.0,
+            "metric": "with_abstain.precision",
+            "Δ (XGB−Arbiter)": 0.139567
+          },
+          {
+            "95% CI high": -0.033418,
+            "95% CI low": -0.059723,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.898017,
+            "Meta-XGB": 0.852359,
+            "P(Δ > 0)": 0.0,
+            "metric": "with_abstain.recall",
+            "Δ (XGB−Arbiter)": -0.045658
+          },
+          {
+            "95% CI high": 0.080189,
+            "95% CI low": 0.054882,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.66083,
+            "Meta-XGB": 0.728597,
+            "P(Δ > 0)": 1.0,
+            "metric": "with_abstain.f2",
+            "Δ (XGB−Arbiter)": 0.067768
+          },
+          {
+            "95% CI high": 0.170504,
+            "95% CI low": 0.151379,
+            "CI excludes 0": true,
+            "GLASS Arbiter": 0.663487,
+            "Meta-XGB": 0.824545,
+            "P(Δ > 0)": 1.0,
+            "metric": "with_abstain.accuracy",
+            "Δ (XGB−Arbiter)": 0.161058
+          }
+        ],
+        "glass_arbiter": "glass_arbiter",
+        "meta_xgb": "meta_xgb_on_glass",
+        "paired": {
+          "no_abstain": {
+            "agreement": 0.9078659868900218,
+            "both_correct": 6359,
+            "both_wrong": 1120,
+            "glass_arbiter_only_correct": 71,
+            "mcnemar_exact_p": 9.243108333519171e-128,
+            "meta_xgb_only_correct": 688,
+            "n": 8238
+          },
+          "retention": {
+            "both": 3460,
+            "glass_arbiter_only": 733,
+            "meta_xgb_only": 826,
+            "neither": 3219
+          },
+          "with_abstain_both_retained": {
+            "agreement": 0.9907514450867052,
+            "both_correct": 2701,
+            "both_wrong": 727,
+            "glass_arbiter_only_correct": 1,
+            "mcnemar_exact_p": 1.5366822481155396e-08,
+            "meta_xgb_only_correct": 31,
+            "n": 3460
+          }
+        },
+        "protocol": {
+          "glass_arbiter_score": "arbiter weighted probability (ranking score, not calibrated)",
+          "n_boot": 2000,
+          "n_test": 8238,
+          "seed": 42,
+          "selection": "each model at its own train-selected configuration; no test-based tuning of either",
+          "upstream": {
+            "glass_arbiter": "glass upstream -> glass_arbiter",
+            "held_fixed": true,
+            "meta_xgb": "glass upstream -> meta_xgb",
+            "required": true,
+            "why_not": null
+          }
+        },
+        "question": "the arbiter effect with the upstream held fixed (registered; black-box Cell 38)",
+        "table": [
+          {
+            "accuracy": 0.780529,
+            "coverage": 1.0,
+            "f1": 0.422364,
+            "f2": 0.558843,
+            "level_0": "GLASS Arbiter",
+            "level_1": "no abstention",
+            "pr_auc": 0.430804,
+            "precision": 0.300182,
+            "recall": 0.712284,
+            "roc_auc": 0.805092
+          },
+          {
+            "accuracy": 0.663487,
+            "coverage": 0.508983,
+            "f1": 0.473311,
+            "f2": 0.66083,
+            "level_0": "GLASS Arbiter",
+            "level_1": "with abstention",
+            "pr_auc": 0.50769,
+            "precision": 0.321338,
+            "recall": 0.898017,
+            "roc_auc": 0.842269
+          },
+          {
+            "accuracy": 0.855426,
+            "coverage": 1.0,
+            "f1": 0.49768,
+            "f2": 0.57226,
+            "level_0": "Meta-XGB",
+            "level_1": "no abstention",
+            "pr_auc": 0.430365,
+            "precision": 0.40887,
+            "recall": 0.635776,
+            "roc_auc": 0.811069
+          },
+          {
+            "accuracy": 0.824545,
+            "coverage": 0.520272,
+            "f1": 0.598291,
+            "f2": 0.728597,
+            "level_0": "Meta-XGB",
+            "level_1": "with abstention",
+            "pr_auc": 0.507752,
+            "precision": 0.460905,
+            "recall": 0.852359,
+            "roc_auc": 0.853997
+          }
+        ]
+      }
+    },
+    "not_registered": {
+      "coverage_grids": "coverage grids and confidence tests in calibrated space: PR 43",
+      "interaction": "an upstream x arbiter interaction estimate: not registered",
+      "rows": "one arbiter on both upstreams (the upstream effect): not registered in PR 39 (contract section 6.5; PR 43). The four cells are reported side by side, with no paired comparison",
+      "whole_system_metrics": "accuracy, F1, F2, ROC-AUC and PR-AUC over the whole population need a policy for abstained rows; none is registered or adopted",
+      "whole_system_uncertainty": "no interval is registered for the whole-system quantities; they are point counts"
+    },
+    "population": {
+      "n": 8238,
+      "negatives": 7310,
+      "positives": 928,
+      "rows": "the test rows of GLOBAL_SPLIT, each scored once by every arbiter (previously exposed; descriptive)",
+      "split_fingerprints": {
+        "router": "fc3e73a5ef91aea4",
+        "stage_io": "d6cddadc3439"
+      }
+    },
+    "stage2": {
+      "blackbox": {
+        "arbiters": {
+          "glass_arbiter_on_blackbox": {
+            "by_route": {
+              "abstain": {
+                "abstained": 2908,
+                "fn": 0,
+                "fp": 73,
+                "n": 2988,
+                "retained": 80,
+                "tn": 2,
+                "tp": 5
+              },
+              "pass1": {
+                "abstained": 1405,
+                "fn": 65,
+                "fp": 4,
+                "n": 3321,
+                "retained": 1916,
+                "tn": 1844,
+                "tp": 3
+              },
+              "pass2": {
+                "abstained": 0,
+                "fn": 0,
+                "fp": 1307,
+                "n": 1929,
+                "retained": 1929,
+                "tn": 0,
+                "tp": 622
+              }
+            },
+            "pass1_positives_retained_as_negative": 65,
+            "suppressed_positives_retained_as_positive": 3,
+            "unique_pass2_positives_retained_as_positive": 0
+          },
+          "meta_xgb": {
+            "by_route": {
+              "abstain": {
+                "abstained": 2978,
+                "fn": 0,
+                "fp": 10,
+                "n": 2988,
+                "retained": 10,
+                "tn": 0,
+                "tp": 0
+              },
+              "pass1": {
+                "abstained": 2369,
+                "fn": 25,
+                "fp": 4,
+                "n": 3321,
+                "retained": 952,
+                "tn": 920,
+                "tp": 3
+              },
+              "pass2": {
+                "abstained": 688,
+                "fn": 0,
+                "fp": 668,
+                "n": 1929,
+                "retained": 1241,
+                "tn": 0,
+                "tp": 573
+              }
+            },
+            "pass1_positives_retained_as_negative": 25,
+            "suppressed_positives_retained_as_positive": 3,
+            "unique_pass2_positives_retained_as_positive": 0
+          }
+        },
+        "obligation_quantities_on_test": {
+          "note": "descriptive: the obligations bind at fit, on training OOF (frozen contract pr37-stage2-primary 1.0.0); not a gate",
+          "pass1_leakage_rate": {
+            "contract_cap": 0.15,
+            "den": 928,
+            "num": 122,
+            "value": 0.1314655172413793
+          },
+          "pass1_npv": {
+            "contract_floor": 0.95,
+            "den": 3321,
+            "num": 3199,
+            "value": 0.9632640770852153
+          },
+          "pass1_rows": 3321,
+          "pass2_precision": {
+            "contract_floor": 0.3,
+            "den": 1929,
+            "num": 622,
+            "value": 0.3224468636599274
+          },
+          "pass2_rows": 1929,
+          "training_support_floors": {
+            "pass1": 125,
+            "pass2": 75
+          }
+        },
+        "pass1_suppression": {
+          "intercepted_negatives": 160,
+          "pass1_positives_flagged_by_neither": 114,
+          "pass1_rows_flagged_by_stage1_or_stage3": 168,
+          "suppressed_positives": 8
+        },
+        "pass2_contribution": {
+          "pass2_positives": 622,
+          "redundant_positives": 622,
+          "unique_negatives_added": 5,
+          "unique_positives": 0
+        },
+        "router": "RF Router",
+        "routes": {
+          "abstain": {
+            "n": 2988,
+            "negatives": 2804,
+            "positives": 184
+          },
+          "pass1": {
+            "n": 3321,
+            "negatives": 3199,
+            "positives": 122
+          },
+          "pass2": {
+            "n": 1929,
+            "negatives": 1307,
+            "positives": 622
+          }
+        },
+        "upstream_flags": "Stage 1 and Stage 3 decisions at the Stage 4 recall cuts the GLASS Arbiter recorded (find_recall_threshold on training OOF, target recall 0.7): stage 1 >= 0.06852406911374345, stage 3 >= 0.069050894085282"
+      },
+      "glass": {
+        "arbiters": {
+          "glass_arbiter": {
+            "by_route": {
+              "abstain": {
+                "abstained": 2967,
+                "fn": 1,
+                "fp": 501,
+                "n": 3705,
+                "retained": 738,
+                "tn": 62,
+                "tp": 174
+              },
+              "pass1": {
+                "abstained": 1078,
+                "fn": 71,
+                "fp": 27,
+                "n": 3264,
+                "retained": 2186,
+                "tn": 2086,
+                "tp": 2
+              },
+              "pass2": {
+                "abstained": 0,
+                "fn": 0,
+                "fp": 811,
+                "n": 1269,
+                "retained": 1269,
+                "tn": 0,
+                "tp": 458
+              }
+            },
+            "pass1_positives_retained_as_negative": 71,
+            "suppressed_positives_retained_as_positive": 2,
+            "unique_pass2_positives_retained_as_positive": 0
+          },
+          "meta_xgb_on_glass": {
+            "by_route": {
+              "abstain": {
+                "abstained": 2593,
+                "fn": 23,
+                "fp": 182,
+                "n": 3705,
+                "retained": 1112,
+                "tn": 765,
+                "tp": 142
+              },
+              "pass1": {
+                "abstained": 1005,
+                "fn": 73,
+                "fp": 6,
+                "n": 3264,
+                "retained": 2259,
+                "tn": 2179,
+                "tp": 1
+              },
+              "pass2": {
+                "abstained": 354,
+                "fn": 1,
+                "fp": 467,
+                "n": 1269,
+                "retained": 915,
+                "tn": 30,
+                "tp": 417
+              }
+            },
+            "pass1_positives_retained_as_negative": 73,
+            "suppressed_positives_retained_as_positive": 1,
+            "unique_pass2_positives_retained_as_positive": 0
+          }
+        },
+        "obligation_quantities_on_test": {
+          "note": "descriptive: the obligations bind at fit, on training OOF (frozen contract pr37-stage2-primary 1.0.0); not a gate",
+          "pass1_leakage_rate": {
+            "contract_cap": 0.15,
+            "den": 928,
+            "num": 149,
+            "value": 0.16056034482758622
+          },
+          "pass1_npv": {
+            "contract_floor": 0.95,
+            "den": 3264,
+            "num": 3115,
+            "value": 0.9543504901960784
+          },
+          "pass1_rows": 3264,
+          "pass2_precision": {
+            "contract_floor": 0.3,
+            "den": 1269,
+            "num": 458,
+            "value": 0.3609141055949567
+          },
+          "pass2_rows": 1269,
+          "training_support_floors": {
+            "pass1": 125,
+            "pass2": 75
+          }
+        },
+        "pass1_suppression": {
+          "intercepted_negatives": 396,
+          "pass1_positives_flagged_by_neither": 104,
+          "pass1_rows_flagged_by_stage1_or_stage3": 441,
+          "suppressed_positives": 45
+        },
+        "pass2_contribution": {
+          "pass2_positives": 458,
+          "redundant_positives": 458,
+          "unique_negatives_added": 12,
+          "unique_positives": 0
+        },
+        "router": "GLASS Router",
+        "routes": {
+          "abstain": {
+            "n": 3705,
+            "negatives": 3384,
+            "positives": 321
+          },
+          "pass1": {
+            "n": 3264,
+            "negatives": 3115,
+            "positives": 149
+          },
+          "pass2": {
+            "n": 1269,
+            "negatives": 811,
+            "positives": 458
+          }
+        },
+        "upstream_flags": "Stage 1 and Stage 3 decisions at the Stage 4 recall cuts the GLASS Arbiter recorded (find_recall_threshold on training OOF, target recall 0.7): stage 1 >= 0.08444249560741927, stage 3 >= 0.07133243606998654"
+      }
+    }
+  },
+  "run_id": "c5_20261116_153459",
+  "started_utc": "2026-11-17T00:44:10+00:00",
+  "status": "the registered 2x2 crossover and the pre-presentation cascade baseline (Step 5B): descriptive results on a previously exposed test split; the owner's acceptance is the Commit 5 commit",
+  "step": "crossover_baseline",
+  "upstream_run": "c4_20261115_204125"
+}

@@ -21,6 +21,12 @@ existing record is never replaced, and a new attempt gets a new run id.
 | Commit 4, Step 4A: Stage 1–3 checks, Stage 4 input builds, §7.5 after the run, every artifact's path, size and SHA-256 (A4.3–A4.6); not an acceptance (that is Step 4B, A4.7) | `run_record.json` | `python -m upstream_regeneration finalize` |
 | Commit 4, Step 4B: the PR 39 upstream artifact manifest (§7.1): the six Stage 1–3 roles with path, size, SHA-256, producer and consumers, and every file the run added or changed; a valid `pr39.upstream_pins/1` file, read by Commit 5 through `pinned_path(role, pins_file=…)` (A5.1) | `artifact_manifest.json` | written by `python -m upstream_regeneration.acceptance accept` |
 | Commit 4, Step 4B: the explicit Stage 1–3 acceptance decision (A4.7): every record and link re-verified, the code chain re-derived, A4.2–A4.6 recomputed and compared with their records, the D7 disposition, the owner's decision and the §7.1 and §7.2 run-specific dispositions; `run_record.json` keeps `accepted: false` | `upstream_acceptance.json` | `python -m upstream_regeneration.acceptance accept` / `check --run-id <run_id>` |
+| Commit 5, Step 5A: before any write, the Commit 4 acceptance and its artifact manifest re-verified (A5.1), the §7.5 checks, the `models/` inventory, the run id and the output layout | `preflight.json` | `python -m stage4_regeneration preflight` |
+| Commit 5, Step 5A: each notebook's Stage 4 fitting cells in a fresh kernel (§5.4): the split cells, an entry cell binding Stages 1–3 by pin, then GLASS Cell 19 or black-box Cells 35–37, all unchanged; each cell's hash, the inventory change and the arbiter versions produced | `execution_glass.json`, `execution_blackbox.json` | `python -m stage4_regeneration execute` |
+| Commit 5, Step 5A: the run's pins: the manifest's six Stage 1–3 roles verbatim and the native GLASS Arbiter (`stage4.glass_arbiter`, read by black-box Cell 35) | `upstream_pins.json` | written by `execute --notebook glass` |
+| Commit 5, Step 5A: the PR 39 arbiter manifest (§7.1): exactly the four `artifact_audit.ROOTS` keys, the file `$BANK_ARTIFACT_MANIFEST` names for every real-data check of the PR 39 arbiters | `arbiter_manifest.json` | written by `execute --notebook blackbox` |
+| Commit 5, Step 5A: A5.1–A5.3 and §7.5 after the run: each arbiter's path, size and SHA-256, and the pinned Stage 1–3 files it read; the real-data audit under the arbiter manifest, with its JUnit report; the §7.3 identities. Not the Commit 5 baseline, which Step 5B records (A5.4, A5.5) | `run_record.json`, `stage4_audit_pytest.xml` | `python -m stage4_regeneration finalize` |
+| Commit 5, Step 5B: the pre-presentation cascade baseline (A5.4, A5.5). It holds the registered 2×2 (§6.5): both columns with the upstream held fixed, and cascade against cascade, which must reproduce black-box Cell 36. Per cell, the abstention accounting keeps three populations apart: no abstention, retained rows only, and the whole system (coverage, retention per class, effective recall). It adds the exact accuracy decomposition, calibration as recorded, Stage 2's descriptive role and the limitations. Every Step 5A record and arbiter is pinned by SHA-256 | `crossover_baseline.json` | `python -m stage4_regeneration.crossover record` / `check --run-id <run_id>` |
 
 The Step 2B records go in their own run folder; the Step 2A folder is not reopened.
 
@@ -37,7 +43,8 @@ if their sidecars match. A step whose checks fail writes `<run_id>/failed/<step>
 instead, which `.gitignore` keeps local; the run then stops and a new attempt gets a new
 run id. The two registered continuations, `recover-glass` and `finalize-transition`, are
 the exceptions: each is written once for its registered cause and code change, and
-`finalize` checks that the failed attempts they name are unchanged.
+`finalize` checks that the failed attempts they name are unchanged. The Commit 5 Step 5A
+records (`stage4_regeneration`) follow the same rules, with no continuations.
 
 `.gitattributes` turns off line-ending conversion inside run folders, so the records'
 bytes, and the hashes that pin them, are the same on every checkout.

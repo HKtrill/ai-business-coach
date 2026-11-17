@@ -8,9 +8,14 @@ Synthetic Stage 1–3 artifacts in the cascade's REAL formats, for Stage 4 tests
   decisions, ``train_pred``, ``oof_protocol`` and 5 shared folds.
 * Stage 3: ``Stage3Artifact`` with the real ``Stage3Calibrator``; 5 shared folds.
 
-Stage 1 carries the ``stage_io`` fingerprint; Stages 2–3 carry the 16-hex
-``router`` fingerprint, exactly as in the notebooks. The router scheme is
-supplied to the loaders through ``extra_fingerprints=ROUTER_FP``.
+Split fingerprints are stamped as the notebooks stamp them. Stage 1 and the
+GLASS EBM carry the 12-hex ``stage_io`` fingerprint (rows and labels). GLASS
+Cell 17 stamps the Stage 3 block with it, and the EBM keeps the block's stamp.
+The routers and XGBoost carry the 16-hex ``router`` fingerprint (rows only;
+black-box Cell 30). Before PR 39 Commit 5, the EBM here carried the router
+stamp, so no synthetic Stage 4 test read a GLASS EBM under its real,
+label-bearing scheme. The router scheme is supplied to the loaders through
+``extra_fingerprints=ROUTER_FP``.
 """
 
 from __future__ import annotations
@@ -250,7 +255,8 @@ def make_stage3(w, family="ebm", applied=True, shift=0.0):
         features=["f1", "f2"],
         index_train=list(GS["X_train"].index), index_test=list(GS["X_test"].index),
         y_train=[int(v) for v in ytr], y_test=[int(v) for v in yte],
-        split_fingerprint=w["fp_router"], block_fingerprint="b" * 64,
+        split_fingerprint=w["fp_io"] if family == "ebm" else w["fp_router"],
+        block_fingerprint="b" * 64,
         feature_fit_scope="per_fold", fold_plan=plan.to_dict(),
         oof={"proba": raw_oof, "proba_calibrated": cal.oof_calibrated_,
              "fold_id": plan.fold_id.copy(), "threshold": 0.55,
