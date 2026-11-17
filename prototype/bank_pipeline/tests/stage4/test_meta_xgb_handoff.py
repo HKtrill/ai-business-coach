@@ -45,9 +45,6 @@ from tests.stage3.conftest import ARMS
 from tests.support.meta_xgb_world import META_PARAMS, N_META_EVAL, meta_config
 from tests.support.rf_router_world import N_STAGE_FOLDS, RANDOM_STATE, bank_world, quiet, save_world
 
-pytestmark = pytest.mark.filterwarnings(        # the MLP's tiny synthetic folds (see Stage 1 suite)
-    "ignore:Got `batch_size` less than 1 or larger than sample size:UserWarning")
-
 
 @dataclasses.dataclass
 class Handoff:
