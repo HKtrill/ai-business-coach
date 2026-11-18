@@ -50,7 +50,7 @@ The project therefore focuses on **traceability, abstention, model complementari
 
 > ⚠️ **Research Status & Dataset Audit Notice**
 >
-> ChurnBot is under active research and architectural refinement. The current phase validates the architecture on the **UCI Bank Marketing term-deposit dataset** before it is transferred back to customer-churn modeling.
+> ChurnBot is under active research. Phase 1, the implementation and validation of both cascades on the **UCI Bank Marketing term-deposit dataset**, is complete (see **Phase 1 Status** below). Phase 2 research follows before the architecture is transferred back to customer-churn modeling.
 >
 > Leakage and temporal-validity auditing identified `duration`, `poutcome`, and `pdays` as unsuitable for deployment-realistic pre-contact prediction. The experiment therefore evaluates the harder task of estimating subscription likelihood before contact, without post-call or prior-campaign artifacts. These issues were surfaced through dataset auditing, interpretable modeling, and symbolic-rule diagnostics.
 >
@@ -88,7 +88,7 @@ A matched black-box cascade removes these constraints stage by stage while keepi
 
 ## 🎯 Architecture: GLASS Cascade
 
-**GLASS** stands for **Glass-box Layered Abstention-aware Scoring System**: a four-stage interpretable decision architecture designed to keep inference traceable while remaining competitive with less constrained alternatives.
+**GLASS** stands for **Glass-box Layered Abstention-aware Scoring System**: a four-stage interpretable decision architecture designed to keep inference traceable. How competitive it remains against less constrained alternatives is the question the project tests.
 
 ```text
 Stage 1: Calibrated Logistic Regression
@@ -126,11 +126,15 @@ Stage 3: Explainable Boosting Machine
 
 Stage 4: GLASS Arbiter
 
-  ↓ Receives aligned, verified out-of-fold outputs from Stages 1–3
-    (the GLASS Router votes only on the rows it routes)
-  ↓ Computes trust weights from calibration (Brier) and accuracy
-  ↓ Combines stage signals through weighted confidence
-  ↓ Abstains when the winning side's weighted confidence is too low
+  ↓ Receives aligned, verified Stage 1–3 outputs (out-of-fold on the
+    training side, full-training refits on the test side)
+  ↓ LR and EBM vote at Stage 4 cuts set for 70% training recall; the
+    GLASS Router votes only on rows it routes, its evidence being the
+    matched rule's positive rate against the training base rate
+  ↓ Weights each vote by its margin from the voter's cut and a trust
+    weight (inverse Brier blended with accuracy, training OOF)
+  ↓ Predicts the side with the larger weighted confidence; abstains when
+    it falls below a cut chosen on training rows
 
 
 Customer-Level Prediction with Stage-by-Stage Traceability
@@ -143,7 +147,7 @@ Selector design: **[GLASS Router ILP Rule Selector](prototype/bank_pipeline/glas
 * **Logistic Regression:** direct coefficient inspection and calibrated linear scoring
 * **GLASS Router:** explicit IF–THEN routing rules, pass-level decisions, and abstention behavior
 * **EBM:** additive shape functions exposing nonlinear feature effects
-* **GLASS Arbiter:** hand-designed confidence-weighted arbitration; every weight, threshold, and abstention cut is an inspectable scalar
+* **GLASS Arbiter:** performance-weighted, margin-based voting with confidence-threshold abstention; every weight, cut, and abstention threshold is an inspectable scalar, and each decision decomposes into per-voter contributions
 
 The goal is not simply to stack interpretable models. Each stage has a distinct decision role, and the cascade is evaluated through complementarity, disagreement, abstention behavior, and shared-failure reduction.
 
@@ -153,7 +157,7 @@ Some training-time components, such as Random Forest feature importance, guide s
 
 ## ⚖️ Black-Box Counterpart Cascade
 
-The black-box cascade mirrors GLASS stage for stage. Each stage keeps its GLASS counterpart's inputs, split, folds, objective, and evaluation protocol, and removes one interpretability constraint:
+The black-box cascade mirrors GLASS stage for stage. Each stage keeps its GLASS counterpart's inputs, split, folds, operating obligations, and evaluation protocol, and removes one interpretability constraint:
 
 | Stage | GLASS | Black-box counterpart | Constraint removed |
 | --- | --- | --- | --- |
@@ -162,13 +166,13 @@ The black-box cascade mirrors GLASS stage for stage. Each stage keeps its GLASS 
 | 3 | Explainable Boosting Machine | XGBoost | additive structure |
 | 4 | GLASS Arbiter (weighted confidence) | Meta-XGB (stacked XGBoost) | explicitly specified arbitration structure |
 
-Stage 4 isolates the arbitration question. **Meta-XGB** receives exactly the same information channels as the GLASS Arbiter (the three stage probabilities and the router's Pass 1 / Pass 2 / abstain state) and nothing else: no raw features, labels, upstream thresholds, or test-derived values. The GLASS Arbiter combines these signals through an explicitly specified weighted-confidence structure with data-derived weights and thresholds; Meta-XGB learns the combination function from training data.
+Stage 4 isolates the arbitration question. **Meta-XGB** receives exactly the same information channels as the GLASS Arbiter (the three stage probabilities and the router's Pass 1 / Pass 2 / abstain state) and nothing else: no raw features, labels, upstream thresholds, or test-derived values. The GLASS Arbiter combines these signals through an explicitly specified weighted-confidence structure with data-derived weights and thresholds; Meta-XGB learns the combination function from training data. The GLASS Arbiter's weighted score ranks rows but is not a calibrated probability.
 
 ### Shared evaluation protocol
 
 - **One split:** both arms use the same `GLOBAL_SPLIT` (80/20, `random_state=42`). Every artifact records a split fingerprint that downstream stages recompute and validate.
-- **One fold plan:** a shared stratified 5-fold partition drives Stage 2–4 cross-fitting in both arms; Stage 1 uses a shared 10-fold partition.
-- **Out-of-fold hand-offs:** each stage passes OOF training predictions downstream. In-sample predictions are kept for diagnostics only and are rejected by the Stage 4 loader.
+- **One fold plan:** a shared stratified 5-fold partition drives Stage 2–3 cross-fitting in both arms and Meta-XGB's Stage 4 cross-fitting; Stage 1 uses a shared 10-fold partition. The GLASS Arbiter has no Stage 4 folds: its cuts, weights, and abstention threshold are derived from the full training-side OOF table.
+- **Out-of-fold hand-offs:** each stage passes OOF training predictions downstream, and scores the held-out test rows with its full-training refit. In-sample predictions are kept for diagnostics only and are rejected by the Stage 4 loader.
 - **Training-only configuration:** thresholds, calibration, trust weights, and abstention cuts are chosen on training data only, and the held-out test split is scored after configuration is frozen. Test-fitted thresholds may be recorded for reference but are never used operationally.
 - **Shared Stage 4 contract:** `shared/stage4/` reads and validates both arms' Stage 1–3 artifacts with the same checks: split identity, row and index alignment, labels, fold provenance, OOF honesty, and router semantics.
 - **Paired statistics (planned, Phase 3):** arm comparisons will use the same held-out rows, paired bootstrap confidence intervals, and McNemar tests. A metric difference will be treated as statistically supported only when its confidence interval excludes zero.
@@ -185,7 +189,7 @@ Carefully designed interpretable cascade architectures can approach or match bla
 
 - Stage-by-stage comparison against a structurally matched black-box counterpart under one shared protocol
 - Threshold-free (ROC-AUC, PR-AUC) and operating-point (recall, precision, F2) metrics on identical held-out rows
-- Abstention behavior compared at each arm's own training-selected configuration
+- Abstention behavior compared at each arm's own training-selected configuration and, in Phase 3, at matched coverage levels
 - Uncertainty reported through paired bootstrap intervals rather than point differences
 - Full prediction traceability retained on the GLASS side through interpretable intermediate stages
 
@@ -253,9 +257,22 @@ Cloud-hosted black-box systems, by contrast, typically externalize both the mode
 
 ---
 
+## ✅ Phase 1 Status: Implementation and Validation
+
+Phase 1 implemented, regenerated, and validated both cascades under frozen, pre-registered contracts.
+
+- **Accepted baseline:** Stage 2 routers `c3_20261112_153333` (PR 38); Stages 1 and 3 `c4_20261115_204125`; Stage 4 arbiters and the 2×2 arbiter crossover `c5_20261116_153459`; reproduction and freeze `c6_20261116_194111` (PR 39).
+- **Validation:** 3,390 fast, 110 real-data, and 11 slow tests passed; both cascade notebooks executed top to bottom in fresh kernels; the reproduction was deterministic (maximum numerical difference 0.0, with identical decisions, abstentions, routing, thresholds, and crossover results). PR 40 removed the recurring test-fixture warnings without suppression or behavior change.
+- **Registered 2×2 crossover:** each Stage 4 arbiter is evaluated on each upstream cascade (four cells), so the two arbiters can be compared with the upstream cascade held fixed.
+- **Records:** [PR 39 research log index](prototype/bank_pipeline/research_logs/pr39/README.md)
+
+> **Evaluation scope:** Phase 1 results establish a reproducible comparative baseline under frozen experimental protocols. Because the test split was examined during earlier development, these findings are treated as descriptive. Independent evaluation on previously unexamined data remains necessary for stronger comparative conclusions.
+
+---
+
 ## 🗺️ Research Roadmap
 
-The project is completing cascade validation (Phase 1); the comparisons pipeline follows in Phase 3.
+Phase 1 (cascade implementation and validation) is complete. Phase 2 organizes the research notebooks, investigates feature validity and training strategies, and produces optimized cascades. Its Stage 4 research first examines the existing GLASS Arbiter's confidence margins and abstention objective, then evaluates a proposed **GLASS Linear Arbiter** (a regularized logistic model on log-odds voter-confidence signals) as a separately registered experimental candidate; it is not part of the accepted implementation. Phase 3 runs the registered comparisons, standalone baselines, and robustness analyses, and Phase 4 prepares the paper.
 
 See the detailed implementation and research roadmap: **[Research Roadmap](prototype/bank_pipeline/documentation/research_roadmap.md)**
 
@@ -268,8 +285,11 @@ See the detailed implementation and research roadmap: **[Research Roadmap](proto
 - The multi-stage cascade adds computational overhead
 - Shape-function interpretation still requires statistical and domain expertise
 - Results currently come from a single train/test split and seed; bootstrap intervals capture test-sampling uncertainty but not training variability
-- The two Stage 4 arbiters select operating points differently (recall-targeted base thresholds vs. an F2-selected threshold), so threshold-dependent metrics partly reflect operating-point choice
-- OOF hand-offs prevent direct training leakage, but upstream model-selection or tuning decisions not fully nested within the outer folds may introduce mild training-side optimism
+- OOF hand-offs reduce direct training leakage, but upstream model-selection or tuning decisions not fully nested within the outer folds may introduce training-side selection optimism
+- The held-out test split was used during earlier development, so current results are descriptive; no independent evaluation dataset is currently available
+- Two Stage 1 features are target rates keyed on period-identifying variables; under the random split they may carry temporal look-ahead, which Phase 2 investigates
+- The Stage 4 arbiters use different prediction mechanisms and threshold-selection procedures. Both select abstention cutoffs using retained F2, so threshold-dependent performance comparisons require matched-coverage evaluation.
+- Training-side constraints, such as the Stage 4 coverage floor and Stage 2 routing obligations, are not guaranteed to hold on unseen data
 
 ---
 
