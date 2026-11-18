@@ -64,9 +64,6 @@ from tests.stage1.conftest import (
 from tests.support import mutations as mut
 from tests.support.checks import assert_never_fit_on, assert_oof_provenance
 
-pytestmark = pytest.mark.filterwarnings(
-    "ignore:Got `batch_size` less than 1 or larger than sample size:UserWarning")
-
 SEED = 42
 LEGACY_METRIC_KEYS = {"brier_uncalibrated", "brier_calibrated", "ece_uncalibrated", "ece_calibrated"}
 

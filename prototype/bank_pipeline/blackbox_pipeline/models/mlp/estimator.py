@@ -20,6 +20,7 @@ so no information crosses a fold boundary.
 
 from __future__ import annotations
 
+import numbers
 from typing import Tuple
 
 import numpy as np
@@ -228,12 +229,19 @@ class Stage1MLPClassifier(ClassifierMixin, BaseEstimator):
         # never appear on both sides of it.
         X_fit, y_fit = oversample_positives(X_fit, y_fit, self.pos_ratio, rng)
 
+        # sklearn clips an integer batch_size above the row count to that count,
+        # warning on every partial_fit call; clip it here to the same value
+        # instead. Anything else goes to sklearn unchanged, which validates it.
+        batch_size = self.batch_size
+        if isinstance(batch_size, numbers.Integral):
+            batch_size = min(batch_size, X_fit.shape[0])
+
         net = MLPClassifier(
             hidden_layer_sizes=tuple(self.hidden_layer_sizes),
             activation=self.activation,
             solver="adam",
             alpha=self.alpha,
-            batch_size=self.batch_size,
+            batch_size=batch_size,
             learning_rate_init=self.learning_rate_init,
             shuffle=True,
             random_state=self.random_state,

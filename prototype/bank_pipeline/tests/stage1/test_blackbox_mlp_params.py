@@ -33,9 +33,6 @@ from blackbox_pipeline.models.mlp import CalibratedStage1MLP, Stage1MLPConfig
 from blackbox_pipeline.models.mlp.estimator import Stage1MLPClassifier
 from blackbox_pipeline.models.mlp.tuning import params_to_kwargs, sample_params, tune_stage1_mlp_auc
 
-pytestmark = pytest.mark.filterwarnings(        # the MLP's tiny synthetic folds (see Stage 1 suite)
-    "ignore:Got `batch_size` less than 1 or larger than sample size:UserWarning")
-
 TUNED = ("n_layers", "width", "activation", "alpha", "learning_rate_init", "batch_size", "pos_ratio")
 PARAMS = {"n_layers": 2, "width": 16, "activation": "relu", "alpha": 1e-4,
           "learning_rate_init": 1e-3, "batch_size": 128, "pos_ratio": 0.5}

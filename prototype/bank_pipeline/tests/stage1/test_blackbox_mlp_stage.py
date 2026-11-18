@@ -65,9 +65,6 @@ from tests.support.checks import assert_never_fit_on, assert_oof_provenance
 from tests.support.notebooks import BANK_ROOT
 from tests.support.synthetic_bank import make_bank_frame
 
-pytestmark = pytest.mark.filterwarnings(
-    "ignore:Got `batch_size` less than 1 or larger than sample size:UserWarning")
-
 CV, SEED = 10, 42                      # Stage1MLPConfig defaults (notebook)
 GRID = np.arange(0.05, 0.50, 0.01)     # default threshold_grid
 NOTEBOOK = BANK_ROOT / "blackbox_pipeline" / "blackbox_cascade.ipynb"

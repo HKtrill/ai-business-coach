@@ -44,9 +44,6 @@ from tests.stage1.conftest import MLP_TEST_CONFIG, fold_levels, stage1_split, su
 from tests.support import mutations as mut
 from tests.support.checks import assert_oof_provenance
 
-pytestmark = pytest.mark.filterwarnings(
-    "ignore:Got `batch_size` less than 1 or larger than sample size:UserWarning")
-
 SEED = 42
 ARMS = ["glass_lr", "blackbox_mlp"]
 
