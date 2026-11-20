@@ -62,7 +62,7 @@ from ..config import ELIGIBILITY_NESTED_T1, RFRouterConfig
 from ..forest import ForestTrainer
 from ..oof import OOFScorer, nested_cascade_oof
 from ..oof.eligibility import NESTED_SOURCE, nested_pass1_eligibility
-from ..threshhold import ThresholdPair, ThresholdSolver
+from ..thresholds import ThresholdPair, ThresholdSolver
 from .base import _BaseRouter, _FitReport, apply_cuts
 
 __all__ = ["RFRouter"]

@@ -36,7 +36,7 @@ import shared.stage2.obligations as ob
 from blackbox_pipeline.models.rf_router.contract import rf_constraints_from_contract_v2
 from blackbox_pipeline.models.rf_router.evaluation.router_metrics import evaluate_router
 from blackbox_pipeline.models.rf_router.router.decisions import PASS1, PASS2, UNCERTAIN
-from blackbox_pipeline.models.rf_router.threshhold import ThresholdSolver
+from blackbox_pipeline.models.rf_router.thresholds import ThresholdSolver
 from glass_pipeline.glass_router.ilp_rule_selector.ilp_rule_selector import ILPRuleSelector
 from shared.stage2.contract import (
     ContractViolation, SharedOperatingContract, SharedOperatingContractV2, working_profile_path,

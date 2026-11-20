@@ -7,7 +7,7 @@ Paired comparisons between routers on the SAME rows.
 every arm on that same resample, so each arm-to-arm difference carries only the
 uncertainty in the difference — not the (much larger) uncertainty in each arm's
 level. Metric definitions are identical to ``router_metrics.evaluate_router``
-(same denominators); ``tests/test_rf_router_specialization.py`` checks that the
+(same denominators); ``tests/stage2/test_rf_router_specialization.py`` checks that the
 point estimates agree exactly.
 
 ``constraint_slippage`` evaluates a router's realised metrics against EVERY

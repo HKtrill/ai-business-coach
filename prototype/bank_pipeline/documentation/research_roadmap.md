@@ -43,19 +43,22 @@
 
 **Step 2A — Structural and Reference Corrections**
 
-- [ ] Remove the obsolete `prototype/glass_pipeline/data/db/` rule and associated misleading comment from `.gitignore`, preserving the tracked database.
-- [ ] Correct stale RF Router test-file references in four module docstrings.
-- [ ] Evaluate renaming `rf_router/threshhold/` to `rf_router/thresholds/`, accounting for permanent compatibility requirements.
-- [ ] If approved, use `git mv`, preserve old import paths through compatibility modules, and update affected imports and references.
-- [ ] Preserve existing test organization, serialized artifact compatibility, historical identifiers, and scientific behavior.
-- [ ] Avoid unrelated file moves, stylistic renames, or test restructuring.
+- [x] Remove the obsolete `prototype/glass_pipeline/data/db/` rule and associated misleading comment from `.gitignore`, preserving the tracked database.
+- [x] Correct stale RF Router test-file references in four module docstrings.
+- [x] Evaluate renaming `rf_router/threshhold/` to `rf_router/thresholds/`, accounting for permanent compatibility requirements.
+- [x] If approved, use `git mv`, preserve old import paths through compatibility modules, and update affected imports and references.
+- [x] Preserve existing test organization, serialized artifact compatibility, historical identifiers, and scientific behavior.
+- [x] Avoid unrelated file moves, stylistic renames, or test restructuring.
 
-**Step 2B — Targeted Validation**
+**Step 2B — Threshold Naming Correction and Compatibility Review**
 
-- [ ] Run relevant RF Router and import regression tests if executable code changes.
-- [ ] If the threshold-package rename proceeds, verify old and new imports and successful loading of an accepted RF Router artifact.
-- [ ] Run additional checks only where a concrete compatibility or provenance dependency justifies them.
-- [ ] Review the diff for unintended changes.
+- [x] Rename `rf_router/threshhold/` to `rf_router/thresholds/`, preserving historical import and serialization compatibility.
+- [x] Update affected imports and introduce minimal backward-compatibility modules.
+- [x] Review old and new module paths, class identities, and serialized artifact dependencies.
+- [x] Identify relevant RF Router, import, and artifact-loading regression tests for Commit 6.
+- [x] Document any compatibility risks requiring runtime verification.
+- [x] Review the complete diff for unintended changes.
+- [x] Defer test execution to Commit 6 — Integration Validation and PR Closure.
 
 ---
 

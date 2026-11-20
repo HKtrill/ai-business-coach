@@ -41,7 +41,7 @@ import pandas as pd
 
 from ..bands import BandConfidence
 from ..config import RFRouterConfig
-from ..threshhold import ThresholdPair, ThresholdSolver
+from ..thresholds import ThresholdPair, ThresholdSolver
 from .decisions import (
     ABSTAIN,
     DECISION_DTYPE,

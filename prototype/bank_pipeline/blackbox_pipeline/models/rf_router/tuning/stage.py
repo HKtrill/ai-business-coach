@@ -12,7 +12,7 @@ remainder a given Pass 1 configuration leaves. ``pass1_stage`` runs exactly
     3. remainder := OOF Pass 1 probability >= t1
 
 so the mask it returns IS ``RFRouter(...).fit(...).remainder_mask_`` for the same
-Pass 1 parameters (``tests/test_rf_router_specialization.py`` pins that).
+Pass 1 parameters (``tests/stage2/test_rf_router_specialization.py`` pins that).
 
 Remainder coupling: change the Pass 1 parameters and the remainder changes, so
 Pass 2 parameters tuned on one remainder say nothing about another.
@@ -33,7 +33,7 @@ from ..constraints import OperatingConstraints
 from ..forest import ForestTrainer
 from ..oof import OOFScorer
 from ..oof.folds import check_aligned
-from ..threshhold import ThresholdResult, ThresholdSolver
+from ..thresholds import ThresholdResult, ThresholdSolver
 from .budget import RouterFolds
 
 __all__ = ["Pass1Stage", "pass1_stage", "mask_fingerprint"]
