@@ -105,32 +105,36 @@
 
 **Objective:** Investigate and conditionally prepare PuLP 4.x compatibility while preserving validated Stage 2 ILP selector behavior. Defer all runtime validation to Commit 6.
 
-**Step 5A — Compatibility Audit**
+#### Commit 5 — PuLP 4.x Compatibility Assessment
 
-- [ ] Inventory existing PuLP usage, dependency constraints, Python requirements, solver configuration, and warning filters.
-- [ ] Review deprecated `LpVariable` construction, `PULP_CBC_CMD`, constraint access, and solver-status handling.
-- [ ] Identify dependencies on CBC binaries, termination statuses, time limits, and feasible-but-not-optimal solutions.
-- [ ] Compare the existing pinned implementation against documented PuLP 4.x APIs and compatibility requirements through static analysis.
-- [ ] Establish compatibility acceptance criteria using existing Stage 2 selector contracts and representative solver cases.
-- [ ] Identify technical blockers and distinguish confirmed API changes from behavior requiring runtime verification.
+**Objective:** Assess PuLP 4.x compatibility, document the migration risks, and preserve the accepted Stage 2 ILP implementation until a scientifically validated solver migration is justified.
 
-**Step 5B — Conditional Migration**
+**Step 5A — Compatibility Audit and Migration Disposition**
 
-- [ ] If static analysis supports a viable migration, prepare minimal compatibility changes through reviewable patches.
-- [ ] Preserve ILP formulations, constraints, objectives, selector decisions, and failure-handling semantics.
-- [ ] Avoid modifying frozen Stage 2 research contracts, accepted artifacts, or historical provenance.
-- [ ] Preserve the existing `pulp<4` dependency constraint until PuLP 4.x passes Commit 6 compatibility validation.
-- [ ] Retain existing targeted deprecation-warning filters until the relevant warnings are demonstrably resolved.
-- [ ] If no credible migration path exists, retain the current implementation and document the blockers.
+- [x] Inventory existing PuLP usage, dependency constraints, Python requirements, solver configuration, and warning filters.
+- [x] Review deprecated `LpVariable` construction, `PULP_CBC_CMD`, constraint access, and solver-status handling.
+- [x] Identify dependencies on CBC binaries, termination statuses, time limits, and feasible-but-not-optimal solutions.
+- [x] Compare the existing pinned implementation against documented PuLP 4.x APIs and compatibility requirements through static analysis.
+- [x] Establish compatibility acceptance criteria using existing Stage 2 selector contracts and representative solver cases.
+- [x] Identify technical blockers and distinguish confirmed API changes from behavior requiring runtime verification.
+- [x] Determine that PuLP 4.x migration requires solver and protocol changes beyond PR 41's maintenance scope.
+- [x] Select retention of the existing PuLP 3.x integration rather than introducing unvalidated changes.
+- [x] Preserve the existing `pulp>=2.8,<4` constraint, CBC configuration, and two targeted deprecation-warning filters.
+- [x] Document the PuLP 4.x incompatibilities, scientific risks, and future migration requirements in the Deferred Engineering section.
+- [x] Identify the existing ILP regression and artifact-compatibility checks applicable to Commit 6A.
+- [x] Confirm no Stage 2 scientific contracts, accepted artifacts, or historical provenance are modified.
+- [x] Review the final documentation diff and defer runtime checks to Commit 6.
 
-**Step 5C — Compatibility Review and Deferred Validation**
+**Step 5B — Compatibility Documentation and Deferred Validation**
 
-- [ ] Review proposed API changes for compatibility risks, unintended logic modifications, and solver-behavior differences.
-- [ ] Identify relevant ILP selector, solver-status, infeasibility, and Stage 2 regression tests for Commit 6.
-- [ ] Define representative baseline comparisons covering constraints, selected rule sets, solver outcomes, and deterministic behavior.
-- [ ] Document any assumptions that require runtime verification.
-- [ ] Defer dependency activation, warning-filter removal, and all runtime compatibility testing to Commit 6.
-- [ ] Avoid model retraining, full cascade regeneration, and unnecessary infrastructure changes.
+- [x] Document the approved decision to retain PuLP 3.x and the existing CBC configuration.
+- [x] Preserve `pulp>=2.8,<4` and both targeted deprecation-warning filters.
+- [x] Record PuLP 4.x API incompatibilities, solver-behavior risks, and future migration requirements.
+- [x] Identify existing ILP selector, solver-status, infeasibility, and Stage 2 regression tests for Commit 6A.
+- [x] Defer PuLP 4.x migration and solver-parity experiments to future Stage 2 research.
+- [x] Confirm no scientific contracts, accepted artifacts, dependencies, or historical provenance were modified.
+- [x] Review the final documentation diff and update the roadmap.
+- [x] Defer runtime validation of the retained PuLP integration to Commit 6.
 
 ---
 
@@ -588,8 +592,8 @@ Stage 1 has three inputs, so architecture and optimization changes have limited 
 
 ### Deferred Engineering and Optional Research
 
-- [ ] **Windows notebook-execution warning (deferred from PR 40).** On Windows, `upstream_regeneration.vehicle.execute` runs nbclient on Python's default Proactor event loop; pyzmq adds a tornado selector thread and emits one `RuntimeWarning` per process. It is non-blocking: every PR 39 execution ran through this path and reproduced deterministically. If addressed, run `client.async_execute()` under `asyncio.Runner(loop_factory=asyncio.SelectorEventLoop)` on Windows only, as a separately versioned execution-path change validated by the vehicle tests, with a full Windows notebook execution only where that validation is already justified (for example, the PR 46 clean-kernel runs). Do not change global event-loop policies, use the deprecated `WindowsSelectorEventLoopPolicy`, or suppress the warning.
-- [ ] **PuLP 4.0 compatibility.** The GLASS Router's ILP code constructs `LpVariable` objects directly and uses `PULP_CBC_CMD`, both deprecated in PuLP 3 ahead of PuLP 4.0. `requirements.txt` pins `pulp<4`, and `pytest.ini` keeps two targeted filters for these messages. Assess separately from frozen Stage 2 work.
+- [x] **Windows notebook-execution warning (deferred from PR 40).** On Windows, `upstream_regeneration.vehicle.execute` runs nbclient on Python's default Proactor event loop; pyzmq adds a tornado selector thread and emits one `RuntimeWarning` per process. It is non-blocking: every PR 39 execution ran through this path and reproduced deterministically. If addressed, run `client.async_execute()` under `asyncio.Runner(loop_factory=asyncio.SelectorEventLoop)` on Windows only, as a separately versioned execution-path change validated by the vehicle tests, with a full Windows notebook execution only where that validation is already justified (for example, the PR 46 clean-kernel runs). Do not change global event-loop policies, use the deprecated `WindowsSelectorEventLoopPolicy`, or suppress the warning.
+- [x] **PuLP 4.0 compatibility.** The GLASS Router's ILP code constructs `LpVariable` objects directly and uses `PULP_CBC_CMD`, both deprecated in PuLP 3 ahead of PuLP 4.0. `requirements.txt` pins `pulp<4`, and `pytest.ini` keeps two targeted filters for these messages. Assess separately from frozen Stage 2 work.
 - [ ] **Lightweight GLASS development utility.** A small command-driven tool (`run script`, `run notebook`, `run cell`, `apply test`, `scan artifacts`) that reuses existing Python, pytest, notebook, and artifact utilities, protects accepted artifacts, never retrains unexpectedly, and leaves Git operations to Git. Evaluate when its workflow benefit justifies implementation.
 - [ ] Investigate advanced training strategies that survive preliminary scientific and computational screening.
 - [ ] Avoid new framework dependencies or infrastructure without demonstrated need.
