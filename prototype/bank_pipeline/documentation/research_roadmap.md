@@ -81,78 +81,90 @@
 
 #### Commit 4 — Windows Notebook Execution Warning
 
-**Objective:** Investigate and conditionally eliminate the Windows ZeroMQ/asyncio warning without disrupting the accepted execution pathway.
+**Objective:** Investigate and conditionally correct the Windows ZeroMQ/asyncio warning without disrupting the accepted notebook execution pathway. Defer runtime validation to Commit 6.
 
-**Step 4A — Compatibility Investigation**
+**Step 4A — Compatibility Investigation and Conditional Correction**
 
-- [ ] Reproduce the warning through a minimal representative execution of `upstream_regeneration.vehicle.execute` on Windows.
-- [ ] Review interactions between nbclient, pyzmq, asyncio, and Jupyter kernel startup.
-- [ ] Evaluate the proposed Windows-only `asyncio.Runner(loop_factory=asyncio.SelectorEventLoop)` approach.
-- [ ] Verify subprocess compatibility, kernel startup, exception propagation, and cleanup.
-- [ ] Exclude global event-loop policy changes, deprecated policies, and warning suppression.
-
-**Step 4B — Conditional Correction and Targeted Validation**
-
-- [ ] Implement a minimal Windows-specific correction only if the compatibility preflight succeeds.
-- [ ] Preserve existing execution behavior on other operating systems.
-- [ ] Run affected execution-vehicle tests and a minimal representative notebook execution.
-- [ ] Verify warning elimination and unchanged execution behavior.
-- [ ] If incompatible, preserve the working pathway and document the limitation.
-- [ ] Defer full clean-kernel notebook execution to PR 46 unless earlier execution is necessary to establish correctness.
-
+- [x] Review the previously documented Windows ZeroMQ/asyncio warning and its reproduction evidence from PR 40.
+- [x] Inspect interactions between nbclient, pyzmq, asyncio, and Jupyter kernel startup.
+- [x] Evaluate the proposed Windows-only `asyncio.Runner(loop_factory=asyncio.SelectorEventLoop)` approach through static compatibility analysis.
+- [x] Assess subprocess support, kernel startup requirements, exception propagation, and cleanup behavior.
+- [x] Identify compatibility risks and determine whether a technically credible correction exists.
+- [x] Exclude global event-loop policy changes, deprecated policies, and warning suppression.
+- [x] Implement the minimal Windows-specific correction in `upstream_regeneration/vehicle.py`, preserving the existing fallback where necessary.
+- [x] Preserve existing execution behavior on non-Windows platforms.
+- [x] Treat the modification to provenance-sensitive execution code as an explicitly reviewed, versioned exception.
+- [x] Preserve accepted Phase 1 execution records, artifacts, and historical entry points.
+- [x] Review the implementation statically for execution-path changes, compatibility risks, and unintended modifications.
+- [x] Document unresolved runtime assumptions and the existing fallback behavior.
+- [x] Defer execution-vehicle tests, warning-elimination verification, and representative Windows notebook execution to Commit 6.
+- [x] Reserve full clean-kernel notebook execution for PR 46 unless Commit 6 validation demonstrates that additional execution is necessary.
 ---
 
 #### Commit 5 — PuLP 4.x Compatibility Assessment and Migration
 
-**Objective:** Evaluate and conditionally implement PuLP 4.x compatibility while preserving validated Stage 2 ILP selector behavior.
+**Objective:** Investigate and conditionally prepare PuLP 4.x compatibility while preserving validated Stage 2 ILP selector behavior. Defer all runtime validation to Commit 6.
 
 **Step 5A — Compatibility Audit**
 
-- [ ] Inventory PuLP usage, installed versions, Python requirements, solver configuration, and warning filters.
+- [ ] Inventory existing PuLP usage, dependency constraints, Python requirements, solver configuration, and warning filters.
 - [ ] Review deprecated `LpVariable` construction, `PULP_CBC_CMD`, constraint access, and solver-status handling.
 - [ ] Identify dependencies on CBC binaries, termination statuses, time limits, and feasible-but-not-optimal solutions.
-- [ ] Compare the existing pinned environment with an isolated PuLP 4.x environment.
-- [ ] Establish compatibility criteria using representative Stage 2 selector cases and existing tests.
+- [ ] Compare the existing pinned implementation against documented PuLP 4.x APIs and compatibility requirements through static analysis.
+- [ ] Establish compatibility acceptance criteria using existing Stage 2 selector contracts and representative solver cases.
+- [ ] Identify technical blockers and distinguish confirmed API changes from behavior requiring runtime verification.
 
 **Step 5B — Conditional Migration**
 
-- [ ] If feasible, migrate affected APIs through minimal, reviewable changes.
+- [ ] If static analysis supports a viable migration, prepare minimal compatibility changes through reviewable patches.
 - [ ] Preserve ILP formulations, constraints, objectives, selector decisions, and failure-handling semantics.
-- [ ] Update dependency requirements only after compatibility is demonstrated.
-- [ ] Remove targeted deprecation-warning filters only when no longer necessary.
-- [ ] Preserve frozen Stage 2 research contracts, accepted artifacts, and historical provenance.
+- [ ] Avoid modifying frozen Stage 2 research contracts, accepted artifacts, or historical provenance.
+- [ ] Preserve the existing `pulp<4` dependency constraint until PuLP 4.x passes Commit 6 compatibility validation.
+- [ ] Retain existing targeted deprecation-warning filters until the relevant warnings are demonstrably resolved.
+- [ ] If no credible migration path exists, retain the current implementation and document the blockers.
 
-**Step 5C — Targeted Compatibility Validation**
+**Step 5C — Compatibility Review and Deferred Validation**
 
-- [ ] Run affected ILP selector, solver-status, infeasibility, and Stage 2 regression tests.
-- [ ] Compare representative solutions, constraints, selected rule sets, and solver outcomes against the accepted baseline.
-- [ ] Investigate material solver differences and verify required deterministic behavior.
-- [ ] If compatibility cannot be established, retain the existing dependency pin and document remaining migration requirements.
-- [ ] Avoid unnecessary retraining, full cascade regeneration, or repeated comprehensive regression testing.
+- [ ] Review proposed API changes for compatibility risks, unintended logic modifications, and solver-behavior differences.
+- [ ] Identify relevant ILP selector, solver-status, infeasibility, and Stage 2 regression tests for Commit 6.
+- [ ] Define representative baseline comparisons covering constraints, selected rule sets, solver outcomes, and deterministic behavior.
+- [ ] Document any assumptions that require runtime verification.
+- [ ] Defer dependency activation, warning-filter removal, and all runtime compatibility testing to Commit 6.
+- [ ] Avoid model retraining, full cascade regeneration, and unnecessary infrastructure changes.
 
 ---
 
 #### Commit 6 — Integration Validation and PR Closure
 
-**Objective:** Validate the complete PR 41 changeset and establish a clean repository baseline for Phase 2 experimentation.
+**Objective:** Validate all PR 41 changes, resolve introduced regressions, and establish a clean repository baseline for Phase 2 experimentation.
 
-**Step 6A — Final Regression and Provenance Verification**
+**Step 6A — Targeted Compatibility and Provenance Verification**
 
-- [ ] Run the full regression suite once after implementation stabilizes.
-- [ ] Run applicable real-data tests and final targeted compatibility checks.
+- [ ] Verify RF Router legacy and corrected imports, module identity, and historical artifact loading.
+- [ ] Execute targeted Windows notebook-vehicle tests and a minimal representative notebook if a Commit 4 correction was implemented.
+- [ ] Verify warning elimination, subprocess and kernel compatibility, exception propagation, and cleanup behavior.
+- [ ] Revert or correct the Windows execution-path change if runtime validation fails.
+- [ ] Test PuLP 4.x compatibility in an isolated environment if a migration was prepared.
+- [ ] Verify ILP solver behavior, infeasibility handling, termination statuses, and Stage 2 selector parity.
+- [ ] Finalize PuLP dependency constraints and warning filters only after compatibility is demonstrated; otherwise retain the accepted configuration.
 - [ ] Verify accepted Phase 1 paths, artifact identifiers, compatibility imports, and recorded execution commands.
 - [ ] Run applicable accepted-record `check` commands.
-- [ ] Confirm that no accepted scientific behavior, model artifacts, or baseline results have changed.
+- [ ] Resolve targeted compatibility failures before comprehensive testing.
+
+**Step 6B — Comprehensive Regression Testing and PR Closure**
+
+- [ ] Run the full regression suite after targeted compatibility validation succeeds.
+- [ ] Run applicable real-data tests.
+- [ ] Investigate and resolve regressions introduced by PR 41.
+- [ ] Re-run affected tests after corrections and repeat comprehensive validation if subsequent changes could affect broader behavior.
+- [ ] Confirm accepted scientific behavior, model artifacts, and baseline results remain unchanged.
 - [ ] Inspect the complete diff for unnecessary modifications, generated files, and unintended behavior changes.
-
-**Step 6B — Documentation and Closure**
-
 - [ ] Finalize the five-notebook responsibility map and research organization notes.
-- [ ] Document completed maintenance changes and remaining compatibility limitations.
+- [ ] Document completed maintenance changes, compatibility decisions, and remaining limitations.
 - [ ] Confirm lightweight GLASS development tooling and advanced training-strategy research remain outside PR 41.
 - [ ] Update the roadmap and prepare PR 41 for review and merge.
 
-**Deliverable:** A minimally cleaned and validated repository ready for Phase 2, with a protected Phase 1 baseline, documented notebook responsibilities, corrected maintenance issues, and compatibility improvements implemented where safely justified.
+**Deliverable:** A minimally cleaned, comprehensively validated repository ready for Phase 2, with preserved Phase 1 provenance, documented research organization, and verified compatibility improvements.
 
 ---
 

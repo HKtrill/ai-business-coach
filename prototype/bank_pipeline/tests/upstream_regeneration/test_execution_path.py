@@ -13,14 +13,20 @@ Notebooks are read, never executed.
 * Stage 4 fitting prevention: the truncated copy drops exactly the Stage 4
   cells, keeps every other cell byte-identical, and refuses a notebook whose
   kept cells would fit, compare or trace an arbiter, or whose switch is on.
+* PR 41 Commit 4: on Windows the vehicle runs nbclient on its own selector loop
+  (``asyncio.Runner``); elsewhere, below Python 3.11 and inside a running loop
+  it calls ``client.execute()`` as before. Checked with a stand-in client, no kernel.
 """
 
 from __future__ import annotations
 
 import ast
+import asyncio
 import json
 import re
 import subprocess
+import sys
+import types
 from pathlib import Path
 
 import pytest
@@ -263,6 +269,89 @@ def test_execute_records_a_failing_cell_and_keeps_the_partial_copy(tmp_path):
     assert run["completed"] is False and "stage 1 failed" in run["error"]
     cells = json.loads(Path(run["executed_copy"]["path"]).read_text(encoding="utf-8"))["cells"]
     assert cells[2]["execution_count"] is None                        # stopped at the error
+
+
+# ----------------------------------------------------------------------
+# PR 41 Commit 4: the Windows selector-loop pathway (a stand-in client, no kernel)
+# ----------------------------------------------------------------------
+class _Client:
+    """Records which nbclient entry point the vehicle called, and on which loop."""
+
+    def __init__(self, error=None):
+        self.calls, self.loop, self.error = [], None, error
+
+    def execute(self):
+        self.calls.append("execute")
+
+    async def async_execute(self):
+        self.calls.append("async_execute")
+        self.loop = asyncio.get_running_loop()
+        if self.error is not None:
+            raise self.error
+
+
+def _current_loops(monkeypatch):
+    """Spy on ``asyncio.set_event_loop`` (calling through): the current loops the vehicle sets."""
+    seen, real = [], asyncio.set_event_loop
+
+    def spy(loop):
+        seen.append(loop)
+        real(loop)
+
+    monkeypatch.setattr(asyncio, "set_event_loop", spy)
+    return seen
+
+
+def _as_platform(monkeypatch, platform, version_info=None):
+    """The vehicle's view of ``sys`` only: the rest of the process keeps the real one."""
+    monkeypatch.setattr(V, "sys", types.SimpleNamespace(
+        platform=platform, version_info=version_info or sys.version_info,
+        executable=sys.executable))
+
+
+@pytest.mark.skipif(not hasattr(asyncio, "Runner"), reason="asyncio.Runner needs Python 3.11+")
+def test_on_windows_the_notebook_runs_on_its_own_selector_loop(monkeypatch):
+    _as_platform(monkeypatch, "win32")
+    seen = _current_loops(monkeypatch)
+    client = _Client()
+    V._run_notebook(client)
+    assert client.calls == ["async_execute"]
+    assert isinstance(client.loop, asyncio.SelectorEventLoop) and client.loop.is_closed()
+    assert seen == [client.loop, None]           # current during the run, unset afterwards
+
+
+@pytest.mark.skipif(not hasattr(asyncio, "Runner"), reason="asyncio.Runner needs Python 3.11+")
+def test_on_windows_a_failing_run_raises_to_the_vehicle_and_its_loop_still_closes(monkeypatch):
+    _as_platform(monkeypatch, "win32")
+    seen = _current_loops(monkeypatch)
+    client = _Client(error=ValueError("stage 1 failed"))
+    with pytest.raises(ValueError, match="stage 1 failed"):
+        V._run_notebook(client)
+    assert client.calls == ["async_execute"] and client.loop.is_closed()
+    assert seen == [client.loop, None]
+
+
+@pytest.mark.parametrize("platform, version_info", [
+    ("linux", None), ("darwin", None), ("win32", (3, 10, 15)),
+])
+def test_other_platforms_and_older_pythons_call_client_execute_as_before(monkeypatch, platform,
+                                                                        version_info):
+    _as_platform(monkeypatch, platform, version_info)
+    seen = _current_loops(monkeypatch)
+    client = _Client()
+    V._run_notebook(client)
+    assert client.calls == ["execute"] and client.loop is None and seen == []
+
+
+def test_inside_a_running_loop_windows_falls_back_to_client_execute(monkeypatch):
+    _as_platform(monkeypatch, "win32")
+    client = _Client()
+
+    async def caller():
+        V._run_notebook(client)                  # a synchronous call from inside a running loop
+
+    asyncio.run(caller())                        # no RuntimeError from a nested Runner
+    assert client.calls == ["execute"] and client.loop is None
 
 
 @pytest.mark.parametrize("nb", sorted(NOTEBOOKS))
