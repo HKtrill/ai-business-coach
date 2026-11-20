@@ -68,14 +68,14 @@
 
 **Step 3A — Utility and Research Organization**
 
-- [ ] Record existing shared metrics, thresholds, evaluation, and artifact-loading utilities for reuse.
-- [ ] Document intentional separation between production, research, and provenance-sensitive utilities.
-- [ ] Defer behavior-sensitive consolidation and duplicated research-function cleanup to appropriate later PRs.
-- [ ] Create a five-notebook responsibility map covering Feature Research, Training Research, GLASS Cascade, Black-Box Cascade, and Comparative Analysis.
-- [ ] Map relevant existing notebook cells, supporting modules, and research dependencies.
-- [ ] Identify fixed Phase 1 notebook-cell contracts and boundaries for future notebook migration.
-- [ ] Add only useful documentation or scaffolding required by the agreed Phase 2 structure.
-- [ ] Do not rebuild notebooks, relocate research modules, or run tests for documentation-only changes.
+- [x] Record existing shared metrics, thresholds, evaluation, and artifact-loading utilities for reuse.
+- [x] Document intentional separation between production, research, and provenance-sensitive utilities.
+- [x] Defer behavior-sensitive consolidation and duplicated research-function cleanup to appropriate later PRs.
+- [x] Create a five-notebook responsibility map covering Feature Research, Training Research, GLASS Cascade, Black-Box Cascade, and Comparative Analysis.
+- [x] Map relevant existing notebook cells, supporting modules, and research dependencies.
+- [x] Identify fixed Phase 1 notebook-cell contracts and boundaries for future notebook migration.
+- [x] Add only useful documentation or scaffolding required by the agreed Phase 2 structure.
+- [x] Do not rebuild notebooks, relocate research modules, or run tests for documentation-only changes.
 
 ---
 
