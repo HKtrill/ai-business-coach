@@ -1,153 +1,155 @@
 ## Roadmap
 
-### Phase 1 — Finish and Validate the Cascades
-
-## PR 40 — Test Warning Cleanup and Maintenance
-
-**Objective:** Eliminate recurring, actionable test warnings by correcting their underlying causes rather than suppressing them. Improve test clarity and maintainability while preserving the finalized PR 39 modeling contracts, behavior, artifacts, and reproducibility.
-
-### Commit 1 — Warning Diagnosis, Corrections, and Validation
-
-**Objective:** Identify and resolve the recurring scikit-learn MLP batch-size warnings and any closely related, actionable warnings through minimal, reviewable changes.
-
-#### Step 1A — Warning Inventory and Root-Cause Analysis
-
-- [x] Start from the completed PR 39 baseline with a clean working tree.
-- [x] Reproduce and inventory recurring warnings from the relevant test suites.
-- [x] Identify warning sources, affected tests, triggering configurations, and underlying causes.
-- [x] Distinguish harmless test-fixture issues from genuine implementation, compatibility, or deprecation concerns.
-- [x] Determine the smallest safe correction for each actionable warning.
-
-#### Step 1B — Targeted Warning Corrections
-
-- [x] Correct invalid or unnecessary MLP batch-size configurations, prioritizing synthetic test fixtures.
-- [x] Preserve the effective training behavior and numerical expectations of affected tests.
-- [x] Address other recurring warnings only where the cause is verified and the correction is similarly narrow.
-- [x] Do not suppress warnings through filters, blanket pytest settings, or equivalent workarounds.
-- [x] Preserve production hyperparameters, model-family behavior, frozen contracts, and existing artifacts.
-- [x] Complete the corrections in one focused implementation patch; use a second only if necessary.
-
-#### Step 1C — Regression and Final Verification
-
-- [x] Rerun affected tests and confirm their original assertions and contracts remain valid.
-- [x] Verify that targeted warnings no longer occur without suppression.
-- [x] Run relevant regression tests and confirm no new failures or warnings were introduced.
-- [x] Verify that no model artifacts, historical evidence, or frozen research records were modified.
-- [x] Review the final diff, confirm the changes remain maintenance-only, and commit the cleanup.
-
-**Deliverable:** A cleaner test suite with the identified warning causes corrected, passing regression tests, unchanged modeling behavior, and no warning suppression. One maintenance commit, with one or at most two implementation patches.
-
-### Commit 2 — Research Roadmap Expansion and README Update
-
-**Objective:** Update `prototype/bank_pipeline/documentation/research_roadmap.md` to incorporate the completed PR 39 baseline, revised Phase 2 research direction, and five-notebook research plan. Update the root `README.md` to accurately reflect the completed Phase 1 implementation and research status. Finalize the forward-looking roadmap without implementing new research or restructuring the repository.
-
-- [x] Review the existing research roadmap and reconcile completed PR 38–39 milestones.
-- [x] Incorporate the accepted Phase 1 baseline, four-stage cascade architectures, and four-way Stage 4 arbiter crossover.
-- [x] Integrate the revised five-notebook research plan, preserving the intended responsibilities and experimental boundaries of each notebook.
-- [x] Organize Phase 2 research priorities, including:
-  - Controlled GLASS versus black-box comparisons.
-  - Model-family-specific optimization under shared evaluation obligations.
-  - Stage 4 training-objective and hyperparameter optimization.
-  - Confidence, abstention, coverage, and whole-system performance analysis.
-  - Investigation of Stage 4 crossover findings and structural differences.
-  - Independent evaluation, leakage safeguards, and scientific validity.
-  - Notebook presentation, reusable research modules, and preparation of publication-quality evidence.
-- [x] Preserve the distinction between completed experiments, accepted findings, research limitations, and future hypotheses.
-- [x] Record future maintenance work, including PR 41 structural cleanup and the proposed lightweight GLASS development environment, without implementing either.
-- [x] Remove obsolete or redundant planning entries where appropriate without discarding historical research evidence.
-- [x] Review the finalized roadmap for completeness, consistency, and realistic execution order.
-- [x] Update the root `README.md` to reflect the finalized Phase 1 architecture, GLASS Arbiter terminology, validated results, reproducibility, and current research status.
-- [x] Commit both documentation changes together: `prototype/bank_pipeline/documentation/research_roadmap.md` and the root `README.md`.
-
-**Deliverable:** A substantially finalized research roadmap reflecting the accepted Phase 1 baseline and planned Phase 2 research program, alongside an updated repository README accurately documenting the completed Phase 1 implementation. One documentation-only commit modifying `prototype/bank_pipeline/documentation/research_roadmap.md` and the root `README.md`.
-
----
-
-### PR 40 — Final Completion Boundary
-
-- [x] **Commit 1 complete:** Recurring actionable test warnings diagnosed, corrected, and validated without altering frozen modeling contracts or artifacts.
-- [x] **Commit 2 complete:** Research roadmap (`prototype/bank_pipeline/documentation/research_roadmap.md`) and root `README.md` updated with the revised five-notebook plan, Phase 2 priorities, and future engineering work.
-- [x] **PR 40 complete:** Both commits validated, pushed, reviewed, and merged.
-- [x] **Phase 1 complete:** GLASS and black-box cascades operational, integrated, validated, and ready for Phase 2 research and presentation.
-
-**Out of scope:** Model retraining, hyperparameter optimization, feature engineering changes, calibration revisions, Stage 2 selector changes, artifact regeneration, notebook redesign, and unrelated refactoring.
-
----
-
-### Accepted Phase 1 Baseline (PR 39)
-
-PR 39 established the validated, reproducible development baseline. All accepted artifacts, manifests, and historical records remain frozen. Subsequent research produces separately versioned results.
-
-| Stage | GLASS Cascade | Black-Box Cascade |
-|---|---|---|
-| 1 | Calibrated Logistic Regression | Calibrated MLP |
-| 2 | Symbolic GLASS Router | Random Forest Router |
-| 3 | Explainable Boosting Machine | XGBoost |
-| 4 | GLASS Arbiter | Meta-XGBoost |
-
-- **GLASS Arbiter:** Performance-weighted, margin-based voting with confidence-threshold abstention. The Stage 3 EBM is an upstream voter, not a Stage 4 meta-model.
-- **Meta-XGBoost:** Learned nonlinear Stage 4 arbiter using cross-fitted upstream predictions.
-- **Crossover:** Registered 2×2 comparison of both arbiters on both upstream architectures.
-- **Validation:** 3,390 fast, 110 real-data, and 11 slow tests passed. Both notebooks reproduced deterministically with maximum numerical difference 0.0.
-- **Accepted runs:** Stage 2 `c3_20261112_153333`; Stages 1/3 `c4_20261115_204125`; Stage 4 `c5_20261116_153459`; reproduction `c6_20261116_194111`.
-- **Limitation:** The previously examined test split supports descriptive findings, not independent validation.
-
-### Phase 2–4 Research Principles
-
-**Objective:** Optimize both cascades to their full legitimate potential, evaluate them fairly, and prepare reproducible scientific comparisons.
-
-- **Mirrored evaluation:** Preserve equivalent stage responsibilities, information availability, operating obligations, and leakage safeguards. Allow architecture-specific training methods and objectives.
-- **Systematic optimization:** Investigate relevant training strategies at every stage, prioritizing inexpensive experiments before expensive cross-fitting and regeneration.
-- **Stage 4 research:** Evaluate improvements to the existing GLASS Arbiter, the proposed GLASS Linear Arbiter, and Meta-XGBoost under shared abstention and coverage objectives.
-- **Scientific validity:** Use training-only evidence for model selection, register comparison criteria in advance, and distinguish development, robustness, and independent validation.
-- **Model selection:** Consider predictive performance, calibration, coverage, interpretability, stability, and computational efficiency. Favor simpler interpretable models when performance is meaningfully comparable.
-- **Provenance:** Preserve the accepted Phase 1 baseline, version methodology changes, and document differences in model capacity and optimization budgets.
-
-### Five-Notebook Research Structure
-
-| Notebook | Responsibility |
-|---|---|
-| Feature Research | Feature engineering, binning, leakage, and temporal validity |
-| Training Research | Stage-wise objectives, optimization, and model selection |
-| GLASS Cascade | Final interpretable architecture and presentation |
-| Black-Box Cascade | Final black-box architecture and presentation |
-| Comparative Analysis | Cascade comparisons, standalone baselines, robustness, and paper figures |
-
-Existing research modules and notebook content will be reused wherever practical.
-
----
-
 ### Phase 2 — Research Organization, Training Research, and Optimized Cascades
 
-#### PR 41 — Structural Cleanup and Research Organization
+### PR 41 — Structural Cleanup and Research Organization
 
-**Objective:** Organize the repository for Phase 2 before substantial notebook and training development, with no scientific behavior changes.
+**Objective:** Complete targeted repository maintenance, document the five-notebook research structure, address selected deferred engineering tasks, and prepare for Phase 2 without changing accepted scientific behavior, historical provenance, or model artifacts.
 
-**Phase 1 protection**
+**Execution principles:**
 
-- [ ] Tag the PR 40 merge commit as the Phase 1 baseline before any structural change.
-- [ ] Keep provenance-sensitive paths unchanged: `upstream_regeneration/`, `stage4_regeneration/`, `phase1_reproduction/`, `stage2_crossfit/`, `stage2_binning/`, `stage1_calibration/`, and `research_logs/`. Their records and documented `python -m` commands name these paths, and Phase 1 re-execution depends on fixed file lists and notebook cell headers.
-- [ ] Preserve historical compatibility identifiers, including `meta_ebm`, and every persisted artifact identifier.
-- [ ] Re-run the accepted runs' record `check` commands after any import or path change.
+- Preserve Phase 1 modeling contracts, accepted results, artifacts, and reproducibility records.
+- Keep provenance-sensitive paths and historical compatibility identifiers unchanged.
+- Prioritize demonstrated maintenance needs over speculative restructuring.
+- Preserve working code and existing organization when no meaningful improvement is justified.
+- Use targeted regression tests after code changes; reserve comprehensive integration testing for Commit 6.
+- Do not regenerate models, change scientific objectives, or rebuild notebooks in this PR.
 
-**Structural cleanup**
+---
 
-- [ ] Review existing Python modules, tests, filenames, and notebook responsibilities.
-- [ ] Rename files according to their actual functions rather than historical implementation steps.
-- [ ] Group related tests by stage and responsibility.
-- [ ] Use `git mv` and minimal import/path corrections.
-- [ ] Identify reusable training, evaluation, plotting, and artifact-loading utilities.
-- [ ] Resolve unnecessary duplication without changing modeling logic, test assertions, or research behavior.
-- [ ] Preserve existing tests, historical provenance, and accepted research artifacts.
+#### Commit 1 — Phase 1 Baseline Protection and Repository Audit
 
-**Research organization**
+**Objective:** Confirm existing Phase 1 protections and identify minimal structural changes needed for Phase 2.
 
-- [ ] Map existing notebook cells and modules to the five notebooks without rebuilding notebooks yet.
-- [ ] Run relevant regression tests.
+**Step 1A — Baseline Protection and Repository Inventory**
 
-**Conditional maintenance:** the Windows ZeroMQ/asyncio warning (Deferred Engineering) may be evaluated here. It is not a PR 41 requirement and must not change the accepted notebook execution pathway.
+- [x] Confirm the PR 40 merge commit and existing annotated Phase 1 baseline tag (`phase1-baseline-2026-11-17`).
+- [x] Confirm the baseline tag points to the correct commit and is published.
+- [x] Identify provenance-sensitive paths: `upstream_regeneration/`, `stage4_regeneration/`, `phase1_reproduction/`, `stage2_crossfit/`, `stage2_binning/`, `stage1_calibration/`, and `research_logs/`.
+- [x] Document historical compatibility constraints, including `meta_ebm`, persisted artifact identifiers, import paths, and recorded execution commands.
+- [x] Review existing Python modules, tests, filenames, and notebook responsibilities.
+- [x] Identify misleading historical filenames, misplaced tests, and organizational inconsistencies.
+- [x] Identify reusable training, evaluation, plotting, and artifact-loading utilities.
+- [x] Identify unnecessary duplication and distinguish safe consolidation from behavior-sensitive refactoring.
+- [x] Establish a minimal file-movement plan and relevant regression-test coverage.
+- [x] Record dependencies between proposed changes and provenance-sensitive entry points.
+- [x] Plan new file scaffolding.
 
-**Deliverable:** A cleaner repository structure ready for Phase 2 experimentation, a tagged Phase 1 baseline, and no scientific behavior changes.
+---
+
+#### Commit 2 — Targeted Module and Documentation Cleanup
+
+**Objective:** Correct identified naming and documentation inconsistencies without unnecessary restructuring.
+
+**Step 2A — Structural and Reference Corrections**
+
+- [ ] Remove the obsolete `prototype/glass_pipeline/data/db/` rule and associated misleading comment from `.gitignore`, preserving the tracked database.
+- [ ] Correct stale RF Router test-file references in four module docstrings.
+- [ ] Evaluate renaming `rf_router/threshhold/` to `rf_router/thresholds/`, accounting for permanent compatibility requirements.
+- [ ] If approved, use `git mv`, preserve old import paths through compatibility modules, and update affected imports and references.
+- [ ] Preserve existing test organization, serialized artifact compatibility, historical identifiers, and scientific behavior.
+- [ ] Avoid unrelated file moves, stylistic renames, or test restructuring.
+
+**Step 2B — Targeted Validation**
+
+- [ ] Run relevant RF Router and import regression tests if executable code changes.
+- [ ] If the threshold-package rename proceeds, verify old and new imports and successful loading of an accepted RF Router artifact.
+- [ ] Run additional checks only where a concrete compatibility or provenance dependency justifies them.
+- [ ] Review the diff for unintended changes.
+
+---
+
+#### Commit 3 — Research Utility Review and Five-Notebook Mapping
+
+**Objective:** Document existing research responsibilities and prepare for future notebook restructuring without prematurely refactoring working utilities.
+
+**Step 3A — Utility and Research Organization**
+
+- [ ] Record existing shared metrics, thresholds, evaluation, and artifact-loading utilities for reuse.
+- [ ] Document intentional separation between production, research, and provenance-sensitive utilities.
+- [ ] Defer behavior-sensitive consolidation and duplicated research-function cleanup to appropriate later PRs.
+- [ ] Create a five-notebook responsibility map covering Feature Research, Training Research, GLASS Cascade, Black-Box Cascade, and Comparative Analysis.
+- [ ] Map relevant existing notebook cells, supporting modules, and research dependencies.
+- [ ] Identify fixed Phase 1 notebook-cell contracts and boundaries for future notebook migration.
+- [ ] Add only useful documentation or scaffolding required by the agreed Phase 2 structure.
+- [ ] Do not rebuild notebooks, relocate research modules, or run tests for documentation-only changes.
+
+---
+
+#### Commit 4 — Windows Notebook Execution Warning
+
+**Objective:** Investigate and conditionally eliminate the Windows ZeroMQ/asyncio warning without disrupting the accepted execution pathway.
+
+**Step 4A — Compatibility Investigation**
+
+- [ ] Reproduce the warning through a minimal representative execution of `upstream_regeneration.vehicle.execute` on Windows.
+- [ ] Review interactions between nbclient, pyzmq, asyncio, and Jupyter kernel startup.
+- [ ] Evaluate the proposed Windows-only `asyncio.Runner(loop_factory=asyncio.SelectorEventLoop)` approach.
+- [ ] Verify subprocess compatibility, kernel startup, exception propagation, and cleanup.
+- [ ] Exclude global event-loop policy changes, deprecated policies, and warning suppression.
+
+**Step 4B — Conditional Correction and Targeted Validation**
+
+- [ ] Implement a minimal Windows-specific correction only if the compatibility preflight succeeds.
+- [ ] Preserve existing execution behavior on other operating systems.
+- [ ] Run affected execution-vehicle tests and a minimal representative notebook execution.
+- [ ] Verify warning elimination and unchanged execution behavior.
+- [ ] If incompatible, preserve the working pathway and document the limitation.
+- [ ] Defer full clean-kernel notebook execution to PR 46 unless earlier execution is necessary to establish correctness.
+
+---
+
+#### Commit 5 — PuLP 4.x Compatibility Assessment and Migration
+
+**Objective:** Evaluate and conditionally implement PuLP 4.x compatibility while preserving validated Stage 2 ILP selector behavior.
+
+**Step 5A — Compatibility Audit**
+
+- [ ] Inventory PuLP usage, installed versions, Python requirements, solver configuration, and warning filters.
+- [ ] Review deprecated `LpVariable` construction, `PULP_CBC_CMD`, constraint access, and solver-status handling.
+- [ ] Identify dependencies on CBC binaries, termination statuses, time limits, and feasible-but-not-optimal solutions.
+- [ ] Compare the existing pinned environment with an isolated PuLP 4.x environment.
+- [ ] Establish compatibility criteria using representative Stage 2 selector cases and existing tests.
+
+**Step 5B — Conditional Migration**
+
+- [ ] If feasible, migrate affected APIs through minimal, reviewable changes.
+- [ ] Preserve ILP formulations, constraints, objectives, selector decisions, and failure-handling semantics.
+- [ ] Update dependency requirements only after compatibility is demonstrated.
+- [ ] Remove targeted deprecation-warning filters only when no longer necessary.
+- [ ] Preserve frozen Stage 2 research contracts, accepted artifacts, and historical provenance.
+
+**Step 5C — Targeted Compatibility Validation**
+
+- [ ] Run affected ILP selector, solver-status, infeasibility, and Stage 2 regression tests.
+- [ ] Compare representative solutions, constraints, selected rule sets, and solver outcomes against the accepted baseline.
+- [ ] Investigate material solver differences and verify required deterministic behavior.
+- [ ] If compatibility cannot be established, retain the existing dependency pin and document remaining migration requirements.
+- [ ] Avoid unnecessary retraining, full cascade regeneration, or repeated comprehensive regression testing.
+
+---
+
+#### Commit 6 — Integration Validation and PR Closure
+
+**Objective:** Validate the complete PR 41 changeset and establish a clean repository baseline for Phase 2 experimentation.
+
+**Step 6A — Final Regression and Provenance Verification**
+
+- [ ] Run the full regression suite once after implementation stabilizes.
+- [ ] Run applicable real-data tests and final targeted compatibility checks.
+- [ ] Verify accepted Phase 1 paths, artifact identifiers, compatibility imports, and recorded execution commands.
+- [ ] Run applicable accepted-record `check` commands.
+- [ ] Confirm that no accepted scientific behavior, model artifacts, or baseline results have changed.
+- [ ] Inspect the complete diff for unnecessary modifications, generated files, and unintended behavior changes.
+
+**Step 6B — Documentation and Closure**
+
+- [ ] Finalize the five-notebook responsibility map and research organization notes.
+- [ ] Document completed maintenance changes and remaining compatibility limitations.
+- [ ] Confirm lightweight GLASS development tooling and advanced training-strategy research remain outside PR 41.
+- [ ] Update the roadmap and prepare PR 41 for review and merge.
+
+**Deliverable:** A minimally cleaned and validated repository ready for Phase 2, with a protected Phase 1 baseline, documented notebook responsibilities, corrected maintenance issues, and compatibility improvements implemented where safely justified.
 
 ---
 
