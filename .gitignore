@@ -68,3 +68,8 @@ Thumbs.db
 # ----------------------
 .ipynb_checkpoints/
 .pytest_cache/
+
+# ----------------------
+# Data / DB
+# ----------------------
+/prototype/bank_pipeline/data/db/
