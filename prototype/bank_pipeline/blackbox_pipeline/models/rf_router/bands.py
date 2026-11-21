@@ -17,7 +17,7 @@ Two implementations
     Confidence varies within a band, by score quantile. A row scoring far past
     the threshold gets more confidence than one scraping it.
 
-Not to be confused with :mod:`~.threshhold.bandscan`, which enumerates which
+Not to be confused with :mod:`~.thresholds.bandscan`, which enumerates which
 bands a score can realise. That module is geometry over a sorted score vector;
 this one measures outcomes.
 

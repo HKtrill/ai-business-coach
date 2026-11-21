@@ -57,7 +57,7 @@ from .router import (
     split_fingerprint,
     unpack_global_split,
 )
-from .threshhold import ThresholdPair, ThresholdResult, ThresholdSolver
+from .thresholds import ThresholdPair, ThresholdResult, ThresholdSolver
 from .artifacts import find_artifact_for_split, load_rf_router, save_rf_router
 from .crossfit import CrossfitResult, crossfit_rf_router
 

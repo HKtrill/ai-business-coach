@@ -26,6 +26,7 @@ committed notebook files are never written.
 from __future__ import annotations
 
 import ast
+import asyncio
 import copy
 import hashlib
 import json
@@ -165,6 +166,47 @@ def _kernel_python(client) -> Optional[str]:
     return argv[0] if argv else None
 
 
+def _loop_running() -> bool:
+    """Whether this thread is running an event loop (``get_running_loop`` raises only if not)."""
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return False
+    return True
+
+
+def _selector_loop() -> asyncio.AbstractEventLoop:
+    """``asyncio.Runner``'s loop factory: a new selector loop, made this thread's current loop."""
+    loop = asyncio.SelectorEventLoop()
+    asyncio.set_event_loop(loop)        # a custom factory's job, per the Runner documentation
+    return loop
+
+
+def _run_notebook(client) -> None:
+    """
+    Run the notebook: ``client.execute()``, or on Windows its coroutine on a selector loop.
+
+    PR 41 Commit 4, a reviewed execution-path exception. nbclient's ``execute`` runs on
+    Python's default loop, which on Windows is the Proactor loop: it lacks the
+    ``add_reader`` methods zmq needs, so pyzmq adds a tornado selector thread and warns.
+    On Windows (Python 3.11+, no loop running) the notebook runs instead on its own
+    ``SelectorEventLoop`` via ``asyncio.Runner``. Like the loops ``Runner`` creates itself,
+    it is this thread's current loop during the run, then closed and unset (as after
+    ``asyncio.run``); no process-wide setting changes. The kernel is started with
+    ``subprocess.Popen``, so the selector loop's lack of asyncio subprocess support does
+    not apply. Elsewhere, and inside an already-running loop, ``client.execute()`` runs as
+    before.
+    """
+    if sys.platform == "win32" and sys.version_info >= (3, 11) and not _loop_running():
+        try:
+            with asyncio.Runner(loop_factory=_selector_loop) as runner:
+                runner.run(client.async_execute())
+        finally:
+            asyncio.set_event_loop(None)
+    else:
+        client.execute()
+
+
 def execute(nb: Mapping[str, Any], notebook: str, out_dir, run_id: str, *,
             env: Optional[Mapping[str, str]] = None, kernel_name: Optional[str] = None,
             root: Path = BANK_ROOT) -> Dict[str, Any]:
@@ -204,7 +246,7 @@ def execute(nb: Mapping[str, Any], notebook: str, out_dir, run_id: str, *,
     os.environ.update(env or {})
     started, t0, error = _now(), time.perf_counter(), None
     try:
-        client.execute()
+        _run_notebook(client)
     except Exception as exc:                            # noqa: BLE001 - recorded, then raised
         error = f"{type(exc).__name__}: {str(exc).strip().splitlines()[-1] if str(exc).strip() else ''}"
     finally:

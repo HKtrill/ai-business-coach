@@ -59,7 +59,7 @@ class OOFResult:
 
         Does not and cannot prove that a fold model never saw a row — that is
         enforced by construction in ``OOFScorer`` and verified independently by
-        ``tests/test_rf_router_leakage.py``.
+        ``tests/stage2/test_rf_router_oof.py``.
         """
         n = len(self.proba)
         if not (len(self.scored_mask) == len(self.fold_id) == n):

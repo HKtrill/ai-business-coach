@@ -40,7 +40,7 @@ from ..forest import ForestTrainer
 from ..oof import OOFScorer
 from ..oof.folds import check_aligned
 from ..reporting import binding_after
-from ..threshhold import ThresholdSolver
+from ..thresholds import ThresholdSolver
 
 __all__ = ["Objective", "OBJECTIVES", "evaluate_params"]
 

@@ -49,7 +49,7 @@ from blackbox_pipeline.models.rf_router.evaluation import (
     paired_bootstrap,
     slippage_table,
 )
-from blackbox_pipeline.models.rf_router.threshhold import ThresholdSolver
+from blackbox_pipeline.models.rf_router.thresholds import ThresholdSolver
 from blackbox_pipeline.models.rf_router.reporting import pass_agreement
 from blackbox_pipeline.models.rf_router.tuning import (
     ARM_A0, ARM_B, ARM_C, ARM_D, ARM_E,

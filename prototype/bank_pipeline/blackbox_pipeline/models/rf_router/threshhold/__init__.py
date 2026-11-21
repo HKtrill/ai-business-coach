@@ -1,42 +1,22 @@
 """
-blackbox_pipeline.models.rf_router.thresholds
+blackbox_pipeline.models.rf_router.threshhold
 =============================================
-Operating-point selection.
+Historical import path of ``blackbox_pipeline.models.rf_router.thresholds``
+(the package's name before PR 41).
 
-One rule governs this whole package: **thresholds are solved from training /
-out-of-fold data only**. No function here accepts test probabilities or test
-labels, and none should ever be given them.
-
-Routing conventions (strict inequalities, matching ``router.predict``)::
-
-    Pass 1 routes NOT_SUBSCRIBE when  p < t1
-    Pass 2 flags  SUBSCRIBE     when  p > t2
-
-``t1`` is the LARGEST threshold whose band still satisfies the NPV floor and
-both leakage budgets; ``t2`` is the SMALLEST threshold whose band still
-satisfies the precision floor (and the recall floor, when set). The reasoning
-for each sits on the corresponding method in ``solver``.
-
-Layout
-------
-``results``   ``ThresholdResult`` / ``ThresholdPair``
-``bandscan``  which bands a score can realise, and their edges
-``solver``    ``ThresholdSolver`` — the two scans and the ordering check
+Kept so that historical callers and pickles resolve unchanged: anything that
+imports ``rf_router.threshhold.<module>``, or was pickled under that path, gets
+the ``rf_router.thresholds`` module of the same name (one object, not a copy),
+so no code is duplicated and types compare equal. New code imports
+``rf_router.thresholds``.
 """
 
-from __future__ import annotations
-
-from .results import ThresholdPair, ThresholdResult
-from .solver import ThresholdSolver
-
-__all__ = ["ThresholdResult", "ThresholdPair", "ThresholdSolver"]
-
-# Back-compat: these were module-private helpers in the old thresholds.py.
-# Safe to delete once nothing imports them by their old names.
-from .bandscan import (  # noqa: F401
-    lower_band_sizes as _lower_band_sizes,
-    lower_edge as _lower_edge,
-    prepare_scores as _prepare,
-    upper_band_sizes as _upper_band_sizes,
-    upper_edge as _upper_edge,
+from blackbox_pipeline.models.rf_router.thresholds import *          # noqa: F401,F403
+from blackbox_pipeline.models.rf_router.thresholds import __all__    # noqa: F401
+from blackbox_pipeline.models.rf_router.thresholds import (          # noqa: F401
+    _lower_band_sizes,
+    _lower_edge,
+    _prepare,
+    _upper_band_sizes,
+    _upper_edge,
 )

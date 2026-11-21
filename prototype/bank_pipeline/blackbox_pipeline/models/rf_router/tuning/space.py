@@ -12,7 +12,7 @@ their tuning budgets comparable.
 Cell 22 / ``glass_pipeline.glass_router.rf.rf_training._tune_rf``. Optuna's
 samplers draw from one RNG stream, so reordering the calls would change which
 configurations a seeded study visits and the baseline would no longer reproduce.
-``tests/test_rf_router_refactor.py`` pins the order.
+``tests/stage2/test_rf_router_refactor.py`` pins the order.
 """
 
 from __future__ import annotations

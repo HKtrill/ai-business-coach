@@ -625,7 +625,7 @@ class ILPRuleSelector:
 
         atoms = membership_atoms([r.rule_id for r in valid], arrays, n_rows)
         prob = self.ilp_builder.create_problem(pass_name)
-        decision_vars = self.ilp_builder.create_decision_variables(valid)
+        decision_vars = self.ilp_builder.create_decision_variables(prob, valid)
 
         # Union coverage: each row counted once, however many selected rules match it
         coverage_expr, raw_weight, n_weighted_atoms, z_links = self.ilp_builder.add_union_coverage(
