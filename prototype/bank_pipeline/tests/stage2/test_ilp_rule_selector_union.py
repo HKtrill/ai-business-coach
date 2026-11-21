@@ -16,7 +16,9 @@ import itertools
 
 import numpy as np
 import pytest
+from pulp import PULP_CBC_CMD, lpSum
 
+import glass_pipeline.glass_router.ilp_rule_selector.ilp_builder as ilp_builder_mod
 import glass_pipeline.glass_router.ilp_rule_selector.ilp_rule_selector as ilp_mod
 from glass_pipeline.glass_router.ilp_rule_selector.ilp_rule_selector import (
     ILPRuleSelector, SelectorInfeasibleError, PROVEN, INCUMBENT, INFEASIBLE, NO_SOLUTION,
@@ -250,13 +252,34 @@ def test_novelty_floor_is_set_level_not_pairwise():
 # ============================================================================
 # 4. ILP union coverage accounting
 # ============================================================================
+def test_the_builder_runs_pulps_bundled_cbc_with_the_accepted_options(monkeypatch):
+    """PR 41: COIN_CMD on the executable PULP_CBC_CMD ran (CBC 2.10.3 with PuLP 3.3.2),
+    with the selector's solver options unchanged."""
+    seen, real = [], ilp_builder_mod.COIN_CMD
+
+    def recording(**kwargs):
+        seen.append(kwargs)
+        return real(**kwargs)
+
+    monkeypatch.setattr(ilp_builder_mod, "COIN_CMD", recording)
+    n, y, rules = _abc()
+    b = make_selector().ilp_builder
+    prob = b.create_problem("solver_identity")
+    x = b.create_decision_variables(prob, rules)
+    prob.setObjective(lpSum(x.values()))
+    assert b.solve(prob, time_limit=60, gap_rel=0.0) == "Optimal"
+    assert len(seen) == 1 and seen[0]["path"] == PULP_CBC_CMD.pulp_cbc_path
+    assert {k: v for k, v in seen[0].items() if k not in ("path", "logPath")} == dict(
+        msg=0, timeLimit=60, warmStart=False, gapRel=0.0, gapAbs=None)
+
+
 def test_union_coverage_expression_counts_each_row_once():
     n, y, rules = _abc()
     sel = make_selector()
     b = sel.ilp_builder
     arrays = {r.rule_id: get_covered_array(r, n) for r in rules}
     prob = b.create_problem("accounting")
-    x = b.create_decision_variables(rules)
+    x = b.create_decision_variables(prob, rules)
     cov, raw, n_weighted, z_links = b.add_union_coverage(prob, rules, x, arrays, np.ones(n, int))
     assert raw == {"A": 5, "B": 4, "C": 3}
     prob += x["A"] == 1

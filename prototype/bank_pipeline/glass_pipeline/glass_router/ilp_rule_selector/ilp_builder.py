@@ -12,7 +12,8 @@ from typing import List, Dict, Optional, Tuple
 
 import numpy as np
 from pulp import (
-    LpProblem, LpVariable, LpMaximize, LpAffineExpression, lpSum, PULP_CBC_CMD, LpStatus,
+    LpProblem, LpVariable, LpMaximize, LpAffineExpression, lpSum, COIN_CMD, PULP_CBC_CMD,
+    LpStatus,
 )
 
 from glass_pipeline.glass_router.core.rule import EvaluatedRule
@@ -27,6 +28,10 @@ _CBC_RESULT = re.compile(r"^Result - (.+?)\s*$", re.M)
 _CBC_OBJECTIVE = re.compile(r"^Objective value:\s+" + _CBC_NUMBER, re.M)
 _CBC_NO_INCUMBENT = 1e49   # CBC prints 1e+50 as the objective when it has no solution
 _CBC_PROVEN = "Optimal solution found"
+# PR 41: the CBC executable bundled with PuLP 3.x (2.10.3 with the recorded PuLP 3.3.2),
+# which every accepted Stage 2 fit ran. COIN_CMD on this path runs what PULP_CBC_CMD(...)
+# ran (PULP_CBC_CMD is COIN_CMD with this path), without the deprecated solver class.
+_BUNDLED_CBC = PULP_CBC_CMD.pulp_cbc_path
 
 
 def parse_cbc_log(text: str, maximize: bool) -> dict:
@@ -174,7 +179,7 @@ class ILPBuilder:
             if len(member_ids) == 1:
                 terms.append(w * decision_vars[member_ids[0]])
                 continue
-            z = LpVariable(f"z_{len(z_links)}", lowBound=0, upBound=1)
+            z = prob.add_variable(f"z_{len(z_links)}", lowBound=0, upBound=1)
             prob += z <= lpSum(decision_vars[rid] for rid in member_ids), f"link_z_{len(z_links)}"
             terms.append(w * z)
             z_links.append((z, list(member_ids)))
@@ -215,7 +220,7 @@ class ILPBuilder:
             if len(member_ids) == 1:
                 terms.append(p_a * decision_vars[member_ids[0]])
                 continue
-            u = LpVariable(f"leak_{a}", lowBound=0, upBound=1)
+            u = prob.add_variable(f"leak_{a}", lowBound=0, upBound=1)
             for k, rid in enumerate(member_ids):
                 prob += u >= decision_vars[rid], f"leak_link_{a}_{k}"
             terms.append(p_a * u)
@@ -261,7 +266,7 @@ class ILPBuilder:
             if len(member_ids) == 1:
                 indicator[a] = decision_vars[member_ids[0]]
                 continue
-            y = LpVariable(f"in_{a}", lowBound=0, upBound=1)
+            y = prob.add_variable(f"in_{a}", lowBound=0, upBound=1)
             for k, rid in enumerate(member_ids):
                 prob += y >= decision_vars[rid], f"in_lo_{a}_{k}"
             prob += y <= lpSum(decision_vars[rid] for rid in member_ids), f"in_hi_{a}"
@@ -326,22 +331,22 @@ class ILPBuilder:
             holds parse_cbc_log's reading of CBC's log for this solve (all
             None when the log has no such line or PuLP lacks logPath).
         """
-        kwargs = dict(msg=0, timeLimit=max(1, int(time_limit)), warmStart=warm_start,
-                      gapRel=gap_rel, gapAbs=gap_abs)
+        kwargs = dict(path=_BUNDLED_CBC, msg=0, timeLimit=max(1, int(time_limit)),
+                      warmStart=warm_start, gapRel=gap_rel, gapAbs=gap_abs)
         self.last_solver_log = None
         if not self.record_solver_log:
-            prob.solve(PULP_CBC_CMD(**kwargs))
+            prob.solve(COIN_CMD(**kwargs))
             self.last_sol_status = getattr(prob, "sol_status", None)
             return LpStatus[prob.status]
         fd, log_path = tempfile.mkstemp(prefix="glass_cbc_", suffix=".log")
         os.close(fd)
         try:
             try:
-                solver = PULP_CBC_CMD(**kwargs, logPath=log_path)
+                solver = COIN_CMD(**kwargs, logPath=log_path)
             except TypeError:      # a PuLP without logPath: record the absence
                 solver = None
             if solver is None:
-                prob.solve(PULP_CBC_CMD(**kwargs))
+                prob.solve(COIN_CMD(**kwargs))
                 self.last_solver_log = {"source": None, "result": None, "objective": None,
                                         "bound": None, "bound_basis": None, "gap_abs": None,
                                         "gap_rel": None}
@@ -382,8 +387,9 @@ class ILPBuilder:
         problem_name = f"GLASS_ROUTER_{pass_name.replace(' ', '_').replace('(', '').replace(')', '')}"
         return LpProblem(problem_name, LpMaximize)
 
-    def create_decision_variables(self, rules: List[EvaluatedRule]) -> Dict[int, LpVariable]:
+    def create_decision_variables(self, prob: LpProblem,
+                                  rules: List[EvaluatedRule]) -> Dict[int, LpVariable]:
         return {
-            r.rule_id: LpVariable(f"x_{r.rule_id}", cat="Binary")
+            r.rule_id: prob.add_variable(f"x_{r.rule_id}", cat="Binary")
             for r in rules
         }

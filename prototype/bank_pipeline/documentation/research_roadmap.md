@@ -138,37 +138,29 @@
 
 ---
 
-#### Commit 6 — Integration Validation and PR Closure
+#### Commit 6 — Compatibility Corrections, Final Validation, and PR Closure
 
-**Objective:** Validate all PR 41 changes, resolve introduced regressions, and establish a clean repository baseline for Phase 2 experimentation.
+**Objective:** Resolve remaining compatibility issues, validate all PR 41 changes, preserve accepted scientific behavior, and prepare the repository for Phase 2.
 
-**Step 6A — Targeted Compatibility and Provenance Verification**
+**Step 6A — Final Compatibility Corrections, Regression Testing, and Closure**
 
-- [ ] Verify RF Router legacy and corrected imports, module identity, and historical artifact loading.
-- [ ] Execute targeted Windows notebook-vehicle tests and a minimal representative notebook if a Commit 4 correction was implemented.
-- [ ] Verify warning elimination, subprocess and kernel compatibility, exception propagation, and cleanup behavior.
-- [ ] Revert or correct the Windows execution-path change if runtime validation fails.
-- [ ] Test PuLP 4.x compatibility in an isolated environment if a migration was prepared.
-- [ ] Verify ILP solver behavior, infeasibility handling, termination statuses, and Stage 2 selector parity.
-- [ ] Finalize PuLP dependency constraints and warning filters only after compatibility is demonstrated; otherwise retain the accepted configuration.
-- [ ] Verify accepted Phase 1 paths, artifact identifiers, compatibility imports, and recorded execution commands.
-- [ ] Run applicable accepted-record `check` commands.
-- [ ] Resolve targeted compatibility failures before comprehensive testing.
+- [X] Evaluate and implement minimal PuLP 3.3.2 API corrections to eliminate deprecated `LpVariable` and `PULP_CBC_CMD` usage without changing CBC 2.10.3, ILP objectives, constraints, solver-status semantics, or accepted Stage 2 behavior.
+- [X] Preserve `pulp>=2.8,<4` and verify that replacement APIs maintain the accepted solver configuration.
+- [X] Remove the two targeted PuLP deprecation-warning filters only after confirming the underlying warnings are resolved.
+- [X] Verify RF Router legacy and corrected imports, module identity, and historical artifact loading.
+- [X] Execute Windows notebook-vehicle tests and representative kernel execution; confirm warning elimination, subprocess compatibility, exception propagation, and cleanup.
+- [X] Verify ILP solver behavior, infeasibility handling, termination statuses, and Stage 2 selector compatibility.
+- [X] Verify accepted Phase 1 paths, artifact identifiers, historical compatibility imports, and recorded execution commands.
+- [X] Run applicable accepted-record `check` commands.
+- [X] Resolve compatibility failures and regressions introduced by PR 41.
+- [X] Run the full regression suite and applicable real-data tests after corrections stabilize.
+- [X] Re-run affected tests following fixes and repeat broader validation only when necessary.
+- [X] Confirm accepted scientific behavior, model artifacts, and baseline results remain unchanged.
+- [X] Inspect the complete diff for unintended changes, generated files, and unnecessary modifications.
+- [X] Finalize the five-notebook responsibility map, research documentation, and compatibility decisions.
+- [X] Update the roadmap and prepare PR 41 for review and merge.
 
-**Step 6B — Comprehensive Regression Testing and PR Closure**
-
-- [ ] Run the full regression suite after targeted compatibility validation succeeds.
-- [ ] Run applicable real-data tests.
-- [ ] Investigate and resolve regressions introduced by PR 41.
-- [ ] Re-run affected tests after corrections and repeat comprehensive validation if subsequent changes could affect broader behavior.
-- [ ] Confirm accepted scientific behavior, model artifacts, and baseline results remain unchanged.
-- [ ] Inspect the complete diff for unnecessary modifications, generated files, and unintended behavior changes.
-- [ ] Finalize the five-notebook responsibility map and research organization notes.
-- [ ] Document completed maintenance changes, compatibility decisions, and remaining limitations.
-- [ ] Confirm lightweight GLASS development tooling and advanced training-strategy research remain outside PR 41.
-- [ ] Update the roadmap and prepare PR 41 for review and merge.
-
-**Deliverable:** A minimally cleaned, comprehensively validated repository ready for Phase 2, with preserved Phase 1 provenance, documented research organization, and verified compatibility improvements.
+**Deliverable:** A cleaned, comprehensively validated repository ready for Phase 2, with resolved compatibility issues where scientifically safe, preserved Phase 1 provenance, and no unintended modeling changes.
 
 ---
 

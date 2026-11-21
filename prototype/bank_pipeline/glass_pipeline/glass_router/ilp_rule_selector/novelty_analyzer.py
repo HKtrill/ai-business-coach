@@ -11,7 +11,7 @@ from typing import List, Tuple, Optional
 
 import numpy as np
 from scipy.sparse import csc_matrix
-from pulp import LpVariable, lpSum
+from pulp import lpSum
 
 from glass_pipeline.glass_router.core.rule import EvaluatedRule
 from .utils import (
@@ -213,7 +213,7 @@ class NoveltyAnalyzer:
             big_m = min(len(member_ids), max_rules) - 1
             if big_m <= 0:
                 continue
-            m_a = LpVariable(f"m_{a}", cat="Binary")
+            m_a = prob.add_variable(f"m_{a}", cat="Binary")
             prob += (lpSum(decision_vars[rid] for rid in member_ids) - 1 <= big_m * m_a,
                      f"multi_cover_{a}")
             multi[a] = m_a
