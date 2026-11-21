@@ -2,219 +2,133 @@
 
 ### Phase 2 — Research Organization, Training Research, and Optimized Cascades
 
-### PR 41 — Structural Cleanup and Research Organization
-
-**Objective:** Complete targeted repository maintenance, document the five-notebook research structure, address selected deferred engineering tasks, and prepare for Phase 2 without changing accepted scientific behavior, historical provenance, or model artifacts.
-
-**Execution principles:**
-
-- Preserve Phase 1 modeling contracts, accepted results, artifacts, and reproducibility records.
-- Keep provenance-sensitive paths and historical compatibility identifiers unchanged.
-- Prioritize demonstrated maintenance needs over speculative restructuring.
-- Preserve working code and existing organization when no meaningful improvement is justified.
-- Use targeted regression tests after code changes; reserve comprehensive integration testing for Commit 6.
-- Do not regenerate models, change scientific objectives, or rebuild notebooks in this PR.
-
----
-
-#### Commit 1 — Phase 1 Baseline Protection and Repository Audit
-
-**Objective:** Confirm existing Phase 1 protections and identify minimal structural changes needed for Phase 2.
-
-**Step 1A — Baseline Protection and Repository Inventory**
-
-- [x] Confirm the PR 40 merge commit and existing annotated Phase 1 baseline tag (`phase1-baseline-2026-11-17`).
-- [x] Confirm the baseline tag points to the correct commit and is published.
-- [x] Identify provenance-sensitive paths: `upstream_regeneration/`, `stage4_regeneration/`, `phase1_reproduction/`, `stage2_crossfit/`, `stage2_binning/`, `stage1_calibration/`, and `research_logs/`.
-- [x] Document historical compatibility constraints, including `meta_ebm`, persisted artifact identifiers, import paths, and recorded execution commands.
-- [x] Review existing Python modules, tests, filenames, and notebook responsibilities.
-- [x] Identify misleading historical filenames, misplaced tests, and organizational inconsistencies.
-- [x] Identify reusable training, evaluation, plotting, and artifact-loading utilities.
-- [x] Identify unnecessary duplication and distinguish safe consolidation from behavior-sensitive refactoring.
-- [x] Establish a minimal file-movement plan and relevant regression-test coverage.
-- [x] Record dependencies between proposed changes and provenance-sensitive entry points.
-- [x] Plan new file scaffolding.
-
----
-
-#### Commit 2 — Targeted Module and Documentation Cleanup
-
-**Objective:** Correct identified naming and documentation inconsistencies without unnecessary restructuring.
-
-**Step 2A — Structural and Reference Corrections**
-
-- [x] Remove the obsolete `prototype/glass_pipeline/data/db/` rule and associated misleading comment from `.gitignore`, preserving the tracked database.
-- [x] Correct stale RF Router test-file references in four module docstrings.
-- [x] Evaluate renaming `rf_router/threshhold/` to `rf_router/thresholds/`, accounting for permanent compatibility requirements.
-- [x] If approved, use `git mv`, preserve old import paths through compatibility modules, and update affected imports and references.
-- [x] Preserve existing test organization, serialized artifact compatibility, historical identifiers, and scientific behavior.
-- [x] Avoid unrelated file moves, stylistic renames, or test restructuring.
-
-**Step 2B — Threshold Naming Correction and Compatibility Review**
-
-- [x] Rename `rf_router/threshhold/` to `rf_router/thresholds/`, preserving historical import and serialization compatibility.
-- [x] Update affected imports and introduce minimal backward-compatibility modules.
-- [x] Review old and new module paths, class identities, and serialized artifact dependencies.
-- [x] Identify relevant RF Router, import, and artifact-loading regression tests for Commit 6.
-- [x] Document any compatibility risks requiring runtime verification.
-- [x] Review the complete diff for unintended changes.
-- [x] Defer test execution to Commit 6 — Integration Validation and PR Closure.
-
----
-
-#### Commit 3 — Research Utility Review and Five-Notebook Mapping
-
-**Objective:** Document existing research responsibilities and prepare for future notebook restructuring without prematurely refactoring working utilities.
-
-**Step 3A — Utility and Research Organization**
-
-- [x] Record existing shared metrics, thresholds, evaluation, and artifact-loading utilities for reuse.
-- [x] Document intentional separation between production, research, and provenance-sensitive utilities.
-- [x] Defer behavior-sensitive consolidation and duplicated research-function cleanup to appropriate later PRs.
-- [x] Create a five-notebook responsibility map covering Feature Research, Training Research, GLASS Cascade, Black-Box Cascade, and Comparative Analysis.
-- [x] Map relevant existing notebook cells, supporting modules, and research dependencies.
-- [x] Identify fixed Phase 1 notebook-cell contracts and boundaries for future notebook migration.
-- [x] Add only useful documentation or scaffolding required by the agreed Phase 2 structure.
-- [x] Do not rebuild notebooks, relocate research modules, or run tests for documentation-only changes.
-
----
-
-#### Commit 4 — Windows Notebook Execution Warning
-
-**Objective:** Investigate and conditionally correct the Windows ZeroMQ/asyncio warning without disrupting the accepted notebook execution pathway. Defer runtime validation to Commit 6.
-
-**Step 4A — Compatibility Investigation and Conditional Correction**
-
-- [x] Review the previously documented Windows ZeroMQ/asyncio warning and its reproduction evidence from PR 40.
-- [x] Inspect interactions between nbclient, pyzmq, asyncio, and Jupyter kernel startup.
-- [x] Evaluate the proposed Windows-only `asyncio.Runner(loop_factory=asyncio.SelectorEventLoop)` approach through static compatibility analysis.
-- [x] Assess subprocess support, kernel startup requirements, exception propagation, and cleanup behavior.
-- [x] Identify compatibility risks and determine whether a technically credible correction exists.
-- [x] Exclude global event-loop policy changes, deprecated policies, and warning suppression.
-- [x] Implement the minimal Windows-specific correction in `upstream_regeneration/vehicle.py`, preserving the existing fallback where necessary.
-- [x] Preserve existing execution behavior on non-Windows platforms.
-- [x] Treat the modification to provenance-sensitive execution code as an explicitly reviewed, versioned exception.
-- [x] Preserve accepted Phase 1 execution records, artifacts, and historical entry points.
-- [x] Review the implementation statically for execution-path changes, compatibility risks, and unintended modifications.
-- [x] Document unresolved runtime assumptions and the existing fallback behavior.
-- [x] Defer execution-vehicle tests, warning-elimination verification, and representative Windows notebook execution to Commit 6.
-- [x] Reserve full clean-kernel notebook execution for PR 46 unless Commit 6 validation demonstrates that additional execution is necessary.
----
-
-#### Commit 5 — PuLP 4.x Compatibility Assessment and Migration
-
-**Objective:** Investigate and conditionally prepare PuLP 4.x compatibility while preserving validated Stage 2 ILP selector behavior. Defer all runtime validation to Commit 6.
-
-#### Commit 5 — PuLP 4.x Compatibility Assessment
-
-**Objective:** Assess PuLP 4.x compatibility, document the migration risks, and preserve the accepted Stage 2 ILP implementation until a scientifically validated solver migration is justified.
-
-**Step 5A — Compatibility Audit and Migration Disposition**
-
-- [x] Inventory existing PuLP usage, dependency constraints, Python requirements, solver configuration, and warning filters.
-- [x] Review deprecated `LpVariable` construction, `PULP_CBC_CMD`, constraint access, and solver-status handling.
-- [x] Identify dependencies on CBC binaries, termination statuses, time limits, and feasible-but-not-optimal solutions.
-- [x] Compare the existing pinned implementation against documented PuLP 4.x APIs and compatibility requirements through static analysis.
-- [x] Establish compatibility acceptance criteria using existing Stage 2 selector contracts and representative solver cases.
-- [x] Identify technical blockers and distinguish confirmed API changes from behavior requiring runtime verification.
-- [x] Determine that PuLP 4.x migration requires solver and protocol changes beyond PR 41's maintenance scope.
-- [x] Select retention of the existing PuLP 3.x integration rather than introducing unvalidated changes.
-- [x] Preserve the existing `pulp>=2.8,<4` constraint, CBC configuration, and two targeted deprecation-warning filters.
-- [x] Document the PuLP 4.x incompatibilities, scientific risks, and future migration requirements in the Deferred Engineering section.
-- [x] Identify the existing ILP regression and artifact-compatibility checks applicable to Commit 6A.
-- [x] Confirm no Stage 2 scientific contracts, accepted artifacts, or historical provenance are modified.
-- [x] Review the final documentation diff and defer runtime checks to Commit 6.
-
-**Step 5B — Compatibility Documentation and Deferred Validation**
-
-- [x] Document the approved decision to retain PuLP 3.x and the existing CBC configuration.
-- [x] Preserve `pulp>=2.8,<4` and both targeted deprecation-warning filters.
-- [x] Record PuLP 4.x API incompatibilities, solver-behavior risks, and future migration requirements.
-- [x] Identify existing ILP selector, solver-status, infeasibility, and Stage 2 regression tests for Commit 6A.
-- [x] Defer PuLP 4.x migration and solver-parity experiments to future Stage 2 research.
-- [x] Confirm no scientific contracts, accepted artifacts, dependencies, or historical provenance were modified.
-- [x] Review the final documentation diff and update the roadmap.
-- [x] Defer runtime validation of the retained PuLP integration to Commit 6.
-
----
-
-#### Commit 6 — Compatibility Corrections, Final Validation, and PR Closure
-
-**Objective:** Resolve remaining compatibility issues, validate all PR 41 changes, preserve accepted scientific behavior, and prepare the repository for Phase 2.
-
-**Step 6A — Final Compatibility Corrections, Regression Testing, and Closure**
-
-- [X] Evaluate and implement minimal PuLP 3.3.2 API corrections to eliminate deprecated `LpVariable` and `PULP_CBC_CMD` usage without changing CBC 2.10.3, ILP objectives, constraints, solver-status semantics, or accepted Stage 2 behavior.
-- [X] Preserve `pulp>=2.8,<4` and verify that replacement APIs maintain the accepted solver configuration.
-- [X] Remove the two targeted PuLP deprecation-warning filters only after confirming the underlying warnings are resolved.
-- [X] Verify RF Router legacy and corrected imports, module identity, and historical artifact loading.
-- [X] Execute Windows notebook-vehicle tests and representative kernel execution; confirm warning elimination, subprocess compatibility, exception propagation, and cleanup.
-- [X] Verify ILP solver behavior, infeasibility handling, termination statuses, and Stage 2 selector compatibility.
-- [X] Verify accepted Phase 1 paths, artifact identifiers, historical compatibility imports, and recorded execution commands.
-- [X] Run applicable accepted-record `check` commands.
-- [X] Resolve compatibility failures and regressions introduced by PR 41.
-- [X] Run the full regression suite and applicable real-data tests after corrections stabilize.
-- [X] Re-run affected tests following fixes and repeat broader validation only when necessary.
-- [X] Confirm accepted scientific behavior, model artifacts, and baseline results remain unchanged.
-- [X] Inspect the complete diff for unintended changes, generated files, and unnecessary modifications.
-- [X] Finalize the five-notebook responsibility map, research documentation, and compatibility decisions.
-- [X] Update the roadmap and prepare PR 41 for review and merge.
-
-**Deliverable:** A cleaned, comprehensively validated repository ready for Phase 2, with resolved compatibility issues where scientifically safe, preserved Phase 1 provenance, and no unintended modeling changes.
-
----
-
 #### PR 42 — Feature Research Notebook and Feature-Contract Investigation
 
 **Objective:** Develop the Feature Research Notebook and determine, on training-side evidence, whether the accepted feature representations should be retained or separately revised before training optimization.
 
-**Feature research**
+**Execution principles:**
 
+- Use training rows only: the notebook draws the cascades' split and never binds a test row, test prediction, or test metric.
+- Fit every target-dependent statistic, selection, and transformation within its training fold, and register evaluation criteria before candidate results are examined.
+- Preserve the frozen PR 39 baseline, the accepted Phase 1 artifacts, and the production feature code, including `feature_research/feature_engineering/`, which Stage 3 imports for both arms. A revised feature contract is a new, separately versioned contract.
+- Reuse existing research modules and accepted evidence code by import (`shared.stage1.crossfit`, `stage2_binning`, `stage2_crossfit`) without modifying them, and add infrastructure only for a demonstrated need.
+- Measure predictive effects with the accepted model configurations. Tuning belongs to PR 44, contract adoption and artifact regeneration to PR 45, and temporal robustness execution to PR 49.
+- Use targeted tests after code changes; reserve full regression validation for Commit 6.
+
+**Commit order:** Commit 2 precedes the research commits. Commit 3 has the highest priority because its findings can invalidate later conclusions, so it precedes Commits 4 and 5, which are independent of each other. Commit 6 follows all of them.
+
+---
+
+##### Commit 1 — Roadmap Planning and Deferred Engineering Updates
+
+**Objective:** Organize PR 42 into reviewable commits and update the Deferred Engineering entries for the completed PR 41 work. Documentation only.
+
+- [x] Review the PR 42 scope and its dependencies in PRs 43–50 against the current repository.
+- [x] Organize PR 42 into commits, retaining its full research scope and safeguards.
+- [x] Update the Deferred Engineering entries: the Windows execution warning and PuLP 3.3.2 deprecations resolved in PR 41, a separate PuLP 4.x migration task, and the Joblib/Loky shutdown traceback.
+- [x] Make no source-code, notebook, or artifact changes.
+
+---
+
+##### Commit 2 — Feature Research Notebook Foundation and Feature Inventory
+
+**Objective:** Create the train-only Feature Research Notebook and inventory the accepted features and contracts that the research commits evaluate.
+
+- [ ] Create the Feature Research Notebook as a new file in `feature_research/`, built from the cells and modules mapped in `documentation/notebook_map.md` (section 2.1). Leave the existing notebooks unchanged.
+- [ ] Extend notebook tests G5 (one labelled top-to-bottom path) and G7 (the cascades' split protocol; no test row bound) to the new notebook, and read accepted router and upstream-model artifacts only through the PR 38 boundary extractors.
+- [ ] Write research records under `research_logs/pr42/` with run identifiers, seeds, and code identity, never over an existing record.
 - [ ] Inventory existing engineered features, feature contracts, and stage-specific feature populations.
-- [ ] Review feature distributions, correlations, redundancy, predictive contributions, and stability.
-- [ ] Investigate interpretable feature interactions and candidate transformations.
-- [ ] Verify that every candidate feature is available at the intended prediction time.
-- [ ] Ensure feature selection, encoding, and transformation fitting remain fold-isolated.
-- [ ] Evaluate candidate features using training-side evidence and reproducible statistical analyses.
-- [ ] Preserve shared feature comparability between arms.
+- [ ] For each feature, record its stage and arm, source variables, whether it is target-derived, where it is fitted (full training split or per-fold refits), and how it is applied to the test split.
+- [ ] Record the frozen references for later comparison: the Stage 1 feature contracts, the Stage 2 binning identity, the Stage 3 feature DAG and block-cache identity, and the three EBM interaction pairs.
+- [ ] Record the duplicated feature-engineering code in `shared/stage2/feature_engineering.py` and `feature_research/feature_engineering/` (notebook map section 5) for the Commit 6 decision.
 
-**Stage 1 temporal validity (high priority)**
+---
+
+##### Commit 3 — Stage 1 Temporal Validity and Target-Derived Feature Audit (high priority)
+
+**Objective:** Determine whether the accepted target-derived features carry direct label leakage, temporal look-ahead, or both, evaluate past-only alternatives, and design the temporal robustness protocol before other feature research builds on these features.
 
 Context from repository inspection: the dataset rows are in date order (May 2008 – November 2010), and the subscription rate rises from about 3–6% to about 45–57% over that period. Two of the three Stage 1 features, `subscribe_rate_by_euribor_bin` and `subscribe_rate_by_dow_month`, are target rates keyed on period-identifying variables, and most euribor quantile bins fall within one to three consecutive months. Under the random split, these encodings are fitted partly on rows contacted later in the same period.
 
+The Stage 1 cross-validations (tuning, OOF, and inner calibration folds) already refit both encodings on each fold's training rows (`shared.stage1.crossfit`, audits F3 and F19), and the full-train fit scores the test split. The audit verifies these refits and addresses a separate question: temporal look-ahead under the random split.
+
+**Step 3A — Encoding Construction and Leakage Audit**
+
+- [ ] Establish the time index used throughout PR 42 from the dataset's date order, and record its basis and limits.
 - [ ] Document exactly how both encodings are constructed, fitted, and applied (training split, Stage 1 fold designs, test mapping).
 - [ ] Determine whether the protocol contains direct label leakage, temporal look-ahead, or both.
 - [ ] Verify that every transformation is fitted within its proper training fold.
-- [ ] Evaluate past-only (expanding-window) encodings: feature availability, deployment realism, and predictive effect.
 - [ ] Extend the audit to the other target-derived features used by Stages 2–3, such as the neighborhood subscription density.
+
+**Step 3B — Past-Only Encodings and Temporal Robustness Protocol**
+
+- [ ] Evaluate past-only (expanding-window) encodings: feature availability, deployment realism, and predictive effect.
 - [ ] Determine whether candidate revisions require separately versioned feature contracts; do not alter the accepted PR 39 baseline.
 - [ ] Design the temporal robustness protocol: chronological split, past-only encodings, and a policy for prevalence shift, which affects thresholds, abstention cuts, and the Stage 2 NPV and precision obligations. Execution follows in PR 49.
+- [ ] Record the interim temporal-validity finding and its implications for the frozen PR 39 evidence used in PR 43, the candidate contracts in PRs 44–45, and the claim boundaries in PR 49.
 
-**Procedural feature decisions**
+---
 
-- [ ] Where feasible, make the NSD/ECI bin derivation and the EBM interaction selection procedural and fold-fitted, so repeated-split and nested evaluations can refit them rather than reuse constants chosen on all training rows.
+##### Commit 4 — Stage 2 NSD/ECI Binning Drift, Sensitivity, and Candidates
 
-**Stage 2 NSD/ECI binning drift and sensitivity (deferred from PR 39)**
+**Objective:** Explain the NSD/ECI lift drift deferred from PR 39, make the bin derivation procedural where feasible, and identify bin candidates for router testing in PR 44, without modifying the frozen binning.
 
+**Step 4A — Drift Reproduction and Diagnosis**
+
+- [ ] Start from the PR 39 Step 3A evidence (`stage2_binning`, record `research_logs/pr39/c3_20261114_231604/`, outcome retain for both families): reuse its per-bin statistics, Wilson intervals, and triggers T1–T4 by import, without modifying the record or its code.
 - [ ] Revisit the substantial lift drift observed during PR 39 Step 3A, particularly:
   - `eci_warm`: original 1.49–1.67× lift versus approximately 1.03× OOF.
   - `eci_hot`: original 3.53× versus approximately 2.50× OOF.
   - `nsd_elevated`: approximately 2.49× pooled OOF lift, with significant fold-level variation.
 - [ ] Reproduce the original NSD/ECI feature-bin research using the corrected, fold-isolated feature engineering implementation.
 - [ ] Distinguish threshold-placement problems from encoder behavior, population shifts, and in-sample label leakage.
+- [ ] Use the Commit 3 findings on the target-derived Stage 2 sources, including period sensitivity, when separating these causes.
 - [ ] Reevaluate decile-lift distributions, candidate thresholds, bin counts, support, confidence intervals, and fold stability.
+
+**Step 4B — Procedural Binning and Candidate Evaluation**
+
+- [ ] Where feasible, make the NSD/ECI bin derivation procedural and fold-fitted, so repeated-split and nested evaluations can refit it rather than reuse constants chosen on all training rows (a limitation recorded in PR 39 Step 3A).
+- [ ] Register the evaluation criteria before candidate results are examined.
 - [ ] Investigate whether transitional or weak bins retain meaningful predictive utility through conjunctions with other Stage 2 features.
 - [ ] Evaluate alternative threshold configurations and bin structures under leakage-safe training protocols, without modifying the frozen Phase 1 baseline.
-- [ ] Identify the candidates that deserve downstream router testing in PR 44 (coverage, constraint feasibility, complementarity, and computational cost).
 - [ ] Compare candidate configurations against the frozen PR 39 binning baseline using predefined evaluation criteria.
+- [ ] Identify the candidates that deserve downstream router testing in PR 44 (coverage, constraint feasibility, complementarity, and computational cost).
 - [ ] Determine whether the existing bins should remain unchanged or whether evidence warrants a separately versioned methodology revision.
 - [ ] If revision is justified, document the required feature-contract changes, G13 leakage audit, downstream artifact regeneration, and follow-up work rather than silently modifying frozen artifacts.
 
-**Acceptance**
+---
+
+##### Commit 5 — Feature Analysis, Interactions, and EBM Interaction Selection
+
+**Objective:** Complete the broader feature research on training-side evidence and make the EBM interaction selection procedural where feasible.
+
+- [ ] Review feature distributions, correlations, redundancy, predictive contributions, and stability.
+- [ ] Include stability across contact periods, using the Commit 3 time index.
+- [ ] Investigate interpretable feature interactions and candidate transformations.
+- [ ] Where feasible, make the EBM interaction selection procedural and fold-fitted, so repeated-split and nested evaluations can refit it rather than reuse constants chosen on all training rows.
+- [ ] Check whether the procedure, run on all training rows, recovers the three accepted pairs, and how consistently each pair is selected across folds. The interaction-budget comparison stays in PR 44 (Step 44C).
+- [ ] Verify that every candidate feature is available at the intended prediction time.
+- [ ] Ensure feature selection, encoding, and transformation fitting remain fold-isolated.
+- [ ] Evaluate candidate features using training-side evidence and reproducible statistical analyses.
+- [ ] Preserve shared feature comparability between arms.
+
+---
+
+##### Commit 6 — Feature-Contract Recommendations and Final Validation
+
+**Objective:** Consolidate the evidence into feature-contract recommendations, confirm that accepted behavior is unchanged, and prepare PR 42 for review.
 
 - [ ] Record candidate configurations, supporting evidence, and rejected alternatives.
 - [ ] Retain the frozen feature contracts unless evidence supports a separately versioned change.
 - [ ] Establish the feature candidates and contracts for subsequent training experiments.
+- [ ] Version each recommended contract separately from the frozen contracts, with its leakage audit and the downstream regeneration it requires, for adoption through PRs 44–45.
+- [ ] Hand off to later PRs: Stage 1 encoding candidates (Step 44A), Stage 2 bin candidates (Step 44B), the EBM interaction procedure (Step 44C), and the temporal protocol and procedural feature refits (PR 49).
+- [ ] Decide where the Stage 3 feature DAG lives and whether the copies in `shared/stage2/feature_engineering.py` can be retired (notebook map section 5). Move code only where accepted features and recorded identities stay unchanged; otherwise defer the move to the adopting contract version.
+- [ ] Run targeted tests for new research code and the notebook tests, then the full regression suite and applicable real-data tests.
+- [ ] Run the applicable accepted-record `check` commands and confirm that the frozen artifacts, contracts, and identities are unchanged.
+- [ ] Run the Feature Research Notebook in a clean kernel and confirm that its records reproduce.
+- [ ] Inspect the complete diff for unintended changes, generated files, and modifications to production feature code.
+- [ ] Update the notebook map, the PR 42 research log, and the roadmap, and decide whether to remove or archive the completed Deferred Engineering items.
 
 **Deliverable:** A reproducible Feature Research Notebook, a documented temporal-validity assessment and robustness protocol, a quantified explanation of the NSD/ECI lift drift, and evidence-based feature-contract recommendations.
 
@@ -584,8 +498,10 @@ Stage 1 has three inputs, so architecture and optimization changes have limited 
 
 ### Deferred Engineering and Optional Research
 
-- [x] **Windows notebook-execution warning (deferred from PR 40).** On Windows, `upstream_regeneration.vehicle.execute` runs nbclient on Python's default Proactor event loop; pyzmq adds a tornado selector thread and emits one `RuntimeWarning` per process. It is non-blocking: every PR 39 execution ran through this path and reproduced deterministically. If addressed, run `client.async_execute()` under `asyncio.Runner(loop_factory=asyncio.SelectorEventLoop)` on Windows only, as a separately versioned execution-path change validated by the vehicle tests, with a full Windows notebook execution only where that validation is already justified (for example, the PR 46 clean-kernel runs). Do not change global event-loop policies, use the deprecated `WindowsSelectorEventLoopPolicy`, or suppress the warning.
-- [x] **PuLP 4.0 compatibility.** The GLASS Router's ILP code constructs `LpVariable` objects directly and uses `PULP_CBC_CMD`, both deprecated in PuLP 3 ahead of PuLP 4.0. `requirements.txt` pins `pulp<4`, and `pytest.ini` keeps two targeted filters for these messages. Assess separately from frozen Stage 2 work.
+- [x] **Windows notebook-execution warning (deferred from PR 40; resolved in PR 41).** On Windows, nbclient ran on Python's default Proactor event loop, which lacks the reader methods zmq needs, so pyzmq added a tornado selector thread and emitted one `RuntimeWarning` per process. PR 41 Commit 4 added a Windows-only path to `upstream_regeneration/vehicle.py` (`_run_notebook`): on Windows with Python 3.11 or later and no running event loop, `client.async_execute()` runs under `asyncio.Runner` on its own `SelectorEventLoop`, which is closed and unset afterward. Other platforms, older Pythons, and calls from a running loop still use `client.execute()`. No global event-loop policy changes, the deprecated `WindowsSelectorEventLoopPolicy` is not used, and the warning is not suppressed. The change is a reviewed exception to the provenance-sensitive execution code. PR 41 Commit 6 validated it with the vehicle tests (`tests/upstream_regeneration/test_execution_path.py`) and a representative Windows kernel execution, confirming the warning's elimination, subprocess compatibility, exception propagation, and cleanup.
+- [x] **PuLP 3.3.2 deprecations (resolved in PR 41).** The GLASS Router's ILP code constructed `LpVariable` objects directly and solved with `PULP_CBC_CMD`, both deprecated in PuLP 3.3. PR 41 Commit 6 replaced them with `prob.add_variable(...)` (`ilp_builder.py`, `novelty_analyzer.py`) and with `COIN_CMD` on the CBC executable bundled with PuLP 3.x (`PULP_CBC_CMD.pulp_cbc_path`; CBC 2.10.3 with the recorded PuLP 3.3.2), which is what `PULP_CBC_CMD` ran. The CBC version, solver options, ILP objectives, constraints, and solver-status semantics are unchanged, and a regression test pins the solver path and options (`tests/stage2/test_ilp_rule_selector_union.py`). Both PuLP warning filters were removed from `pytest.ini`; `requirements.txt` keeps `pulp>=2.8,<4`.
+- [ ] **PuLP 4.x migration (future compatibility).** PuLP 4.0 removes the bundled CBC binary and `PULP_CBC_CMD`, from which `ilp_builder.py` reads its pinned CBC path (`_BUNDLED_CBC`). CBC then comes from the `pulp[cbc]` extra or a `cbc` executable on `PATH`, possibly a different build from CBC 2.10.3, and PuLP 4.0 changes other modelling and solve APIs (see its 3.x-to-4.0 migration guide). Migrating requires a dependency change, a new solver pin, and solver-parity validation against the accepted Stage 2 selections (objectives, termination statuses, time-limit and feasible-but-not-optimal outcomes, and the CBC log parsing in `parse_cbc_log`), as a separately versioned Stage 2 change. Until then, keep `pulp>=2.8,<4`.
+- [ ] **Joblib/Loky shutdown traceback (low priority).** On Windows (Python 3.14.3, Joblib 1.6.0 with vendored Loky 3.6.0, ipykernel 6.31.0), the Joblib/Loky resource tracker can print a `KeyError` traceback for a `joblib_memmapping_folder_` entry during kernel shutdown, after notebook execution has completed. Local reproduction supports a shutdown-order conflict: ipykernel terminates the tracker, and Joblib's exit-time cleanup restarts it with an empty registry. No effect on notebook results, accepted artifacts, or execution records has been observed, and no repository change is required (`research_logs/pr41/pr41_loky_resource_tracker.md`). [Joblib PR #1829](https://github.com/joblib/joblib/pull/1829) concerns temporary-folder registration and cleanup and may address it; before upgrading Joblib, repeat the isolated reproduction with the candidate release.
 - [ ] **Lightweight GLASS development utility.** A small command-driven tool (`run script`, `run notebook`, `run cell`, `apply test`, `scan artifacts`) that reuses existing Python, pytest, notebook, and artifact utilities, protects accepted artifacts, never retrains unexpectedly, and leaves Git operations to Git. Evaluate when its workflow benefit justifies implementation.
 - [ ] Investigate advanced training strategies that survive preliminary scientific and computational screening.
 - [ ] Avoid new framework dependencies or infrastructure without demonstrated need.
