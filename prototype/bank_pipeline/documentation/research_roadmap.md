@@ -34,13 +34,13 @@
 
 **Objective:** Create the train-only Feature Research Notebook and inventory the accepted features and contracts that the research commits evaluate.
 
-- [ ] Create the Feature Research Notebook as a new file in `feature_research/`, built from the cells and modules mapped in `documentation/notebook_map.md` (section 2.1). Leave the existing notebooks unchanged.
-- [ ] Extend notebook tests G5 (one labelled top-to-bottom path) and G7 (the cascades' split protocol; no test row bound) to the new notebook, and read accepted router and upstream-model artifacts only through the PR 38 boundary extractors.
-- [ ] Write research records under `research_logs/pr42/` with run identifiers, seeds, and code identity, never over an existing record.
-- [ ] Inventory existing engineered features, feature contracts, and stage-specific feature populations.
-- [ ] For each feature, record its stage and arm, source variables, whether it is target-derived, where it is fitted (full training split or per-fold refits), and how it is applied to the test split.
-- [ ] Record the frozen references for later comparison: the Stage 1 feature contracts, the Stage 2 binning identity, the Stage 3 feature DAG and block-cache identity, and the three EBM interaction pairs.
-- [ ] Record the duplicated feature-engineering code in `shared/stage2/feature_engineering.py` and `feature_research/feature_engineering/` (notebook map section 5) for the Commit 6 decision.
+- [x] Create the Feature Research Notebook as a new file in `feature_research/`, built from the cells and modules mapped in `documentation/notebook_map.md` (section 2.1). Leave the existing notebooks unchanged.
+- [x] Extend notebook tests G5 (one labelled top-to-bottom path) and G7 (the cascades' split protocol; no test row bound) to the new notebook, and read accepted router and upstream-model artifacts only through the PR 38 boundary extractors.
+- [x] Write research records under `research_logs/pr42/` with run identifiers, seeds, and code identity, never over an existing record.
+- [x] Inventory existing engineered features, feature contracts, and stage-specific feature populations.
+- [x] For each feature, record its stage and arm, source variables, whether it is target-derived, where it is fitted (full training split or per-fold refits), and how it is applied to the test split.
+- [x] Record the frozen references for later comparison: the Stage 1 feature contracts, the Stage 2 binning identity, the Stage 3 feature DAG and block-cache identity, and the three EBM interaction pairs.
+- [x] Record the duplicated feature-engineering code in `shared/stage2/feature_engineering.py` and `feature_research/feature_engineering/` (notebook map section 5) for the Commit 6 decision.
 
 ---
 
