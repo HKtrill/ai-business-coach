@@ -112,6 +112,19 @@ CODE_FILES = (
     "shared/stage2/obligations.py",
     "research_logs/pr39/c2_20261114_184433/stage1_calibration_evidence.json",
     "research_logs/pr38/c3_20261112_153333/report_v1/02_router_metrics.csv",
+    # Commit 4, Step 4A: the binning drift diagnosis, the PR 39 evidence code it reuses by import,
+    # the accepted record it reproduces and the lift analysis whose deciles it reproduces (the
+    # exploratory notebook's printed outputs are read from a pinned Git blob, recorded in the record)
+    "feature_research/binning_drift.py",
+    "stage2_binning/evidence.py",
+    "stage2_binning/runner.py",
+    "feature_research/model_training/rf/lift_analysis.py",
+    "research_logs/pr39/c3_20261114_231604/stage2_binning_evidence.json",
+    # Commit 4, Step 4B: the registered candidate comparison, and the frozen GLASS profile and rule
+    # family map it reads (the shared contract is listed above)
+    "feature_research/binning_candidates.py",
+    "glass_pipeline/glass_router/profiles/glass_router_primary_v1.json",
+    "glass_pipeline/glass_router/rule_generator/feature_validator.py",
 )
 
 #: The verified Commit 2 inventory record (run id, name) later runs are compared with.

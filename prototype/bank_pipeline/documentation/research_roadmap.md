@@ -75,26 +75,26 @@ The Stage 1 cross-validations (tuning, OOF, and inner calibration folds) already
 
 **Step 4A — Drift Reproduction and Diagnosis**
 
-- [ ] Start from the PR 39 Step 3A evidence (`stage2_binning`, record `research_logs/pr39/c3_20261114_231604/`, outcome retain for both families): reuse its per-bin statistics, Wilson intervals, and triggers T1–T4 by import, without modifying the record or its code.
-- [ ] Revisit the substantial lift drift observed during PR 39 Step 3A, particularly:
+- [x] Start from the PR 39 Step 3A evidence (`stage2_binning`, record `research_logs/pr39/c3_20261114_231604/`, outcome retain for both families): reuse its per-bin statistics, Wilson intervals, and triggers T1–T4 by import, without modifying the record or its code.
+- [x] Revisit the substantial lift drift observed during PR 39 Step 3A, particularly:
   - `eci_warm`: original 1.49–1.67× lift versus approximately 1.03× OOF.
   - `eci_hot`: original 3.53× versus approximately 2.50× OOF.
   - `nsd_elevated`: approximately 2.49× pooled OOF lift, with significant fold-level variation.
-- [ ] Reproduce the original NSD/ECI feature-bin research using the corrected, fold-isolated feature engineering implementation.
-- [ ] Distinguish threshold-placement problems from encoder behavior, population shifts, and in-sample label leakage.
-- [ ] Use the Commit 3 findings on the target-derived Stage 2 sources, including period sensitivity, when separating these causes.
-- [ ] Reevaluate decile-lift distributions, candidate thresholds, bin counts, support, confidence intervals, and fold stability.
+- [x] Reproduce the original NSD/ECI feature-bin research using the corrected, fold-isolated feature engineering implementation.
+- [x] Distinguish threshold-placement problems from encoder behavior, population shifts, and in-sample label leakage.
+- [x] Use the Commit 3 findings on the target-derived Stage 2 sources, including period sensitivity, when separating these causes.
+- [x] Reevaluate decile-lift distributions, candidate thresholds, bin counts, support, confidence intervals, and fold stability.
 
 **Step 4B — Procedural Binning and Candidate Evaluation**
 
-- [ ] Where feasible, make the NSD/ECI bin derivation procedural and fold-fitted, so repeated-split and nested evaluations can refit it rather than reuse constants chosen on all training rows (a limitation recorded in PR 39 Step 3A).
-- [ ] Register the evaluation criteria before candidate results are examined.
-- [ ] Investigate whether transitional or weak bins retain meaningful predictive utility through conjunctions with other Stage 2 features.
-- [ ] Evaluate alternative threshold configurations and bin structures under leakage-safe training protocols, without modifying the frozen Phase 1 baseline.
-- [ ] Compare candidate configurations against the frozen PR 39 binning baseline using predefined evaluation criteria.
-- [ ] Identify the candidates that deserve downstream router testing in PR 44 (coverage, constraint feasibility, complementarity, and computational cost).
-- [ ] Determine whether the existing bins should remain unchanged or whether evidence warrants a separately versioned methodology revision.
-- [ ] If revision is justified, document the required feature-contract changes, G13 leakage audit, downstream artifact regeneration, and follow-up work rather than silently modifying frozen artifacts.
+- [x] Where feasible, make the NSD/ECI bin derivation procedural and fold-fitted, so repeated-split and nested evaluations can refit it rather than reuse constants chosen on all training rows (a limitation recorded in PR 39 Step 3A).
+- [x] Register the evaluation criteria before candidate results are examined.
+- [x] Investigate whether transitional or weak bins retain meaningful predictive utility through conjunctions with other Stage 2 features.
+- [x] Evaluate alternative threshold configurations and bin structures under leakage-safe training protocols, without modifying the frozen Phase 1 baseline.
+- [x] Compare candidate configurations against the frozen PR 39 binning baseline using predefined evaluation criteria.
+- [x] Identify the candidates that deserve downstream router testing in PR 44 (coverage, constraint feasibility, complementarity, and computational cost).
+- [x] Determine whether the existing bins should remain unchanged or whether evidence warrants a separately versioned methodology revision.
+- [x] If revision is justified, document the required feature-contract changes, G13 leakage audit, downstream artifact regeneration, and follow-up work rather than silently modifying frozen artifacts.
 
 ---
 
@@ -121,23 +121,41 @@ The Stage 1 cross-validations (tuning, OOF, and inner calibration folds) already
 
 ---
 
-##### Commit 6 — Feature-Contract Recommendations and Final Validation
+#### Commit 6 — Feature-Contract Recommendations, Validation, and PR Closure
 
-**Objective:** Consolidate the evidence into feature-contract recommendations, confirm that accepted behavior is unchanged, and prepare PR 42 for review.
+**Objective:** Consolidate the PR 42 findings into feature-contract recommendations, validate the frozen baseline, and give readers direct access to the executed research notebooks from the root README and PR description.
 
-- [ ] Record candidate configurations, supporting evidence, and rejected alternatives.
-- [ ] Retain the frozen feature contracts unless evidence supports a separately versioned change.
-- [ ] Establish the feature candidates and contracts for subsequent training experiments.
-- [ ] Version each recommended contract separately from the frozen contracts, with its leakage audit and the downstream regeneration it requires, for adoption through PRs 44–45.
-- [ ] Hand off to later PRs: Stage 1 encoding candidates (Step 44A), Stage 2 bin candidates (Step 44B), the EBM interaction procedure (Step 44C), and the temporal protocol and procedural feature refits (PR 49).
-- [ ] Decide where the Stage 3 feature DAG lives and whether the copies in `shared/stage2/feature_engineering.py` can be retired (notebook map section 5). Move code only where accepted features and recorded identities stay unchanged; otherwise defer the move to the adopting contract version.
-- [ ] Run targeted tests for new research code and the notebook tests, then the full regression suite and applicable real-data tests.
-- [ ] Run the applicable accepted-record `check` commands and confirm that the frozen artifacts, contracts, and identities are unchanged.
-- [ ] Run the Feature Research Notebook in a clean kernel and confirm that its records reproduce.
-- [ ] Inspect the complete diff for unintended changes, generated files, and modifications to production feature code.
-- [ ] Update the notebook map, the PR 42 research log, and the roadmap, and decide whether to remove or archive the completed Deferred Engineering items.
+##### Step 6A — Feature-Contract Recommendations and Research Handoff
 
-**Deliverable:** A reproducible Feature Research Notebook, a documented temporal-validity assessment and robustness protocol, a quantified explanation of the NSD/ECI lift drift, and evidence-based feature-contract recommendations.
+- [ ] Record the candidate configurations, supporting evidence, rejected alternatives, and remaining uncertainties.
+- [ ] Retain the frozen feature contracts unless the evidence supports a separately versioned change. For each recommended revision, document its leakage audit and required downstream artifact regeneration before adoption through PRs 44–45.
+- [ ] Hand off the Stage 1 encoding candidates to Step 44A, Stage 2 bin and filter candidates to Step 44B, the EBM interaction procedure and budget comparison to Step 44C, and the temporal protocol and procedural feature refits to PR 49.
+- [ ] Decide where the Stage 3 feature DAG belongs and whether to retire the copies in `shared/stage2/feature_engineering.py` identified in Section 5 of the notebook map. Defer any move that would change accepted feature values or recorded identities to the adopting contract version.
+
+##### Step 6B — README, Repository Layout, and Executed-Notebook Packaging
+
+- [ ] Rewrite the opening of the root `README.md` as a 15–30 second project pitch beneath the title and logo. Explain what ChurnBot predicts, how the GLASS cascade works, and why the research compares it with a matched black-box cascade.
+- [ ] Place a **Download executed notebooks (.zip)** link immediately below the pitch, before the tech stack and installation instructions. Update the repository layout and notebook map so readers can locate the tracked source notebooks and their executed copies.
+- [ ] Add a small packaging script that reuses existing executed notebooks and takes explicitly accepted runs as input. Preserve notebook source paths in the project-wide archive and run IDs in PR-specific filenames. Exclude partial and failed runs.
+- [ ] Build `executed_notebooks.zip` with the latest accepted executed copy of each project notebook. Use a stable README download link and refresh the bundle whenever new notebook outputs are accepted.
+- [ ] Create `pr42_executed_notebooks/` inside the local projects ZIP folder. Collect the accepted PR 42 executed notebooks there and package them as `pr42_executed_notebooks.zip`. Preserve this snapshot for the PR 42 description.
+- [ ] Extract both archives and verify that the notebooks open with their saved tables and plots. Once the executed copies are accounted for, clear outputs and execution counts from tracked notebooks and confirm their code and Markdown cells are intact.
+
+##### Step 6C — Final Validation and Reproducibility
+
+- [ ] Run the targeted research, notebook, and packaging tests, followed by the full regression suite and applicable real-data tests.
+- [ ] Run the applicable accepted-record `check` commands and confirm that frozen artifacts, feature contracts, and recorded identities match the accepted baseline.
+- [ ] Execute the final Feature Research Notebook in a clean Windows kernel through the established PR 41 `_run_notebook` path. Confirm that its records reproduce and save the executed copy under `notebook_outputs/pr42/` with its run ID.
+- [ ] Include the accepted final run in both bundles, verify their final contents, and confirm that the tracked notebooks remain output-free.
+
+##### Step 6D — Publication and PR Closeout
+
+- [ ] Publish both ZIPs as GitHub release assets. Link the current project-wide bundle from the root README and the fixed `pr42_executed_notebooks.zip` asset from the PR 42 description. Verify that each link downloads the intended archive.
+- [ ] Document the closeout convention for future PRs that change notebook outputs: refresh the project-wide bundle after validation and publish a separate snapshot for that PR.
+- [ ] Update the PR 42 research log, finish the roadmap heading cleanup, and decide whether to remove or archive completed Deferred Engineering items.
+- [ ] Inspect the complete diff for unintended changes, generated files, and modifications to production feature code. Finalize the PR description with the findings, validation results, and PR-specific notebook download.
+
+**Deliverable:** A reproducible Feature Research Notebook, a documented temporal-validity assessment and robustness protocol, a quantified explanation of NSD/ECI binning drift, and evidence-based feature-contract recommendations. The root README gives readers a short project overview and the current executed notebooks. The PR 42 description links directly to the accepted runs behind this PR.
 
 ---
 
