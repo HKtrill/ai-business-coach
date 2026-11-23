@@ -263,6 +263,7 @@ Arms: `G` GLASS, `B` black-box. Target dependence: `none` (a function of the row
 | production | direct | `glass_pipeline/glass_router/pipeline/crossfit.py` | `engineer_features` |
 | production | direct | `glass_pipeline/glass_router/rf/__init__.py` | `RFFeatureEngineer`, `engineer_features` |
 | production | direct | `shared/stage2/__init__.py` | `RFFeatureEngineer`, `RF_SOURCE_FEATURES`, `engineer_features` |
+| research | direct | `feature_research/encoding_audit.py` | `RFFeatureEngineer` |
 | research | direct | `feature_research/feature_inventory.py` | `RFFeatureEngineer`, `RF_SOURCE_FEATURES`, `_apply_binning_thresholds`, `shared.stage2.feature_engineering` |
 | research | direct | `feature_research/frozen_references.py` | `RF_SOURCE_FEATURES` |
 | evidence | direct | `stage2_binning/runner.py` | `RFFeatureEngineer` |
@@ -271,6 +272,7 @@ Arms: `G` GLASS, `B` black-box. Target dependence: `none` (a function of the row
 | evidence | direct | `stage2_crossfit/inner_features.py` | `RFFeatureEngineer` |
 | evidence | direct | `stage2_crossfit/runner.py` | `engineer_features` |
 | evidence | direct | `upstream_regeneration/checks.py` | `RF_SOURCE_FEATURES` |
+| tests | direct | `tests/feature_research/test_pr42_encoding_audit.py` | `shared.stage2.feature_engineering` |
 | tests | direct | `tests/stage2/conftest.py` | `engineer_features` |
 | tests | direct | `tests/stage2/test_glass_router_fit.py` | `engineer_features` |
 | tests | direct | `tests/stage2/test_glass_union_obligations.py` | `engineer_features` |
@@ -286,10 +288,12 @@ Arms: `G` GLASS, `B` black-box. Target dependence: `none` (a function of the row
 | Group | Import | File | Names |
 |---|---|---|---|
 | production | direct | `shared/stage3/feature_engineering.py` | `DerivativeFeatureEngineer`, `IntegralFeatureEngineer`, `TemporalFeatureEngineer`, `add_crisis_features`, `add_overlap_features`, `add_prior_features` |
+| research | direct | `feature_research/encoding_audit.py` | `_KDE_LARGE_DS_THRESH` |
 | research | direct | `feature_research/feature_inventory.py` | `feature_engineering`, `integrals` |
 | tests | direct | `tests/feature_research/conftest.py` | `FeaturePipeline` |
 | tests | direct | `tests/feature_research/test_feature_pipeline.py` | `LIVE_FEATURES`, `finalize_features`, `get_stage_df` |
 | tests | direct | `tests/feature_research/test_fold_engineering.py` | `EBM_FEATURES` |
+| tests | direct | `tests/feature_research/test_pr42_encoding_audit.py` | `feature_research.feature_engineering.integrals` |
 | tests | direct | `tests/feature_research/test_stage_trainers.py` | `EBM_FEATURES`, `LR_FEATURES` |
 | notebook | direct | `feature_research/exploratory_feature_research.ipynb` cell 11 | `FeaturePipeline` |
 | notebook | direct | `feature_research/exploratory_feature_research.ipynb` cell 12G | `LIVE_FEATURES`, `finalize_features`, `get_stage_df` |

@@ -193,3 +193,40 @@ def test_content_digest_ignores_the_run_and_needs_identity_keys_untouched(tmp_pa
         RR.start_run(commit=2, seeds={"s": 1.5}, root=tmp_path, run_id="c2_20261122_101013")
     with pytest.raises(RR.RecordError, match="record name"):
         RR.write_run_record(_run(tmp_path, "c2_20261122_101014"), "Bad Name", {})
+
+
+def test_a_run_writes_several_named_records_each_once(tmp_path):
+    run = RR.start_run(commit=3, seeds={"split": 42}, root=tmp_path, run_id="c3_20261122_101010")
+    first = RR.write_run_record(run, "feature_inventory", {"a": 1})
+    second = RR.write_run_record(run, "encoding_audit", {"b": [1, 2]})
+    assert first.parent == second.parent == run.folder and run.written == ["feature_inventory",
+                                                                          "encoding_audit"]
+    assert sorted(p.name for p in run.folder.iterdir()) == [
+        "encoding_audit.json", "encoding_audit.json.sha256",
+        "feature_inventory.json", "feature_inventory.json.sha256"]
+    before = second.read_bytes()
+    with pytest.raises(RR.RecordError, match="written once"):
+        RR.write_run_record(run, "encoding_audit", {"b": 3})
+    assert second.read_bytes() == before
+    for name in ("feature_inventory", "encoding_audit"):
+        assert RR.read_run_record(run.run_id, name, root=tmp_path)["run"]["run_id"] == run.run_id
+    other = RR.start_run(commit=3, seeds={"split": 42}, root=tmp_path, run_id="c3_20261122_101011")
+    other.folder.mkdir()                                     # a folder this run did not create
+    with pytest.raises(RR.RecordError, match="written once"):
+        RR.write_run_record(other, "feature_inventory", {"a": 1})
+
+
+def test_compare_records_locates_differing_sections(tmp_path):
+    a = {"run": {"run_id": "x"}, "code": {"head": "1"}, "scope": "s", "duplicates": {"callers": 1, "pairs": 2}}
+    b = {"run": {"run_id": "y"}, "code": {"head": "2"}, "scope": "s", "duplicates": {"callers": 3, "pairs": 2},
+         "extra": 1}
+    rows = {(r["section"], r["part"]): r for r in RR.compare_records(a, b)}
+    assert rows[("scope", "")]["same"] and not rows[("duplicates", "")]["same"]
+    assert ("duplicates", "callers") in rows and ("duplicates", "pairs") not in rows
+    assert rows[("extra", "")]["detail"] == "only in the reference"
+    assert not {k for k, _ in rows} & set(RR.VOLATILE_KEYS)
+
+
+def test_the_commit2_reference_record_reads_back_verified():
+    record = RR.read_run_record(*RR.COMMIT2_INVENTORY)
+    assert record["run"]["run_id"] == RR.COMMIT2_INVENTORY[0] and record["run"]["commit"] == 2

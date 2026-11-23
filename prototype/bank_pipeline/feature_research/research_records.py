@@ -2,19 +2,21 @@
 feature_research.research_records
 =================================
 PR 42 research records: one folder per run under ``research_logs/pr42/``,
-written once (PR 42, Commit 2).
+written once (PR 42, Commit 2; several named records per run since Commit 3).
 
-    run = start_run(commit=2)              # run id, seeds, code identity, environment
+    run = start_run(commit=3)              # run id, seeds, code identity, environment
     ...                                    # the notebook's work
     path = write_run_record(run, "feature_inventory", sections)
+    path = write_run_record(run, "encoding_audit", sections)    # same run, same folder
 
 Conventions (the same as the PR 39 records, ``research_logs/pr39/README.md``)
 ---------------------------------------------------------------------------
 * A run id is ``c<commit>_<YYYYMMDD_HHMMSS>``; every attempt gets a new one.
 * A record is ``<run_id>/<name>.json`` plus a ``.sha256`` sidecar. The run
-  folder must not exist when the record is written and both files are opened
-  in exclusive-create mode, so nothing is ever written over an existing
-  record: a repeated run, or a run id reused by mistake, is refused.
+  folder must not exist when the run's first record is written; the run's
+  later records are added beside it. Every file is opened in exclusive-create
+  mode, so nothing is ever written over an existing record: a repeated run, a
+  run id reused by mistake, or a record name written twice is refused.
 * JSON is canonical (sorted keys, NaN-free) through
   ``upstream_regeneration.records.canonical``, so two runs on the same code
   and data produce the same bytes for the same content.
@@ -43,11 +45,11 @@ import subprocess
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Mapping, Optional
+from typing import Any, Dict, List, Mapping, Optional
 
 __all__ = ["RECORD_ROOT", "RUN_ID", "CODE_FILES", "RecordError", "Run", "new_run_id",
            "check_run_id", "code_identity", "start_run", "content_digest",
-           "write_run_record", "read_run_record"]
+           "write_run_record", "read_run_record", "COMMIT2_INVENTORY", "compare_records"]
 
 BANK_ROOT = Path(__file__).resolve().parents[1]
 
@@ -58,13 +60,15 @@ RECORD_ROOT = BANK_ROOT / "research_logs" / "pr42"
 RUN_ID = re.compile(r"^c[0-9]+_[0-9]{8}_[0-9]{6}$")
 
 #: Files whose LF-normalised SHA-256 every record carries: the notebook, the PR 42
-#: research modules and the production feature code the inventory traces.
+#: research modules, the production code the inventory, the audit and the Step 3B
+#: comparisons trace, and the frozen inputs Step 3B reads or cites.
 CODE_FILES = (
     "feature_research/feature_research.ipynb",
     "feature_research/research_records.py",
     "feature_research/training_side.py",
     "feature_research/feature_inventory.py",
     "feature_research/frozen_references.py",
+    "feature_research/encoding_audit.py",
     "feature_research/config.py",
     "feature_research/feature_engineering/__init__.py",
     "feature_research/feature_engineering/_checks.py",
@@ -87,7 +91,31 @@ CODE_FILES = (
     "blackbox_pipeline/models/mlp/features.py",
     "blackbox_pipeline/models/meta_xgb/config.py",
     "stage2_crossfit/inner_features.py",
+    # traced by the Commit 3 encoding audit (source order, fold plans, in-fold label arguments)
+    "data/bank_database.py",
+    "data/preprocessing/bank_preprocessing.py",
+    "data/preprocessing/sql/create_raw_bank.sql",
+    "data/preprocessing/sql/transform.sql",
+    "shared/stage_io.py",
+    "shared/stage1/oof_calibration.py",
+    "stage2_crossfit/g13.py",
+    "glass_pipeline/glass_router/pipeline/crossfit.py",
+    "blackbox_pipeline/models/rf_router/crossfit.py",
+    "blackbox_pipeline/models/rf_router/oof/folds.py",
+    # Step 3B: past-only encodings and the predictive comparisons (accepted Stage 1 settings and fits)
+    "feature_research/temporal_validity.py",
+    "glass_pipeline/lr/penalty.py",
+    "blackbox_pipeline/models/mlp/estimator.py",
+    "blackbox_pipeline/models/mlp/config.py",
+    "blackbox_pipeline/models/mlp/tuning.py",
+    "shared/stage2/contracts/stage2_primary_v1.json",
+    "shared/stage2/obligations.py",
+    "research_logs/pr39/c2_20261114_184433/stage1_calibration_evidence.json",
+    "research_logs/pr38/c3_20261112_153333/report_v1/02_router_metrics.csv",
 )
+
+#: The verified Commit 2 inventory record (run id, name) later runs are compared with.
+COMMIT2_INVENTORY = ("c2_20261122_124809", "feature_inventory")
 
 #: Top-level record keys that identify the run rather than its content.
 VOLATILE_KEYS = ("run", "seeds", "code", "environment", "content_sha256", "format")
@@ -160,6 +188,8 @@ class Run:
     code: Dict[str, Any]
     environment: Dict[str, Any]
     root: Path = field(default=RECORD_ROOT)
+    #: Names of the records this run has written, in order (its folder exists once non-empty).
+    written: List[str] = field(default_factory=list)
 
     @property
     def folder(self) -> Path:
@@ -217,8 +247,10 @@ def write_run_record(run: Run, name: str, sections: Mapping[str, Any]) -> Path:
     """
     Write ``<root>/<run_id>/<name>.json`` and its ``.sha256`` sidecar, once.
 
-    The run folder is created here and must not exist; both files are opened
-    exclusively. ``sections`` may not use the identity keys (``VOLATILE_KEYS``).
+    The run's first record creates the run folder, which must not exist; later
+    records of the same run go beside it. Both files are opened exclusively, so
+    a name is written once. ``sections`` may not use the identity keys
+    (``VOLATILE_KEYS``).
     """
     if not re.fullmatch(r"[a-z0-9_]+", str(name)):
         raise RecordError(f"record name {name!r} must be lower-case letters, digits and _")
@@ -237,16 +269,24 @@ def write_run_record(run: Run, name: str, sections: Mapping[str, Any]) -> Path:
     record["content_sha256"] = content_digest(sections)
     data = _text(record)
     folder = run.folder
-    try:
-        folder.mkdir(parents=True, exist_ok=False)
-    except FileExistsError:
-        raise RecordError(f"{folder} exists: records are written once (a new attempt gets "
-                          "a new run id)") from None
+    if not run.written:
+        try:
+            folder.mkdir(parents=True, exist_ok=False)
+        except FileExistsError:
+            raise RecordError(f"{folder} exists: records are written once (a new attempt gets "
+                              "a new run id)") from None
+    elif not folder.is_dir():
+        raise RecordError(f"{folder} is missing although this run wrote {run.written}")
     path = folder / f"{name}.json"
-    with open(path, "xb") as fh:
-        fh.write(data)
+    try:
+        with open(path, "xb") as fh:
+            fh.write(data)
+    except FileExistsError:
+        raise RecordError(f"{path} exists: records are written once (a new attempt gets "
+                          "a new run id)") from None
     with open(path.with_name(path.name + ".sha256"), "x", encoding="ascii", newline="\n") as fh:
         fh.write(hashlib.sha256(data).hexdigest() + "\n")
+    run.written.append(name)
     return path
 
 
@@ -265,3 +305,24 @@ def read_run_record(run_id: str, name: str, *, root: Path = RECORD_ROOT) -> Dict
     if content_digest(sections) != record.get("content_sha256"):
         raise RecordError(f"{path}: content_sha256 does not match its content")
     return record
+
+
+def compare_records(record: Mapping[str, Any], reference: Mapping[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Content sections of two records (identity keys excluded), compared after
+    canonicalisation: one row per section, and per first-level key of a
+    section that differs, so a difference is located without reading the data.
+    """
+    a = {k: v for k, v in _canonical(dict(record)).items() if k not in VOLATILE_KEYS}
+    b = {k: v for k, v in _canonical(dict(reference)).items() if k not in VOLATILE_KEYS}
+    rows = []
+    for key in sorted(set(a) | set(b)):
+        same = key in a and key in b and a[key] == b[key]
+        rows.append({"section": key, "part": "", "same": same,
+                     "detail": "" if key in a and key in b else
+                     ("only in the reference" if key in b else "only in this record")})
+        if not same and isinstance(a.get(key), dict) and isinstance(b.get(key), dict):
+            for part in sorted(set(a[key]) | set(b[key])):
+                if a[key].get(part) != b[key].get(part):
+                    rows.append({"section": key, "part": part, "same": False, "detail": "differs"})
+    return rows

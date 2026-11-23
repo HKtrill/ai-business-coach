@@ -19,7 +19,7 @@
 
 ---
 
-##### Commit 1 — Roadmap Planning and Deferred Engineering Updates
+#### Commit 1 — Roadmap Planning and Deferred Engineering Updates
 
 **Objective:** Organize PR 42 into reviewable commits and update the Deferred Engineering entries for the completed PR 41 work. Documentation only.
 
@@ -54,18 +54,18 @@ The Stage 1 cross-validations (tuning, OOF, and inner calibration folds) already
 
 **Step 3A — Encoding Construction and Leakage Audit**
 
-- [ ] Establish the time index used throughout PR 42 from the dataset's date order, and record its basis and limits.
-- [ ] Document exactly how both encodings are constructed, fitted, and applied (training split, Stage 1 fold designs, test mapping).
-- [ ] Determine whether the protocol contains direct label leakage, temporal look-ahead, or both.
-- [ ] Verify that every transformation is fitted within its proper training fold.
-- [ ] Extend the audit to the other target-derived features used by Stages 2–3, such as the neighborhood subscription density.
+- [x] Establish the time index used throughout PR 42 from the dataset's date order, and record its basis and limits.
+- [x] Document exactly how both encodings are constructed, fitted, and applied (training split, Stage 1 fold designs, test mapping).
+- [x] Determine whether the protocol contains direct label leakage, temporal look-ahead, or both.
+- [x] Verify that every transformation is fitted within its proper training fold.
+- [x] Extend the audit to the other target-derived features used by Stages 2–3, such as the neighborhood subscription density.
 
 **Step 3B — Past-Only Encodings and Temporal Robustness Protocol**
 
-- [ ] Evaluate past-only (expanding-window) encodings: feature availability, deployment realism, and predictive effect.
-- [ ] Determine whether candidate revisions require separately versioned feature contracts; do not alter the accepted PR 39 baseline.
-- [ ] Design the temporal robustness protocol: chronological split, past-only encodings, and a policy for prevalence shift, which affects thresholds, abstention cuts, and the Stage 2 NPV and precision obligations. Execution follows in PR 49.
-- [ ] Record the interim temporal-validity finding and its implications for the frozen PR 39 evidence used in PR 43, the candidate contracts in PRs 44–45, and the claim boundaries in PR 49.
+- [x] Evaluate past-only (expanding-window) encodings: feature availability, deployment realism, and predictive effect.
+- [x] Determine whether candidate revisions require separately versioned feature contracts; do not alter the accepted PR 39 baseline.
+- [x] Design the temporal robustness protocol: chronological split, past-only encodings, and a policy for prevalence shift, which affects thresholds, abstention cuts, and the Stage 2 NPV and precision obligations. Execution follows in PR 49.
+- [x] Record the interim temporal-validity finding and its implications for the frozen PR 39 evidence used in PR 43, the candidate contracts in PRs 44–45, and the claim boundaries in PR 49.
 
 ---
 
@@ -100,17 +100,24 @@ The Stage 1 cross-validations (tuning, OOF, and inner calibration folds) already
 
 ##### Commit 5 — Feature Analysis, Interactions, and EBM Interaction Selection
 
-**Objective:** Complete the broader feature research on training-side evidence and make the EBM interaction selection procedural where feasible.
+**Objective:** Use training-side evidence to identify a simpler Stage 3 feature set with interpretable EBM shapes that remain stable across folds and contact periods. Quantify the effects of simplification on predictive performance and calibration, and, where feasible, use fold-fitted interaction selection to assess what reselection recovers under the existing three-pair budget.
 
-- [ ] Review feature distributions, correlations, redundancy, predictive contributions, and stability.
-- [ ] Include stability across contact periods, using the Commit 3 time index.
-- [ ] Investigate interpretable feature interactions and candidate transformations.
-- [ ] Where feasible, make the EBM interaction selection procedural and fold-fitted, so repeated-split and nested evaluations can refit it rather than reuse constants chosen on all training rows.
-- [ ] Check whether the procedure, run on all training rows, recovers the three accepted pairs, and how consistently each pair is selected across folds. The interaction-budget comparison stays in PR 44 (Step 44C).
-- [ ] Verify that every candidate feature is available at the intended prediction time.
-- [ ] Ensure feature selection, encoding, and transformation fitting remain fold-isolated.
-- [ ] Evaluate candidate features using training-side evidence and reproducible statistical analyses.
-- [ ] Preserve shared feature comparability between arms.
+#### Step 5A — Feature Analysis and Stage 3 Simplification
+
+- [ ] Review feature distributions, correlations, redundancy, predictive contributions, and stability across contact periods using the Commit 3 time index.
+- [ ] Investigate interpretable feature interactions and candidate transformations. Verify that every candidate feature is available at the intended prediction time.
+- [ ] Keep feature selection, encoding, and transformation fitting fold-isolated. Use reproducible training-side analyses and preserve shared feature comparability between cascade arms.
+- [ ] Starting from the frozen PR 39 Stage 3 inventory, identify the remaining correlated pair and test removing each member separately. For `decay_x_density`, compare the accepted feature with `joint_economic_decay` alone and with a past-only density variant if its inputs are available at prediction time.
+- [ ] Compare candidates on identical evaluation rows with the same folds and model settings. Keep unaffected interaction pairs fixed. When removing a feature, record which pairs disappear and leave those slots empty. Report paired out-of-fold performance, calibration, and feature and interaction counts.
+- [ ] Assess EBM shape interpretability. Document what each changed feature measures, how its contribution varies over well-supported values, whether that pattern holds across folds and contact periods, and which interactions affect its interpretation. Favor clearer, more stable shapes when the interpretability gain justifies a modest loss in standalone Stage 3 performance. Report the change in predictive performance and calibration.
+- [ ] Plot each EBM main-effect shape for the frozen Stage 3 model and the simplification candidates on matched axes. Label the feature values and their contribution to the model score, show how many training rows support each region, and overlay fold-level curves. For retained interactions, plot the pairwise effect with joint support.
+- [ ] On identical out-of-fold rows, compare the baseline and candidate EBMs with Stage 1, reporting Stage 2 abstentions separately. Count how often each EBM is right when Stage 1 is wrong and vice versa. Carry promising candidates forward to verify whether that disagreement improves final cascade decisions at comparable coverage under the same operating obligations.
+
+#### Step 5B — Procedural EBM Interaction Selection
+
+- [ ] Where feasible, make EBM interaction selection procedural and fold-fitted so repeated-split and nested evaluations can rerun selection within each training fold.
+- [ ] On the frozen PR 39 feature set, check whether selection on all training rows recovers the three accepted pairs. Record how often each pair is selected across folds.
+- [ ] For candidates carried forward from 5A, rerun selection under the same three-pair budget. Compare with the corresponding 5A result on the same evaluation rows. Report which pairs recur and how reselection changes predictive performance and calibration. Compare different interaction budgets in PR 44 (Step 44C).
 
 ---
 
