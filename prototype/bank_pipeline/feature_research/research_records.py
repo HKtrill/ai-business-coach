@@ -125,6 +125,26 @@ CODE_FILES = (
     "feature_research/binning_candidates.py",
     "glass_pipeline/glass_router/profiles/glass_router_primary_v1.json",
     "glass_pipeline/glass_router/rule_generator/feature_validator.py",
+    # Commit 5, Step 5A: the Stage 3 simplification, the Stage 3 and EBM code it fits through, the
+    # operating points and metrics it reports with, and the accepted records and notebook it reads
+    "feature_research/stage3_simplification.py",
+    "shared/stage3/evaluation.py",
+    "shared/stage3/calibration.py",
+    "shared/stage3/thresholding.py",
+    "shared/stage3/config.py",
+    "glass_pipeline/ebm/estimator.py",
+    "glass_pipeline/ebm/config.py",
+    "shared/metrics.py",
+    "shared/stage2/diagnostics/operating_points.py",
+    "research_logs/pr39/c4_20261115_204125/run_record.json",
+    "research_logs/pr39/c4_20261115_204125/artifact_manifest.json",
+    "research_logs/pr39/c6_20261116_194111/reproduction.json",
+    "glass_pipeline/glass_cascade.ipynb",
+    # Commit 5, Step 5B: procedural interaction selection, the accepted pair definitions and the sandbox
+    # values it is compared with (the research round it cites is Step 4A's pinned blob, identified in the record)
+    "feature_research/interaction_selection.py",
+    "glass_pipeline/ebm/interactions.py",
+    "feature_research/interaction_selection_sandbox.json",
 )
 
 #: The verified Commit 2 inventory record (run id, name) later runs are compared with.

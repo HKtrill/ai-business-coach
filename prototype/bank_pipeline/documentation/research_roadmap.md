@@ -104,20 +104,20 @@ The Stage 1 cross-validations (tuning, OOF, and inner calibration folds) already
 
 #### Step 5A — Feature Analysis and Stage 3 Simplification
 
-- [ ] Review feature distributions, correlations, redundancy, predictive contributions, and stability across contact periods using the Commit 3 time index.
-- [ ] Investigate interpretable feature interactions and candidate transformations. Verify that every candidate feature is available at the intended prediction time.
-- [ ] Keep feature selection, encoding, and transformation fitting fold-isolated. Use reproducible training-side analyses and preserve shared feature comparability between cascade arms.
-- [ ] Starting from the frozen PR 39 Stage 3 inventory, identify the remaining correlated pair and test removing each member separately. For `decay_x_density`, compare the accepted feature with `joint_economic_decay` alone and with a past-only density variant if its inputs are available at prediction time.
-- [ ] Compare candidates on identical evaluation rows with the same folds and model settings. Keep unaffected interaction pairs fixed. When removing a feature, record which pairs disappear and leave those slots empty. Report paired out-of-fold performance, calibration, and feature and interaction counts.
-- [ ] Assess EBM shape interpretability. Document what each changed feature measures, how its contribution varies over well-supported values, whether that pattern holds across folds and contact periods, and which interactions affect its interpretation. Favor clearer, more stable shapes when the interpretability gain justifies a modest loss in standalone Stage 3 performance. Report the change in predictive performance and calibration.
-- [ ] Plot each EBM main-effect shape for the frozen Stage 3 model and the simplification candidates on matched axes. Label the feature values and their contribution to the model score, show how many training rows support each region, and overlay fold-level curves. For retained interactions, plot the pairwise effect with joint support.
-- [ ] On identical out-of-fold rows, compare the baseline and candidate EBMs with Stage 1, reporting Stage 2 abstentions separately. Count how often each EBM is right when Stage 1 is wrong and vice versa. Carry promising candidates forward to verify whether that disagreement improves final cascade decisions at comparable coverage under the same operating obligations.
+- [x] Review feature distributions, correlations, redundancy, predictive contributions, and stability across contact periods using the Commit 3 time index.
+- [x] Investigate interpretable feature interactions and candidate transformations. Verify that every candidate feature is available at the intended prediction time.
+- [x] Keep feature selection, encoding, and transformation fitting fold-isolated. Use reproducible training-side analyses and preserve shared feature comparability between cascade arms.
+- [x] Starting from the frozen PR 39 Stage 3 inventory, identify the remaining correlated pair and test removing each member separately. For `decay_x_density`, compare the accepted feature with `joint_economic_decay` alone and with a past-only density variant if its inputs are available at prediction time.
+- [x] Compare candidates on identical evaluation rows with the same folds and model settings. Keep unaffected interaction pairs fixed. When removing a feature, record which pairs disappear and leave those slots empty. Report paired out-of-fold performance, calibration, and feature and interaction counts.
+- [x] Assess EBM shape interpretability. Document what each changed feature measures, how its contribution varies over well-supported values, whether that pattern holds across folds and contact periods, and which interactions affect its interpretation. Favor clearer, more stable shapes when the interpretability gain justifies a modest loss in standalone Stage 3 performance. Report the change in predictive performance and calibration.
+- [x] Plot each EBM main-effect shape for the frozen Stage 3 model and the simplification candidates on matched axes. Label the feature values and their contribution to the model score, show how many training rows support each region, and overlay fold-level curves. For retained interactions, plot the pairwise effect with joint support.
+- [x] On identical out-of-fold rows, compare the baseline and candidate EBMs with Stage 1, reporting Stage 2 abstentions separately. Count how often each EBM is right when Stage 1 is wrong and vice versa. Carry promising candidates forward to verify whether that disagreement improves final cascade decisions at comparable coverage under the same operating obligations.
 
 #### Step 5B — Procedural EBM Interaction Selection
 
-- [ ] Where feasible, make EBM interaction selection procedural and fold-fitted so repeated-split and nested evaluations can rerun selection within each training fold.
-- [ ] On the frozen PR 39 feature set, check whether selection on all training rows recovers the three accepted pairs. Record how often each pair is selected across folds.
-- [ ] For candidates carried forward from 5A, rerun selection under the same three-pair budget. Compare with the corresponding 5A result on the same evaluation rows. Report which pairs recur and how reselection changes predictive performance and calibration. Compare different interaction budgets in PR 44 (Step 44C).
+- [x] Where feasible, make EBM interaction selection procedural and fold-fitted so repeated-split and nested evaluations can rerun selection within each training fold.
+- [x] On the frozen PR 39 feature set, check whether selection on all training rows recovers the three accepted pairs. Record how often each pair is selected across folds.
+- [x] For candidates carried forward from 5A, rerun selection under the same three-pair budget. Compare with the corresponding 5A result on the same evaluation rows. Report which pairs recur and how reselection changes predictive performance and calibration. Compare different interaction budgets in PR 44 (Step 44C).
 
 ---
 

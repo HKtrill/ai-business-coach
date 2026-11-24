@@ -564,7 +564,7 @@ def test_the_notebook_registers_before_any_result_and_writes_its_record_once():
     headers = [next((ln for ln in s.splitlines() if ln.startswith("# CELL ")), "") for s in code]
     idx = {h.split(":")[0].replace("# CELL ", ""): i for i, h in enumerate(headers)}
     assert all(str(c) in idx for c in range(40, 49))
-    assert idx["39"] < idx["40"] < idx["48"] == len(code) - 1
+    assert idx["39"] < idx["40"] < idx["48"] < len(code)             # Step 5A follows (Cells 49-59)
     reg = code[idx["40"]]
     assert "BC.registration_checks(PR39_BINNING)" in reg and "BC.require(REGISTRATION_CHECKS_4B" in reg
     assert "BC.registration_digest()" in reg and "BC.FOLD_FINGERPRINT" in reg

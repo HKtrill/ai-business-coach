@@ -1,0 +1,3865 @@
+{
+ "run_id": "c5_20261124_015820",
+ "about": "The sandbox run that research_logs/pr42/interaction_selection.md quotes: every value below was read from that run's interaction_selection record with IS.observed (and the Step 5A record's content digest). Cell 67 compares a run with it; exact equality is required only in this environment.",
+ "record_content_sha256": "c0b5644fe9e4dbecb544ff8b850e632aeecad8d5646dbc090ae67dc3540401ca",
+ "environment": {
+  "executable": "/usr/local/bin/python3",
+  "os": "Linux",
+  "packages": {
+   "interpret": "0.7.8",
+   "ipykernel": "6.31.0",
+   "joblib": "1.6.0",
+   "nbclient": "0.11.0",
+   "nbformat": "5.11.1",
+   "numpy": "2.5.3",
+   "optuna": "4.9.0",
+   "pandas": "3.0.5",
+   "pulp": "3.3.2",
+   "scikit-learn": "1.9.1",
+   "scipy": "1.18.1",
+   "xgboost": "3.4.1"
+  },
+  "platform": "Linux-6.18.44-fc-v819-x86_64-with-glibc2.39",
+  "python": "3.13.18"
+ },
+ "views_available": false,
+ "views_status": {
+  "stage1.lr": "not available locally",
+  "stage2.glass_router": "not available locally",
+  "stage3.ebm": "not available locally"
+ },
+ "items": 888,
+ "values": {
+  "step 5A record content": {
+   "kind": "identity",
+   "value": "fe23cfc342bbe05841001c58f96ecca903fb4e535b0365d78e366d29360d93e4"
+  },
+  "baseline | outer 0 | pairs": {
+   "kind": "selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "euribor3m_sigmoid_slope x campaign",
+    "decay_x_density x campaign"
+   ]
+  },
+  "baseline | outer 0 | margin": {
+   "kind": "margin",
+   "value": 2.5714285714285707
+  },
+  "baseline | outer 1 | pairs": {
+   "kind": "selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "euribor3m_sigmoid_slope x campaign",
+    "decay_x_density x campaign"
+   ]
+  },
+  "baseline | outer 1 | margin": {
+   "kind": "margin",
+   "value": 2.642857142857143
+  },
+  "baseline | outer 2 | pairs": {
+   "kind": "selection",
+   "value": [
+    "euribor3m_sigmoid_slope x campaign",
+    "decay_x_density x campaign",
+    "campaign x emp_var_rate_sigmoid_slope"
+   ]
+  },
+  "baseline | outer 2 | margin": {
+   "kind": "margin",
+   "value": 4.2142857142857135
+  },
+  "baseline | outer 3 | pairs": {
+   "kind": "selection",
+   "value": [
+    "decay_x_density x cons.conf.idx",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "euribor3m_sigmoid_slope x cons.conf.idx"
+   ]
+  },
+  "baseline | outer 3 | margin": {
+   "kind": "margin",
+   "value": 0.8571428571428568
+  },
+  "baseline | outer 4 | pairs": {
+   "kind": "selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "economic_curvature_intensity x behavioral_favorability",
+    "decay_x_density x campaign"
+   ]
+  },
+  "baseline | outer 4 | margin": {
+   "kind": "margin",
+   "value": 0.8571428571428572
+  },
+  "baseline | all rows | pairs": {
+   "kind": "selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "euribor3m_sigmoid_slope x campaign",
+    "decay_x_density x campaign"
+   ]
+  },
+  "baseline | all rows | margin": {
+   "kind": "margin",
+   "value": 1.4285714285714284
+  },
+  "drop_first_selected | outer 0 | pairs": {
+   "kind": "selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x campaign",
+    "cons.conf.idx x campaign"
+   ]
+  },
+  "drop_first_selected | outer 0 | margin": {
+   "kind": "margin",
+   "value": 0.7857142857142856
+  },
+  "drop_first_selected | outer 1 | pairs": {
+   "kind": "selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x campaign",
+    "prior_x_stress x campaign"
+   ]
+  },
+  "drop_first_selected | outer 1 | margin": {
+   "kind": "margin",
+   "value": 0.7142857142857144
+  },
+  "drop_first_selected | outer 2 | pairs": {
+   "kind": "selection",
+   "value": [
+    "decay_x_density x campaign",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x dow_month_encoded"
+   ]
+  },
+  "drop_first_selected | outer 2 | margin": {
+   "kind": "margin",
+   "value": 1.5000000000000009
+  },
+  "drop_first_selected | outer 3 | pairs": {
+   "kind": "selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x cons.conf.idx",
+    "decay_x_density x dow_month_encoded"
+   ]
+  },
+  "drop_first_selected | outer 3 | margin": {
+   "kind": "margin",
+   "value": 0.07142857142857206
+  },
+  "drop_first_selected | outer 4 | pairs": {
+   "kind": "selection",
+   "value": [
+    "decay_x_density x campaign",
+    "economic_curvature_intensity x behavioral_favorability",
+    "campaign x emp_var_rate_sigmoid_slope"
+   ]
+  },
+  "drop_first_selected | outer 4 | margin": {
+   "kind": "margin",
+   "value": 2.7142857142857144
+  },
+  "drop_first_selected | inner 0.0 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "decay_x_density x campaign",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "economic_curvature_intensity x age"
+   ]
+  },
+  "drop_first_selected | inner 0.0 | margin": {
+   "kind": "margin",
+   "value": 3.1428571428571432
+  },
+  "drop_first_selected | inner 0.1 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x campaign",
+    "campaign x behavioral_favorability"
+   ]
+  },
+  "drop_first_selected | inner 0.1 | margin": {
+   "kind": "margin",
+   "value": 1.1428571428571423
+  },
+  "drop_first_selected | inner 0.2 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x campaign",
+    "decay_x_density x age"
+   ]
+  },
+  "drop_first_selected | inner 0.2 | margin": {
+   "kind": "margin",
+   "value": 0.21428571428571352
+  },
+  "drop_first_selected | inner 0.3 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "decay_x_density x campaign",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "economic_curvature_intensity x behavioral_favorability"
+   ]
+  },
+  "drop_first_selected | inner 0.3 | margin": {
+   "kind": "margin",
+   "value": 1.0
+  },
+  "drop_first_selected | inner 0.4 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x campaign",
+    "cons.conf.idx x campaign"
+   ]
+  },
+  "drop_first_selected | inner 0.4 | margin": {
+   "kind": "margin",
+   "value": 0.07142857142857117
+  },
+  "drop_first_selected | inner 1.0 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "economic_curvature_intensity x behavioral_favorability",
+    "decay_x_density x campaign"
+   ]
+  },
+  "drop_first_selected | inner 1.0 | margin": {
+   "kind": "margin",
+   "value": 1.5000000000000004
+  },
+  "drop_first_selected | inner 1.1 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "decay_x_density x campaign",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "economic_curvature_intensity x campaign"
+   ]
+  },
+  "drop_first_selected | inner 1.1 | margin": {
+   "kind": "margin",
+   "value": 0.7142857142857144
+  },
+  "drop_first_selected | inner 1.2 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "decay_x_density x campaign",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "economic_curvature_intensity x age"
+   ]
+  },
+  "drop_first_selected | inner 1.2 | margin": {
+   "kind": "margin",
+   "value": 0.0
+  },
+  "drop_first_selected | inner 1.3 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x campaign",
+    "cons.conf.idx x campaign"
+   ]
+  },
+  "drop_first_selected | inner 1.3 | margin": {
+   "kind": "margin",
+   "value": 2.7857142857142874
+  },
+  "drop_first_selected | inner 1.4 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "economic_curvature_intensity x behavioral_favorability",
+    "decay_x_density x campaign",
+    "campaign x emp_var_rate_sigmoid_slope"
+   ]
+  },
+  "drop_first_selected | inner 1.4 | margin": {
+   "kind": "margin",
+   "value": 1.2142857142857144
+  },
+  "drop_first_selected | inner 2.0 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "decay_x_density x campaign",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x dow_month_encoded"
+   ]
+  },
+  "drop_first_selected | inner 2.0 | margin": {
+   "kind": "margin",
+   "value": 0.35714285714285676
+  },
+  "drop_first_selected | inner 2.1 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x campaign",
+    "cons.conf.idx x age"
+   ]
+  },
+  "drop_first_selected | inner 2.1 | margin": {
+   "kind": "margin",
+   "value": 0.14285714285714146
+  },
+  "drop_first_selected | inner 2.2 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "decay_x_density x campaign",
+    "prior_x_stress x campaign",
+    "decay_x_density x behavioral_favorability"
+   ]
+  },
+  "drop_first_selected | inner 2.2 | margin": {
+   "kind": "margin",
+   "value": 0.7857142857142856
+  },
+  "drop_first_selected | inner 2.3 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "decay_x_density x campaign",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "economic_curvature_intensity x campaign"
+   ]
+  },
+  "drop_first_selected | inner 2.3 | margin": {
+   "kind": "margin",
+   "value": 2.5
+  },
+  "drop_first_selected | inner 2.4 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "decay_x_density x campaign",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "dow_month_encoded x campaign"
+   ]
+  },
+  "drop_first_selected | inner 2.4 | margin": {
+   "kind": "margin",
+   "value": 0.7142857142857135
+  },
+  "drop_first_selected | inner 3.0 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "decay_x_density x behavioral_favorability",
+    "decay_x_density x dow_month_encoded",
+    "campaign x behavioral_favorability"
+   ]
+  },
+  "drop_first_selected | inner 3.0 | margin": {
+   "kind": "margin",
+   "value": 1.071428571428573
+  },
+  "drop_first_selected | inner 3.1 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "decay_x_density x cons.conf.idx",
+    "decay_x_density x cpi_high_cellular",
+    "economic_curvature_intensity x age"
+   ]
+  },
+  "drop_first_selected | inner 3.1 | margin": {
+   "kind": "margin",
+   "value": 1.7142857142857135
+  },
+  "drop_first_selected | inner 3.2 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "decay_x_density x behavioral_favorability",
+    "behavioral_favorability x emp_var_rate_sigmoid_slope",
+    "decay_x_density x cons.conf.idx"
+   ]
+  },
+  "drop_first_selected | inner 3.2 | margin": {
+   "kind": "margin",
+   "value": 0.9285714285714288
+  },
+  "drop_first_selected | inner 3.3 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x campaign",
+    "economic_curvature_intensity x dow_month_encoded"
+   ]
+  },
+  "drop_first_selected | inner 3.3 | margin": {
+   "kind": "margin",
+   "value": 0.7857142857142865
+  },
+  "drop_first_selected | inner 3.4 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "decay_x_density x cons.conf.idx",
+    "economic_curvature_intensity x dow_month_encoded",
+    "decay_x_density x campaign"
+   ]
+  },
+  "drop_first_selected | inner 3.4 | margin": {
+   "kind": "margin",
+   "value": 0.35714285714285676
+  },
+  "drop_first_selected | inner 4.0 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "decay_x_density x campaign",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "economic_curvature_intensity x dow_month_encoded"
+   ]
+  },
+  "drop_first_selected | inner 4.0 | margin": {
+   "kind": "margin",
+   "value": 0.7142857142857135
+  },
+  "drop_first_selected | inner 4.1 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x campaign",
+    "economic_curvature_intensity x behavioral_favorability"
+   ]
+  },
+  "drop_first_selected | inner 4.1 | margin": {
+   "kind": "margin",
+   "value": 2.2142857142857144
+  },
+  "drop_first_selected | inner 4.2 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "economic_curvature_intensity x behavioral_favorability",
+    "decay_x_density x campaign",
+    "decay_x_density x dow_month_encoded"
+   ]
+  },
+  "drop_first_selected | inner 4.2 | margin": {
+   "kind": "margin",
+   "value": 1.2857142857142851
+  },
+  "drop_first_selected | inner 4.3 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x campaign",
+    "economic_curvature_intensity x campaign"
+   ]
+  },
+  "drop_first_selected | inner 4.3 | margin": {
+   "kind": "margin",
+   "value": 0.5714285714285712
+  },
+  "drop_first_selected | inner 4.4 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "economic_curvature_intensity x behavioral_favorability",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x campaign"
+   ]
+  },
+  "drop_first_selected | inner 4.4 | margin": {
+   "kind": "margin",
+   "value": 2.928571428571429
+  },
+  "drop_first_selected | all rows | pairs": {
+   "kind": "selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x campaign",
+    "cons.conf.idx x campaign"
+   ]
+  },
+  "drop_first_selected | all rows | margin": {
+   "kind": "margin",
+   "value": 3.285714285714287
+  },
+  "jed_alone_selected | outer 0 | pairs": {
+   "kind": "selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "euribor3m_sigmoid_slope x campaign",
+    "joint_economic_decay x campaign"
+   ]
+  },
+  "jed_alone_selected | outer 0 | margin": {
+   "kind": "margin",
+   "value": 2.4285714285714284
+  },
+  "jed_alone_selected | outer 1 | pairs": {
+   "kind": "selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "euribor3m_sigmoid_slope x campaign",
+    "joint_economic_decay x campaign"
+   ]
+  },
+  "jed_alone_selected | outer 1 | margin": {
+   "kind": "margin",
+   "value": 2.5
+  },
+  "jed_alone_selected | outer 2 | pairs": {
+   "kind": "selection",
+   "value": [
+    "euribor3m_sigmoid_slope x campaign",
+    "joint_economic_decay x campaign",
+    "campaign x emp_var_rate_sigmoid_slope"
+   ]
+  },
+  "jed_alone_selected | outer 2 | margin": {
+   "kind": "margin",
+   "value": 4.071428571428571
+  },
+  "jed_alone_selected | outer 3 | pairs": {
+   "kind": "selection",
+   "value": [
+    "joint_economic_decay x cons.conf.idx",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "euribor3m_sigmoid_slope x cons.conf.idx"
+   ]
+  },
+  "jed_alone_selected | outer 3 | margin": {
+   "kind": "margin",
+   "value": 0.6428571428571432
+  },
+  "jed_alone_selected | outer 4 | pairs": {
+   "kind": "selection",
+   "value": [
+    "economic_curvature_intensity x behavioral_favorability",
+    "joint_economic_decay x campaign",
+    "campaign x emp_var_rate_sigmoid_slope"
+   ]
+  },
+  "jed_alone_selected | outer 4 | margin": {
+   "kind": "margin",
+   "value": 0.7857142857142856
+  },
+  "jed_alone_selected | inner 0.0 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "joint_economic_decay x campaign",
+    "euribor3m_sigmoid_slope x campaign",
+    "campaign x emp_var_rate_sigmoid_slope"
+   ]
+  },
+  "jed_alone_selected | inner 0.0 | margin": {
+   "kind": "margin",
+   "value": 2.6428571428571415
+  },
+  "jed_alone_selected | inner 0.1 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "joint_economic_decay x campaign",
+    "euribor3m_sigmoid_slope x campaign"
+   ]
+  },
+  "jed_alone_selected | inner 0.1 | margin": {
+   "kind": "margin",
+   "value": 0.5
+  },
+  "jed_alone_selected | inner 0.2 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "euribor3m_sigmoid_slope x campaign",
+    "joint_economic_decay x campaign"
+   ]
+  },
+  "jed_alone_selected | inner 0.2 | margin": {
+   "kind": "margin",
+   "value": 1.142857142857142
+  },
+  "jed_alone_selected | inner 0.3 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "euribor3m_sigmoid_slope x campaign",
+    "joint_economic_decay x campaign",
+    "campaign x emp_var_rate_sigmoid_slope"
+   ]
+  },
+  "jed_alone_selected | inner 0.3 | margin": {
+   "kind": "margin",
+   "value": 1.5000000000000004
+  },
+  "jed_alone_selected | inner 0.4 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "joint_economic_decay x campaign",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "euribor3m_sigmoid_slope x campaign"
+   ]
+  },
+  "jed_alone_selected | inner 0.4 | margin": {
+   "kind": "margin",
+   "value": 3.857142857142857
+  },
+  "jed_alone_selected | inner 1.0 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "economic_curvature_intensity x behavioral_favorability",
+    "economic_curvature_intensity x dow_month_encoded"
+   ]
+  },
+  "jed_alone_selected | inner 1.0 | margin": {
+   "kind": "margin",
+   "value": 0.7857142857142847
+  },
+  "jed_alone_selected | inner 1.1 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "euribor3m_sigmoid_slope x campaign",
+    "joint_economic_decay x campaign",
+    "campaign x emp_var_rate_sigmoid_slope"
+   ]
+  },
+  "jed_alone_selected | inner 1.1 | margin": {
+   "kind": "margin",
+   "value": 4.142857142857144
+  },
+  "jed_alone_selected | inner 1.2 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "joint_economic_decay x campaign",
+    "euribor3m_sigmoid_slope x campaign",
+    "campaign x emp_var_rate_sigmoid_slope"
+   ]
+  },
+  "jed_alone_selected | inner 1.2 | margin": {
+   "kind": "margin",
+   "value": 0.35714285714285765
+  },
+  "jed_alone_selected | inner 1.3 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "joint_economic_decay x campaign",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "euribor3m_sigmoid_slope x campaign"
+   ]
+  },
+  "jed_alone_selected | inner 1.3 | margin": {
+   "kind": "margin",
+   "value": 1.071428571428572
+  },
+  "jed_alone_selected | inner 1.4 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "economic_curvature_intensity x behavioral_favorability",
+    "joint_economic_decay x campaign",
+    "euribor3m_sigmoid_slope x campaign"
+   ]
+  },
+  "jed_alone_selected | inner 1.4 | margin": {
+   "kind": "margin",
+   "value": 0.4285714285714288
+  },
+  "jed_alone_selected | inner 2.0 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "euribor3m_sigmoid_slope x campaign",
+    "joint_economic_decay x campaign",
+    "campaign x emp_var_rate_sigmoid_slope"
+   ]
+  },
+  "jed_alone_selected | inner 2.0 | margin": {
+   "kind": "margin",
+   "value": 2.714285714285714
+  },
+  "jed_alone_selected | inner 2.1 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "euribor3m_sigmoid_slope x campaign",
+    "joint_economic_decay x campaign"
+   ]
+  },
+  "jed_alone_selected | inner 2.1 | margin": {
+   "kind": "margin",
+   "value": 4.428571428571429
+  },
+  "jed_alone_selected | inner 2.2 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "joint_economic_decay x campaign",
+    "euribor3m_sigmoid_slope x behavioral_favorability",
+    "joint_economic_decay x behavioral_favorability"
+   ]
+  },
+  "jed_alone_selected | inner 2.2 | margin": {
+   "kind": "margin",
+   "value": 0.42857142857142794
+  },
+  "jed_alone_selected | inner 2.3 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "euribor3m_sigmoid_slope x campaign",
+    "joint_economic_decay x campaign",
+    "campaign x emp_var_rate_sigmoid_slope"
+   ]
+  },
+  "jed_alone_selected | inner 2.3 | margin": {
+   "kind": "margin",
+   "value": 1.5
+  },
+  "jed_alone_selected | inner 2.4 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "joint_economic_decay x campaign",
+    "euribor3m_sigmoid_slope x campaign",
+    "campaign x emp_var_rate_sigmoid_slope"
+   ]
+  },
+  "jed_alone_selected | inner 2.4 | margin": {
+   "kind": "margin",
+   "value": 2.285714285714284
+  },
+  "jed_alone_selected | inner 3.0 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "joint_economic_decay x behavioral_favorability",
+    "economic_curvature_intensity x dow_month_encoded",
+    "campaign x behavioral_favorability"
+   ]
+  },
+  "jed_alone_selected | inner 3.0 | margin": {
+   "kind": "margin",
+   "value": 0.07142857142857029
+  },
+  "jed_alone_selected | inner 3.1 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "joint_economic_decay x cons.conf.idx",
+    "euribor3m_sigmoid_slope x cons.conf.idx",
+    "joint_economic_decay x cpi_high_cellular"
+   ]
+  },
+  "jed_alone_selected | inner 3.1 | margin": {
+   "kind": "margin",
+   "value": 1.3571428571428585
+  },
+  "jed_alone_selected | inner 3.2 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "joint_economic_decay x behavioral_favorability",
+    "joint_economic_decay x cons.conf.idx",
+    "behavioral_favorability x emp_var_rate_sigmoid_slope"
+   ]
+  },
+  "jed_alone_selected | inner 3.2 | margin": {
+   "kind": "margin",
+   "value": 8.881784197001252e-16
+  },
+  "jed_alone_selected | inner 3.3 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "joint_economic_decay x campaign",
+    "economic_curvature_intensity x dow_month_encoded"
+   ]
+  },
+  "jed_alone_selected | inner 3.3 | margin": {
+   "kind": "margin",
+   "value": 0.2142857142857153
+  },
+  "jed_alone_selected | inner 3.4 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "euribor3m_sigmoid_slope x cons.conf.idx",
+    "joint_economic_decay x cons.conf.idx",
+    "euribor3m_sigmoid_slope x age"
+   ]
+  },
+  "jed_alone_selected | inner 3.4 | margin": {
+   "kind": "margin",
+   "value": 2.357142857142856
+  },
+  "jed_alone_selected | inner 4.0 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "joint_economic_decay x campaign",
+    "economic_curvature_intensity x dow_month_encoded",
+    "economic_curvature_intensity x behavioral_favorability"
+   ]
+  },
+  "jed_alone_selected | inner 4.0 | margin": {
+   "kind": "margin",
+   "value": 0.14285714285714413
+  },
+  "jed_alone_selected | inner 4.1 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "joint_economic_decay x campaign",
+    "economic_curvature_intensity x behavioral_favorability"
+   ]
+  },
+  "jed_alone_selected | inner 4.1 | margin": {
+   "kind": "margin",
+   "value": 0.2142857142857144
+  },
+  "jed_alone_selected | inner 4.2 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "economic_curvature_intensity x behavioral_favorability",
+    "joint_economic_decay x campaign",
+    "euribor3m_sigmoid_slope x campaign"
+   ]
+  },
+  "jed_alone_selected | inner 4.2 | margin": {
+   "kind": "margin",
+   "value": 0.14285714285714235
+  },
+  "jed_alone_selected | inner 4.3 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "joint_economic_decay x campaign",
+    "euribor3m_sigmoid_slope x campaign"
+   ]
+  },
+  "jed_alone_selected | inner 4.3 | margin": {
+   "kind": "margin",
+   "value": 3.2142857142857144
+  },
+  "jed_alone_selected | inner 4.4 | pairs": {
+   "kind": "inner selection",
+   "value": [
+    "economic_curvature_intensity x behavioral_favorability",
+    "campaign x emp_var_rate_sigmoid_slope",
+    "joint_economic_decay x campaign"
+   ]
+  },
+  "jed_alone_selected | inner 4.4 | margin": {
+   "kind": "margin",
+   "value": 0.5714285714285703
+  },
+  "jed_alone_selected | all rows | pairs": {
+   "kind": "selection",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "euribor3m_sigmoid_slope x campaign",
+    "joint_economic_decay x campaign"
+   ]
+  },
+  "jed_alone_selected | all rows | margin": {
+   "kind": "margin",
+   "value": 2.142857142857143
+  },
+  "baseline | campaign x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 5
+  },
+  "baseline | campaign x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 1
+  },
+  "baseline | decay_x_density x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 4
+  },
+  "baseline | decay_x_density x campaign | all-rows position": {
+   "kind": "position",
+   "value": 3
+  },
+  "baseline | euribor3m_sigmoid_slope x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 3
+  },
+  "baseline | euribor3m_sigmoid_slope x campaign | all-rows position": {
+   "kind": "position",
+   "value": 2
+  },
+  "baseline | economic_curvature_intensity x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 1
+  },
+  "baseline | economic_curvature_intensity x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 5
+  },
+  "baseline | decay_x_density x cons.conf.idx | outer fits selecting": {
+   "kind": "count",
+   "value": 1
+  },
+  "baseline | decay_x_density x cons.conf.idx | all-rows position": {
+   "kind": "position",
+   "value": 15
+  },
+  "baseline | euribor3m_sigmoid_slope x cons.conf.idx | outer fits selecting": {
+   "kind": "count",
+   "value": 1
+  },
+  "baseline | euribor3m_sigmoid_slope x cons.conf.idx | all-rows position": {
+   "kind": "position",
+   "value": 16
+  },
+  "baseline | decay_x_density x dow_month_encoded | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | decay_x_density x dow_month_encoded | all-rows position": {
+   "kind": "position",
+   "value": 10
+  },
+  "baseline | euribor3m_sigmoid_slope x age | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | euribor3m_sigmoid_slope x age | all-rows position": {
+   "kind": "position",
+   "value": 7
+  },
+  "baseline | cons.conf.idx x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | cons.conf.idx x campaign | all-rows position": {
+   "kind": "position",
+   "value": 4
+  },
+  "baseline | euribor3m_sigmoid_slope x dow_month_encoded | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | euribor3m_sigmoid_slope x dow_month_encoded | all-rows position": {
+   "kind": "position",
+   "value": 14
+  },
+  "baseline | dow_month_encoded x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | dow_month_encoded x campaign | all-rows position": {
+   "kind": "position",
+   "value": 11
+  },
+  "baseline | campaign x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | campaign x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 6
+  },
+  "baseline | economic_curvature_intensity x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | economic_curvature_intensity x campaign | all-rows position": {
+   "kind": "position",
+   "value": 8
+  },
+  "baseline | decay_x_density x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | decay_x_density x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 9
+  },
+  "baseline | prior_x_stress x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | prior_x_stress x campaign | all-rows position": {
+   "kind": "position",
+   "value": 13
+  },
+  "baseline | economic_curvature_intensity x age | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | economic_curvature_intensity x age | all-rows position": {
+   "kind": "position",
+   "value": 17
+  },
+  "baseline | economic_curvature_intensity x dow_month_encoded | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | economic_curvature_intensity x dow_month_encoded | all-rows position": {
+   "kind": "position",
+   "value": 18
+  },
+  "baseline | euribor3m_sigmoid_slope x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | euribor3m_sigmoid_slope x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 12
+  },
+  "baseline | cons.conf.idx x age | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | cons.conf.idx x age | all-rows position": {
+   "kind": "position",
+   "value": 21
+  },
+  "baseline | decay_x_density x age | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | decay_x_density x age | all-rows position": {
+   "kind": "position",
+   "value": 22
+  },
+  "baseline | decay_x_density x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | decay_x_density x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 24
+  },
+  "baseline | behavioral_favorability x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | behavioral_favorability x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 19
+  },
+  "baseline | age x dow_month_encoded | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | age x dow_month_encoded | all-rows position": {
+   "kind": "position",
+   "value": 26
+  },
+  "baseline | age x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | age x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 28
+  },
+  "baseline | age x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | age x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 31
+  },
+  "baseline | age x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | age x campaign | all-rows position": {
+   "kind": "position",
+   "value": 33
+  },
+  "baseline | campaign x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | campaign x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 20
+  },
+  "baseline | cons.conf.idx x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | cons.conf.idx x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 23
+  },
+  "baseline | euribor3m_sigmoid_slope x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | euribor3m_sigmoid_slope x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 27
+  },
+  "baseline | cpi_high_cellular x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | cpi_high_cellular x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 29
+  },
+  "baseline | decay_x_density x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | decay_x_density x default | all-rows position": {
+   "kind": "position",
+   "value": 25
+  },
+  "baseline | euribor3m_sigmoid_slope x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | euribor3m_sigmoid_slope x default | all-rows position": {
+   "kind": "position",
+   "value": 36
+  },
+  "baseline | euribor3m_sigmoid_slope x economic_curvature_intensity | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | euribor3m_sigmoid_slope x economic_curvature_intensity | all-rows position": {
+   "kind": "position",
+   "value": 30
+  },
+  "baseline | prior_x_stress x decay_x_density | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | prior_x_stress x decay_x_density | all-rows position": {
+   "kind": "position",
+   "value": 38
+  },
+  "baseline | euribor3m_sigmoid_slope x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | euribor3m_sigmoid_slope x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 40
+  },
+  "baseline | age x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | age x default | all-rows position": {
+   "kind": "position",
+   "value": 35
+  },
+  "baseline | decay_x_density x euribor3m_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | decay_x_density x euribor3m_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 48
+  },
+  "baseline | campaign x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | campaign x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 37
+  },
+  "baseline | dow_month_encoded x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | dow_month_encoded x default | all-rows position": {
+   "kind": "position",
+   "value": 34
+  },
+  "baseline | euribor3m_sigmoid_slope x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | euribor3m_sigmoid_slope x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 39
+  },
+  "baseline | economic_curvature_intensity x cons.conf.idx | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | economic_curvature_intensity x cons.conf.idx | all-rows position": {
+   "kind": "position",
+   "value": 32
+  },
+  "baseline | cons.conf.idx x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | cons.conf.idx x default | all-rows position": {
+   "kind": "position",
+   "value": 41
+  },
+  "baseline | prior_x_stress x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | prior_x_stress x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 49
+  },
+  "baseline | age x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | age x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 44
+  },
+  "baseline | decay_x_density x economic_curvature_intensity | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | decay_x_density x economic_curvature_intensity | all-rows position": {
+   "kind": "position",
+   "value": 56
+  },
+  "baseline | dow_month_encoded x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | dow_month_encoded x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 45
+  },
+  "baseline | age x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | age x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 42
+  },
+  "baseline | age x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | age x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 50
+  },
+  "baseline | cons.conf.idx x dow_month_encoded | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | cons.conf.idx x dow_month_encoded | all-rows position": {
+   "kind": "position",
+   "value": 54
+  },
+  "baseline | economic_curvature_intensity x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | economic_curvature_intensity x default | all-rows position": {
+   "kind": "position",
+   "value": 43
+  },
+  "baseline | dow_month_encoded x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | dow_month_encoded x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 63
+  },
+  "baseline | cons.conf.idx x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | cons.conf.idx x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 47
+  },
+  "baseline | dow_month_encoded x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | dow_month_encoded x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 55
+  },
+  "baseline | dow_month_encoded x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | dow_month_encoded x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 58
+  },
+  "baseline | prior_x_stress x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | prior_x_stress x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 51
+  },
+  "baseline | economic_curvature_intensity x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | economic_curvature_intensity x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 46
+  },
+  "baseline | default x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | default x campaign | all-rows position": {
+   "kind": "position",
+   "value": 53
+  },
+  "baseline | default x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | default x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 52
+  },
+  "baseline | economic_curvature_intensity x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | economic_curvature_intensity x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 57
+  },
+  "baseline | economic_curvature_intensity x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | economic_curvature_intensity x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 60
+  },
+  "baseline | cons.conf.idx x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | cons.conf.idx x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 65
+  },
+  "baseline | decay_x_density x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | decay_x_density x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 69
+  },
+  "baseline | dow_month_encoded x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | dow_month_encoded x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 62
+  },
+  "baseline | decay_x_density x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | decay_x_density x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 66
+  },
+  "baseline | euribor3m_sigmoid_slope x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | euribor3m_sigmoid_slope x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 67
+  },
+  "baseline | default x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | default x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 59
+  },
+  "baseline | prior_x_stress x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | prior_x_stress x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 70
+  },
+  "baseline | default x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | default x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 73
+  },
+  "baseline | overlap_default_clean x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | overlap_default_clean x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 61
+  },
+  "baseline | economic_curvature_intensity x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | economic_curvature_intensity x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 72
+  },
+  "baseline | cpi_high_cellular x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | cpi_high_cellular x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 64
+  },
+  "baseline | default x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | default x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 68
+  },
+  "baseline | cons.conf.idx x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | cons.conf.idx x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 71
+  },
+  "baseline | cons.conf.idx x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | cons.conf.idx x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 75
+  },
+  "baseline | overlap_default_clean x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | overlap_default_clean x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 74
+  },
+  "baseline | prior_x_stress x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | prior_x_stress x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 77
+  },
+  "baseline | overlap_default_clean x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | overlap_default_clean x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 76
+  },
+  "baseline | default x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "baseline | default x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 78
+  },
+  "drop_first_selected | campaign x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 5
+  },
+  "drop_first_selected | campaign x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 19
+  },
+  "drop_first_selected | campaign x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 1
+  },
+  "drop_first_selected | decay_x_density x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 4
+  },
+  "drop_first_selected | decay_x_density x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 22
+  },
+  "drop_first_selected | decay_x_density x campaign | all-rows position": {
+   "kind": "position",
+   "value": 2
+  },
+  "drop_first_selected | decay_x_density x dow_month_encoded | outer fits selecting": {
+   "kind": "count",
+   "value": 2
+  },
+  "drop_first_selected | decay_x_density x dow_month_encoded | inner fits selecting": {
+   "kind": "inner count",
+   "value": 3
+  },
+  "drop_first_selected | decay_x_density x dow_month_encoded | all-rows position": {
+   "kind": "position",
+   "value": 7
+  },
+  "drop_first_selected | cons.conf.idx x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 1
+  },
+  "drop_first_selected | cons.conf.idx x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 2
+  },
+  "drop_first_selected | cons.conf.idx x campaign | all-rows position": {
+   "kind": "position",
+   "value": 3
+  },
+  "drop_first_selected | economic_curvature_intensity x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 1
+  },
+  "drop_first_selected | economic_curvature_intensity x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 6
+  },
+  "drop_first_selected | economic_curvature_intensity x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 4
+  },
+  "drop_first_selected | decay_x_density x cons.conf.idx | outer fits selecting": {
+   "kind": "count",
+   "value": 1
+  },
+  "drop_first_selected | decay_x_density x cons.conf.idx | inner fits selecting": {
+   "kind": "inner count",
+   "value": 3
+  },
+  "drop_first_selected | decay_x_density x cons.conf.idx | all-rows position": {
+   "kind": "position",
+   "value": 11
+  },
+  "drop_first_selected | prior_x_stress x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 1
+  },
+  "drop_first_selected | prior_x_stress x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 1
+  },
+  "drop_first_selected | prior_x_stress x campaign | all-rows position": {
+   "kind": "position",
+   "value": 10
+  },
+  "drop_first_selected | dow_month_encoded x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | dow_month_encoded x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 1
+  },
+  "drop_first_selected | dow_month_encoded x campaign | all-rows position": {
+   "kind": "position",
+   "value": 9
+  },
+  "drop_first_selected | campaign x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | campaign x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 2
+  },
+  "drop_first_selected | campaign x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 6
+  },
+  "drop_first_selected | economic_curvature_intensity x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 3
+  },
+  "drop_first_selected | economic_curvature_intensity x campaign | all-rows position": {
+   "kind": "position",
+   "value": 5
+  },
+  "drop_first_selected | decay_x_density x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | decay_x_density x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 3
+  },
+  "drop_first_selected | decay_x_density x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 8
+  },
+  "drop_first_selected | economic_curvature_intensity x age | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x age | inner fits selecting": {
+   "kind": "inner count",
+   "value": 3
+  },
+  "drop_first_selected | economic_curvature_intensity x age | all-rows position": {
+   "kind": "position",
+   "value": 12
+  },
+  "drop_first_selected | cons.conf.idx x age | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x age | inner fits selecting": {
+   "kind": "inner count",
+   "value": 1
+  },
+  "drop_first_selected | cons.conf.idx x age | all-rows position": {
+   "kind": "position",
+   "value": 15
+  },
+  "drop_first_selected | decay_x_density x age | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | decay_x_density x age | inner fits selecting": {
+   "kind": "inner count",
+   "value": 1
+  },
+  "drop_first_selected | decay_x_density x age | all-rows position": {
+   "kind": "position",
+   "value": 17
+  },
+  "drop_first_selected | economic_curvature_intensity x dow_month_encoded | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x dow_month_encoded | inner fits selecting": {
+   "kind": "inner count",
+   "value": 3
+  },
+  "drop_first_selected | economic_curvature_intensity x dow_month_encoded | all-rows position": {
+   "kind": "position",
+   "value": 18
+  },
+  "drop_first_selected | decay_x_density x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | decay_x_density x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 1
+  },
+  "drop_first_selected | decay_x_density x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 20
+  },
+  "drop_first_selected | behavioral_favorability x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | behavioral_favorability x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 1
+  },
+  "drop_first_selected | behavioral_favorability x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 13
+  },
+  "drop_first_selected | age x dow_month_encoded | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | age x dow_month_encoded | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | age x dow_month_encoded | all-rows position": {
+   "kind": "position",
+   "value": 22
+  },
+  "drop_first_selected | age x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | age x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | age x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 21
+  },
+  "drop_first_selected | decay_x_density x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | decay_x_density x default | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | decay_x_density x default | all-rows position": {
+   "kind": "position",
+   "value": 16
+  },
+  "drop_first_selected | age x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | age x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | age x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 24
+  },
+  "drop_first_selected | prior_x_stress x decay_x_density | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | prior_x_stress x decay_x_density | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | prior_x_stress x decay_x_density | all-rows position": {
+   "kind": "position",
+   "value": 29
+  },
+  "drop_first_selected | campaign x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | campaign x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | campaign x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 14
+  },
+  "drop_first_selected | age x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | age x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | age x campaign | all-rows position": {
+   "kind": "position",
+   "value": 25
+  },
+  "drop_first_selected | cons.conf.idx x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 19
+  },
+  "drop_first_selected | cpi_high_cellular x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | cpi_high_cellular x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | cpi_high_cellular x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 27
+  },
+  "drop_first_selected | age x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | age x default | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | age x default | all-rows position": {
+   "kind": "position",
+   "value": 26
+  },
+  "drop_first_selected | decay_x_density x economic_curvature_intensity | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | decay_x_density x economic_curvature_intensity | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | decay_x_density x economic_curvature_intensity | all-rows position": {
+   "kind": "position",
+   "value": 39
+  },
+  "drop_first_selected | dow_month_encoded x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | dow_month_encoded x default | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | dow_month_encoded x default | all-rows position": {
+   "kind": "position",
+   "value": 23
+  },
+  "drop_first_selected | campaign x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | campaign x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | campaign x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 30
+  },
+  "drop_first_selected | economic_curvature_intensity x cons.conf.idx | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x cons.conf.idx | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x cons.conf.idx | all-rows position": {
+   "kind": "position",
+   "value": 28
+  },
+  "drop_first_selected | age x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | age x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | age x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 34
+  },
+  "drop_first_selected | age x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | age x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | age x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 33
+  },
+  "drop_first_selected | cons.conf.idx x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x default | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x default | all-rows position": {
+   "kind": "position",
+   "value": 35
+  },
+  "drop_first_selected | dow_month_encoded x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | dow_month_encoded x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | dow_month_encoded x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 36
+  },
+  "drop_first_selected | prior_x_stress x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | prior_x_stress x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | prior_x_stress x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 40
+  },
+  "drop_first_selected | age x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | age x prior_x_stress | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | age x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 38
+  },
+  "drop_first_selected | cons.conf.idx x dow_month_encoded | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x dow_month_encoded | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x dow_month_encoded | all-rows position": {
+   "kind": "position",
+   "value": 44
+  },
+  "drop_first_selected | economic_curvature_intensity x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x default | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x default | all-rows position": {
+   "kind": "position",
+   "value": 32
+  },
+  "drop_first_selected | cons.conf.idx x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 37
+  },
+  "drop_first_selected | dow_month_encoded x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | dow_month_encoded x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | dow_month_encoded x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 54
+  },
+  "drop_first_selected | dow_month_encoded x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | dow_month_encoded x prior_x_stress | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | dow_month_encoded x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 46
+  },
+  "drop_first_selected | economic_curvature_intensity x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 31
+  },
+  "drop_first_selected | default x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | default x prior_x_stress | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | default x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 41
+  },
+  "drop_first_selected | dow_month_encoded x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | dow_month_encoded x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | dow_month_encoded x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 53
+  },
+  "drop_first_selected | prior_x_stress x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | prior_x_stress x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | prior_x_stress x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 42
+  },
+  "drop_first_selected | default x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | default x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | default x campaign | all-rows position": {
+   "kind": "position",
+   "value": 43
+  },
+  "drop_first_selected | economic_curvature_intensity x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x prior_x_stress | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 50
+  },
+  "drop_first_selected | decay_x_density x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | decay_x_density x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | decay_x_density x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 57
+  },
+  "drop_first_selected | economic_curvature_intensity x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 47
+  },
+  "drop_first_selected | cons.conf.idx x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x prior_x_stress | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 56
+  },
+  "drop_first_selected | dow_month_encoded x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | dow_month_encoded x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | dow_month_encoded x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 55
+  },
+  "drop_first_selected | decay_x_density x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | decay_x_density x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | decay_x_density x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 52
+  },
+  "drop_first_selected | default x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | default x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | default x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 45
+  },
+  "drop_first_selected | prior_x_stress x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | prior_x_stress x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | prior_x_stress x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 59
+  },
+  "drop_first_selected | cpi_high_cellular x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | cpi_high_cellular x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | cpi_high_cellular x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 48
+  },
+  "drop_first_selected | economic_curvature_intensity x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | economic_curvature_intensity x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 61
+  },
+  "drop_first_selected | overlap_default_clean x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | overlap_default_clean x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | overlap_default_clean x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 49
+  },
+  "drop_first_selected | default x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | default x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | default x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 51
+  },
+  "drop_first_selected | default x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | default x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | default x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 58
+  },
+  "drop_first_selected | cons.conf.idx x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 60
+  },
+  "drop_first_selected | cons.conf.idx x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | cons.conf.idx x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 63
+  },
+  "drop_first_selected | overlap_default_clean x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | overlap_default_clean x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | overlap_default_clean x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 62
+  },
+  "drop_first_selected | prior_x_stress x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | prior_x_stress x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | prior_x_stress x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 65
+  },
+  "drop_first_selected | overlap_default_clean x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | overlap_default_clean x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | overlap_default_clean x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 64
+  },
+  "drop_first_selected | default x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "drop_first_selected | default x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "drop_first_selected | default x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 66
+  },
+  "jed_alone_selected | campaign x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 5
+  },
+  "jed_alone_selected | campaign x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 17
+  },
+  "jed_alone_selected | campaign x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 1
+  },
+  "jed_alone_selected | joint_economic_decay x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 4
+  },
+  "jed_alone_selected | joint_economic_decay x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 20
+  },
+  "jed_alone_selected | joint_economic_decay x campaign | all-rows position": {
+   "kind": "position",
+   "value": 3
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 3
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 15
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x campaign | all-rows position": {
+   "kind": "position",
+   "value": 2
+  },
+  "jed_alone_selected | economic_curvature_intensity x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 1
+  },
+  "jed_alone_selected | economic_curvature_intensity x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 6
+  },
+  "jed_alone_selected | economic_curvature_intensity x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 5
+  },
+  "jed_alone_selected | joint_economic_decay x cons.conf.idx | outer fits selecting": {
+   "kind": "count",
+   "value": 1
+  },
+  "jed_alone_selected | joint_economic_decay x cons.conf.idx | inner fits selecting": {
+   "kind": "inner count",
+   "value": 3
+  },
+  "jed_alone_selected | joint_economic_decay x cons.conf.idx | all-rows position": {
+   "kind": "position",
+   "value": 13
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x cons.conf.idx | outer fits selecting": {
+   "kind": "count",
+   "value": 1
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x cons.conf.idx | inner fits selecting": {
+   "kind": "inner count",
+   "value": 2
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x cons.conf.idx | all-rows position": {
+   "kind": "position",
+   "value": 16
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x age | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x age | inner fits selecting": {
+   "kind": "inner count",
+   "value": 1
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x age | all-rows position": {
+   "kind": "position",
+   "value": 7
+  },
+  "jed_alone_selected | joint_economic_decay x dow_month_encoded | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x dow_month_encoded | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x dow_month_encoded | all-rows position": {
+   "kind": "position",
+   "value": 9
+  },
+  "jed_alone_selected | cons.conf.idx x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x campaign | all-rows position": {
+   "kind": "position",
+   "value": 4
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x dow_month_encoded | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x dow_month_encoded | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x dow_month_encoded | all-rows position": {
+   "kind": "position",
+   "value": 14
+  },
+  "jed_alone_selected | dow_month_encoded x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | dow_month_encoded x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | dow_month_encoded x campaign | all-rows position": {
+   "kind": "position",
+   "value": 15
+  },
+  "jed_alone_selected | campaign x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | campaign x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 1
+  },
+  "jed_alone_selected | campaign x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 6
+  },
+  "jed_alone_selected | economic_curvature_intensity x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x campaign | all-rows position": {
+   "kind": "position",
+   "value": 10
+  },
+  "jed_alone_selected | joint_economic_decay x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 3
+  },
+  "jed_alone_selected | joint_economic_decay x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 8
+  },
+  "jed_alone_selected | prior_x_stress x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | prior_x_stress x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | prior_x_stress x campaign | all-rows position": {
+   "kind": "position",
+   "value": 11
+  },
+  "jed_alone_selected | economic_curvature_intensity x age | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x age | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x age | all-rows position": {
+   "kind": "position",
+   "value": 17
+  },
+  "jed_alone_selected | economic_curvature_intensity x dow_month_encoded | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x dow_month_encoded | inner fits selecting": {
+   "kind": "inner count",
+   "value": 4
+  },
+  "jed_alone_selected | economic_curvature_intensity x dow_month_encoded | all-rows position": {
+   "kind": "position",
+   "value": 19
+  },
+  "jed_alone_selected | joint_economic_decay x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 1
+  },
+  "jed_alone_selected | joint_economic_decay x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 22
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 1
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 12
+  },
+  "jed_alone_selected | cons.conf.idx x age | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x age | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x age | all-rows position": {
+   "kind": "position",
+   "value": 21
+  },
+  "jed_alone_selected | joint_economic_decay x age | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x age | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x age | all-rows position": {
+   "kind": "position",
+   "value": 23
+  },
+  "jed_alone_selected | behavioral_favorability x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | behavioral_favorability x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 1
+  },
+  "jed_alone_selected | behavioral_favorability x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 18
+  },
+  "jed_alone_selected | age x dow_month_encoded | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | age x dow_month_encoded | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | age x dow_month_encoded | all-rows position": {
+   "kind": "position",
+   "value": 26
+  },
+  "jed_alone_selected | age x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | age x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | age x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 31
+  },
+  "jed_alone_selected | age x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | age x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | age x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 28
+  },
+  "jed_alone_selected | age x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | age x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | age x campaign | all-rows position": {
+   "kind": "position",
+   "value": 33
+  },
+  "jed_alone_selected | cons.conf.idx x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 24
+  },
+  "jed_alone_selected | campaign x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | campaign x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | campaign x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 20
+  },
+  "jed_alone_selected | cpi_high_cellular x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | cpi_high_cellular x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | cpi_high_cellular x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 29
+  },
+  "jed_alone_selected | joint_economic_decay x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x default | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x default | all-rows position": {
+   "kind": "position",
+   "value": 25
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x economic_curvature_intensity | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x economic_curvature_intensity | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x economic_curvature_intensity | all-rows position": {
+   "kind": "position",
+   "value": 32
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x default | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x default | all-rows position": {
+   "kind": "position",
+   "value": 35
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 27
+  },
+  "jed_alone_selected | joint_economic_decay x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x prior_x_stress | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 37
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x prior_x_stress | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 40
+  },
+  "jed_alone_selected | age x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | age x default | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | age x default | all-rows position": {
+   "kind": "position",
+   "value": 36
+  },
+  "jed_alone_selected | joint_economic_decay x euribor3m_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x euribor3m_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x euribor3m_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 49
+  },
+  "jed_alone_selected | dow_month_encoded x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | dow_month_encoded x default | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | dow_month_encoded x default | all-rows position": {
+   "kind": "position",
+   "value": 34
+  },
+  "jed_alone_selected | campaign x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | campaign x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | campaign x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 38
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 39
+  },
+  "jed_alone_selected | economic_curvature_intensity x cons.conf.idx | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x cons.conf.idx | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x cons.conf.idx | all-rows position": {
+   "kind": "position",
+   "value": 30
+  },
+  "jed_alone_selected | prior_x_stress x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | prior_x_stress x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | prior_x_stress x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 48
+  },
+  "jed_alone_selected | cons.conf.idx x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x default | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x default | all-rows position": {
+   "kind": "position",
+   "value": 41
+  },
+  "jed_alone_selected | joint_economic_decay x economic_curvature_intensity | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x economic_curvature_intensity | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x economic_curvature_intensity | all-rows position": {
+   "kind": "position",
+   "value": 52
+  },
+  "jed_alone_selected | age x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | age x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | age x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 43
+  },
+  "jed_alone_selected | dow_month_encoded x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | dow_month_encoded x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | dow_month_encoded x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 44
+  },
+  "jed_alone_selected | age x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | age x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | age x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 42
+  },
+  "jed_alone_selected | cons.conf.idx x dow_month_encoded | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x dow_month_encoded | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x dow_month_encoded | all-rows position": {
+   "kind": "position",
+   "value": 53
+  },
+  "jed_alone_selected | age x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | age x prior_x_stress | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | age x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 50
+  },
+  "jed_alone_selected | cons.conf.idx x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 47
+  },
+  "jed_alone_selected | economic_curvature_intensity x default | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x default | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x default | all-rows position": {
+   "kind": "position",
+   "value": 45
+  },
+  "jed_alone_selected | dow_month_encoded x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | dow_month_encoded x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | dow_month_encoded x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 62
+  },
+  "jed_alone_selected | dow_month_encoded x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | dow_month_encoded x prior_x_stress | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | dow_month_encoded x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 57
+  },
+  "jed_alone_selected | prior_x_stress x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | prior_x_stress x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | prior_x_stress x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 51
+  },
+  "jed_alone_selected | economic_curvature_intensity x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 46
+  },
+  "jed_alone_selected | dow_month_encoded x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | dow_month_encoded x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | dow_month_encoded x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 59
+  },
+  "jed_alone_selected | default x campaign | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | default x campaign | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | default x campaign | all-rows position": {
+   "kind": "position",
+   "value": 54
+  },
+  "jed_alone_selected | default x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | default x prior_x_stress | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | default x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 55
+  },
+  "jed_alone_selected | economic_curvature_intensity x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x prior_x_stress | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 61
+  },
+  "jed_alone_selected | economic_curvature_intensity x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 56
+  },
+  "jed_alone_selected | cons.conf.idx x prior_x_stress | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x prior_x_stress | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x prior_x_stress | all-rows position": {
+   "kind": "position",
+   "value": 58
+  },
+  "jed_alone_selected | joint_economic_decay x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 68
+  },
+  "jed_alone_selected | dow_month_encoded x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | dow_month_encoded x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | dow_month_encoded x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 64
+  },
+  "jed_alone_selected | joint_economic_decay x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | joint_economic_decay x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 65
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 67
+  },
+  "jed_alone_selected | default x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | default x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | default x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 63
+  },
+  "jed_alone_selected | prior_x_stress x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | prior_x_stress x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | prior_x_stress x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 70
+  },
+  "jed_alone_selected | default x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | default x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | default x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 73
+  },
+  "jed_alone_selected | economic_curvature_intensity x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | economic_curvature_intensity x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 72
+  },
+  "jed_alone_selected | overlap_default_clean x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | overlap_default_clean x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | overlap_default_clean x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 60
+  },
+  "jed_alone_selected | default x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | default x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | default x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 69
+  },
+  "jed_alone_selected | cpi_high_cellular x behavioral_favorability | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | cpi_high_cellular x behavioral_favorability | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | cpi_high_cellular x behavioral_favorability | all-rows position": {
+   "kind": "position",
+   "value": 66
+  },
+  "jed_alone_selected | cons.conf.idx x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 71
+  },
+  "jed_alone_selected | cons.conf.idx x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | cons.conf.idx x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 74
+  },
+  "jed_alone_selected | overlap_default_clean x emp_var_rate_sigmoid_slope | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | overlap_default_clean x emp_var_rate_sigmoid_slope | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | overlap_default_clean x emp_var_rate_sigmoid_slope | all-rows position": {
+   "kind": "position",
+   "value": 75
+  },
+  "jed_alone_selected | prior_x_stress x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | prior_x_stress x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | prior_x_stress x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 77
+  },
+  "jed_alone_selected | overlap_default_clean x cpi_high_cellular | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | overlap_default_clean x cpi_high_cellular | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | overlap_default_clean x cpi_high_cellular | all-rows position": {
+   "kind": "position",
+   "value": 76
+  },
+  "jed_alone_selected | default x overlap_default_clean | outer fits selecting": {
+   "kind": "count",
+   "value": 0
+  },
+  "jed_alone_selected | default x overlap_default_clean | inner fits selecting": {
+   "kind": "inner count",
+   "value": 0
+  },
+  "jed_alone_selected | default x overlap_default_clean | all-rows position": {
+   "kind": "position",
+   "value": 78
+  },
+  "jed_alone_selected | vs 5A | roc_auc_5a": {
+   "kind": "estimate",
+   "value": 0.7933956723
+  },
+  "jed_alone_selected | vs 5A | roc_auc": {
+   "kind": "estimate",
+   "value": 0.7928294954
+  },
+  "jed_alone_selected | vs 5A | d_roc_auc": {
+   "kind": "difference",
+   "value": -0.0005661769
+  },
+  "jed_alone_selected | vs 5A | d_roc_auc_low": {
+   "kind": "estimate",
+   "value": -0.0014699684
+  },
+  "jed_alone_selected | vs 5A | d_roc_auc_high": {
+   "kind": "estimate",
+   "value": 0.0003376146
+  },
+  "jed_alone_selected | vs 5A | d_roc_auc_p": {
+   "kind": "estimate",
+   "value": 0.2195089821
+  },
+  "jed_alone_selected | vs 5A | pr_auc_5a": {
+   "kind": "estimate",
+   "value": 0.4176166106
+  },
+  "jed_alone_selected | vs 5A | pr_auc": {
+   "kind": "estimate",
+   "value": 0.416418642
+  },
+  "jed_alone_selected | vs 5A | d_pr_auc": {
+   "kind": "difference",
+   "value": -0.0011979687
+  },
+  "jed_alone_selected | vs 5A | nested_f2_5a": {
+   "kind": "estimate",
+   "value": 0.551809879
+  },
+  "jed_alone_selected | vs 5A | nested_f2": {
+   "kind": "estimate",
+   "value": 0.5518976626
+  },
+  "jed_alone_selected | vs 5A | d_nested_f2": {
+   "kind": "difference",
+   "value": 8.77836e-05
+  },
+  "jed_alone_selected | vs 5A | brier_raw_5a": {
+   "kind": "estimate",
+   "value": 0.1623352759
+  },
+  "jed_alone_selected | vs 5A | brier_raw": {
+   "kind": "estimate",
+   "value": 0.1624563204
+  },
+  "jed_alone_selected | vs 5A | d_brier_raw": {
+   "kind": "estimate",
+   "value": 0.0001210445
+  },
+  "jed_alone_selected | vs 5A | brier_calibrated_5a": {
+   "kind": "estimate",
+   "value": 0.0796022114
+  },
+  "jed_alone_selected | vs 5A | brier_calibrated": {
+   "kind": "estimate",
+   "value": 0.0797147787
+  },
+  "jed_alone_selected | vs 5A | d_brier_calibrated": {
+   "kind": "difference",
+   "value": 0.0001125673
+  },
+  "jed_alone_selected | vs 5A | ece_raw_5a": {
+   "kind": "estimate",
+   "value": 0.2711570441
+  },
+  "jed_alone_selected | vs 5A | ece_raw": {
+   "kind": "estimate",
+   "value": 0.2713934929
+  },
+  "jed_alone_selected | vs 5A | d_ece_raw": {
+   "kind": "estimate",
+   "value": 0.0002364488
+  },
+  "jed_alone_selected | vs 5A | ece_calibrated_5a": {
+   "kind": "estimate",
+   "value": 0.002668561
+  },
+  "jed_alone_selected | vs 5A | ece_calibrated": {
+   "kind": "estimate",
+   "value": 0.0025942542
+  },
+  "jed_alone_selected | vs 5A | d_ece_calibrated": {
+   "kind": "difference",
+   "value": -7.43068e-05
+  },
+  "jed_alone_selected | vs 5A | differ": {
+   "kind": "decisions",
+   "value": 702
+  },
+  "jed_alone_selected | vs 5A | flag_now_not_5a": {
+   "kind": "decisions",
+   "value": 526
+  },
+  "jed_alone_selected | vs 5A | flag_5a_not_now": {
+   "kind": "decisions",
+   "value": 176
+  },
+  "jed_alone_selected | vs 5A | flagged": {
+   "kind": "decisions",
+   "value": 6415
+  },
+  "jed_alone_selected | vs 5A | flagged_5a": {
+   "kind": "decisions",
+   "value": 6065
+  },
+  "jed_alone_selected | vs 5A | material_change": {
+   "kind": "verdict",
+   "value": false
+  },
+  "drop_first_selected | vs 5A | roc_auc_5a": {
+   "kind": "estimate",
+   "value": 0.792955892
+  },
+  "drop_first_selected | vs 5A | roc_auc": {
+   "kind": "estimate",
+   "value": 0.7934653572
+  },
+  "drop_first_selected | vs 5A | d_roc_auc": {
+   "kind": "difference",
+   "value": 0.0005094652
+  },
+  "drop_first_selected | vs 5A | d_roc_auc_low": {
+   "kind": "estimate",
+   "value": -0.0004786823
+  },
+  "drop_first_selected | vs 5A | d_roc_auc_high": {
+   "kind": "estimate",
+   "value": 0.0014976127
+  },
+  "drop_first_selected | vs 5A | d_roc_auc_p": {
+   "kind": "estimate",
+   "value": 0.3122418841
+  },
+  "drop_first_selected | vs 5A | pr_auc_5a": {
+   "kind": "estimate",
+   "value": 0.4152125592
+  },
+  "drop_first_selected | vs 5A | pr_auc": {
+   "kind": "estimate",
+   "value": 0.4165430308
+  },
+  "drop_first_selected | vs 5A | d_pr_auc": {
+   "kind": "difference",
+   "value": 0.0013304716
+  },
+  "drop_first_selected | vs 5A | nested_f2_5a": {
+   "kind": "estimate",
+   "value": 0.5512521979
+  },
+  "drop_first_selected | vs 5A | nested_f2": {
+   "kind": "estimate",
+   "value": 0.548197547
+  },
+  "drop_first_selected | vs 5A | d_nested_f2": {
+   "kind": "difference",
+   "value": -0.0030546509
+  },
+  "drop_first_selected | vs 5A | brier_raw_5a": {
+   "kind": "estimate",
+   "value": 0.1625455671
+  },
+  "drop_first_selected | vs 5A | brier_raw": {
+   "kind": "estimate",
+   "value": 0.1624700005
+  },
+  "drop_first_selected | vs 5A | d_brier_raw": {
+   "kind": "estimate",
+   "value": -7.55666e-05
+  },
+  "drop_first_selected | vs 5A | brier_calibrated_5a": {
+   "kind": "estimate",
+   "value": 0.0796790665
+  },
+  "drop_first_selected | vs 5A | brier_calibrated": {
+   "kind": "estimate",
+   "value": 0.0795431539
+  },
+  "drop_first_selected | vs 5A | d_brier_calibrated": {
+   "kind": "difference",
+   "value": -0.0001359126
+  },
+  "drop_first_selected | vs 5A | ece_raw_5a": {
+   "kind": "estimate",
+   "value": 0.2717521907
+  },
+  "drop_first_selected | vs 5A | ece_raw": {
+   "kind": "estimate",
+   "value": 0.2712521972
+  },
+  "drop_first_selected | vs 5A | d_ece_raw": {
+   "kind": "estimate",
+   "value": -0.0004999935
+  },
+  "drop_first_selected | vs 5A | ece_calibrated_5a": {
+   "kind": "estimate",
+   "value": 0.0018063755
+  },
+  "drop_first_selected | vs 5A | ece_calibrated": {
+   "kind": "estimate",
+   "value": 0.0027868629
+  },
+  "drop_first_selected | vs 5A | d_ece_calibrated": {
+   "kind": "difference",
+   "value": 0.0009804874
+  },
+  "drop_first_selected | vs 5A | differ": {
+   "kind": "decisions",
+   "value": 684
+  },
+  "drop_first_selected | vs 5A | flag_now_not_5a": {
+   "kind": "decisions",
+   "value": 542
+  },
+  "drop_first_selected | vs 5A | flag_5a_not_now": {
+   "kind": "decisions",
+   "value": 142
+  },
+  "drop_first_selected | vs 5A | flagged": {
+   "kind": "decisions",
+   "value": 6595
+  },
+  "drop_first_selected | vs 5A | flagged_5a": {
+   "kind": "decisions",
+   "value": 6195
+  },
+  "drop_first_selected | vs 5A | material_change": {
+   "kind": "verdict",
+   "value": false
+  },
+  "drop_first_selected | per fold | roc_auc mean": {
+   "kind": "difference",
+   "value": 0.0004840954
+  },
+  "drop_first_selected | per fold | roc_auc sd": {
+   "kind": "estimate",
+   "value": 0.00083013
+  },
+  "drop_first_selected | per fold | roc_auc folds better": {
+   "kind": "folds better",
+   "value": 4
+  },
+  "drop_first_selected | per fold | pr_auc mean": {
+   "kind": "difference",
+   "value": 0.001338865
+  },
+  "drop_first_selected | per fold | pr_auc sd": {
+   "kind": "estimate",
+   "value": 0.0009173239
+  },
+  "drop_first_selected | per fold | pr_auc folds better": {
+   "kind": "folds better",
+   "value": 5
+  },
+  "drop_first_selected | per fold | brier_calibrated mean": {
+   "kind": "difference",
+   "value": -0.0001359126
+  },
+  "drop_first_selected | per fold | brier_calibrated sd": {
+   "kind": "estimate",
+   "value": 0.0001887091
+  },
+  "drop_first_selected | per fold | brier_calibrated folds better": {
+   "kind": "folds better",
+   "value": 4
+  },
+  "drop_first_selected | per fold | ece_calibrated mean": {
+   "kind": "difference",
+   "value": 0.0012478529
+  },
+  "drop_first_selected | per fold | ece_calibrated sd": {
+   "kind": "estimate",
+   "value": 0.0018258122
+  },
+  "drop_first_selected | per fold | ece_calibrated folds better": {
+   "kind": "folds better",
+   "value": 1
+  },
+  "drop_first_selected | per fold | nested_f2 mean": {
+   "kind": "difference",
+   "value": -0.0028786952
+  },
+  "drop_first_selected | per fold | nested_f2 sd": {
+   "kind": "estimate",
+   "value": 0.0082741905
+  },
+  "drop_first_selected | per fold | nested_f2 folds better": {
+   "kind": "folds better",
+   "value": 2
+  },
+  "jed_alone_selected | per fold | roc_auc mean": {
+   "kind": "difference",
+   "value": -0.0007156032
+  },
+  "jed_alone_selected | per fold | roc_auc sd": {
+   "kind": "estimate",
+   "value": 0.0011343406
+  },
+  "jed_alone_selected | per fold | roc_auc folds better": {
+   "kind": "folds better",
+   "value": 1
+  },
+  "jed_alone_selected | per fold | pr_auc mean": {
+   "kind": "difference",
+   "value": -0.0012046694
+  },
+  "jed_alone_selected | per fold | pr_auc sd": {
+   "kind": "estimate",
+   "value": 0.0039567143
+  },
+  "jed_alone_selected | per fold | pr_auc folds better": {
+   "kind": "folds better",
+   "value": 2
+  },
+  "jed_alone_selected | per fold | brier_calibrated mean": {
+   "kind": "difference",
+   "value": 0.0001125673
+  },
+  "jed_alone_selected | per fold | brier_calibrated sd": {
+   "kind": "estimate",
+   "value": 0.000116927
+  },
+  "jed_alone_selected | per fold | brier_calibrated folds better": {
+   "kind": "folds better",
+   "value": 1
+  },
+  "jed_alone_selected | per fold | ece_calibrated mean": {
+   "kind": "difference",
+   "value": -0.0001932343
+  },
+  "jed_alone_selected | per fold | ece_calibrated sd": {
+   "kind": "estimate",
+   "value": 0.0013653658
+  },
+  "jed_alone_selected | per fold | ece_calibrated folds better": {
+   "kind": "folds better",
+   "value": 1
+  },
+  "jed_alone_selected | per fold | nested_f2 mean": {
+   "kind": "difference",
+   "value": 0.000143574
+  },
+  "jed_alone_selected | per fold | nested_f2 sd": {
+   "kind": "estimate",
+   "value": 0.0026208164
+  },
+  "jed_alone_selected | per fold | nested_f2 folds better": {
+   "kind": "folds better",
+   "value": 2
+  },
+  "baseline | campaign x emp_var_rate_sigmoid_slope | surface pair_importance": {
+   "kind": "estimate",
+   "value": 0.0522513858
+  },
+  "baseline | campaign x emp_var_rate_sigmoid_slope | surface pair_share_of_all_terms": {
+   "kind": "estimate",
+   "value": 0.0243748445
+  },
+  "baseline | campaign x emp_var_rate_sigmoid_slope | surface max_abs_supported": {
+   "kind": "estimate",
+   "value": 0.6711907337
+  },
+  "baseline | campaign x emp_var_rate_sigmoid_slope | surface fold_sd_max_supported": {
+   "kind": "estimate",
+   "value": 0.0487386257
+  },
+  "baseline | campaign x emp_var_rate_sigmoid_slope | surface strong_cells_sign_agreement": {
+   "kind": "estimate",
+   "value": 1.0
+  },
+  "baseline | campaign x emp_var_rate_sigmoid_slope | surface selecting folds": {
+   "kind": "count",
+   "value": 5
+  },
+  "jed_alone | campaign x emp_var_rate_sigmoid_slope | surface pair_importance": {
+   "kind": "estimate",
+   "value": 0.0434126204
+  },
+  "jed_alone | campaign x emp_var_rate_sigmoid_slope | surface pair_share_of_all_terms": {
+   "kind": "estimate",
+   "value": 0.0203153232
+  },
+  "jed_alone | campaign x emp_var_rate_sigmoid_slope | surface max_abs_supported": {
+   "kind": "estimate",
+   "value": 0.5609331621
+  },
+  "jed_alone | campaign x emp_var_rate_sigmoid_slope | surface fold_sd_max_supported": {
+   "kind": "estimate",
+   "value": 0.0872729376
+  },
+  "jed_alone | campaign x emp_var_rate_sigmoid_slope | surface strong_cells_sign_agreement": {
+   "kind": "estimate",
+   "value": 1.0
+  },
+  "jed_alone | campaign x emp_var_rate_sigmoid_slope | surface selecting folds": {
+   "kind": "count",
+   "value": 5
+  },
+  "jed_alone_selected | campaign x emp_var_rate_sigmoid_slope | surface pair_importance": {
+   "kind": "estimate",
+   "value": 0.0158538331
+  },
+  "jed_alone_selected | campaign x emp_var_rate_sigmoid_slope | surface pair_share_of_all_terms": {
+   "kind": "estimate",
+   "value": 0.007472921
+  },
+  "jed_alone_selected | campaign x emp_var_rate_sigmoid_slope | surface max_abs_supported": {
+   "kind": "estimate",
+   "value": 0.2277922306
+  },
+  "jed_alone_selected | campaign x emp_var_rate_sigmoid_slope | surface fold_sd_max_supported": {
+   "kind": "estimate",
+   "value": 0.1224589757
+  },
+  "jed_alone_selected | campaign x emp_var_rate_sigmoid_slope | surface strong_cells_sign_agreement": {
+   "kind": "estimate",
+   "value": 1.0
+  },
+  "jed_alone_selected | campaign x emp_var_rate_sigmoid_slope | surface selecting folds": {
+   "kind": "count",
+   "value": 5
+  },
+  "drop_first | campaign x emp_var_rate_sigmoid_slope | surface pair_importance": {
+   "kind": "estimate",
+   "value": 0.046004076
+  },
+  "drop_first | campaign x emp_var_rate_sigmoid_slope | surface pair_share_of_all_terms": {
+   "kind": "estimate",
+   "value": 0.0214163441
+  },
+  "drop_first | campaign x emp_var_rate_sigmoid_slope | surface max_abs_supported": {
+   "kind": "estimate",
+   "value": 0.5822904726
+  },
+  "drop_first | campaign x emp_var_rate_sigmoid_slope | surface fold_sd_max_supported": {
+   "kind": "estimate",
+   "value": 0.0836685039
+  },
+  "drop_first | campaign x emp_var_rate_sigmoid_slope | surface strong_cells_sign_agreement": {
+   "kind": "estimate",
+   "value": 1.0
+  },
+  "drop_first | campaign x emp_var_rate_sigmoid_slope | surface selecting folds": {
+   "kind": "count",
+   "value": 5
+  },
+  "drop_first_selected | campaign x emp_var_rate_sigmoid_slope | surface pair_importance": {
+   "kind": "estimate",
+   "value": 0.0160238716
+  },
+  "drop_first_selected | campaign x emp_var_rate_sigmoid_slope | surface pair_share_of_all_terms": {
+   "kind": "estimate",
+   "value": 0.0074768548
+  },
+  "drop_first_selected | campaign x emp_var_rate_sigmoid_slope | surface max_abs_supported": {
+   "kind": "estimate",
+   "value": 0.2831514173
+  },
+  "drop_first_selected | campaign x emp_var_rate_sigmoid_slope | surface fold_sd_max_supported": {
+   "kind": "estimate",
+   "value": 0.111968171
+  },
+  "drop_first_selected | campaign x emp_var_rate_sigmoid_slope | surface strong_cells_sign_agreement": {
+   "kind": "estimate",
+   "value": 1.0
+  },
+  "drop_first_selected | campaign x emp_var_rate_sigmoid_slope | surface selecting folds": {
+   "kind": "count",
+   "value": 5
+  },
+  "drop_first_selected | decay_x_density x campaign | surface pair_importance": {
+   "kind": "estimate",
+   "value": 0.0214394635
+  },
+  "drop_first_selected | decay_x_density x campaign | surface pair_share_of_all_terms": {
+   "kind": "estimate",
+   "value": 0.0100038093
+  },
+  "drop_first_selected | decay_x_density x campaign | surface max_abs_supported": {
+   "kind": "estimate",
+   "value": 0.2830454673
+  },
+  "drop_first_selected | decay_x_density x campaign | surface fold_sd_max_supported": {
+   "kind": "estimate",
+   "value": 0.1877252601
+  },
+  "drop_first_selected | decay_x_density x campaign | surface strong_cells_sign_agreement": {
+   "kind": "estimate",
+   "value": 0.625
+  },
+  "drop_first_selected | decay_x_density x campaign | surface selecting folds": {
+   "kind": "count",
+   "value": 4
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x campaign | surface pair_importance": {
+   "kind": "estimate",
+   "value": 0.0135290417
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x campaign | surface pair_share_of_all_terms": {
+   "kind": "estimate",
+   "value": 0.0063770988
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x campaign | surface max_abs_supported": {
+   "kind": "estimate",
+   "value": 0.1636518145
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x campaign | surface fold_sd_max_supported": {
+   "kind": "estimate",
+   "value": 0.1034489971
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x campaign | surface strong_cells_sign_agreement": {
+   "kind": "estimate",
+   "value": 0.9
+  },
+  "jed_alone_selected | euribor3m_sigmoid_slope x campaign | surface selecting folds": {
+   "kind": "count",
+   "value": 3
+  },
+  "baseline | euribor3m_sigmoid_slope x economic_curvature_intensity | surface pair_importance": {
+   "kind": "estimate",
+   "value": 0.010062099
+  },
+  "baseline | euribor3m_sigmoid_slope x economic_curvature_intensity | surface pair_share_of_all_terms": {
+   "kind": "estimate",
+   "value": 0.004693887
+  },
+  "baseline | euribor3m_sigmoid_slope x economic_curvature_intensity | surface max_abs_supported": {
+   "kind": "estimate",
+   "value": 0.0478807492
+  },
+  "baseline | euribor3m_sigmoid_slope x economic_curvature_intensity | surface fold_sd_max_supported": {
+   "kind": "estimate",
+   "value": 0.2022903412
+  },
+  "baseline | euribor3m_sigmoid_slope x economic_curvature_intensity | surface strong_cells_sign_agreement": {
+   "kind": "estimate",
+   "value": null
+  },
+  "baseline | euribor3m_sigmoid_slope x economic_curvature_intensity | surface selecting folds": {
+   "kind": "count",
+   "value": 5
+  },
+  "jed_alone | euribor3m_sigmoid_slope x economic_curvature_intensity | surface pair_importance": {
+   "kind": "estimate",
+   "value": 0.0132804714
+  },
+  "jed_alone | euribor3m_sigmoid_slope x economic_curvature_intensity | surface pair_share_of_all_terms": {
+   "kind": "estimate",
+   "value": 0.0062147151
+  },
+  "jed_alone | euribor3m_sigmoid_slope x economic_curvature_intensity | surface max_abs_supported": {
+   "kind": "estimate",
+   "value": 0.0537786513
+  },
+  "jed_alone | euribor3m_sigmoid_slope x economic_curvature_intensity | surface fold_sd_max_supported": {
+   "kind": "estimate",
+   "value": 0.265625445
+  },
+  "jed_alone | euribor3m_sigmoid_slope x economic_curvature_intensity | surface strong_cells_sign_agreement": {
+   "kind": "estimate",
+   "value": 1.0
+  },
+  "jed_alone | euribor3m_sigmoid_slope x economic_curvature_intensity | surface selecting folds": {
+   "kind": "count",
+   "value": 5
+  },
+  "baseline | prior_x_stress x decay_x_density | surface pair_importance": {
+   "kind": "estimate",
+   "value": 0.0072743584
+  },
+  "baseline | prior_x_stress x decay_x_density | surface pair_share_of_all_terms": {
+   "kind": "estimate",
+   "value": 0.0033934288
+  },
+  "baseline | prior_x_stress x decay_x_density | surface max_abs_supported": {
+   "kind": "estimate",
+   "value": 0.0681073425
+  },
+  "baseline | prior_x_stress x decay_x_density | surface fold_sd_max_supported": {
+   "kind": "estimate",
+   "value": 0.105944968
+  },
+  "baseline | prior_x_stress x decay_x_density | surface strong_cells_sign_agreement": {
+   "kind": "estimate",
+   "value": 0.0
+  },
+  "baseline | prior_x_stress x decay_x_density | surface selecting folds": {
+   "kind": "count",
+   "value": 5
+  },
+  "drop_first | prior_x_stress x decay_x_density | surface pair_importance": {
+   "kind": "estimate",
+   "value": 0.0073726502
+  },
+  "drop_first | prior_x_stress x decay_x_density | surface pair_share_of_all_terms": {
+   "kind": "estimate",
+   "value": 0.0034322005
+  },
+  "drop_first | prior_x_stress x decay_x_density | surface max_abs_supported": {
+   "kind": "estimate",
+   "value": 0.0657312424
+  },
+  "drop_first | prior_x_stress x decay_x_density | surface fold_sd_max_supported": {
+   "kind": "estimate",
+   "value": 0.105333754
+  },
+  "drop_first | prior_x_stress x decay_x_density | surface strong_cells_sign_agreement": {
+   "kind": "estimate",
+   "value": 0.0
+  },
+  "drop_first | prior_x_stress x decay_x_density | surface selecting folds": {
+   "kind": "count",
+   "value": 5
+  },
+  "jed_alone_selected | joint_economic_decay x campaign | surface pair_importance": {
+   "kind": "estimate",
+   "value": 0.0118747059
+  },
+  "jed_alone_selected | joint_economic_decay x campaign | surface pair_share_of_all_terms": {
+   "kind": "estimate",
+   "value": 0.005597305
+  },
+  "jed_alone_selected | joint_economic_decay x campaign | surface max_abs_supported": {
+   "kind": "estimate",
+   "value": 0.2197282604
+  },
+  "jed_alone_selected | joint_economic_decay x campaign | surface fold_sd_max_supported": {
+   "kind": "estimate",
+   "value": 0.1995420193
+  },
+  "jed_alone_selected | joint_economic_decay x campaign | surface strong_cells_sign_agreement": {
+   "kind": "estimate",
+   "value": 1.0
+  },
+  "jed_alone_selected | joint_economic_decay x campaign | surface selecting folds": {
+   "kind": "count",
+   "value": 4
+  },
+  "surfaces shown": {
+   "kind": "list",
+   "value": [
+    "campaign x emp_var_rate_sigmoid_slope",
+    "decay_x_density x campaign",
+    "euribor3m_sigmoid_slope x campaign",
+    "euribor3m_sigmoid_slope x economic_curvature_intensity",
+    "prior_x_stress x decay_x_density",
+    "joint_economic_decay x campaign"
+   ]
+  }
+ }
+}

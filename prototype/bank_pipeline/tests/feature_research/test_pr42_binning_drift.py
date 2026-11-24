@@ -18,6 +18,7 @@ from __future__ import annotations
 import ast
 import copy
 import json
+import re
 from pathlib import Path
 
 import numpy as np
@@ -373,7 +374,8 @@ def test_the_notebook_runs_step4a_after_step3b_and_writes_its_record_once():
     assert joined.count('"binning_drift"') == 3                  # seed name, record written, record read
     assert code[idx["39"]].count('RR.write_run_record(RUN, "binning_drift"') == 1
     assert 'RR.read_run_record(RUN.run_id, "binning_drift")' in code[idx["39"]]
-    assert "RR.start_run(commit=4" in code[idx["3"]]
+    run_commit = re.search(r"RR\.start_run\(commit=(\d+)", code[idx["3"]])
+    assert run_commit and int(run_commit.group(1)) >= 4                 # Commit 4 or a later commit's run
     assert 'TRAINING_FRAMES["stage2_sources"]' in code[idx["32"]]
     assert "BD.require(CLAIMS_4A" in code[idx["38"]]
     assert "BD.focal_assignments(" in code[idx["38"]] and "assignments=ASSIGNMENTS" in code[idx["38"]]
