@@ -73,3 +73,16 @@ Thumbs.db
 # Data / DB
 # ----------------------
 /prototype/bank_pipeline/data/db/
+
+# ----------------------
+# Executed notebooks and their archives (PR 42, Step 6B)
+# ----------------------
+# Executed copies, archives and preserved outputs are written outside the repository
+# (notebook_packaging refuses paths inside it). These rules keep any copy placed here by
+# hand out of Git; the archives are published as GitHub release assets instead.
+*_executed.ipynb
+*_input.ipynb
+executed_notebooks.zip
+*_executed_notebooks.zip
+*_executed_notebooks/
+*_tracked_outputs.ipynb

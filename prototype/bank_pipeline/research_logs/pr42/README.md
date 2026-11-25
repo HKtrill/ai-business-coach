@@ -1,0 +1,230 @@
+# PR 42 research logs
+
+Feature research on the training side
+([`research_roadmap.md`](../../documentation/research_roadmap.md), PR 42). One folder per run, named
+`c<commit>_<YYYYMMDD_HHMMSS>`, written once: an existing record is never replaced, and a new attempt gets a
+new run id. The conventions are the PR 39 ones ([`../pr39/README.md`](../pr39/README.md)).
+
+| Commit | Record in `<run_id>/` | Written by |
+|---|---|---|
+| Commit 2: training-side identities, stage feature populations, the per-feature inventory, the DAG, registry / call-site / fit-protocol / DAG checks, the label-permutation probe, the frozen references, the accepted artifacts read through the PR 38 boundary extractors, the duplicated implementations (pairs, callers, parity on training rows) | `feature_inventory.json` + `.sha256` | `feature_research/feature_research.ipynb`, Cells 1–13 |
+| Commit 3, Step 3A: the time index (source order verified, periods, contact days), how the target-derived encodings are built, every fitting path, fold-isolation label flips and call sites, the accepted fits' fold scopes, the black-box MLP's early-stopping split against the Stage 1 encoders, the attribution of every encoded value to fit-row labels by contact timing (mechanisms a, b and c per path, held-out own labels measured, reconstruction coverage expected versus completed), threshold and constant provenance, the findings, and this run's inventory compared with the Commit 2 record | `encoding_audit.json` + `.sha256`, beside the same run's `feature_inventory.json` | the same notebook, Cells 14–21 |
+| Commit 3, Step 3B: the registration (rules, cold start, windows, comparisons) and its digest, the accepted Stage 1 settings read, the past-only states verified against the production encoder, availability and fallbacks per rule and scope, the invariance flips, the predictive runs (protocol table, paired DeLong comparisons pooled and per segment, the 2 × 2 encoding × split factorial for LR and MLP, per-fold ROC-AUCs, every MLP fit's stopping epoch and split check), the lag-consistent chronological arm and its regression, the contract decisions and the proposed candidate contract, the Stage 2–3 extension, the PR 49 protocol, the Stage 2 prior-shift projection, the interim finding with its interpretation, and the accepted Step 3A run (unavailable if its directory is absent; otherwise both records and sidecars required and their integrity checked; exact reproduction only in the matching environment), checked before the record is written | `temporal_validity.json` + `.sha256`, beside the same run's two records | the same notebook, Cells 22–30 |
+| Commit 4, Step 4A: the PR 39 Step 3A record (pinned SHA-256) and where each quoted figure comes from (the historical transcription, Git-verified where commit `1ce1649` is present; the rows between each frozen cut and its printed decile edge; the exploratory notebook's accepted printed Cells 15A–15B, read from their pinned Git blob, with source and status), E-B, T1–T4 and the decision reproduced by import, the row-level sources, held-out label flips with controls, the macro states and each encoder's values, the in-sample, fold-fit and out-of-fold lifts with their two descriptive contrasts and the migration, support with Wilson intervals (estimand stated) and fold stability, deciles and the historical thresholds, contact periods with period-standardized ratios and their non-cancelling within-period measures, straddling states, Commit 3 label provenance by bin, the row- and state-level facts behind the findings, the findings with every claim and its evidence, and the limits | `binning_drift.json` + `.sha256`, beside the same run's three records | the same notebook, Cells 31–39 |
+| Commit 4, Step 4B: the registration (its content, digest and checks against the PR 39 record, the GLASS profile, the shared contract and the frozen binning), the reference inputs every procedure reads (`frozen_shares()`, `window_halfwidths()`, `_tail_range()`, all from the frozen bins' in-sample supports on all training rows), the held-out source and inner cross-fit checks, every fold-fitted and all-rows fit (cuts, shares, gaps, bin rows and states, the tail selection), held-out label flips with controls (conditional on those reference inputs), the comparison with the frozen bins on identical held-out rows (parity, focal summaries, every bin table and T1–T4, refit migration, NSD × ECI joint tables), fold and period dependence, `eci_warm` as a filter on partner rules (partners per fold, the three variants per fold and slot, pooled per slot and partner, partition checks; support as a standalone conjunction), the decision by the registered criteria, the review document's statements checked, the post-registration fold-local sensitivity for NSD `gap_placed` (outside the registration and the ranking), and the limits | `binning_candidates.json` + `.sha256`, beside the same run's four records | the same notebook, Cells 40–48 |
+| Commit 5, Step 5A: the registration (its content, digest and checks of the baseline's features, pairs, protocol and transcribed hyperparameters), the row and fold identities of the training-side Stage 3 block and its checks, the past-only density's contexts and checks (production-engineer verification, held-out and later-label flips with controls, cold start) and its fallback trace (earlier-day raw values against the full-fit-fold median fallback, the held-out rows that take it, and its dependence on later fit labels), the inventory review (distributions, correlations, the remaining correlated pair), the configurations and their pairs resolved by name, every fit's thresholds, calibration and fitted terms with out-of-fold digests, baseline parity against the PR 39 records (row by row where the accepted EBM exists locally), the paired out-of-fold comparison at the three operating points with per-fold differences, every main-effect curve and retained-interaction surface (on support-defined cells) with support and contact-period concentration, the post-registration centring check of the correlated slopes' fold offsets, complementarity with Stage 1 on all rows and Stage 2 abstentions (the accepted views checked before any fit; required, with reconciled tables, when `PR42_REQUIRE_ACCEPTED_VIEWS=1`), the nominations, the interpretation and feature notes, the statements checked and the limits | `stage3_simplification.json` + `.sha256`, beside the same run's five records | the same notebook, Cells 49–59 |
+| Commit 5, Step 5B: the registration (its content, digest and checks, and the history of PR 39's pair choice read back from the tracked sources, the exploratory notebook from Step 4A's pinned blob with its identity), the accepted Step 5A record (integrity; reproduction where required), every interaction selection (the fit and rows it used, each eligible pair's mean rank, the selected and fitted pairs, the margin), the recovery on the frozen 13 features, the reselected candidates' fits and checks, recurrence and change against the accepted or 5A pairs, the comparison with each 5A fit, the surfaces of recurring and changed pairs with what each adds, complementarity under the 5A cascade screen (Windows; required with `PR42_REQUIRE_ACCEPTED_VIEWS=1`), the acceptance checks with their verdict, the reproduction of the sandbox run (every item with both values and the difference, the statements, the checks: required only in the sandbox's environment), everything flagged for review, and the limits; written before acceptance is enforced | `interaction_selection.json` + `.sha256`, beside the same run's six records | the same notebook, Cells 60–68 |
+
+[`feature_inventory.md`](feature_inventory.md), beside this index, is the Commit 2 review document: the
+inventory and frozen references as tables, generated from `feature_research.feature_inventory` and kept in step
+with it by `tests/feature_research/test_pr42_feature_inventory.py`. [`encoding_audit.md`](encoding_audit.md) is
+the Step 3A review document: the findings by mechanism, feature family and fitting path (with denominators), the
+MLP early-stopping trace, their limits and where each piece of evidence is.
+[`temporal_validity.md`](temporal_validity.md) is the Step 3B review document: what each past-only encoding knows
+when a row is scored, availability, the predictive comparisons (encoding versus split, MLP early stopping), the
+contract decisions, the PR 49 protocol and the interim finding. Its comparisons are differences between whole
+protocols; it says what each does and does not isolate.
+[`binning_drift.md`](binning_drift.md) is the Step 4A review document: what each quoted NSD/ECI lift measures,
+the reproduction, the descriptive encoder contrasts, support and deciles, contact periods, and the finding per focal bin
+with the causes left entangled. Its claims are the record's `claims`, each required to hold by the run that writes it.
+[`binning_candidates.md`](binning_candidates.md) is the Step 4B review document: the registration (what Step 4A had established, apart from what it fixed), the learned cuts, the comparison with the frozen bins on identical held-out rows, fold and period dependence, `eci_warm` as a filter on its diagnostic population, the decision per candidate, family and filter, and a separately labelled post-registration sensitivity that qualifies the PR 44 handoff. Its statements are the module's `STATED` and `STATED_SENSITIVITY`, each required to hold by the run that writes the record.
+[`stage3_simplification.md`](stage3_simplification.md) is the Step 5A review document: the baseline and its parity, the remaining correlated pair, the four candidates and the pairs each loses, the paired out-of-fold comparison and calibration, the shapes by feature with their fold and period support (including why the correlated slopes' fold curves look offset), the retained and lost interactions inside their joint support, complementarity with Stage 1 (computed in the Windows run), and the recommendation for Step 5B. Its statements are the module's `STATED`, each required to hold, within the stated tolerance for model-dependent values, by the run that writes the record.
+[`interaction_selection.md`](interaction_selection.md) is the Step 5B review document: how PR 39 chose its three pairs, the selector and where it runs, recovery on the frozen 13 features, the reselected candidates and what enters, persists or disappears, the comparison with each 5A fit, the surfaces of the recurring and changed pairs, complementarity under the 5A cascade screen (computed in the Windows run), how a run is judged (acceptance in every run; the sandbox figures reproduced exactly only in the sandbox, and elsewhere recorded with changed selections, directions and verdicts flagged for review), and the handoff to Step 6A and Step 44C.
+[`feature_contract_recommendations.md`](feature_contract_recommendations.md) is the Commit 6, Step 6A document. It writes no record. It names the accepted run of each step and consolidates those records into:
+
+- the feature-contract dispositions: retain, advance, or recommend a separately versioned revision (PR 42 adopts nothing);
+- the versioning and adoption requirements of each candidate revision;
+- the Stage 3 feature DAG ownership decision;
+- the handoff to PRs 43–49.
+
+It quotes the accepted Windows records where the review documents above quote sandbox runs. Its evidence index is resolved in those records by `tests/feature_research/test_pr42_contract_recommendations.py`.
+
+Since Commit 3 a run writes several records into its folder: the first creates the folder, which must not exist,
+and each name is written once (`research_records.write_run_record`).
+
+## What every record holds
+
+| Key | Content |
+|---|---|
+| `run` | run id, commit, the notebook, UTC start and finish |
+| `seeds` | every seed the run used, by name |
+| `code` | Git HEAD, `uncommitted_tracked_changes`, the LF SHA-256 of each file in `research_records.CODE_FILES`, and the whole-tree digest of `upstream_regeneration.records.code_identity` |
+| `environment` | Python, platform and package versions |
+| `content_sha256` | SHA-256 of the content sections only (no run id, times, code or environment): a run that reproduces another has the same value |
+
+`feature_research.research_records.read_run_record(run_id, name)` reads a record only if its `.sha256` sidecar
+and its `content_sha256` both match. No record holds a test row, a test label, a test prediction or a test
+metric: the notebook never binds them (G7).
+
+`.gitattributes` turns off line-ending conversion inside run folders, so the records' bytes, and the hashes that
+pin them, are the same on every checkout.
+
+
+## Commit 6 - Final Validation, Reproducibility, and Research Closeout
+
+PR 42 completed its feature-contract investigation without adopting new
+production feature contracts or modifying the frozen PR 39 model artifacts.
+
+### Final regression validation
+
+| Validation suite | Result |
+|---|---:|
+| Targeted research, notebook, packaging, and historical artifact tests | 525 passed |
+| Full default regression suite | 3,828 passed |
+| Slow regression suite | 11 passed |
+| Real-data regression suite | 144 passed |
+| Total distinct regression tests | 3,983 passed |
+| Final targeted regression after execution registration | 525 passed |
+
+All regression suites passed with zero failures. The targeted suite overlaps
+the default regression suite and is not added to the distinct test total.
+
+The final targeted suite completed in 299.43 seconds.
+
+### Frozen baseline and accepted-record validation
+
+All eight established accepted-baseline verification commands passed:
+
+- Upstream artifact acceptance.
+- Stage 4 crossover.
+- Stage 1 calibration.
+- Stage 2 binning.
+- PR 38 crossfit report.
+- PR 38 acceptance.
+- Stage 2 baseline verification.
+- Historical archive reproduction.
+
+The PR 38 crossfit report returned `IDENTICAL`. All 19 historical baseline
+files matched. Historical archive verification returned
+`reproduced_with_code_drift`, with the frozen outputs reproduced exactly.
+
+All 33 existing research records remained intact. The research-record
+verification reported 15 frozen references and zero mismatches.
+
+The accepted Stage 1 calibration family remains sigmoid.
+
+### Final clean-kernel notebook execution
+
+The complete Feature Research Notebook was executed in a clean Windows
+kernel through the PR 41 `_run_notebook` execution path, with
+`PR42_REQUIRE_ACCEPTED_VIEWS=1`.
+
+| Property | Result |
+|---|---|
+| Final run ID | `c5_20261124_223143` |
+| Scientific reproduction reference | `c5_20261124_122029` |
+| Execution status | Completed |
+| Exit code | 0 |
+| Runtime | 3,979 seconds |
+| Total notebook cells | 140 |
+| Executed code cells | 68/68 |
+| Execution errors | 0 |
+| Saved outputs | 181 |
+| Tables | 53 |
+| Plots | 28 |
+| Acceptance checks | Passed |
+| Scientific reproduction | `REPRODUCED` |
+
+The final run reproduced all seven scientific record content digests
+exactly against the accepted Step 5B reference.
+
+| Research record | SHA-256 content digest prefix | Result |
+|---|---|---|
+| Feature inventory | `ec6e2201e3ff` | Identical |
+| Encoding audit | `9751f4affcf6` | Identical |
+| Temporal validity | `26de64937438` | Identical |
+| Binning drift | `46c26889ec06` | Identical |
+| Binning candidates | `f223bf72e34d` | Identical |
+| Stage 3 simplification | `d70330e1d8fa` | Identical |
+| Interaction selection | `0d999bc8c58a` | Identical |
+
+Recorded seeds matched, and no package version differences were reported
+by the final reproduction check.
+
+The only recorded code-identity differences were the intentional Feature
+Research Notebook Markdown changes and the clearing of GLASS cascade
+notebook outputs.
+
+The final executed notebook passed all completeness checks and was
+registered as the current accepted Feature Research Notebook execution
+and as a member of the PR 42 snapshot.
+
+### Artifact and notebook integrity
+
+- All fingerprinted model artifacts remained SHA-256 identical before
+  and after the final notebook execution.
+- All 13 fingerprinted original notebook files remained unchanged.
+- All four tracked bank-pipeline notebooks contain zero outputs and
+  zero execution counts.
+- All 11 listed notebook executions were accepted by the packaging
+  inventory.
+- No failed or unregistered executions were included in the archives.
+
+### Executed-notebook packaging
+
+Both final archives passed packaging verification, including member
+integrity, SHA-256 checks, manifest consistency, safe extraction,
+notebook readability, execution completeness, and equality with their
+accepted source copies.
+
+| Archive | Contents |
+|---|---|
+| `executed_notebooks.zip` | Four current accepted project notebooks |
+| `pr42_executed_notebooks.zip` | Eight accepted PR 42 notebook executions |
+
+The project-wide archive uses a flat layout, with repository source
+paths and execution provenance preserved in `MANIFEST.json`.
+
+The PR 42 snapshot preserves the seven historical accepted executions
+and the final Step 6C execution, using run-ID filenames.
+
+Generated archives and executed notebook copies remain outside Git.
+
+For future PRs that change accepted notebook outputs, refresh the
+project-wide archive after validation and publish a separate,
+release-specific PR snapshot. Preserve the stable project-wide
+download link and the historical PR-specific archives.
+
+### Documented warnings and deferred engineering
+
+Seven scikit-learn `ConvergenceWarning` instances were reported during:
+
+`tests/realdata/test_pr42_temporal_validity.py::test_availability_is_the_reported_one`
+
+The SAG/SAGA optimizer reached its configured maximum iteration count.
+All affected tests passed. The warnings were neither suppressed nor
+addressed through changes to the accepted research configurations.
+
+Investigate scaling, solver tolerance, iteration limits, and convergence
+during PR 44 training optimization or before PR 45 artifact regeneration.
+
+Optuna interactive progress bars can display widget-rendering warnings
+when opening saved executed notebooks. The recorded optimization results
+remain available. This cosmetic presentation issue is deferred.
+
+Cross-platform compatibility, line-ending portability, and the previously
+documented Joblib/Loky shutdown behavior remain deferred engineering work.
+
+### Research handoff and claim boundaries
+
+The feature-contract recommendations remain documented in
+[feature_contract_recommendations.md](feature_contract_recommendations.md).
+
+- PR 43: Preserve the frozen random-split benchmark claim boundaries
+  during Stage 4 methodology research.
+- PR 44: Evaluate past-only encodings, encoder-isolated MLP early
+  stopping, Stage 2 binning and filter candidates, Stage 3 feature
+  simplification, and EBM interaction budgets and selection.
+- PR 45: Adopt only justified, separately versioned contract revisions,
+  consolidate the production feature implementation where appropriate,
+  and regenerate dependent artifacts.
+- PR 49: Execute chronological evaluation and temporal robustness
+  research under the established protocol.
+
+PR 42 adopts no new production feature contracts. Its random-split
+findings are not evidence of validated forward-in-time performance.
+
+The final execution establishes scientific reproducibility against the
+accepted reference in the recorded Windows environment. It does not
+constitute independent external validation or cross-platform
+reproducibility.

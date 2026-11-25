@@ -16,8 +16,14 @@ G5  Each active notebook is one labelled top-to-bottom path: every code cell
 G6  The concluded PR 35 specialization experiment is off by default: its
     three flags are False and every expensive or test-split step sits under
     the flag that gates it.
-G7  The feature-research notebook draws the cascades' split under the same
-    protocol and never binds a test row.
+G7  The feature-research notebooks draw the cascades' split under the same
+    protocol and never bind a test row. The PR 42 Feature Research Notebook
+    goes further: it draws the split only through
+    ``feature_research.training_side.draw_training_side`` (which returns the
+    training side and nothing of the test side), spells no test-side name or
+    key (the PR 38 boundary's ``FORBIDDEN_FIELD_TOKENS``), and opens accepted
+    artifacts only through ``frozen_references.accepted_artifact_views`` (the
+    PR 38 boundary extractors).
 
 Stage-specific notebook contracts stay with their stages (tests/stage1-4,
 tests/parity); import resolution is tests/notebooks/test_notebook_imports.py.
@@ -45,6 +51,7 @@ from tests.support.synthetic_bank import make_bank_frame
 GLASS = BANK_ROOT / "glass_pipeline" / "glass_cascade.ipynb"
 BLACKBOX = BANK_ROOT / "blackbox_pipeline" / "blackbox_cascade.ipynb"
 RESEARCH = BANK_ROOT / "feature_research" / "exploratory_feature_research.ipynb"
+FEATURE_RESEARCH = BANK_ROOT / "feature_research" / "feature_research.ipynb"     # PR 42
 HEADER = re.compile(r"^#\s*CELL\s+([0-9]+[A-Z]?)\s*:", re.M)
 
 
@@ -267,3 +274,73 @@ def test_the_feature_research_notebook_draws_the_cascade_split_and_binds_no_test
     names = {n.id for n in _nodes(RESEARCH) if isinstance(n, ast.Name)}
     keys = {n.value for n in _nodes(RESEARCH) if isinstance(n, ast.Constant) and isinstance(n.value, str)}
     assert not names & {"X_test", "y_test"} and not keys & {"X_test", "y_test"}
+
+
+# G7 (PR 42) — the Feature Research Notebook binds the training side only
+#: Steps only ``draw_training_side`` takes: the population, the split and the test row ids.
+SPLIT_STEPS = ("build_database", "BankPreprocessor", "sanity_check_data", "GlobalSplitManager",
+               "create_split", "train_test_split", "load_split", "save_split", "split_frame",
+               "build_train_reference", "train_reference_from_global_split", "read_csv",
+               "read_sql_query")
+#: Ways to open an artifact other than the boundary extractors (through
+#: ``frozen_references.accepted_artifact_views``).
+ARTIFACT_READERS = ("load", "read_pickle", "load_pinned_stage2", "pinned_path", "read_pins",
+                    "read_verified", "verify_pin", "load_rf_router", "load_stage_outputs",
+                    "build_stage4_inputs", "load_blackbox_stage4_inputs", "load_or_build_block",
+                    "from_global_split", "find_stage3_artifact", "find_artifact_for_split",
+                    "load_latest", "extract_router_view", "extract_lr_view", "extract_ebm_view",
+                    "open")
+BANNED_IMPORTS = ("joblib", "pickle", "dill", "cloudpickle", "shared.pinned_artifacts",
+                  "shared.stage4", "shared.stage2.diagnostics", "data.global_splits",
+                  "data.preprocessing", "sklearn.model_selection")
+
+
+def _spelled(path) -> set:
+    """Every name, attribute, keyword, definition, import alias and string a code cell spells."""
+    out = set()
+    for n in _nodes(path):
+        if isinstance(n, ast.Name):
+            out.add(n.id)
+        elif isinstance(n, ast.Attribute):
+            out.add(n.attr)
+        elif isinstance(n, ast.keyword) and n.arg:
+            out.add(n.arg)
+        elif isinstance(n, (ast.FunctionDef, ast.ClassDef)):
+            out.add(n.name)
+        elif isinstance(n, ast.alias):
+            out.update(filter(None, (n.name, n.asname)))
+        elif isinstance(n, ast.Constant) and isinstance(n.value, str):
+            out.add(n.value)
+    return out
+
+
+def test_the_pr42_feature_research_notebook_draws_only_the_training_side():
+    from feature_research import training_side
+    (draw,) = _calls(FEATURE_RESEARCH, "draw_training_side")
+    assert not draw.args and not draw.keywords
+    assert [ast.unparse(v) for v in _assigned(FEATURE_RESEARCH)["TRAIN"]] == ["draw_training_side()"]
+    imports = [n for n in _nodes(FEATURE_RESEARCH) if isinstance(n, ast.ImportFrom)
+               and any(a.name == "draw_training_side" for a in n.names)]
+    assert [n.module for n in imports] == ["feature_research.training_side"]
+    assert training_side.TEST_SIZE == 0.20 and training_side.RANDOM_SEED == 42
+    assert not [s for s in SPLIT_STEPS if _calls(FEATURE_RESEARCH, s)]
+
+
+def test_the_pr42_feature_research_notebook_spells_no_test_side_name():
+    from shared.stage2.diagnostics.boundary import FORBIDDEN_FIELD_TOKENS
+    tokens = tuple(FORBIDDEN_FIELD_TOKENS) + ("holdout",)
+    spelled = _spelled(FEATURE_RESEARCH)
+    hits = sorted(s for s in spelled if any(t in s.lower() for t in tokens))
+    assert not hits, hits
+    assert not spelled & {"GLOBAL_SPLIT", "df_processed", "X_test", "y_test"}
+
+
+def test_the_pr42_feature_research_notebook_reads_artifacts_only_through_the_boundary():
+    assert not [r for r in ARTIFACT_READERS if _calls(FEATURE_RESEARCH, r)]
+    modules = {a.name for n in _nodes(FEATURE_RESEARCH) if isinstance(n, ast.Import)
+               for a in n.names}
+    modules |= {n.module for n in _nodes(FEATURE_RESEARCH) if isinstance(n, ast.ImportFrom)}
+    assert not [m for m in modules if any(m == b or m.startswith(b + ".") for b in BANNED_IMPORTS)]
+    (views,) = _calls(FEATURE_RESEARCH, "accepted_artifact_views")
+    assert ast.unparse(views.func) == "FR.accepted_artifact_views"
+    assert [ast.unparse(a) for a in views.args] == ["TRAIN.train_reference"]

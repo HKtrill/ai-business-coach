@@ -6,8 +6,9 @@ The Phase 1 reproduction reference is the tag `phase1-baseline-2026-11-17`.
 
 Paths are relative to `prototype/bank_pipeline/`. Cell references use the notebooks' own
 `# CELL <id>:` headers: **G** = `glass_pipeline/glass_cascade.ipynb`, **B** =
-`blackbox_pipeline/blackbox_cascade.ipynb`, **E** = `feature_research/exploratory_feature_research.ipynb`.
-An asterisk marks a legacy cell (section 1).
+`blackbox_pipeline/blackbox_cascade.ipynb`, **E** = `feature_research/exploratory_feature_research.ipynb`,
+**F** = `feature_research/feature_research.ipynb` (added in PR 42). An asterisk marks a legacy cell (section 1).
+Section 6 says where each notebook's executed copies are and how the published archives are built.
 
 ---
 
@@ -18,6 +19,7 @@ An asterisk marks a legacy cell (section 1).
 | G | GLASS cascade, Stages 1–4, and the cascade trace | Phase 1 execution contract (section 4); notebook tests |
 | B | Black-box cascade, Stages 1–4, and the 2×2 arbiter crossover | Phase 1 execution contract (section 4); notebook tests |
 | E | Feature research, research stage trainers, and the research GLASS Arbiter | Notebook tests only (`tests/notebooks/`: G5, G7) |
+| F | PR 42 Feature Research Notebook (section 2.1): training-side feature research, one write-once record per step | Notebook tests (G5, G7) and the PR 42 record tests (`tests/feature_research/`) |
 
 **Legacy cells.** G 9–14 and 15–16 (not 14B) and B 19–28B start with `%%legacy_stage2` and run only when
 `RUN_LEGACY_STAGE2 = True` (`shared/notebook_switches.py`, off by default). In the accepted path,
@@ -51,7 +53,8 @@ validity, and feature-selection evidence.
 - **Production references (read-only):** `shared/stage1/feature_engineering.py`,
   `shared/stage2/{feature_engineering,binning}.py`, `shared/stage3/feature_engineering.py`,
   `glass_pipeline/lr/correlation_analysis.py`, `glass_pipeline/glass_router/rf/lift_analysis.py`.
-- **Evidence:** the Stage 2 binning record `research_logs/pr39/c3_20261114_231604/` (`stage2_binning`).
+- **Evidence:** the Stage 2 binning record `research_logs/pr39/c3_20261114_231604/` (`stage2_binning`); the
+  PR 42 records in `research_logs/pr42/`, consolidated in `feature_contract_recommendations.md` (Step 6A).
 - **Boundaries:** produces feature evidence and contract recommendations. It does not edit
   production feature code in place, including `feature_research/feature_engineering/`: a revised
   contract is a new version, adopted through Training Research and the PR 45 regeneration. It
@@ -172,7 +175,7 @@ the PR 46 freeze).
 | | Research trainers | `feature_research/model_training/` | Includes a separate research `tune_min_confidence` |
 | | Reporting | `feature_research/visualization.py`, `feature_research/model_training/shared/report.py`, `feature_research/model_training/*/diagnostics.py` | |
 | **Production** | Stage contracts | `shared/stage1/`–`shared/stage4/` (including `shared/stage2/{contract,evaluation_protocol,obligations,arm_profile}.py`) | Frozen and fingerprinted; reuse, don't edit |
-| | Stage 3 feature DAG | `feature_research/feature_engineering/` (`crisis`, `integrals`, `derivatives`, `temporal`, `prior`, `overlap`, `_checks`), `feature_research/config.py` | Imported by `shared/stage3/feature_engineering.py` for both arms; part of the Stage 3 block-cache implementation identity |
+| | Stage 3 feature DAG | `feature_research/feature_engineering/` (`crisis`, `integrals`, `derivatives`, `temporal`, `prior`, `overlap`, `_checks`), `feature_research/config.py` | Imported by `shared/stage3/feature_engineering.py` for both arms; part of the Stage 3 block-cache implementation identity; its classes are pickled by path in every Stage 3 artifact (`refit["feature_pipeline"]`) |
 | | GLASS stages | `glass_pipeline/{lr,glass_router,ebm,glass_arbiter}/` | |
 | | Black-box stages | `blackbox_pipeline/models/{mlp,rf_router,xgb,meta_xgb}/` | |
 | | Per-stage loaders | `glass_pipeline/lr/artifacts.py`, `blackbox_pipeline/models/mlp/artifacts.py`, `blackbox_pipeline/models/rf_router/artifacts.py`, `shared/stage3/artifact.py`, `glass_pipeline/glass_arbiter/loader.py`, `blackbox_pipeline/models/meta_xgb/{artifact,inputs}.py` | Split-fingerprint checks are stage-specific |
@@ -211,8 +214,115 @@ registers them.
 
 | Item | Location | Why deferred | Revisit |
 |---|---|---|---|
-| Feature-engineering copies | `shared/stage2/feature_engineering.py` keeps self-contained copies of functions in `feature_research/feature_engineering/{crisis,integrals,derivatives}.py`, which Stage 3 imports directly | PR 42 may revise these features. Any edit to the `feature_research/feature_engineering/` modules changes the accepted Stage 3 features | PR 42: decide where the Stage 3 DAG lives before removing copies |
+| Feature-engineering copies | `shared/stage2/feature_engineering.py` keeps self-contained copies of `feature_research/feature_engineering/{crisis,integrals,derivatives,temporal,prior,overlap}.py`, which Stage 3 imports directly. The two agree in sample but differ on held-out rows at rounded bin edges, and in how they treat non-finite values | Decided in PR 42 Step 6A (`research_logs/pr42/feature_contract_recommendations.md`, section 6): one production-owned implementation under `shared/`, imported by Stages 2 and 3, with `feature_research.feature_engineering` kept as compatibility aliases for the class paths pickled in Stage 3 artifacts. Any move changes accepted feature values or recorded identities | PR 45, with the first adopted Stage 2 or Stage 3 contract revision; if none is adopted, keep both |
 | Research threshold and abstention helpers | `feature_research/model_training/glass_arbiter/{thresholds,arbiter}.py` vs `glass_pipeline/glass_arbiter/meta_stage.py` and `shared/stage4/protocol.py` | `find_recall_threshold` is an identical copy. The research `tune_min_confidence` applies the same F2-under-coverage rule over a fixed grid, while production searches every distinct confidence value. Stage 4 policy research may change both | PR 43 |
 | Training helper overlap | `feature_research/model_training/rf/trainer.py` vs `glass_pipeline/glass_router/rf/rf_training.py` (`_build_pipe`, `_normalize_params`) | Small private helpers; research trainers are the Training Research starting point | PR 43 |
 | Comparison-ready artifact loading | Per-stage loaders, `shared/pinned_artifacts.py`, `tests/support/artifact_audit.py` | Needs the PR 45 manifests; build on `pinned_path` and the existing loaders | PR 46 |
 | Shared plotting | Production and research plotting modules (section 3) | Presentation needs are not yet defined | PR 46 |
+
+---
+
+## 6. Executed notebooks and published archives
+
+PR 42, Step 6B. A notebook exists in three forms:
+
+- **Tracked source notebook.** The file in Git (section 1, plus the two legacy notebooks in
+  `prototype/churn_pipeline/notebooks/`). It holds the code and Markdown that tests and tooling read.
+- **Executed copy.** One file per accepted run, written outside the repository and never edited
+  afterwards. Its run's record identifies it.
+- **Published archive.** A GitHub release asset built from executed copies.
+
+**Executed copies and how each is accepted** (the listing is `notebook_packaging/accepted_executions.json`):
+
+| Notebook | Accepted executed copy | Where it is | Accepted by |
+|---|---|---|---|
+| G, B | `c6_20261116_194111_{glass,blackbox}_executed.ipynb`, the PR 39 Phase 1 reproduction (each notebook run top to bottom in a fresh kernel; written by `phase1_reproduction` through the `upstream_regeneration.vehicle` path) | `C:\Users\phill\projects\pr39_c6_notebooks\` (outside the repository) | `research_logs/pr39/c6_20261116_194111/phase1_freeze.json`: `passed`, and the executed copy's SHA-256 |
+| E | the outputs committed in PR 36 (commit `42753db`, Git blob `266860ba…`) | Git | `research_logs/pr42/c4_20261123_081749/binning_drift.json` pins the blob and its LF SHA-256 |
+| F | one copy per accepted PR 42 run (`research_logs/pr42/feature_contract_recommendations.md`, section 1), named `<run_id>_feature_research_executed.ipynb` except the first three (below). The current one is the manifest's `current` for F: Step 6C's final run once it is registered | `C:\Users\phill\projects\notebook_outputs\pr42\` (outside the repository) | the run's record in `research_logs/pr42/<run_id>/`, intact against its sidecar, with the run id in the notebook's saved outputs |
+| `prototype/churn_pipeline/notebooks/*.ipynb` | none | — | listed with the reason they have none |
+
+The validation commands of the first three PR 42 runs named their copies differently (Step 6C). The records
+pin no executed copy, so each copy is accepted only if its saved outputs name its run:
+
+| Run | Executed copy as written |
+|---|---|
+| `c2_20261122_124809` (Commit 2) | `%TEMP%\feature_research_executed.ipynb` |
+| `c3_20261122_201830` (Step 3A) | `C:\Users\phill\projects\patches\feature_research_step3a_executed.ipynb` |
+| `c3_20261122_232809` (Step 3B) | `notebook_outputs\pr42\c3_20261122_232809_feature_research_step3b_executed.ipynb` |
+
+A copy that is missing, or that a later run overwrote, is never replaced by another file: `exclude` removes its
+run from the snapshot with the reason, and the run's records and manifest entry stay. In the archive, every copy is
+named `<run_id>_feature_research_executed.ipynb`.
+
+G and B have had cell edits since PR 39 Commit 6 (PR 41's cleanup), so their executed copies are of the
+notebooks as Phase 1 froze them (tag `phase1-baseline-2026-11-17`). A newer accepted execution, such as
+PR 46's, replaces them.
+
+**Archives** (`python -m notebook_packaging`, run from `prototype/bank_pipeline/`). Archives are written
+outside the repository and are never tracked. The root `.gitignore` also ignores their names, executed and
+input copies (`*_executed.ipynb`, `*_input.ipynb`) and preserved outputs (`*_tracked_outputs.ipynb`), in case
+one is placed in the repository by hand.
+
+| Archive | Contents | Refreshed |
+|---|---|---|
+| `executed_notebooks.zip` | the current accepted executed copy of every tracked notebook that has one, at the ZIP root (no nested directories), with `MANIFEST.json` (original repository path, run, SHA-256, acceptance record, output counts) and a `README.md`. Notebooks without one are named in the manifest with the reason | whenever a newly accepted execution becomes a notebook's `current` one. Rebuilding needs `--replace` and reports what changed. Linked from the root README by a stable `releases/latest/download/` URL |
+| `prN_executed_notebooks.zip` | one PR's accepted executions as `prN_executed_notebooks/<run_id>_<notebook>_executed.ipynb`, with its manifest | fixed: a snapshot for that PR's description (PR 42's: `pr42`) |
+
+**Safeguards.**
+
+- An execution is packaged only if all of these hold:
+  - it is listed in the accepted-executions file;
+  - its file is found by its exact name in a folder passed with `--executed-dir`;
+  - it is a valid notebook in which every non-empty code cell ran and no output is an error;
+  - its record confirms it.
+- Missing, failed, partial and unlisted executions are reported, never substituted.
+- Every tracked notebook must be listed, with an execution or a reason, so none is left out silently.
+- Executed copies are only read. The build checks that they are unchanged afterwards.
+- Archive paths that collide (including differences of case only) are refused.
+- An existing archive is replaced only with `--replace`. A snapshot folder never takes a differing
+  copy or a stray file.
+- Verification refuses an archive at once, before extracting or reading any member, if a member path, or
+  a path its `MANIFEST.json` lists, is unsafe or collides with another. Unsafe means absolute, a drive
+  path, a backslash, an empty, `.` or `..` part, a character or name Windows forbids or reserves, or a
+  part ending in `.` or a space. Colliding means appearing twice or differing only by case. Extraction
+  writes each member only below the extraction folder.
+
+**Commands.**
+
+- `inventory`: the status of every listed execution, and any files in the folders that are not listed. A
+  snapshot member excluded with a reason is reported as excluded, not as a failure.
+- `build` and `snapshot <name>`: write the archives. A snapshot's `MANIFEST.json` (`not_included`) and
+  `README.md` list its excluded runs with their reasons and acceptance records.
+- `register <run_id> --like <execution> --description <text> [--current] [--snapshot <name>]`: lists a new run
+  of the same kind as an accepted execution. Its id, executed-copy name, acceptance record and required record
+  values are the template's with the run id replaced. It is written only if the run is accepted now (record
+  intact and confirming it, copy found, complete and naming the run), and only with `--apply`.
+- `exclude <snapshot> <execution> --reason <text>`: records that a snapshot member's executed copy is not
+  available. It is refused while the copy is found and accepted in the folders given, or while the run is a
+  notebook's current execution. It writes only with `--apply`.
+- `verify <zip>`: checks member paths first, then extracts the archive and checks members, SHA-256,
+  notebook validity, completeness, and output, table and plot counts. With `--executed-dir` it also
+  checks each member against its source.
+- `clear-outputs --verified-archive <zip> --preserve-dir <folder> --notebook <path> ... [--apply]`:
+  clears outputs and execution counts from tracked notebooks. It is a separate, explicit step, run only
+  after the archive has verified, and never a side effect of building or verifying. It writes nothing
+  without `--apply`. It refuses unless:
+  - the archive verifies;
+  - the archive accounts for each notebook that has outputs;
+  - `--preserve-dir` is a folder outside the repository.
+
+  Before it clears anything, it copies each notebook's current file, saved outputs included, byte for
+  byte to `<folder>/<repository path>/<stem>_<sha256[:12]>_tracked_outputs.ipynb`. It reads each copy back
+  to check it and records it in `<folder>/PRESERVED.json`. A preserved copy is never overwritten. If any
+  copy fails, no notebook is cleared, and a notebook that changes after it was preserved is not cleared.
+
+  It keeps every cell, cell order and id, code and Markdown, cell and notebook metadata, the JSON layout
+  and the line endings. A notebook would be restored if anything else changed. A notebook that is
+  already output-free is a no-op: nothing is written or preserved. The legacy `churn_pipeline` notebooks,
+  which have no accepted execution, are kept separate and refused. Executed copies and archives are
+  never cleared.
+
+**Publishing a newly accepted execution.**
+
+1. `register` it with `--current` and `--snapshot <its PR>`, first as a dry run, then with `--apply`.
+2. Rebuild both archives with `--replace`, verify them, and publish them as GitHub release assets.
