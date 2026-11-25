@@ -35,27 +35,27 @@
 
 #### Step 2A — Notebook Foundation and Frozen Input Boundary
 
-- [ ] Build the Training Research Notebook from `documentation/notebook_map.md` section 2.2. Inventory and reuse the existing training, calibration, cross-fitting, threshold, evaluation, statistical, plotting, and research-record utilities.
-- [ ] Reuse `feature_research.training_side` and extend notebook tests G5 and G7 to cover the labelled execution path and train-only boundary.
-- [ ] Assemble both upstream OOF tables from the PR 39 pins. Verify row order, labels, producer fold identities, route states, probability semantics, and fingerprints. Preserve the distinct Stage 1 and Stage 2/3 fold designs.
-- [ ] Reuse the PR 38 router, LR, and EBM boundary extractors. Supply the smallest verified train-only access needed for the MLP, Stage 3 XGBoost, and missing router evidence. Check the notebook entry point for test-field access because the production Stage 4 loaders and `build_feature_frames` construct both sides of the split.
-- [ ] Record the accepted configurations and threshold procedures. Reproduce the production abstention search over distinct confidence values when checking the historical reference. The research helper searches a fixed grid.
+- [x] Build the Training Research Notebook from `documentation/notebook_map.md` section 2.2. Inventory and reuse the existing training, calibration, cross-fitting, threshold, evaluation, statistical, plotting, and research-record utilities.
+- [x] Reuse `feature_research.training_side` and extend notebook tests G5 and G7 to cover the labelled execution path and train-only boundary.
+- [x] Assemble both upstream OOF tables from the PR 39 pins. Verify row order, labels, producer fold identities, route states, probability semantics, and fingerprints. Preserve the distinct Stage 1 and Stage 2/3 fold designs.
+- [x] Reuse the PR 38 router, LR, and EBM boundary extractors. Supply the smallest verified train-only access needed for the MLP, Stage 3 XGBoost, and missing router evidence. Check the notebook entry point for test-field access because the production Stage 4 loaders and `build_feature_frames` construct both sides of the split.
+- [x] Record the accepted configurations and threshold procedures. Reproduce the production abstention search over distinct confidence values when checking the historical reference. The research helper searches a fixed grid.
 
 #### Step 2B — Stage 4 Objective, Abstention Policy, and Comparison Registration
 
-- [ ] Define what abstention means operationally and how abstained rows contribute to whole-system scoring. Register the primary loss, coverage grid, selective-risk definition, AURC convention, tie handling, class-retention safeguards, and rule for selecting a deployable cut.
-- [ ] Evaluate scoring functions at matched coverage. Separately measure the coverage achieved on outer-fold rows by an inner-selected cut. Report decisions before abstention, retained-row results, and whole-system outcomes, including effective recall, per-class retention, retained prevalence, and correct and incorrect decisions deferred.
-- [ ] Keep retained F2 as a descriptive historical metric. It has no true-negative term, and the selected cut reached the 50% training coverage floor in all four accepted crossover cells. Use the registered criteria for weight, threshold, and policy selection.
-- [ ] Register the GLASS Linear Arbiter comparisons against the GLASS Arbiter and Meta-XGBoost on each upstream, separately from the historical PR 39 2×2.
-- [ ] Predefine the paired uncertainty method, meaningful improvement and comparability margins, calibration and class-retention limits, interpretability requirements, and computational budget. Favor the simpler interpretable approach when performance falls within the registered comparability margin.
-- [ ] Record each arm’s search space, trial budget, stopping criteria, diagnostic triggers for optional variants, and decision rule for expanding the simulated holdout.
+- [x] Define what abstention means operationally and how abstained rows contribute to whole-system scoring. Register the primary loss, coverage grid, selective-risk definition, AURC convention, tie handling, class-retention safeguards, and rule for selecting a deployable cut.
+- [x] Evaluate scoring functions at matched coverage. Separately measure the coverage achieved on outer-fold rows by an inner-selected cut. Report decisions before abstention, retained-row results, and whole-system outcomes, including effective recall, per-class retention, retained prevalence, and correct and incorrect decisions deferred.
+- [x] Keep retained F2 as a descriptive historical metric. It has no true-negative term, and the selected cut reached the 50% training coverage floor in all four accepted crossover cells. Use the registered criteria for weight, threshold, and policy selection.
+- [x] Register the GLASS Linear Arbiter comparisons against the GLASS Arbiter and Meta-XGBoost on each upstream, separately from the historical PR 39 2×2.
+- [x] Predefine the paired uncertainty method, meaningful improvement and comparability margins, calibration and class-retention limits, interpretability requirements, and computational budget. Favor the simpler interpretable approach when performance falls within the registered comparability margin.
+- [x] Record each arm’s search space, trial budget, stopping criteria, diagnostic triggers for optional variants, and decision rule for expanding the simulated holdout.
 
 #### Step 2C — Nested Stage 4 Validation on Fixed Upstream Inputs
 
-- [ ] Use common outer folds for evaluation and inner folds for selection. Fit each Stage 4 procedure from scratch, including learned voter cuts, weights or coefficients, calibration, class thresholds, and abstention cuts. Keep raw scoring, calibration, class decisions, and deferral separate.
-- [ ] Refit the accepted GLASS Arbiter procedure per outer fold. Reproduce its historical operating rule as a reference and evaluate its scoring function under the common registered policy. Apply the same outer evaluation and selection safeguards to Meta-XGBoost.
-- [ ] Measure Stage 4 selection optimism from inner-selected and outer-evaluated results. Document that upstream OOF inputs remain fixed and that upstream fits producing one row’s inputs can include other Stage 4 outer-fold labels. Fully nested Stage 1/3 hyperparameter selection belongs to PR 44.
-- [ ] Verify Stage 4 fold isolation, input parity, and reference behavior with targeted checks. Record run IDs, seeds, fold identities, parameters, trial counts, elapsed time, and code identity under `research_logs/pr43/`.
+- [x] Use common outer folds for evaluation and inner folds for selection. Fit each Stage 4 procedure from scratch, including learned voter cuts, weights or coefficients, calibration, class thresholds, and abstention cuts. Keep raw scoring, calibration, class decisions, and deferral separate.
+- [x] Refit the accepted GLASS Arbiter procedure per outer fold. Reproduce its historical operating rule as a reference and evaluate its scoring function under the common registered policy. Apply the same outer evaluation and selection safeguards to Meta-XGBoost.
+- [x] Measure Stage 4 selection optimism from inner-selected and outer-evaluated results. Document that upstream OOF inputs remain fixed and that upstream fits producing one row’s inputs can include other Stage 4 outer-fold labels. Fully nested Stage 1/3 hyperparameter selection belongs to PR 44.
+- [x] Verify Stage 4 fold isolation, input parity, and reference behavior with targeted checks. Record run IDs, seeds, fold identities, parameters, trial counts, elapsed time, and code identity under `research_logs/pr43/`.
 
 ### Commit 3 — Voter Diagnostics and GLASS Decision Structure
 

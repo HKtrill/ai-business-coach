@@ -14,6 +14,10 @@
   "prototype/bank_pipeline/feature_research/feature_research.ipynb": {
    "current": "c5_20261124_223143/feature_research"
   },
+  "prototype/bank_pipeline/feature_research/training_research.ipynb": {
+   "current": null,
+   "reason": "PR 43 Training Research Notebook, in progress: no accepted execution yet; PR 43 Commit 6 (Step 6B) records its accepted executed copy"
+  },
   "prototype/churn_pipeline/notebooks/BestRulesWins_GlassBox_Meta.ipynb": {
    "current": null,
    "reason": "Legacy IBM Telco feasibility prototype (prototype/churn_pipeline); its tracked copy has no outputs and no accepted execution is recorded"

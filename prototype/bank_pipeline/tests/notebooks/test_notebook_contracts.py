@@ -52,6 +52,7 @@ GLASS = BANK_ROOT / "glass_pipeline" / "glass_cascade.ipynb"
 BLACKBOX = BANK_ROOT / "blackbox_pipeline" / "blackbox_cascade.ipynb"
 RESEARCH = BANK_ROOT / "feature_research" / "exploratory_feature_research.ipynb"
 FEATURE_RESEARCH = BANK_ROOT / "feature_research" / "feature_research.ipynb"     # PR 42
+TRAINING_RESEARCH = BANK_ROOT / "feature_research" / "training_research.ipynb"
 HEADER = re.compile(r"^#\s*CELL\s+([0-9]+[A-Z]?)\s*:", re.M)
 
 
@@ -314,33 +315,41 @@ def _spelled(path) -> set:
     return out
 
 
-def test_the_pr42_feature_research_notebook_draws_only_the_training_side():
+@pytest.mark.parametrize("notebook", [FEATURE_RESEARCH, TRAINING_RESEARCH])
+def test_the_research_notebook_draws_only_the_training_side(notebook):
     from feature_research import training_side
-    (draw,) = _calls(FEATURE_RESEARCH, "draw_training_side")
-    assert not draw.args and not draw.keywords
-    assert [ast.unparse(v) for v in _assigned(FEATURE_RESEARCH)["TRAIN"]] == ["draw_training_side()"]
-    imports = [n for n in _nodes(FEATURE_RESEARCH) if isinstance(n, ast.ImportFrom)
+    (draw,) = _calls(notebook, "draw_training_side")
+    expected = "draw_training_side(indices_only=True)" if notebook == TRAINING_RESEARCH else "draw_training_side()"
+    assert ast.unparse(draw) == expected
+    assert [ast.unparse(v) for v in _assigned(notebook)["TRAIN"]] == [expected]
+    imports = [n for n in _nodes(notebook) if isinstance(n, ast.ImportFrom)
                and any(a.name == "draw_training_side" for a in n.names)]
     assert [n.module for n in imports] == ["feature_research.training_side"]
     assert training_side.TEST_SIZE == 0.20 and training_side.RANDOM_SEED == 42
-    assert not [s for s in SPLIT_STEPS if _calls(FEATURE_RESEARCH, s)]
+    assert not [s for s in SPLIT_STEPS if _calls(notebook, s)]
 
 
-def test_the_pr42_feature_research_notebook_spells_no_test_side_name():
+@pytest.mark.parametrize("notebook", [FEATURE_RESEARCH, TRAINING_RESEARCH])
+def test_the_research_notebook_spells_no_test_side_name(notebook):
     from shared.stage2.diagnostics.boundary import FORBIDDEN_FIELD_TOKENS
     tokens = tuple(FORBIDDEN_FIELD_TOKENS) + ("holdout",)
-    spelled = _spelled(FEATURE_RESEARCH)
+    spelled = _spelled(notebook)
     hits = sorted(s for s in spelled if any(t in s.lower() for t in tokens))
     assert not hits, hits
     assert not spelled & {"GLOBAL_SPLIT", "df_processed", "X_test", "y_test"}
 
 
-def test_the_pr42_feature_research_notebook_reads_artifacts_only_through_the_boundary():
-    assert not [r for r in ARTIFACT_READERS if _calls(FEATURE_RESEARCH, r)]
-    modules = {a.name for n in _nodes(FEATURE_RESEARCH) if isinstance(n, ast.Import)
+@pytest.mark.parametrize("notebook", [FEATURE_RESEARCH, TRAINING_RESEARCH])
+def test_the_research_notebook_reads_artifacts_only_through_the_boundary(notebook):
+    assert not [r for r in ARTIFACT_READERS if _calls(notebook, r)]
+    modules = {a.name for n in _nodes(notebook) if isinstance(n, ast.Import)
                for a in n.names}
-    modules |= {n.module for n in _nodes(FEATURE_RESEARCH) if isinstance(n, ast.ImportFrom)}
+    modules |= {n.module for n in _nodes(notebook) if isinstance(n, ast.ImportFrom)}
     assert not [m for m in modules if any(m == b or m.startswith(b + ".") for b in BANNED_IMPORTS)]
-    (views,) = _calls(FEATURE_RESEARCH, "accepted_artifact_views")
+    if notebook == TRAINING_RESEARCH:
+        (entry,) = _calls(notebook, "frozen_inputs")
+        assert ast.unparse(entry) == "frozen_inputs(TRAIN)"
+        return
+    (views,) = _calls(notebook, "accepted_artifact_views")
     assert ast.unparse(views.func) == "FR.accepted_artifact_views"
     assert [ast.unparse(a) for a in views.args] == ["TRAIN.train_reference"]

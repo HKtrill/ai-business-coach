@@ -43,6 +43,7 @@ ACTIVE_NOTEBOOKS = (
     "glass_pipeline/glass_cascade.ipynb",
     "blackbox_pipeline/blackbox_cascade.ipynb",
     "feature_research/exploratory_feature_research.ipynb",
+    "feature_research/training_research.ipynb",
     "feature_research/feature_research.ipynb",          # PR 42 Feature Research Notebook
 )
 
