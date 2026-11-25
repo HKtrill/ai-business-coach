@@ -4,10 +4,17 @@
 
 > A research-driven glass-box cascade for transparent customer decision modeling.
 
-**Current Research Application:**  
-Predicting term-deposit subscription likelihood using interpretable cascade architectures on the UCI Bank Marketing dataset.
+**ChurnBot** predicts bank term-deposit subscription using **GLASS**, a four-stage interpretable machine learning cascade.
 
-ChurnBot investigates whether carefully designed interpretable models can deliver competitive predictive performance while keeping every stage of a prediction explainable.
+**GLASS Architecture**
+
+Logistic Regression → Symbolic Router → Explainable Boosting Machine → Arbiter
+
+**Research objective:** Compare GLASS against a matched black-box cascade to quantify the tradeoffs between predictive performance, interpretability, and operational effectiveness.
+
+**Research status:** Phase 1 complete · Phase 2 underway.
+
+### [⬇️ Download executed notebooks (.zip)](https://github.com/HKtrill/ai-business-coach/releases/latest/download/executed_notebooks.zip)
 
 **Tech Stack:**
 <img src="https://cdn.simpleicons.org/python/3776AB" alt="Python" width="24"/> Python,
@@ -287,7 +294,7 @@ See the detailed implementation and research roadmap: **[Research Roadmap](proto
 - Results currently come from a single train/test split and seed; bootstrap intervals capture test-sampling uncertainty but not training variability
 - OOF hand-offs reduce direct training leakage, but upstream model-selection or tuning decisions not fully nested within the outer folds may introduce training-side selection optimism
 - The held-out test split was used during earlier development, so current results are descriptive; no independent evaluation dataset is currently available
-- Two Stage 1 features are target rates keyed on period-identifying variables; under the random split they may carry temporal look-ahead, which Phase 2 investigates
+- Every target-derived feature (two Stage 1 encodings and three Stage 2–3 sources) uses labels of later contacts under the random split (PR 42). Held-out labels never reach their own encodings, so the frozen results are valid random-split evidence, but not forward-in-time performance; past-only versions are evaluated in Phase 2
 - The Stage 4 arbiters use different prediction mechanisms and threshold-selection procedures. Both select abstention cutoffs using retained F2, so threshold-dependent performance comparisons require matched-coverage evaluation.
 - Training-side constraints, such as the Stage 4 coverage floor and Stage 2 routing obligations, are not guaranteed to hold on unseen data
 
@@ -348,10 +355,22 @@ ai-business-coach/
 ├── documentation/                 setup guide, dataset audit & research status
 └── prototype/
     └── bank_pipeline/
-        ├── documentation/         research roadmap
-        ├── feature_research/      feature-research notebook, stage trainers, research GLASS Arbiter
-        ├── glass_pipeline/        GLASS cascade (GLASS Router, Stage 4 GLASS Arbiter)
-        ├── blackbox_pipeline/     black-box cascade (RF Router, Meta-XGB)
+        ├── documentation/         research roadmap, notebook map
+        ├── feature_research/      Feature Research Notebook (PR 42), exploratory notebook, stage trainers
+        ├── glass_pipeline/        GLASS cascade notebook and stages (GLASS Router, GLASS Arbiter)
+        ├── blackbox_pipeline/     black-box cascade notebook and stages (RF Router, Meta-XGB)
         ├── shared/                stage I/O, Stage 3 and Stage 4 contracts, validation
+        ├── notebook_packaging/    builds and verifies the executed-notebook archives
+        ├── research_logs/         accepted research records, by PR
         └── tests/                 regression tests (incl. the ILP rule selector)
 ```
+
+### Notebooks: source, executed copies and archives
+
+| Form | Where | What it holds |
+| --- | --- | --- |
+| Tracked source notebook | in Git: `glass_pipeline/glass_cascade.ipynb`, `blackbox_pipeline/blackbox_cascade.ipynb`, `feature_research/feature_research.ipynb`, `feature_research/exploratory_feature_research.ipynb` | the code and Markdown; outputs are cleared, as a separate step, once a verified archive holds an accepted executed copy and the current outputs are preserved outside the repository |
+| Executed copy | outside the repository, one file per accepted run (`<run_id>_<notebook>_executed.ipynb`; three early PR 42 copies have other names, listed in the notebook map) | the outputs of one fresh-kernel execution; its run's research record identifies it (by SHA-256 or run id) |
+| Published archive | GitHub release assets | `executed_notebooks.zip`: the latest accepted executed copy of each notebook, at the ZIP root (original paths are recorded in `MANIFEST.json`; the download link is above). `prN_executed_notebooks.zip`: one PR's accepted runs, with run ids in the file names |
+
+`python -m notebook_packaging` builds the archives from the accepted executions listed in `notebook_packaging/accepted_executions.json`. It copies the executed files unchanged and never moves or edits them. See the [notebook map](prototype/bank_pipeline/documentation/notebook_map.md), section 6.

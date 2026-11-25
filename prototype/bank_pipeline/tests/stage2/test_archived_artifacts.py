@@ -9,6 +9,12 @@ mapped into the archive, an unlisted, missing or changed file is refused. The
 pinned loader, audit and baseline CLI are not modified (their identities are
 checked by test_the_baseline_pinned_code_is_unchanged).
 
+Since PR 42 the real-data folder also holds training-side research modules: they
+bind the training rows through ``feature_research.training_side`` and open no
+model artifact with any loader (the accepted PR 39 artifacts are read only
+through ``feature_research``'s pinned boundary views). Every other module is an
+October 23 module and must read through ``HistoricalReal``.
+
 Synthetic files only; nothing is fitted and no real artifact is read.
 """
 
@@ -230,15 +236,69 @@ def test_current_artifacts_are_never_checked_against_the_october_hashes(archive,
     assert current.sums == {} and current.sha(Path(BANK_ROOT) / "anything.joblib") is None
 
 
+#: The real-data modules on the live artifacts: the current-artifact boundary and the PR 36 audit.
+CURRENT_MODULES = ("test_current_artifacts.py", "test_saved_artifacts.py")
+#: Any way a test module could open a model artifact itself.
+_ARTIFACT_ACCESS = re.compile(r"\b(?:joblib|router_artifacts|archived_artifacts|artifact_audit|"
+                              r"(?:Pinned|Historical|Current)?Real)\b")
+
+
+def _realdata_kind(text: str) -> str:
+    """``historical``, ``training-side`` or ``unclassified``: a module must be one of the first two."""
+    if "HistoricalReal" in text:
+        return "historical"
+    if "draw_training_side" in text and not _ARTIFACT_ACCESS.search(text):
+        return "training-side"
+    return "unclassified"
+
+
 def test_historical_realdata_modules_read_only_the_archive():
+    kinds = {}
     for path in sorted(REALDATA.glob("test_*.py")):
-        if path.name in ("test_current_artifacts.py", "test_saved_artifacts.py"):
+        if path.name in CURRENT_MODULES:
             continue
         text = path.read_text(encoding="utf-8")
         assert not re.search(r"\b(?:Pinned)?Real\(", text), path.name
-        assert "HistoricalReal" in text, path.name
+        kinds[path.name] = _realdata_kind(text)
+        assert kinds[path.name] != "unclassified", (
+            f"{path.name} neither reads through HistoricalReal nor is a training-side module "
+            "that opens no artifact")
+    assert "historical" in kinds.values()
     text = (REALDATA / "test_current_artifacts.py").read_text(encoding="utf-8")
     assert "CurrentReal()" in text and "HistoricalReal" not in text
+
+
+@pytest.mark.parametrize("text, kind", [
+    ("from tests.support.archived_artifacts import HistoricalReal\nREAL = HistoricalReal()", "historical"),
+    ("from feature_research.training_side import draw_training_side\nTRAIN = draw_training_side()",
+     "training-side"),
+    # a training-side module that also opens an artifact is not exempt: it must use HistoricalReal
+    ("from feature_research.training_side import draw_training_side\nimport joblib", "unclassified"),
+    ("from feature_research.training_side import draw_training_side\n"
+     "from tests.support import router_artifacts as ra", "unclassified"),
+    ("from feature_research.training_side import draw_training_side\n"
+     "from tests.support.archived_artifacts import CurrentReal", "unclassified"),
+    ("from tests.support import artifact_audit as audit", "unclassified"),
+    ("import pytest", "unclassified"),
+])
+def test_a_realdata_module_is_exempt_from_the_archive_only_if_it_opens_no_artifact(text, kind):
+    assert _realdata_kind(text) == kind
+
+
+#: The October 23 modules as PR 39 left them: each must keep reading only the archive.
+OCTOBER_MODULES = ("test_evaluation_protocol_artifacts.py", "test_router_baseline_artifacts.py",
+                   "test_router_contribution_artifacts.py", "test_router_diagnostics_artifacts.py",
+                   "test_router_overlap_artifacts.py", "test_router_suppression_artifacts.py",
+                   "test_router_trace_artifacts.py", "test_stage2_freeze_artifacts.py")
+
+
+def test_the_october_modules_stay_historical_and_the_pr42_modules_are_training_side():
+    for name in OCTOBER_MODULES:
+        assert _realdata_kind((REALDATA / name).read_text(encoding="utf-8")) == "historical", name
+    pr42 = sorted(REALDATA.glob("test_pr42_*.py"))
+    assert len(pr42) == 6
+    for path in pr42:
+        assert _realdata_kind(path.read_text(encoding="utf-8")) == "training-side", path.name
 
 
 # ======================================================================
