@@ -49,6 +49,7 @@ def meta_arbiter(
     min_weighted_confidence: float = 0.15,
     glass_base_rate=None,
     return_confidence: bool = False,
+    *, contribution_trace=None,
 ) -> tuple:
     """
     Weighted confidence arbiter with optional abstention.
@@ -106,6 +107,13 @@ def meta_arbiter(
         rule_positive_rate(glass_prob, pass1_mask, pass2_mask, glass_base_rate),
         pass1_mask, pass2_mask, glass_base_rate)
 
+    # Optional diagnostic buffer: signed, normalized confidence and ranking terms
+    # in LR, EBM, router order. A deferred router contributes zero.
+    if contribution_trace is not None:
+        if contribution_trace.shape != (n, 3, 2) or contribution_trace.dtype != np.float64:
+            raise ValueError("contribution_trace must be a float64 array of shape (n, 3, 2)")
+        contribution_trace.fill(0)
+
     pred    = np.zeros(n, dtype=int)
     prob    = np.zeros(n, dtype=float)
     explain = np.empty(n, dtype=object)
@@ -139,6 +147,9 @@ def meta_arbiter(
         confs   = np.array(confs)
         probs_a = np.array(probs)
 
+        if contribution_trace is not None:
+            contribution_trace[i, :len(ws), 0] = ws_arr * confs * (2 * votes - 1)
+            contribution_trace[i, :len(ws), 1] = ws_arr * probs_a
         weighted_prob = float(np.sum(probs_a * ws_arr))
         conf1 = float(np.sum(confs * ws_arr * (votes == 1)))
         conf0 = float(np.sum(confs * ws_arr * (votes == 0)))
