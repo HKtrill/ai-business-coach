@@ -61,11 +61,11 @@
 
 **Objective:** Determine where each voter contributes, where confidence is poorly scaled, and which arbiter changes warrant evaluation.
 
-- [ ] On the frozen GLASS OOF rows, tabulate routing state × LR vote × EBM vote, support, and observed positive rate. Measure agreement, error correlation, double faults, unique-correct predictions, and correct lone dissents at the Stage 4 voter cuts and at matched flag budgets. Break out class and routing state where supported.
-- [ ] Count Pass 1 leaked positives flagged by LR or EBM. For Pass 2 rows where both voters vote negative, count the false positives a veto would remove and the true positives it would lose.
-- [ ] Measure LR and EBM discrimination and calibration on router-deferred rows. Estimate voter calibration intercepts and slopes by routing state where estimable, with support and uncertainty.
-- [ ] Trace accepted-cut abstentions and per-voter contributions by class and route. Quantify how the bound on negative probability margins affects Pass 2 and router-deferred rows.
-- [ ] Record which registered triggers were met for optional variants. Assess redundancy through shared errors and unique contributions. High agreement and near-uniform formula weights alone do not establish redundancy.
+- [x] On the frozen GLASS OOF rows, tabulate routing state × LR vote × EBM vote, support, and observed positive rate. Measure agreement, error correlation, double faults, unique-correct predictions, and correct lone dissents at the Stage 4 voter cuts and at matched flag budgets. Break out class and routing state where supported.
+- [x] Count Pass 1 leaked positives flagged by LR or EBM. For Pass 2 rows where both voters vote negative, count the false positives a veto would remove and the true positives it would lose.
+- [x] Measure LR and EBM discrimination and calibration on router-deferred rows. Estimate voter calibration intercepts and slopes by routing state where estimable, with support and uncertainty.
+- [x] Trace accepted-cut abstentions and per-voter contributions by class and route. Quantify how the bound on negative probability margins affects Pass 2 and router-deferred rows.
+- [x] Record which registered triggers were met for optional variants. Assess redundancy through shared errors and unique contributions. High agreement and near-uniform formula weights alone do not establish redundancy.
 
 ### Commit 4 — Stage 4 Candidate Evaluation at Matched Coverage
 
@@ -73,18 +73,18 @@
 
 #### Step 4A — GLASS Linear Arbiter
 
-- [ ] Fit regularized logistic regression with nonnegative coefficients and an intercept using full-batch log-loss optimization. Use `logit(p) − logit(t)` for Stage 1 and Stage 3 and signed `logit(r) − logit(b)` router evidence on routed rows, with zero router contribution on deferral. Specify finite clipping and direction conventions before fitting.
-- [ ] Derive inputs from the Stage 1/3 probabilities, router probability, and route indicators available to Meta-XGBoost, using training-fitted constants where required. Verify each upstream’s router semantics. For GLASS, recover the rule rate using its producing model’s base rate. Keep rule identity and per-rule outcome counts outside the linear candidate’s inputs.
-- [ ] Assess probability calibration before and after any inner-fitted correction. Report coefficients, bootstrap intervals, and fold-to-fold stability.
-- [ ] Evaluate routing-state-specific coefficients shrunk toward the global coefficients only if the registered Commit 3 reliability trigger is met.
-- [ ] Evaluate both upstreams against both reference arbiters. Apply the registered paired improvement and class-retention criteria before retaining the linear candidate for PR 45.
+- [x] Fit regularized logistic regression with nonnegative coefficients and an intercept using full-batch log-loss optimization. Use `logit(p) − logit(t)` for Stage 1 and Stage 3 and signed `logit(r) − logit(b)` router evidence on routed rows, with zero router contribution on deferral. Specify finite clipping and direction conventions before fitting.
+- [x] Derive inputs from the Stage 1/3 probabilities, router probability, and route indicators available to Meta-XGBoost, using training-fitted constants where required. Verify each upstream’s router semantics. For GLASS, recover the rule rate using its producing model’s base rate. Keep rule identity and per-rule outcome counts outside the linear candidate’s inputs.
+- [x] Assess probability calibration before and after any inner-fitted correction. Report coefficients, bootstrap intervals, and fold-to-fold stability.
+- [x] Evaluate routing-state-specific coefficients shrunk toward the global coefficients only if the registered Commit 3 reliability trigger is met.
+- [x] Evaluate both upstreams against both reference arbiters. Apply the registered paired improvement and class-retention criteria before retaining the linear candidate for PR 45.
 
 #### Step 4B — GLASS Formula and Meta-XGBoost Comparators
 
-- [ ] Isolate GLASS log-odds margin normalization with the accepted formula weights first. Then evaluate sensitivity to the recall target of 0.70, weight blend α = 0.5, and abstention cut. Compare sequential fitting with nested joint selection where justified.
-- [ ] Compare selected-rule in-sample evidence with cross-fitted router rule precision. Document rule support, unseen-rule handling, and what the frozen records can establish. Account for any required upstream refit in the Commit 5 budget.
-- [ ] For Meta-XGBoost, compare the accepted balanced-weight, F2-at-0.5 tuning objective with registered threshold-free alternatives. Evaluate raw and calibrated confidence using the implemented `operating_space="calibrated"` path while preserving nonlinear learning.
-- [ ] Produce one paired comparison per upstream, using the same rows for all arbiters. Report matched-coverage risk, AURC, achieved coverage at locked cuts, calibration where applicable, class retention, and whole-system outcomes. Record retained candidates and inconclusive comparisons.
+- [x] Isolate GLASS log-odds margin normalization with the accepted formula weights first. Then evaluate sensitivity to the recall target of 0.70, weight blend α = 0.5, and abstention cut. Compare sequential fitting with nested joint selection where justified.
+- [x] Compare selected-rule in-sample evidence with cross-fitted router rule precision. Document rule support, unseen-rule handling, and what the frozen records can establish. Account for any required upstream refit in the Commit 5 budget.
+- [x] For Meta-XGBoost, compare the accepted balanced-weight, F2-at-0.5 tuning objective with registered threshold-free alternatives. Evaluate raw and calibrated confidence using the implemented `operating_space="calibrated"` path while preserving nonlinear learning.
+- [x] Produce one paired comparison per upstream, using the same rows for all arbiters. Report matched-coverage risk, AURC, achieved coverage at locked cuts, calibration where applicable, class retention, and whole-system outcomes. Record retained candidates and inconclusive comparisons.
 
 ### Commit 5 — OOF-versus-Refit Input Shift and Coverage Stability
 

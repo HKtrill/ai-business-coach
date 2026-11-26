@@ -586,9 +586,9 @@ def summarize(evidence):
     return pd.DataFrame(out).set_index(["upstream", "procedure", "rule"])
 
 
-def load_predictions(run_id, root=LOGS, index=None):
+def load_predictions(run_id, root=LOGS, index=None, *, record_name="nested_references"):
     """A run's stored scores, each checked against its digest in the tracked record."""
-    rec = records.read_run_record(run_id, "nested_references", root=root)
+    rec = records.read_run_record(run_id, record_name, root=root)
     man = rec["predictions"]
     with np.load(Path(root) / run_id / man["file"], allow_pickle=False) as z:
         arrays = {key: z[key] for key in z.files}
@@ -601,14 +601,19 @@ def load_predictions(run_id, root=LOGS, index=None):
     return rec, arrays
 
 
+def write_predictions(run, name, evidence, arrays, root=LOGS):
+    paths = [records.write_run_record(run, name, evidence), run.folder / PREDICTIONS]
+    with open(paths[1], "xb") as fh:
+        np.savez_compressed(fh, **arrays)
+    load_predictions(run.run_id, root, record_name=name)
+    return paths
+
+
 def record_nested(evidence, local, root=LOGS):
     """The tracked record, then the local score store read back against it, then runtime."""
     seeds = {"inner_folds": INNER_SEED, "random_sampler": SAMPLER_SEED, "meta_xgb": 42}
     run = records.start_run(commit=2, seeds=seeds, notebook=NOTEBOOK, root=root, code_files=CODE_FILES)
-    paths = [records.write_run_record(run, "nested_references", evidence), run.folder / PREDICTIONS]
-    with open(paths[1], "xb") as fh:               # written once, beside its record
-        np.savez_compressed(fh, **local["arrays"])
-    load_predictions(run.run_id, root)
+    paths = write_predictions(run, "nested_references", evidence, local["arrays"], root)
     stored = {"bytes": paths[1].stat().st_size, "sha256": hashlib.sha256(paths[1].read_bytes()).hexdigest()}
     paths.append(records.write_run_record(run, "nested_runtime", {
         "seconds": local["seconds"], "threads": 1, "predictions_file": stored}))

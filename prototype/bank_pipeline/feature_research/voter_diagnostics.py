@@ -213,11 +213,10 @@ def decision_structure(rows, config, cost):
                 retained_f2=fbeta_score(f.y[kept], d[kept], beta=2, zero_division=0) if kept.any() else None)
 
 
-def run():
-    from threadpoolctl import threadpool_limits
+def verified_tables():
+    """Load the accepted frozen tables, reference store and common fold identities."""
     from feature_research import research_records as rr, stage4_nested as nested, training_inputs as inputs
 
-    start = perf_counter()
     root = nested.LOGS
     frozen = rr.read_run_record(nested.load_policy()["input_run"], "frozen_inputs", root=root)
     policy, identity = nested.verified_inputs(frozen, root)
@@ -240,6 +239,16 @@ def run():
     for k, ids in inner.items():
         np.testing.assert_array_equal(ids, arrays["inner_fold"][k, outer != k])
         np.testing.assert_array_equal(arrays["inner_fold"][k, outer == k], -1)
+    return tables, frozen, policy, identity, reference, arrays, outer, inner
+
+
+def run():
+    from threadpoolctl import threadpool_limits
+    from feature_research import research_records as rr, stage4_nested as nested, training_inputs as inputs
+
+    start = perf_counter()
+    root = nested.LOGS
+    tables, frozen, policy, identity, reference, arrays, outer, inner = verified_tables()
     del arrays  # verified store; full-precision accepted summaries are already in its record
     glass = tables["glass"]
     config = frozen["historical_reference"]["glass_arbiter"]["configuration"]
