@@ -92,17 +92,17 @@
 
 #### Step 5A — Frozen-Table Stability Checks
 
-- [ ] Compare Meta-XGBoost coverage under fold-nested operating thresholds and the single global threshold used for deployment. Label the global-cut result on training rows as descriptive.
-- [ ] Measure abstention-cut and achieved-coverage stability across training-row resamples for retained candidates.
-- [ ] Identify the remaining questions that require fresh upstream fits. Record the expected fit count and runtime before starting the simulated holdout.
+- [x] Compare Meta-XGBoost coverage under fold-nested operating thresholds and the single global threshold used for deployment. Label the global-cut result on training rows as descriptive.
+- [x] Measure abstention-cut and achieved-coverage stability across training-row resamples for retained candidates.
+- [x] Identify the remaining questions that require fresh upstream fits. Record the expected fit count and runtime before starting the simulated holdout.
 
 #### Step 5B — Training-Only Simulated Upstream Holdout
 
-- [ ] Start with the black-box upstream. Hold out a stratified subset of training rows and fit the upstream procedures on the remainder using accepted hyperparameters. Keep learned transformations, routing evidence, calibration, and cuts inside the fitting partition. Reuse the resulting fits and predictions across arbiters.
-- [ ] Compare the fitting partition’s OOF input distribution with the simulated holdout distribution. On the same untouched holdout rows, compare full-refit and fold-averaged upstream predictions with Stage 4 held fixed.
-- [ ] Isolate Meta-XGBoost’s own OOF/refit effect with upstream inputs held fixed. Report changes in route state, confidence, decisions, and achieved coverage.
-- [ ] Apply the registered expansion rule to the GLASS upstream, accounting for fold-model versus full-fit rule rates and base rates. Evaluate retained candidates under the simulated conditions relevant to their proposed use. Identify any unresolved arm-specific shift as a prerequisite for PR 45 adoption.
-- [ ] Record observed runtime, bottlenecks, and computational estimates for PR 45 regeneration and PR 49 repeated splits. Keep simulated fits research-local and preserve the accepted artifacts.
+- [x] Start with the black-box upstream. Hold out a stratified subset of training rows and fit the upstream procedures on the remainder using accepted hyperparameters. Keep learned transformations, routing evidence, calibration, and cuts inside the fitting partition. Reuse the resulting fits and predictions across arbiters.
+- [x] Compare the fitting partition’s OOF input distribution with the simulated holdout distribution. On the same untouched holdout rows, compare full-refit and fold-averaged upstream predictions with Stage 4 held fixed.
+- [x] Isolate Meta-XGBoost’s own OOF/refit effect with upstream inputs held fixed. Report changes in route state, confidence, decisions, and achieved coverage.
+- [x] Apply the registered expansion rule to the GLASS upstream, accounting for fold-model versus full-fit rule rates and base rates. Evaluate retained candidates under the simulated conditions relevant to their proposed use. Identify any unresolved arm-specific shift as a prerequisite for PR 45 adoption.
+- [x] Record observed runtime, bottlenecks, and computational estimates for PR 45 regeneration and PR 49 repeated splits. Keep simulated fits research-local and preserve the accepted artifacts.
 
 ### Commit 6 — Recommendations, Validation, Executed Notebooks, and PR Closure
 

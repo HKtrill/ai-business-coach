@@ -1,3 +1,4 @@
 # Step 2C nested scores (stage4_nested.record_nested) stay local: each run's tracked
 # nested_references.json lists the digest of every stored array, and load_predictions checks them.
 */nested_predictions.npz
+holdout_cache/
