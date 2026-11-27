@@ -75,8 +75,8 @@ from typing import Any, Callable, Dict, List, Optional
 import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
-from scipy.optimize import minimize
-from scipy.special import expit
+from scipy.optimize import minimize, root
+from scipy.special import expit, logit
 from sklearn.base import clone
 from sklearn.isotonic import IsotonicRegression
 from sklearn.metrics import brier_score_loss
@@ -115,6 +115,52 @@ STAGE1_CALIBRATION_POLICY = {
 # ----------------------------------------------------------------------
 # calibrators
 # ----------------------------------------------------------------------
+def _recover_monotone_platt(scores, targets, attempted):
+    """Recover a failed line search by solving the same convex smoothed score equations."""
+    import logging
+
+    center = scores.mean()
+    spread = scores.std() or 1.0
+    x = (scores - center) / spread
+    design = np.column_stack((x, np.ones_like(x)))
+    # Positive slope convention here: z = m*x + b, m >= 0.
+    def equations(params):
+        p = expit(design @ params)
+        gradient = design.T @ (p - targets) / len(p)
+        hessian = design.T @ ((p * (1 - p))[:, None] * design) / len(p)
+        return gradient, hessian
+
+    params = np.array([0., logit(targets.mean())])
+    if equations(params)[0][0] < -1e-12:
+        # The intercept-only optimum violates the lower-bound slope condition beyond roundoff.
+        params = root(equations, params, jac=True, tol=1e-11).x
+    m, b = params
+    recovered = np.array([-m / spread, m * center / spread - b])
+
+    def residual(ab):
+        # Recheck in the actual prediction parameterization, per observation and
+        # standardized score unit. At zero slope a positive derivative is feasible.
+        p = expit(-(ab[0] * scores + ab[1]))
+        g = design.T @ (p - targets) / len(p)
+        if ab[0] == 0:
+            g[0] = min(0., g[0])
+        return float(np.max(np.abs(g))) if ab[0] <= 0 else np.inf
+
+    error = residual(recovered)
+    if not np.isfinite(recovered).all() or not error <= 1e-10:
+        raise RuntimeError(f"Sigmoid calibration failed: constrained score residual {error:.3g}")
+    def mean_loss(ab):
+        z = -(ab[0] * scores + ab[1])
+        return np.mean(np.logaddexp(0., z) - targets * z)
+
+    logging.getLogger(__name__).warning(
+        "Constrained Platt line search (%s): initial KKT residual %.3g; recovered %.3g; "
+        "initial minus recovered mean loss %.3g; recovered slope %.6g",
+        attempted.message, residual(attempted.x), error,
+        mean_loss(attempted.x) - mean_loss(recovered), -recovered[0])
+    return recovered
+
+
 class PlattCalibrator:
     """
     Platt scaling, as scikit-learn's ``CalibratedClassifierCV(method="sigmoid")``
@@ -122,7 +168,7 @@ class PlattCalibrator:
     scores rescaled first. ``predict`` returns ``P(y = 1)``.
     """
 
-    def fit(self, scores, y) -> "PlattCalibrator":
+    def fit(self, scores, y, *, nondecreasing=False) -> "PlattCalibrator":
         F = np.asarray(scores, dtype=float).ravel()
         y = np.asarray(y).ravel()
         max_abs = float(np.max(np.abs(F)))
@@ -140,8 +186,12 @@ class PlattCalibrator:
 
         AB0 = np.array([0.0, log((prior0 + 1.0) / (prior1 + 1.0))])
         result = minimize(loss_grad, AB0, method="L-BFGS-B", jac=True,
+                          bounds=[(None, 0.), (None, None)] if nondecreasing else None,
                           options={"gtol": 1e-6, "ftol": 64 * np.finfo(float).eps})
-        self.a_, self.b_ = result.x[0] / scale, result.x[1]
+        ab = result.x
+        if nondecreasing and not result.success:
+            ab = _recover_monotone_platt(F, T, result)
+        self.a_, self.b_ = ab[0] / scale, ab[1]
         return self
 
     def predict(self, scores) -> np.ndarray:

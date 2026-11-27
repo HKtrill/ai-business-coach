@@ -1,221 +1,247 @@
 {
- "format": "notebook_packaging.accepted_executions/1",
- "about": "Every tracked notebook, and the accepted executions the archives are built from. An execution is packaged only if it is listed here, its executed copy is complete and its acceptance record confirms it. To publish a newly accepted run, 'python -m notebook_packaging register' lists it, points its notebook's 'current' at it and adds it to its PR's snapshot; 'exclude' records a snapshot member whose executed copy is not available. Then rebuild (documentation/notebook_map.md, section 6).",
- "notebooks": {
-  "prototype/bank_pipeline/glass_pipeline/glass_cascade.ipynb": {
-   "current": "c6_20261116_194111/glass"
-  },
-  "prototype/bank_pipeline/blackbox_pipeline/blackbox_cascade.ipynb": {
-   "current": "c6_20261116_194111/blackbox"
-  },
-  "prototype/bank_pipeline/feature_research/exploratory_feature_research.ipynb": {
-   "current": "pr36_42753db/exploratory"
-  },
-  "prototype/bank_pipeline/feature_research/feature_research.ipynb": {
-   "current": "c5_20261124_223143/feature_research"
-  },
-  "prototype/churn_pipeline/notebooks/BestRulesWins_GlassBox_Meta.ipynb": {
-   "current": null,
-   "reason": "Legacy IBM Telco feasibility prototype (prototype/churn_pipeline); its tracked copy has no outputs and no accepted execution is recorded"
-  },
-  "prototype/churn_pipeline/notebooks/churn_distributions.ipynb": {
-   "current": null,
-   "reason": "Legacy IBM Telco feasibility prototype (prototype/churn_pipeline); its tracked copy has no outputs and no accepted execution is recorded"
-  }
- },
- "executions": {
-  "c6_20261116_194111/glass": {
-   "notebook": "prototype/bank_pipeline/glass_pipeline/glass_cascade.ipynb",
-   "run_id": "c6_20261116_194111",
-   "description": "PR 39 Commit 6: the Phase 1 reproduction, the glass cascade notebook run top to bottom in a fresh kernel (accepted in the Phase 1 freeze)",
-   "source": {
-    "file": "c6_20261116_194111_glass_executed.ipynb"
-   },
-   "sha256": "3bdaae772f3328141839beec567611299c212320586efb362b138951212b0180",
-   "acceptance": {
-    "record": "prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/phase1_freeze.json",
-    "sha256": "executions/glass/executed_copy/sha256",
-    "require": {
-     "passed": true
+  "format": "notebook_packaging.accepted_executions/1",
+  "about": "Every tracked notebook, and the accepted executions the archives are built from. An execution is packaged only if it is listed here, its executed copy is complete and its acceptance record confirms it. To publish a newly accepted run, 'python -m notebook_packaging register' lists it, points its notebook's 'current' at it and adds it to its PR's snapshot; 'exclude' records a snapshot member whose executed copy is not available. Then rebuild (documentation/notebook_map.md, section 6).",
+  "notebooks": {
+    "prototype/bank_pipeline/glass_pipeline/glass_cascade.ipynb": {
+      "current": "c6_20261116_194111/glass"
+    },
+    "prototype/bank_pipeline/blackbox_pipeline/blackbox_cascade.ipynb": {
+      "current": "c6_20261116_194111/blackbox"
+    },
+    "prototype/bank_pipeline/feature_research/exploratory_feature_research.ipynb": {
+      "current": "pr36_42753db/exploratory"
+    },
+    "prototype/bank_pipeline/feature_research/feature_research.ipynb": {
+      "current": "c5_20261124_223143/feature_research"
+    },
+    "prototype/bank_pipeline/feature_research/training_research.ipynb": {
+      "current": "c2_20261126_231759/training_research"
+    },
+    "prototype/churn_pipeline/notebooks/BestRulesWins_GlassBox_Meta.ipynb": {
+      "current": null,
+      "reason": "Legacy IBM Telco feasibility prototype (prototype/churn_pipeline); its tracked copy has no outputs and no accepted execution is recorded"
+    },
+    "prototype/churn_pipeline/notebooks/churn_distributions.ipynb": {
+      "current": null,
+      "reason": "Legacy IBM Telco feasibility prototype (prototype/churn_pipeline); its tracked copy has no outputs and no accepted execution is recorded"
     }
-   }
   },
-  "c6_20261116_194111/blackbox": {
-   "notebook": "prototype/bank_pipeline/blackbox_pipeline/blackbox_cascade.ipynb",
-   "run_id": "c6_20261116_194111",
-   "description": "PR 39 Commit 6: the Phase 1 reproduction, the blackbox cascade notebook run top to bottom in a fresh kernel (accepted in the Phase 1 freeze)",
-   "source": {
-    "file": "c6_20261116_194111_blackbox_executed.ipynb"
-   },
-   "sha256": "43fcd721a91818bddf4472ababfc63a8c21481360e202bd36fda0d23efc0eedf",
-   "acceptance": {
-    "record": "prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/phase1_freeze.json",
-    "sha256": "executions/blackbox/executed_copy/sha256",
-    "require": {
-     "passed": true
+  "executions": {
+    "c6_20261116_194111/glass": {
+      "notebook": "prototype/bank_pipeline/glass_pipeline/glass_cascade.ipynb",
+      "run_id": "c6_20261116_194111",
+      "description": "PR 39 Commit 6: the Phase 1 reproduction, the glass cascade notebook run top to bottom in a fresh kernel (accepted in the Phase 1 freeze)",
+      "source": {
+        "file": "c6_20261116_194111_glass_executed.ipynb"
+      },
+      "sha256": "3bdaae772f3328141839beec567611299c212320586efb362b138951212b0180",
+      "acceptance": {
+        "record": "prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/phase1_freeze.json",
+        "sha256": "executions/glass/executed_copy/sha256",
+        "require": {
+          "passed": true
+        }
+      }
+    },
+    "c6_20261116_194111/blackbox": {
+      "notebook": "prototype/bank_pipeline/blackbox_pipeline/blackbox_cascade.ipynb",
+      "run_id": "c6_20261116_194111",
+      "description": "PR 39 Commit 6: the Phase 1 reproduction, the blackbox cascade notebook run top to bottom in a fresh kernel (accepted in the Phase 1 freeze)",
+      "source": {
+        "file": "c6_20261116_194111_blackbox_executed.ipynb"
+      },
+      "sha256": "43fcd721a91818bddf4472ababfc63a8c21481360e202bd36fda0d23efc0eedf",
+      "acceptance": {
+        "record": "prototype/bank_pipeline/research_logs/pr39/c6_20261116_194111/phase1_freeze.json",
+        "sha256": "executions/blackbox/executed_copy/sha256",
+        "require": {
+          "passed": true
+        }
+      }
+    },
+    "pr36_42753db/exploratory": {
+      "notebook": "prototype/bank_pipeline/feature_research/exploratory_feature_research.ipynb",
+      "run_id": "pr36_42753db",
+      "description": "the exploratory notebook's committed outputs (PR 36, commit 42753db), the printed outputs PR 42 Step 4A reproduces and pins",
+      "source": {
+        "git_blob": "266860bac589f67ad1cc82bf007a5868cde4f652",
+        "sha256_lf": "136c8fb7f44c072a6a97a6be53302e729a9660d8af7495cc065371eaabe0b6d5"
+      },
+      "acceptance": {
+        "record": "prototype/bank_pipeline/research_logs/pr42/c4_20261123_081749/binning_drift.json",
+        "require": {
+          "provenance/exploratory/blob": "266860bac589f67ad1cc82bf007a5868cde4f652",
+          "provenance/exploratory/sha256_lf": "136c8fb7f44c072a6a97a6be53302e729a9660d8af7495cc065371eaabe0b6d5"
+        }
+      }
+    },
+    "c2_20261122_124809/feature_research": {
+      "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
+      "run_id": "c2_20261122_124809",
+      "description": "PR 42 Commit 2: the foundation and feature inventory (Cells 1-13), accepted Windows run. Its validation command wrote the executed copy as %TEMP%\\feature_research_executed.ipynb, without the run id; the record pins no copy, so the copy is accepted only if its saved outputs name this run",
+      "source": {
+        "file": "feature_research_executed.ipynb"
+      },
+      "sha256": null,
+      "acceptance": {
+        "record": "prototype/bank_pipeline/research_logs/pr42/c2_20261122_124809/feature_inventory.json",
+        "require": {
+          "run/run_id": "c2_20261122_124809"
+        },
+        "run_id_in_outputs": true
+      }
+    },
+    "c3_20261122_201830/feature_research": {
+      "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
+      "run_id": "c3_20261122_201830",
+      "description": "PR 42 Commit 3, Step 3A: the encoding audit (Cells 1-21), accepted Windows run. Its validation command wrote the executed copy as C:\\Users\\phill\\projects\\patches\\feature_research_step3a_executed.ipynb, without the run id; the record pins no copy, so the copy is accepted only if its saved outputs name this run",
+      "source": {
+        "file": "feature_research_step3a_executed.ipynb"
+      },
+      "sha256": null,
+      "acceptance": {
+        "record": "prototype/bank_pipeline/research_logs/pr42/c3_20261122_201830/encoding_audit.json",
+        "require": {
+          "run/run_id": "c3_20261122_201830"
+        },
+        "run_id_in_outputs": true
+      }
+    },
+    "c3_20261122_232809/feature_research": {
+      "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
+      "run_id": "c3_20261122_232809",
+      "description": "PR 42 Commit 3, Step 3B: past-only encodings (Cells 1-30), accepted Windows run. Its validation command named the executed copy <run_id>_feature_research_step3b_executed.ipynb, in notebook_outputs\\pr42",
+      "source": {
+        "file": "c3_20261122_232809_feature_research_step3b_executed.ipynb"
+      },
+      "sha256": null,
+      "acceptance": {
+        "record": "prototype/bank_pipeline/research_logs/pr42/c3_20261122_232809/temporal_validity.json",
+        "require": {
+          "run/run_id": "c3_20261122_232809"
+        },
+        "run_id_in_outputs": true
+      }
+    },
+    "c4_20261123_081749/feature_research": {
+      "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
+      "run_id": "c4_20261123_081749",
+      "description": "PR 42 Commit 4, Step 4A: the NSD/ECI drift diagnosis (Cells 1-39), accepted Windows run",
+      "source": {
+        "file": "c4_20261123_081749_feature_research_executed.ipynb"
+      },
+      "sha256": null,
+      "acceptance": {
+        "record": "prototype/bank_pipeline/research_logs/pr42/c4_20261123_081749/binning_drift.json",
+        "require": {
+          "run/run_id": "c4_20261123_081749"
+        },
+        "run_id_in_outputs": true
+      }
+    },
+    "c4_20261123_151515/feature_research": {
+      "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
+      "run_id": "c4_20261123_151515",
+      "description": "PR 42 Commit 4, Step 4B: procedural binning (Cells 1-48), accepted Windows run",
+      "source": {
+        "file": "c4_20261123_151515_feature_research_executed.ipynb"
+      },
+      "sha256": null,
+      "acceptance": {
+        "record": "prototype/bank_pipeline/research_logs/pr42/c4_20261123_151515/binning_candidates.json",
+        "require": {
+          "run/run_id": "c4_20261123_151515"
+        },
+        "run_id_in_outputs": true
+      }
+    },
+    "c5_20261124_002645/feature_research": {
+      "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
+      "run_id": "c5_20261124_002645",
+      "description": "PR 42 Commit 5, Step 5A: Stage 3 simplification (Cells 1-59), accepted Windows run",
+      "source": {
+        "file": "c5_20261124_002645_feature_research_executed.ipynb"
+      },
+      "sha256": null,
+      "acceptance": {
+        "record": "prototype/bank_pipeline/research_logs/pr42/c5_20261124_002645/stage3_simplification.json",
+        "require": {
+          "run/run_id": "c5_20261124_002645"
+        },
+        "run_id_in_outputs": true
+      }
+    },
+    "c5_20261124_122029/feature_research": {
+      "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
+      "run_id": "c5_20261124_122029",
+      "description": "PR 42 Commit 5, Step 5B: interaction selection (Cells 1-68), accepted Windows run",
+      "source": {
+        "file": "c5_20261124_122029_feature_research_executed.ipynb"
+      },
+      "sha256": null,
+      "acceptance": {
+        "record": "prototype/bank_pipeline/research_logs/pr42/c5_20261124_122029/interaction_selection.json",
+        "require": {
+          "run/run_id": "c5_20261124_122029",
+          "acceptance/passed": true
+        },
+        "run_id_in_outputs": true
+      }
+    },
+    "c5_20261124_223143/feature_research": {
+      "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
+      "run_id": "c5_20261124_223143",
+      "description": "PR 42 Commit 6 Step 6C: final complete Feature Research Notebook Windows execution; all seven accepted research record digests reproduced",
+      "source": {
+        "file": "c5_20261124_223143_feature_research_executed.ipynb"
+      },
+      "sha256": null,
+      "acceptance": {
+        "record": "prototype/bank_pipeline/research_logs/pr42/c5_20261124_223143/interaction_selection.json",
+        "require": {
+          "run/run_id": "c5_20261124_223143",
+          "acceptance/passed": true
+        },
+        "run_id_in_outputs": true
+      }
+    },
+    "c2_20261126_231759/training_research": {
+      "notebook": "prototype/bank_pipeline/feature_research/training_research.ipynb",
+      "run_id": "c2_20261126_231759",
+      "description": "PR 43 Commit 6 Step 6B: final clean-kernel Windows execution; all three scientific record digests reproduced, 11 code cells executed, 89 outputs and 24 plots preserved.",
+      "source": {
+        "file": "c2_20261126_231759_training_research_executed.ipynb"
+      },
+      "sha256": "9024ae5a37e3a6ae784f66cfc915c3a50f13d383e01a63ab25d6206348bb1544",
+      "acceptance": {
+        "record": "prototype/bank_pipeline/research_logs/pr43/c2_20261126_231759/nested_references.json",
+        "require": {
+          "run/run_id": "c2_20261126_231759",
+          "content_sha256": "85db12425eb5ddbdb9a3d6df307d4d4d7cc63a8ea82976fda6804e68e756386e"
+        },
+        "run_id_in_outputs": true
+      }
     }
-   }
   },
-  "pr36_42753db/exploratory": {
-   "notebook": "prototype/bank_pipeline/feature_research/exploratory_feature_research.ipynb",
-   "run_id": "pr36_42753db",
-   "description": "the exploratory notebook's committed outputs (PR 36, commit 42753db), the printed outputs PR 42 Step 4A reproduces and pins",
-   "source": {
-    "git_blob": "266860bac589f67ad1cc82bf007a5868cde4f652",
-    "sha256_lf": "136c8fb7f44c072a6a97a6be53302e729a9660d8af7495cc065371eaabe0b6d5"
-   },
-   "acceptance": {
-    "record": "prototype/bank_pipeline/research_logs/pr42/c4_20261123_081749/binning_drift.json",
-    "require": {
-     "provenance/exploratory/blob": "266860bac589f67ad1cc82bf007a5868cde4f652",
-     "provenance/exploratory/sha256_lf": "136c8fb7f44c072a6a97a6be53302e729a9660d8af7495cc065371eaabe0b6d5"
+  "snapshots": {
+    "pr42": {
+      "directory": "pr42_executed_notebooks",
+      "executions": [
+        "c2_20261122_124809/feature_research",
+        "c3_20261122_201830/feature_research",
+        "c3_20261122_232809/feature_research",
+        "c4_20261123_081749/feature_research",
+        "c4_20261123_151515/feature_research",
+        "c5_20261124_002645/feature_research",
+        "c5_20261124_122029/feature_research",
+        "c5_20261124_223143/feature_research"
+      ]
+    },
+    "pr43": {
+      "directory": "pr43_executed_notebooks",
+      "executions": [
+        "c2_20261126_231759/training_research"
+      ]
     }
-   }
-  },
-  "c2_20261122_124809/feature_research": {
-   "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
-   "run_id": "c2_20261122_124809",
-   "description": "PR 42 Commit 2: the foundation and feature inventory (Cells 1-13), accepted Windows run. Its validation command wrote the executed copy as %TEMP%\\feature_research_executed.ipynb, without the run id; the record pins no copy, so the copy is accepted only if its saved outputs name this run",
-   "source": {
-    "file": "feature_research_executed.ipynb"
-   },
-   "sha256": null,
-   "acceptance": {
-    "record": "prototype/bank_pipeline/research_logs/pr42/c2_20261122_124809/feature_inventory.json",
-    "require": {
-     "run/run_id": "c2_20261122_124809"
-    },
-    "run_id_in_outputs": true
-   }
-  },
-  "c3_20261122_201830/feature_research": {
-   "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
-   "run_id": "c3_20261122_201830",
-   "description": "PR 42 Commit 3, Step 3A: the encoding audit (Cells 1-21), accepted Windows run. Its validation command wrote the executed copy as C:\\Users\\phill\\projects\\patches\\feature_research_step3a_executed.ipynb, without the run id; the record pins no copy, so the copy is accepted only if its saved outputs name this run",
-   "source": {
-    "file": "feature_research_step3a_executed.ipynb"
-   },
-   "sha256": null,
-   "acceptance": {
-    "record": "prototype/bank_pipeline/research_logs/pr42/c3_20261122_201830/encoding_audit.json",
-    "require": {
-     "run/run_id": "c3_20261122_201830"
-    },
-    "run_id_in_outputs": true
-   }
-  },
-  "c3_20261122_232809/feature_research": {
-   "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
-   "run_id": "c3_20261122_232809",
-   "description": "PR 42 Commit 3, Step 3B: past-only encodings (Cells 1-30), accepted Windows run. Its validation command named the executed copy <run_id>_feature_research_step3b_executed.ipynb, in notebook_outputs\\pr42",
-   "source": {
-    "file": "c3_20261122_232809_feature_research_step3b_executed.ipynb"
-   },
-   "sha256": null,
-   "acceptance": {
-    "record": "prototype/bank_pipeline/research_logs/pr42/c3_20261122_232809/temporal_validity.json",
-    "require": {
-     "run/run_id": "c3_20261122_232809"
-    },
-    "run_id_in_outputs": true
-   }
-  },
-  "c4_20261123_081749/feature_research": {
-   "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
-   "run_id": "c4_20261123_081749",
-   "description": "PR 42 Commit 4, Step 4A: the NSD/ECI drift diagnosis (Cells 1-39), accepted Windows run",
-   "source": {
-    "file": "c4_20261123_081749_feature_research_executed.ipynb"
-   },
-   "sha256": null,
-   "acceptance": {
-    "record": "prototype/bank_pipeline/research_logs/pr42/c4_20261123_081749/binning_drift.json",
-    "require": {
-     "run/run_id": "c4_20261123_081749"
-    },
-    "run_id_in_outputs": true
-   }
-  },
-  "c4_20261123_151515/feature_research": {
-   "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
-   "run_id": "c4_20261123_151515",
-   "description": "PR 42 Commit 4, Step 4B: procedural binning (Cells 1-48), accepted Windows run",
-   "source": {
-    "file": "c4_20261123_151515_feature_research_executed.ipynb"
-   },
-   "sha256": null,
-   "acceptance": {
-    "record": "prototype/bank_pipeline/research_logs/pr42/c4_20261123_151515/binning_candidates.json",
-    "require": {
-     "run/run_id": "c4_20261123_151515"
-    },
-    "run_id_in_outputs": true
-   }
-  },
-  "c5_20261124_002645/feature_research": {
-   "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
-   "run_id": "c5_20261124_002645",
-   "description": "PR 42 Commit 5, Step 5A: Stage 3 simplification (Cells 1-59), accepted Windows run",
-   "source": {
-    "file": "c5_20261124_002645_feature_research_executed.ipynb"
-   },
-   "sha256": null,
-   "acceptance": {
-    "record": "prototype/bank_pipeline/research_logs/pr42/c5_20261124_002645/stage3_simplification.json",
-    "require": {
-     "run/run_id": "c5_20261124_002645"
-    },
-    "run_id_in_outputs": true
-   }
-  },
-  "c5_20261124_122029/feature_research": {
-   "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
-   "run_id": "c5_20261124_122029",
-   "description": "PR 42 Commit 5, Step 5B: interaction selection (Cells 1-68), accepted Windows run",
-   "source": {
-    "file": "c5_20261124_122029_feature_research_executed.ipynb"
-   },
-   "sha256": null,
-   "acceptance": {
-    "record": "prototype/bank_pipeline/research_logs/pr42/c5_20261124_122029/interaction_selection.json",
-    "require": {
-     "run/run_id": "c5_20261124_122029",
-     "acceptance/passed": true
-    },
-    "run_id_in_outputs": true
-   }
-  },
-  "c5_20261124_223143/feature_research": {
-   "notebook": "prototype/bank_pipeline/feature_research/feature_research.ipynb",
-   "run_id": "c5_20261124_223143",
-   "description": "PR 42 Commit 6 Step 6C: final complete Feature Research Notebook Windows execution; all seven accepted research record digests reproduced",
-   "source": {
-    "file": "c5_20261124_223143_feature_research_executed.ipynb"
-   },
-   "sha256": null,
-   "acceptance": {
-    "record": "prototype/bank_pipeline/research_logs/pr42/c5_20261124_223143/interaction_selection.json",
-    "require": {
-     "run/run_id": "c5_20261124_223143",
-     "acceptance/passed": true
-    },
-    "run_id_in_outputs": true
-   }
   }
- },
- "snapshots": {
-  "pr42": {
-   "directory": "pr42_executed_notebooks",
-   "executions": [
-    "c2_20261122_124809/feature_research",
-    "c3_20261122_201830/feature_research",
-    "c3_20261122_232809/feature_research",
-    "c4_20261123_081749/feature_research",
-    "c4_20261123_151515/feature_research",
-    "c5_20261124_002645/feature_research",
-    "c5_20261124_122029/feature_research",
-    "c5_20261124_223143/feature_research"
-   ]
-  }
- }
 }

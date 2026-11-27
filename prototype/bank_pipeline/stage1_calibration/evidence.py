@@ -105,6 +105,18 @@ def calibration_metrics(y, p, base_score, n_bins: int = ECE_BINS) -> Dict[str, A
     }
 
 
+def stratified_row_weights(y, fold_id, replicates, seed):
+    """Yield one fold/class-stratified multiplicity vector, reused between iterations."""
+    strata = sorted({(int(f), int(v)) for f, v in zip(fold_id, y)})
+    members = [np.flatnonzero((fold_id == f) & (y == v)) for f, v in strata]
+    rng = np.random.default_rng(int(seed))
+    w = np.zeros(len(y), dtype=int)
+    for _ in range(int(replicates)):
+        for rows in members:
+            w[rows] = np.bincount(rng.integers(0, len(rows), len(rows)), minlength=len(rows))
+        yield w
+
+
 def stratified_bootstrap_delta(d, y, fold_id, *, replicates: int = BOOTSTRAP["replicates"],
                                seed: int = BOOTSTRAP["seed"],
                                level: float = BOOTSTRAP["level"]) -> Dict[str, Any]:
@@ -118,19 +130,13 @@ def stratified_bootstrap_delta(d, y, fold_id, *, replicates: int = BOOTSTRAP["re
     d = np.asarray(d, dtype=float)
     y, fold_id = np.asarray(y).astype(int), np.asarray(fold_id).astype(int)
     n = len(d)
-    strata = sorted({(int(f), int(v)) for f, v in zip(fold_id, y)})
-    members = [np.flatnonzero((fold_id == f) & (y == v)) for f, v in strata]
-    rng = np.random.default_rng(int(seed))
-    w = np.zeros(n)
     means = np.empty(int(replicates))
-    for r in range(int(replicates)):
-        for rows in members:
-            w[rows] = np.bincount(rng.integers(0, len(rows), len(rows)), minlength=len(rows))
+    for r, w in enumerate(stratified_row_weights(y, fold_id, replicates, seed)):
         means[r] = float(w @ d) / n
     lower, upper = np.quantile(means, [(1 - level) / 2, 1 - (1 - level) / 2])
     return {"point": float(d.mean()), "lower": float(lower), "upper": float(upper),
             "replicates": int(replicates), "seed": int(seed), "level": float(level),
-            "strata": len(strata)}
+            "strata": len(set(zip(fold_id, y)))}
 
 
 def stage4_inputs(y, p_by_family: Mapping[str, np.ndarray],

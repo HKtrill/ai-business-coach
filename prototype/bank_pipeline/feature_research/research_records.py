@@ -188,9 +188,9 @@ def _git(*args: str, cwd: Path) -> Optional[str]:
     return out.stdout if out.returncode == 0 else None
 
 
-def code_identity(root: Path = BANK_ROOT) -> Dict[str, Any]:
+def code_identity(root: Path = BANK_ROOT, *, code_files=CODE_FILES) -> Dict[str, Any]:
     """
-    HEAD, the uncommitted-changes flag, ``CODE_FILES`` digests (LF-normalised;
+    HEAD, the uncommitted-changes flag, the requested file digests (LF-normalised;
     ``None`` for a file that does not exist) and the whole-tree digest.
     """
     from upstream_regeneration.records import code_identity as tree_identity
@@ -198,7 +198,7 @@ def code_identity(root: Path = BANK_ROOT) -> Dict[str, Any]:
 
     root = Path(root)
     files = {rel: (file_sha256_lf(root / rel) if (root / rel).is_file() else None)
-             for rel in CODE_FILES}
+             for rel in code_files}
     head = _git("rev-parse", "HEAD", cwd=root)
     status = _git("status", "--porcelain", "--untracked-files=no", cwd=root)
     tree = tree_identity(root)
@@ -238,7 +238,8 @@ class Run:
 
 def start_run(*, commit: int, seeds: Mapping[str, int],
               notebook: str = "feature_research/feature_research.ipynb",
-              root: Path = RECORD_ROOT, run_id: Optional[str] = None) -> Run:
+              root: Path = RECORD_ROOT, run_id: Optional[str] = None,
+              code_files=CODE_FILES) -> Run:
     """
     A new run. Refused when its folder already exists (a run id is used once).
     Nothing is written until ``write_run_record``.
@@ -252,7 +253,7 @@ def start_run(*, commit: int, seeds: Mapping[str, int],
     if folder.exists():
         raise RecordError(f"{folder} exists: a run id is used once (start a new run)")
     return Run(run_id=run_id, commit=commit, notebook=notebook, seeds=dict(seeds),
-               started_utc=_now(), code=code_identity(), environment=environment(),
+               started_utc=_now(), code=code_identity(code_files=code_files), environment=environment(),
                root=Path(root))
 
 

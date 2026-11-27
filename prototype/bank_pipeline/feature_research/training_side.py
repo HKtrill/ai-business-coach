@@ -142,9 +142,12 @@ def train_side_identities(X_train: pd.DataFrame, y_train: pd.Series,
     }
 
 
-def draw_training_side(*, verbose: bool = True) -> TrainingSide:
+def draw_training_side(*, verbose: bool = True, indices_only: bool = False) -> TrainingSide:
     """
     The cascades' split, returned without its test side (module docstring).
+
+    ``indices_only=True`` partitions identifiers first and selects only training values.
+    This avoids the legacy split manager's descriptive report on both split sides.
 
     ``verbose`` prints the training-side summary; the protocol's own console
     output is never shown (it reports full-population and test-split counts).
@@ -154,20 +157,34 @@ def draw_training_side(*, verbose: bool = True) -> TrainingSide:
         build_database()
         population = BankPreprocessor(drop_leaky=True).fit_transform()
         target_col = sanity_check_data(population)
-        split = GlobalSplitManager(test_size=TEST_SIZE, random_state=RANDOM_SEED).create_split(
-            population, target_col=target_col)
-        X_train = split["X_train"].copy()
-        y_train = split["y_train"].copy()
+        if indices_only:
+            # Same stratification and ordering as create_split. Only row identifiers
+            # cross the split before selecting the training frame.
+            from sklearn.model_selection import train_test_split
+            train_idx, other_idx = train_test_split(
+                population.index, stratify=population[target_col],
+                test_size=TEST_SIZE, random_state=RANDOM_SEED)
+            rows = population.loc[train_idx]
+            X_train = rows.drop(columns=target_col)
+            y_train = rows[target_col].copy()
+        else:
+            split = GlobalSplitManager(test_size=TEST_SIZE, random_state=RANDOM_SEED).create_split(
+                population, target_col=target_col)
+            X_train = split["X_train"].copy()
+            y_train = split["y_train"].copy()
+            other_idx = split["X_test"].index
+            del split
         ref = build_train_reference(
-            index_train=X_train.index, y_train=y_train, index_test=split["X_test"].index,
+            index_train=X_train.index, y_train=y_train, index_test=other_idx,
             attested_stage_io_split_fingerprint=attested,
             attestation_source=f"{ATTESTATION['record']} ({ATTESTATION['field']})")
-        del split, population
+        del other_idx, population
     protocol = MappingProxyType({
         "database": "data.preprocessing.build_database()",
         "population": "data.preprocessing.BankPreprocessor(drop_leaky=True).fit_transform()",
         "target": f"feature_research.validation.sanity_check_data -> {target_col!r}",
-        "split": (f"data.global_splits.split_manager.GlobalSplitManager(test_size={TEST_SIZE}, "
+        "split": ("stratified row indices; same test_size and random_state as create_split" if indices_only else
+                  f"data.global_splits.split_manager.GlobalSplitManager(test_size={TEST_SIZE}, "
                   f"random_state={RANDOM_SEED}).create_split(population, "
                   f"target_col={target_col!r})"),
         "kept": "X_train, y_train (copies); TrainReference (fingerprints only)",

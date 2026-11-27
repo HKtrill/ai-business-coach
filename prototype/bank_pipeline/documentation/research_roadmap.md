@@ -2,236 +2,128 @@
 
 ## Phase 2 — Research Organization, Training Research, and Optimized Cascades
 
-## PR 42 — Feature Research Notebook and Feature-Contract Investigation
+## PR 43 — Training Research Notebook and Stage 4 Policy Research
 
-**Objective:** Develop the Feature Research Notebook and determine, on training-side evidence, whether the accepted feature representations should be retained or separately revised before training optimization.
+**Objective:** Establish the train-only Training Research Notebook, register a whole-system abstention policy, and evaluate Stage 4 approaches on the frozen PR 39 training-side out-of-fold (OOF) evidence. Give the GLASS Linear Arbiter priority, diagnose input shift for retained candidates, and provide recommendations for PR 44 optimization and PR 45 adoption.
 
 **Execution principles:**
 
-- Use training rows only: the notebook draws the cascades' split and never binds a test row, test prediction, or test metric.
-- Fit every target-dependent statistic, selection, and transformation within its training fold, and register evaluation criteria before candidate results are examined.
-- Preserve the frozen PR 39 baseline, the accepted Phase 1 artifacts, and the production feature code, including `feature_research/feature_engineering/`, which Stage 3 imports for both arms. A revised feature contract is a new, separately versioned contract.
-- Reuse existing research modules and accepted evidence code by import (`shared.stage1.crossfit`, `stage2_binning`, `stage2_crossfit`) without modifying them, and add infrastructure only for a demonstrated need.
-- Measure predictive effects with the accepted model configurations. Tuning belongs to PR 44, contract adoption and artifact regeneration to PR 45, and temporal robustness execution to PR 49.
-- Use targeted tests after code changes; reserve full regression validation for Commit 6.
+- Use training rows only. Preserve the PR 39 artifacts, manifests, accepted configurations, and registered 2×2 crossover. Write research evidence under distinct PR 43 run identities.
+- Apply the PR 42 claim boundary throughout. The frozen OOF evidence supports random-split comparisons. Target-derived features use later contacts’ labels, and the MLP early-stopping split shares encoder fitting. Forward-in-time claims require the temporal evaluation in PR 49.
+- Register objectives, decision rules, budgets, and conditional experiments before inspecting candidate results. Use identical evaluation rows, folds, coverage obligations, and uncertainty methods for paired comparisons. Record each arm’s search space and budget.
+- Reuse existing implementations by import. Justify substantial additions before implementation by identifying the missing capability and the alternatives inspected. Reserve repository-wide consolidation for after PR 46.
+- Screen candidates on frozen inputs first. Use full-batch optimization for the small convex candidate. Reserve upstream fitting for the registered input-shift experiment.
+- Run targeted tests and applicable research acceptance checks after each implementation step. Reuse accepted execution records and intermediate results where their recorded identities remain valid. Reserve the full default, slow, and comprehensive real-data regression suites, final clean-kernel notebook execution, and complete frozen-baseline verification for Commit 6. Repeat expensive experiments only when a material change invalidates their accepted evidence.
+- Review the implementation footprint alongside scientific correctness. Avoid duplicating metrics, diagnostics, research summaries, plotting functionality, and test coverage. Store sufficient evidence to reproduce and defend each finding without unnecessarily duplicating large intermediate results.
 
-**Commit order:** Commit 2 precedes the research commits. Commit 3 has the highest priority because its findings can invalidate later conclusions, so it precedes Commits 4 and 5, which are independent of each other. Commit 6 follows all of them.
+**Commit order:** Commit 1 records the plan. Commit 2 establishes the training boundary and registers the evaluation protocol. Commit 3 diagnoses the voters under that protocol. Commit 4 evaluates the priority GLASS Linear Arbiter, targeted GLASS formula changes, and Meta-XGBoost on the same evidence. Commit 5 uses those results to limit upstream refitting to the candidates and questions that require it. Commit 6 consolidates recommendations, completes validation, and publishes the accepted executed notebooks.
 
 ### Commit 1 — Roadmap Planning and Deferred Engineering Updates
 
-**Objective:** Organize PR 42 into reviewable commits and update the Deferred Engineering entries for the completed PR 41 work. Documentation only.
+**Objective:** Record the PR 43 execution plan and reconcile Deferred Engineering with the completed PR 42 handoff. Documentation only.
 
-- [x] Review the PR 42 scope and its dependencies in PRs 43–50 against the current repository.
-- [x] Organize PR 42 into commits, retaining its full research scope and safeguards.
-- [x] Update the Deferred Engineering entries: the Windows execution warning and PuLP 3.3.2 deprecations resolved in PR 41, a separate PuLP 4.x migration task, and the Joblib/Loky shutdown traceback.
+- [x] Replace the existing PR 43 section with the agreed commit sequence. Keep its deliverable immediately before PR 44.
+- [x] Add the PR 44 acceptance requirement for measuring Stage 1 and Stage 3 hyperparameter-selection optimism before adoption.
+- [x] Review Deferred Engineering dispositions. Keep the resolved Windows execution and PuLP 3.3.2 items closed. Retain the separate PuLP 4.x migration, low-priority Loky shutdown issue, Optuna widget rendering, portability work, and optional development utility in their existing queues.
+- [x] Keep the seven SAG/SAGA convergence warnings visible for PR 44 optimization or resolution before PR 45 regeneration.
+- [x] Record the repository consolidation and documentation cleanup planned after PR 46 and before publicly announcing Phase 2 completion. Preserve scientific evidence and provenance during that cleanup.
 - [x] Make no source-code, notebook, or artifact changes.
 
-### Commit 2 — Feature Research Notebook Foundation and Feature Inventory
+### Commit 2 — Train-Only Notebook, Policy Registration, and Nested Stage 4 Validation
 
-**Objective:** Create the train-only Feature Research Notebook and inventory the accepted features and contracts that the research commits evaluate.
+**Objective:** Establish the training inputs, scoring policy, and evaluation procedure before examining Stage 4 candidate results.
 
-- [x] Create the Feature Research Notebook as a new file in `feature_research/`, built from the cells and modules mapped in `documentation/notebook_map.md` (section 2.1). Leave the existing notebooks unchanged.
-- [x] Extend notebook tests G5 (one labelled top-to-bottom path) and G7 (the cascades' split protocol; no test row bound) to the new notebook, and read accepted router and upstream-model artifacts only through the PR 38 boundary extractors.
-- [x] Write research records under `research_logs/pr42/` with run identifiers, seeds, and code identity, never over an existing record.
-- [x] Inventory existing engineered features, feature contracts, and stage-specific feature populations.
-- [x] For each feature, record its stage and arm, source variables, whether it is target-derived, where it is fitted (full training split or per-fold refits), and how it is applied to the test split.
-- [x] Record the frozen references for later comparison: the Stage 1 feature contracts, the Stage 2 binning identity, the Stage 3 feature DAG and block-cache identity, and the three EBM interaction pairs.
-- [x] Record the duplicated feature-engineering code in `shared/stage2/feature_engineering.py` and `feature_research/feature_engineering/` (notebook map section 5) for the Commit 6 decision.
+#### Step 2A — Notebook Foundation and Frozen Input Boundary
 
-### Commit 3 — Stage 1 Temporal Validity and Target-Derived Feature Audit (high priority)
+- [x] Build the Training Research Notebook from `documentation/notebook_map.md` section 2.2. Inventory and reuse the existing training, calibration, cross-fitting, threshold, evaluation, statistical, plotting, and research-record utilities.
+- [x] Reuse `feature_research.training_side` and extend notebook tests G5 and G7 to cover the labelled execution path and train-only boundary.
+- [x] Assemble both upstream OOF tables from the PR 39 pins. Verify row order, labels, producer fold identities, route states, probability semantics, and fingerprints. Preserve the distinct Stage 1 and Stage 2/3 fold designs.
+- [x] Reuse the PR 38 router, LR, and EBM boundary extractors. Supply the smallest verified train-only access needed for the MLP, Stage 3 XGBoost, and missing router evidence. Check the notebook entry point for test-field access because the production Stage 4 loaders and `build_feature_frames` construct both sides of the split.
+- [x] Record the accepted configurations and threshold procedures. Reproduce the production abstention search over distinct confidence values when checking the historical reference. The research helper searches a fixed grid.
 
-**Objective:** Determine whether the accepted target-derived features carry direct label leakage, temporal look-ahead, or both, evaluate past-only alternatives, and design the temporal robustness protocol before other feature research builds on these features.
+#### Step 2B — Stage 4 Objective, Abstention Policy, and Comparison Registration
 
-**Context from repository inspection:** the dataset rows are in date order (May 2008 – November 2010), and the subscription rate rises from about 3–6% to about 45–57% over that period. Two of the three Stage 1 features, `subscribe_rate_by_euribor_bin` and `subscribe_rate_by_dow_month`, are target rates keyed on period-identifying variables, and most euribor quantile bins fall within one to three consecutive months. Under the random split, these encodings are fitted partly on rows contacted later in the same period.
+- [x] Define what abstention means operationally and how abstained rows contribute to whole-system scoring. Register the primary loss, coverage grid, selective-risk definition, AURC convention, tie handling, class-retention safeguards, and rule for selecting a deployable cut.
+- [x] Evaluate scoring functions at matched coverage. Separately measure the coverage achieved on outer-fold rows by an inner-selected cut. Report decisions before abstention, retained-row results, and whole-system outcomes, including effective recall, per-class retention, retained prevalence, and correct and incorrect decisions deferred.
+- [x] Keep retained F2 as a descriptive historical metric. It has no true-negative term, and the selected cut reached the 50% training coverage floor in all four accepted crossover cells. Use the registered criteria for weight, threshold, and policy selection.
+- [x] Register the GLASS Linear Arbiter comparisons against the GLASS Arbiter and Meta-XGBoost on each upstream, separately from the historical PR 39 2×2.
+- [x] Predefine the paired uncertainty method, meaningful improvement and comparability margins, calibration and class-retention limits, interpretability requirements, and computational budget. Favor the simpler interpretable approach when performance falls within the registered comparability margin.
+- [x] Record each arm’s search space, trial budget, stopping criteria, diagnostic triggers for optional variants, and decision rule for expanding the simulated holdout.
 
-The Stage 1 cross-validations (tuning, OOF, and inner calibration folds) already refit both encodings on each fold's training rows (`shared.stage1.crossfit`, audits F3 and F19), and the full-train fit scores the test split. The audit verifies these refits and addresses a separate question: temporal look-ahead under the random split.
+#### Step 2C — Nested Stage 4 Validation on Fixed Upstream Inputs
 
-#### Step 3A — Encoding Construction and Leakage Audit
+- [x] Use common outer folds for evaluation and inner folds for selection. Fit each Stage 4 procedure from scratch, including learned voter cuts, weights or coefficients, calibration, class thresholds, and abstention cuts. Keep raw scoring, calibration, class decisions, and deferral separate.
+- [x] Refit the accepted GLASS Arbiter procedure per outer fold. Reproduce its historical operating rule as a reference and evaluate its scoring function under the common registered policy. Apply the same outer evaluation and selection safeguards to Meta-XGBoost.
+- [x] Measure Stage 4 selection optimism from inner-selected and outer-evaluated results. Document that upstream OOF inputs remain fixed and that upstream fits producing one row’s inputs can include other Stage 4 outer-fold labels. Fully nested Stage 1/3 hyperparameter selection belongs to PR 44.
+- [x] Verify Stage 4 fold isolation, input parity, and reference behavior with targeted checks. Record run IDs, seeds, fold identities, parameters, trial counts, elapsed time, and code identity under `research_logs/pr43/`.
 
-- [x] Establish the time index used throughout PR 42 from the dataset's date order, and record its basis and limits.
-- [x] Document exactly how both encodings are constructed, fitted, and applied (training split, Stage 1 fold designs, test mapping).
-- [x] Determine whether the protocol contains direct label leakage, temporal look-ahead, or both.
-- [x] Verify that every transformation is fitted within its proper training fold.
-- [x] Extend the audit to the other target-derived features used by Stages 2–3, such as the neighborhood subscription density.
+### Commit 3 — Voter Diagnostics and GLASS Decision Structure
 
-#### Step 3B — Past-Only Encodings and Temporal Robustness Protocol
+**Objective:** Determine where each voter contributes, where confidence is poorly scaled, and which arbiter changes warrant evaluation.
 
-- [x] Evaluate past-only (expanding-window) encodings: feature availability, deployment realism, and predictive effect.
-- [x] Determine whether candidate revisions require separately versioned feature contracts; do not alter the accepted PR 39 baseline.
-- [x] Design the temporal robustness protocol: chronological split, past-only encodings, and a policy for prevalence shift, which affects thresholds, abstention cuts, and the Stage 2 NPV and precision obligations. Execution follows in PR 49.
-- [x] Record the interim temporal-validity finding and its implications for the frozen PR 39 evidence used in PR 43, the candidate contracts in PRs 44–45, and the claim boundaries in PR 49.
+- [x] On the frozen GLASS OOF rows, tabulate routing state × LR vote × EBM vote, support, and observed positive rate. Measure agreement, error correlation, double faults, unique-correct predictions, and correct lone dissents at the Stage 4 voter cuts and at matched flag budgets. Break out class and routing state where supported.
+- [x] Count Pass 1 leaked positives flagged by LR or EBM. For Pass 2 rows where both voters vote negative, count the false positives a veto would remove and the true positives it would lose.
+- [x] Measure LR and EBM discrimination and calibration on router-deferred rows. Estimate voter calibration intercepts and slopes by routing state where estimable, with support and uncertainty.
+- [x] Trace accepted-cut abstentions and per-voter contributions by class and route. Quantify how the bound on negative probability margins affects Pass 2 and router-deferred rows.
+- [x] Record which registered triggers were met for optional variants. Assess redundancy through shared errors and unique contributions. High agreement and near-uniform formula weights alone do not establish redundancy.
 
-### Commit 4 — Stage 2 NSD/ECI Binning Drift, Sensitivity, and Candidates
+### Commit 4 — Stage 4 Candidate Evaluation at Matched Coverage
 
-**Objective:** Explain the NSD/ECI lift drift deferred from PR 39, make the bin derivation procedural where feasible, and identify bin candidates for router testing in PR 44, without modifying the frozen binning.
+**Objective:** Compare the priority GLASS Linear Arbiter, targeted GLASS formula improvements, and Meta-XGBoost under the registered policy and nested Stage 4 procedure.
 
-#### Step 4A — Drift Reproduction and Diagnosis
+#### Step 4A — GLASS Linear Arbiter
 
-- [x] Start from the PR 39 Step 3A evidence (`stage2_binning`, record `research_logs/pr39/c3_20261114_231604/`, outcome retain for both families): reuse its per-bin statistics, Wilson intervals, and triggers T1–T4 by import, without modifying the record or its code.
-- [x] Revisit the substantial lift drift observed during PR 39 Step 3A, particularly:
-  - `eci_warm`: original 1.49–1.67× lift versus approximately 1.03× OOF.
-  - `eci_hot`: original 3.53× versus approximately 2.50× OOF.
-  - `nsd_elevated`: approximately 2.49× pooled OOF lift, with significant fold-level variation.
-- [x] Reproduce the original NSD/ECI feature-bin research using the corrected, fold-isolated feature engineering implementation.
-- [x] Distinguish threshold-placement problems from encoder behavior, population shifts, and in-sample label leakage.
-- [x] Use the Commit 3 findings on the target-derived Stage 2 sources, including period sensitivity, when separating these causes.
-- [x] Reevaluate decile-lift distributions, candidate thresholds, bin counts, support, confidence intervals, and fold stability.
+- [x] Fit regularized logistic regression with nonnegative coefficients and an intercept using full-batch log-loss optimization. Use `logit(p) − logit(t)` for Stage 1 and Stage 3 and signed `logit(r) − logit(b)` router evidence on routed rows, with zero router contribution on deferral. Specify finite clipping and direction conventions before fitting.
+- [x] Derive inputs from the Stage 1/3 probabilities, router probability, and route indicators available to Meta-XGBoost, using training-fitted constants where required. Verify each upstream’s router semantics. For GLASS, recover the rule rate using its producing model’s base rate. Keep rule identity and per-rule outcome counts outside the linear candidate’s inputs.
+- [x] Assess probability calibration before and after any inner-fitted correction. Report coefficients, bootstrap intervals, and fold-to-fold stability.
+- [x] Evaluate routing-state-specific coefficients shrunk toward the global coefficients only if the registered Commit 3 reliability trigger is met.
+- [x] Evaluate both upstreams against both reference arbiters. Apply the registered paired improvement and class-retention criteria before retaining the linear candidate for PR 45.
 
-#### Step 4B — Procedural Binning and Candidate Evaluation
+#### Step 4B — GLASS Formula and Meta-XGBoost Comparators
 
-- [x] Where feasible, make the NSD/ECI bin derivation procedural and fold-fitted, so repeated-split and nested evaluations can refit it rather than reuse constants chosen on all training rows (a limitation recorded in PR 39 Step 3A).
-- [x] Register the evaluation criteria before candidate results are examined.
-- [x] Investigate whether transitional or weak bins retain meaningful predictive utility through conjunctions with other Stage 2 features.
-- [x] Evaluate alternative threshold configurations and bin structures under leakage-safe training protocols, without modifying the frozen Phase 1 baseline.
-- [x] Compare candidate configurations against the frozen PR 39 binning baseline using predefined evaluation criteria.
-- [x] Identify the candidates that deserve downstream router testing in PR 44 (coverage, constraint feasibility, complementarity, and computational cost).
-- [x] Determine whether the existing bins should remain unchanged or whether evidence warrants a separately versioned methodology revision.
-- [x] If revision is justified, document the required feature-contract changes, G13 leakage audit, downstream artifact regeneration, and follow-up work rather than silently modifying frozen artifacts.
+- [x] Isolate GLASS log-odds margin normalization with the accepted formula weights first. Then evaluate sensitivity to the recall target of 0.70, weight blend α = 0.5, and abstention cut. Compare sequential fitting with nested joint selection where justified.
+- [x] Compare selected-rule in-sample evidence with cross-fitted router rule precision. Document rule support, unseen-rule handling, and what the frozen records can establish. Account for any required upstream refit in the Commit 5 budget.
+- [x] For Meta-XGBoost, compare the accepted balanced-weight, F2-at-0.5 tuning objective with registered threshold-free alternatives. Evaluate raw and calibrated confidence using the implemented `operating_space="calibrated"` path while preserving nonlinear learning.
+- [x] Produce one paired comparison per upstream, using the same rows for all arbiters. Report matched-coverage risk, AURC, achieved coverage at locked cuts, calibration where applicable, class retention, and whole-system outcomes. Record retained candidates and inconclusive comparisons.
 
-### Commit 5 — Feature Analysis, Interactions, and EBM Interaction Selection
+### Commit 5 — OOF-versus-Refit Input Shift and Coverage Stability
 
-**Objective:** Use training-side evidence to identify a simpler Stage 3 feature set with interpretable EBM shapes that remain stable across folds and contact periods. Quantify the effects of simplification on predictive performance and calibration, and, where feasible, use fold-fitted interaction selection to assess what reselection recovers under the existing three-pair budget.
+**Objective:** Determine how much Stage 4 coverage changes with the operating rule and how much changes when upstream models are refitted.
 
-#### Step 5A — Feature Analysis and Stage 3 Simplification
+#### Step 5A — Frozen-Table Stability Checks
 
-- [x] Review feature distributions, correlations, redundancy, predictive contributions, and stability across contact periods using the Commit 3 time index.
-- [x] Investigate interpretable feature interactions and candidate transformations. Verify that every candidate feature is available at the intended prediction time.
-- [x] Keep feature selection, encoding, and transformation fitting fold-isolated. Use reproducible training-side analyses and preserve shared feature comparability between cascade arms.
-- [x] Starting from the frozen PR 39 Stage 3 inventory, identify the remaining correlated pair and test removing each member separately. For `decay_x_density`, compare the accepted feature with `joint_economic_decay` alone and with a past-only density variant if its inputs are available at prediction time.
-- [x] Compare candidates on identical evaluation rows with the same folds and model settings. Keep unaffected interaction pairs fixed. When removing a feature, record which pairs disappear and leave those slots empty. Report paired out-of-fold performance, calibration, and feature and interaction counts.
-- [x] Assess EBM shape interpretability. Document what each changed feature measures, how its contribution varies over well-supported values, whether that pattern holds across folds and contact periods, and which interactions affect its interpretation. Favor clearer, more stable shapes when the interpretability gain justifies a modest loss in standalone Stage 3 performance. Report the change in predictive performance and calibration.
-- [x] Plot each EBM main-effect shape for the frozen Stage 3 model and the simplification candidates on matched axes. Label the feature values and their contribution to the model score, show how many training rows support each region, and overlay fold-level curves. For retained interactions, plot the pairwise effect with joint support.
-- [x] On identical out-of-fold rows, compare the baseline and candidate EBMs with Stage 1, reporting Stage 2 abstentions separately. Count how often each EBM is right when Stage 1 is wrong and vice versa. Carry promising candidates forward to verify whether that disagreement improves final cascade decisions at comparable coverage under the same operating obligations.
+- [x] Compare Meta-XGBoost coverage under fold-nested operating thresholds and the single global threshold used for deployment. Label the global-cut result on training rows as descriptive.
+- [x] Measure abstention-cut and achieved-coverage stability across training-row resamples for retained candidates.
+- [x] Identify the remaining questions that require fresh upstream fits. Record the expected fit count and runtime before starting the simulated holdout.
 
-#### Step 5B — Procedural EBM Interaction Selection
+#### Step 5B — Training-Only Simulated Upstream Holdout
 
-- [x] Where feasible, make EBM interaction selection procedural and fold-fitted so repeated-split and nested evaluations can rerun selection within each training fold.
-- [x] On the frozen PR 39 feature set, check whether selection on all training rows recovers the three accepted pairs. Record how often each pair is selected across folds.
-- [x] For candidates carried forward from 5A, rerun selection under the same three-pair budget. Compare with the corresponding 5A result on the same evaluation rows. Report which pairs recur and how reselection changes predictive performance and calibration. Compare different interaction budgets in PR 44 (Step 44C).
+- [x] Start with the black-box upstream. Hold out a stratified subset of training rows and fit the upstream procedures on the remainder using accepted hyperparameters. Keep learned transformations, routing evidence, calibration, and cuts inside the fitting partition. Reuse the resulting fits and predictions across arbiters.
+- [x] Compare the fitting partition’s OOF input distribution with the simulated holdout distribution. On the same untouched holdout rows, compare full-refit and fold-averaged upstream predictions with Stage 4 held fixed.
+- [x] Isolate Meta-XGBoost’s own OOF/refit effect with upstream inputs held fixed. Report changes in route state, confidence, decisions, and achieved coverage.
+- [x] Apply the registered expansion rule to the GLASS upstream, accounting for fold-model versus full-fit rule rates and base rates. Evaluate retained candidates under the simulated conditions relevant to their proposed use. Identify any unresolved arm-specific shift as a prerequisite for PR 45 adoption.
+- [x] Record observed runtime, bottlenecks, and computational estimates for PR 45 regeneration and PR 49 repeated splits. Keep simulated fits research-local and preserve the accepted artifacts.
 
-### Commit 6 — Feature-Contract Recommendations, Validation, and PR Closure
+### Commit 6 — Recommendations, Validation, Executed Notebooks, and PR Closure
 
-**Objective:** Consolidate the PR 42 findings into feature-contract recommendations, validate the frozen baseline, and give readers direct access to the executed research notebooks from the root README and PR description.
+**Objective:** Record the provisional Stage 4 decision, hand actionable findings to PRs 44–45, complete reproducibility checks, and publish the accepted executed notebooks.
 
-#### Step 6A — Feature-Contract Recommendations and Research Handoff
+#### Step 6A — Stage 4 Recommendations and Research Handoff
 
-- [x] Record the candidate configurations, supporting evidence, rejected alternatives, and remaining uncertainties.
-- [x] Retain the frozen feature contracts unless the evidence supports a separately versioned change. For each recommended revision, document its leakage audit and required downstream artifact regeneration before adoption through PRs 44–45.
-- [x] Hand off the Stage 1 encoding candidates to Step 44A, Stage 2 bin and filter candidates to Step 44B, the EBM interaction procedure and budget comparison to Step 44C, and the temporal protocol and procedural feature refits to PR 49.
-- [x] Decide where the Stage 3 feature DAG belongs and whether to retire the copies in `shared/stage2/feature_engineering.py` identified in Section 5 of the notebook map. Defer any move that would change accepted feature values or recorded identities to the adopting contract version.
+- [x] Consolidate the registered policy, supporting run IDs, paired comparisons, accepted and rejected variants, shift findings, and remaining uncertainties. Record the provisional GLASS Stage 4 choice or an inconclusive outcome. Specify the decision PR 45 must repeat on regenerated inputs.
+- [x] Hand PR 44 the upstream properties that materially affect Stage 4. Connect Stage 1 probability quality to the past-only encoding and MLP early-stopping work, router reliability and complementarity to the qualified `gap_placed` and `eci_warm` experiments, and deferred-row performance to shared `jed_alone` and the EBM interaction-budget comparison.
+- [x] Update the notebook map and PR 43 research log with accepted records, reproduction commands, costs, claim boundaries, and unresolved prerequisites. Reference the PR 42 handoff for feature-contract details.
 
-**Record:** [`research_logs/pr42/feature_contract_recommendations.md`](../research_logs/pr42/feature_contract_recommendations.md). All frozen contracts are retained and nothing is adopted. Three methodology revisions are recommended for versioned adoption (section 5.2). The handoffs below cite its sections.
+#### Step 6B — Final Validation, Reproducibility, and Notebook Publication
 
-#### Step 6B — README, Repository Layout, and Executed-Notebook Packaging
+- [x] Run targeted research, notebook, and packaging checks, followed by the full default, slow, and comprehensive real-data regression suites. Run the applicable accepted-record checks and verify the frozen PR 39 pins, crossover identity, and PR 42 contract references.
+- [x] Execute the final Training Research Notebook in a clean Windows kernel through the established `_run_notebook` path. Verify reproduction against the registered tolerances and save the accepted executed copy with its run ID under `notebook_outputs/pr43/`.
+- [x] Reuse the PR 42 packager with explicitly accepted runs. Refresh the flat project-wide `executed_notebooks.zip` with the latest accepted copy of each notebook and repository source paths in `MANIFEST.json`. Prepare `pr43_executed_notebooks.zip` with run IDs in its filenames.
+- [x] Extract both archives and verify that the notebooks open with their saved tables and plots. Confirm tracked notebooks are output-free with code and Markdown cells intact.
+- [x] Publish both assets on the `pr43-notebooks` GitHub release. Verify the root README’s stable `releases/latest/download/executed_notebooks.zip` link and include the release-specific PR 43 snapshot link in the PR description.
+- [x] Review the complete diff for unintended changes and generated files. Record final validation results, warnings, and outstanding handoffs, then close the PR.
 
-- [x] Rewrite the opening of the root `README.md` as a 15–30 second project pitch beneath the title and logo. Explain what ChurnBot predicts, how the GLASS cascade works, and why the research compares it with a matched black-box cascade.
-- [x] Place a **Download executed notebooks (.zip)** link immediately below the pitch, before the tech stack and installation instructions. Update the repository layout and notebook map so readers can locate the tracked source notebooks and their executed copies.
-- [x] Add a small packaging script that reuses existing executed notebooks and takes explicitly accepted runs as input. Use a flat project-wide archive layout, preserve repository source paths in `MANIFEST.json`, and retain run IDs in PR-specific filenames. Exclude partial and failed runs.
-- [x] Build `executed_notebooks.zip` with the latest accepted executed copy of each project notebook. Use a stable README download link and refresh the bundle whenever new notebook outputs are accepted.
-- [x] Create `pr42_executed_notebooks/` inside the local projects ZIP folder. Collect the accepted PR 42 executed notebooks there and package them as `pr42_executed_notebooks.zip`. Preserve this snapshot for the PR 42 description.
-- [x] Extract both archives and verify that the notebooks open with their saved tables and plots. Once the executed copies are accounted for, preserve the tracked notebooks' current outputs outside the repository, clear outputs and execution counts from tracked notebooks, and confirm their code and Markdown cells are intact.
-
-#### Step 6C — Final Validation, Reproducibility, and Research Closeout
-
-- [x] Run the targeted research, notebook, and packaging tests, followed by the full regression suite and applicable real-data tests.
-- [x] Run the applicable accepted-record `check` commands and confirm that frozen artifacts, feature contracts, and recorded identities match the accepted baseline.
-- [x] Execute the final Feature Research Notebook in a clean Windows kernel through the established PR 41 `_run_notebook` path. Confirm that its records reproduce and save the executed copy under `notebook_outputs/pr42/` with its run ID.
-- [x] Include the accepted final run in both bundles, verify their final contents, and confirm that the tracked notebooks remain output-free.
-- [x] Standardize the Markdown heading hierarchy and formatting throughout the research roadmap while preserving all substantive content, research objectives, task statuses, and planned execution sequences.
-- [x] Update the PR 42 research log with final validation results, reproducibility evidence, documented warnings, and outstanding research and engineering handoffs.
-- [x] Inspect the complete diff for unintended changes, generated files, and modifications to production feature code.
-
----
-
-## PR 43 — Training Research Notebook and Stage 4 Policy Research
-
-**Objective:** Establish the train-only training-research workflow and complete inexpensive Stage 4 methodology research, including the GLASS Linear Arbiter as a priority experimental candidate, on the frozen PR 39 training-side OOF evidence, before upstream optimization or regeneration.
-
-Every Stage 4 candidate in this PR can be screened on the frozen training-side OOF table (Stage 1–3 predictions, router decisions, labels, and fold identities) without regenerating Stages 1–3. Small convex problems are solved with full-batch optimization; no mini-batch, online-learning, or reinforcement-learning infrastructure is introduced.
-
-### Step 43A — Training Experiment Framework
-
-- [ ] Build the Training Research Notebook from existing research cells and modules; inventory tuning, calibration, cross-fitting, and training utilities before adding infrastructure.
-- [ ] Enforce train-only selection with the PR 38 boundary extractors: the notebook loads no test split, test prediction, or test metric.
-- [ ] Treat the frozen PR 39 training-side OOF evidence as random-split evidence. It is fold-isolated, but every target-derived feature looks ahead in time and the MLP's early stopping is not encoder-isolated, so no Stage 4 result built on it is reported as forward-in-time performance (PR 42 Step 6A, section 2.4).
-- [ ] Define stage-specific objectives, acceptance metrics, experiment budgets, and stopping criteria.
-- [ ] Screen candidates inexpensively before full nested procedures, without weakening leakage safeguards.
-- [ ] Separate raw model scoring, calibration, and decision-threshold selection.
-- [ ] Record each arm's search spaces, trial budgets, and selection protocols.
-- [ ] Measure hyperparameter-selection optimism. Stage 1 and Stage 3 currently tune on the same folds that produce their OOF predictions (calibration and thresholds are nested; hyperparameters are not). Define when nested selection is required for adoption.
-- [ ] Build a nested Stage 4 validation harness on the frozen training-side OOF table: outer folds for evaluation, inner folds for selection, each fold fitted from scratch (no warm starts across folds), with the accepted GLASS Arbiter's procedure refitted per outer fold as the baseline.
-- [ ] Track parameters, seeds, fold identities, elapsed time, and results, and support reproducible comparison against the accepted PR 39 configurations.
-- [ ] Estimate the computational budget for the PR 45 regeneration and the PR 49 repeated-split experiments.
-
-### Step 43B — Stage 4 Objective and Abstention Policy
-
-- [ ] Define the purpose and cost of abstention (for example, deferral to review) and a whole-system scoring policy for abstained rows; none is currently registered.
-- [ ] Register coverage/risk criteria: selective risk at registered coverage levels, risk–coverage curves and AURC, or an explicit cost rule.
-- [ ] Evaluate alternatives to retained F2 first. F2 has no true-negative term, so abstaining on a predicted negative never lowers retained F2; in all four accepted crossover cells the selected cut sits at the 50% training coverage floor.
-- [ ] Compare Stage 4 scoring functions at matched coverage (AURC and selective risk on the registered coverage grid), separately from operating-point selection; never select weights or thresholds by retained F2.
-- [ ] Apply one registered abstention/coverage policy to all Stage 4 candidates.
-- [ ] Investigate excessive abstention and class-specific coverage (per-class retention, retained base rate) on training-side evidence, and reject candidates that improve retained-row metrics by abstaining on more correct predictions.
-
-### Step 43C — Stage 4 Voter Diagnostics
-
-Measured overall and by routing state (Pass 1, Pass 2, router-deferred) on the frozen training-side OOF table, with voter decisions at the Stage 4 cuts and at matched flag budgets. High agreement is not treated as redundancy, and nearly uniform weights are not treated as inherently wrong.
-
-- [ ] Vote-pattern table: counts and observed positive rates for each routing state × LR vote × EBM vote.
-- [ ] LR–EBM agreement, error correlation, and double-fault rate (both voters wrong).
-- [ ] Unique-correct predictions and correct lone dissents, by voter, class, and routing state.
-- [ ] Router contributions: Pass 1 leaked positives flagged by LR or EBM, and the Pass 2 veto opportunity (false and true positives where both LR and EBM vote negative).
-- [ ] Router-deferred rows: LR and EBM discrimination and calibration within that population.
-- [ ] Segment calibration: intercept and slope of each voter's logit within each routing state.
-- [ ] Abstention composition at the accepted cut, by class and routing state.
-
-### Step 43D — GLASS Arbiter Improvements
-
-**Context:** the accepted weights (LR 0.343, EBM 0.355, router 0.302) are near-uniform by construction of the formula, and per-row influence is dominated by the confidence margins, whose negative side cannot exceed a voter's cut. The margins and the abstention objective are investigated before the weights.
-
-- [ ] Analyze per-voter contributions and decision structure, including the structural confidence bound and its effect on Pass 2 and router-deferred rows.
-- [ ] Evaluate log-odds confidence-margin normalization with the existing formula weights, isolating the effect of normalization.
-- [ ] Evaluate sensitivity to the recall target (0.70), the weight blend (α = 0.5), and the abstention threshold.
-- [ ] Evaluate nested joint selection of these parameters, where justified, against the current sequential fit.
-- [ ] Compare in-sample rule evidence with cross-fitted router rule precision.
-- [ ] Preserve the accepted configuration as the reproducible reference.
-
-### Step 43E — GLASS Linear Arbiter (priority experimental candidate)
-
-- [ ] Define the candidate: regularized logistic regression with nonnegative coefficients and an intercept on log-odds voter-confidence signals: `logit(p) − logit(t)` for LR and EBM, and the signed `logit(r) − logit(b)` for the router where it routes (zero elsewhere). Its output is a probability estimate whose calibration must be assessed; any calibration correction uses training-only evidence.
-- [ ] Use only the information channels Meta-XGBoost receives; give it no privileged information.
-- [ ] Fit with full-batch convex optimization and a log-loss objective under the Step 43A nested harness, applying the registered abstention policy.
-- [ ] Report coefficients with bootstrap intervals and fold-to-fold stability.
-- [ ] Evaluate routing-state-specific coefficients, shrunk toward the global coefficients, only if Step 43C shows meaningful reliability differences between routing states.
-- [ ] Compare it with the GLASS Arbiter at matched coverage; retain it only if its improvement exceeds fold-to-fold variability with no worse class-specific retention.
-- [ ] Register it as a separate experimental arbiter, not a replacement; the GLASS Arbiter and Meta-XGBoost remain reference configurations.
-
-### Step 43F — Meta-XGBoost
-
-- [ ] Compare its tuning objective (F2 at the 0.5 cut with balanced weights) with threshold-free alternatives.
-- [ ] Compare confidence behavior in raw and calibrated probability space (`operating_space="calibrated"` is implemented).
-- [ ] Evaluate its abstention policy under the registered criteria, without restricting its nonlinear learning.
-
-### Step 43G — Stage 4 Input Shift and Coverage Stability
-
-- [ ] Meta-XGBoost: compare training-side coverage under its per-fold (fold-nested) thresholds and under the single global operating threshold used at test time.
-- [ ] Investigate OOF-versus-refit input shift with a training-only simulated holdout: hold out a stratified part of the training split, fit the upstream stages on the remainder with the accepted hyperparameters, and compare OOF, refit, and fold-averaged inputs, confidence, and coverage. Start with the black-box upstream and pre-register the decision rule.
-- [ ] Localize any shift by stage, including Meta-XGBoost's own meta-level OOF/refit asymmetry and the GLASS router evidence (fold-model rule rates and base rates on the training side, full-training values on the test side).
-- [ ] Evaluate the retained Stage 4 candidates in the simulated holdout before PR 45; learned coefficients can amplify OOF-versus-refit shift.
-- [ ] Measure abstention-cut and coverage stability across training-row resamples.
-
-### Registration
-
-- [ ] Keep the registered PR 39 2×2 crossover unchanged.
-- [ ] Register the GLASS Linear Arbiter comparisons (against the GLASS Arbiter and Meta-XGBoost, applied to both upstreams) separately, before their results are examined.
-
-**Acceptance:**
-
-- [ ] Predefine the criteria for selecting the final GLASS Stage 4 approach: performance, calibration, coverage, interpretability, and computational efficiency, favoring the simpler interpretable model when performance is meaningfully comparable.
-- [ ] Record the registered Stage 4 objectives, policies, candidates, and the provisional GLASS Stage 4 choice with their training-side evidence.
-- [ ] Identify the upstream properties Stage 4 depends on (for example, probability quality on router-deferred rows) to direct PR 44.
-- [ ] Regenerate no artifacts.
-
-**Deliverable:** The Training Research Notebook, a registered Stage 4 abstention policy, training-side voter diagnostics, an evaluated GLASS Linear Arbiter candidate, a diagnosis of Stage 4 input shift, and predefined Stage 4 selection criteria for PR 45.
+**Deliverable:** The Training Research Notebook, a registered Stage 4 abstention policy and comparison protocol, training-side voter diagnostics, an evaluated GLASS Linear Arbiter candidate, matched-coverage comparisons with both reference arbiters, an input-shift diagnosis, and a provisional Stage 4 recommendation for PR 45.
 
 ---
 
@@ -337,6 +229,7 @@ Stage 1 has three inputs, so architecture and optimization changes have limited 
 - [ ] Preserve the PR 39 configurations for comparison.
 - [ ] Version candidate training contracts.
 - [ ] Defer artifact regeneration to PR 45.
+- [ ] Measure hyperparameter-selection optimism for shortlisted Stage 1 and Stage 3 configurations using nested selection and outer-fold evaluation before adoption. Reuse the PR 43 evaluation methodology where applicable.
 
 **Deliverable:** Evaluated, versioned Stage 1–3 candidates for both cascades, ready for a single upstream regeneration.
 

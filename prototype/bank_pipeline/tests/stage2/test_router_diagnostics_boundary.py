@@ -505,3 +505,55 @@ def test_rf_candidate_mutation_fails_loudly(w, ref, mutate, match):
     mutate(w["rf_result"], w)
     with pytest.raises(d.BoundaryCheckError, match=match):
         d.extract_rf_pass1_candidate(dw.trapped(w["rf_result"]), ref)
+
+
+def test_blackbox_stage1_and_stage3_reuse_the_trapped_training_contracts(w, ref):
+    so = _so(w)
+    so.update(arm="blackbox", model="calibrated_mlp")
+    mlp = boundary.extract_mlp_view(dw.trapped(w["lr"]), ref)
+    assert mlp.model == "mlp" and mlp.arm == "blackbox"
+    np.testing.assert_array_equal(mlp.scores["calibrated_probability"].values, so["train_proba_oof"])
+    art = w["ebm"]
+    art.model_family = "xgboost"
+    art.config["arm"] = "blackbox"
+    xgb = boundary.extract_xgb_view(dw.trapped_stage3(art), ref)
+    assert xgb.model == "xgb" and xgb.arm == "blackbox"
+    np.testing.assert_array_equal(xgb.scores["calibrated_probability"].values, art.oof["proba_calibrated"])
+    so["model"] = "calibrated_lr"
+    with pytest.raises(boundary.BoundaryCheckError, match="calibrated_mlp"):
+        boundary.extract_mlp_view(dw.trapped(w["lr"]), ref)
+    art.model_family = "ebm"
+    with pytest.raises(boundary.BoundaryCheckError, match="xgboost"):
+        boundary.extract_xgb_view(dw.trapped_stage3(art), ref)
+
+
+def test_pr43_meta_replay_reads_only_pinned_training_outputs(w, monkeypatch):
+    from types import SimpleNamespace
+
+    from feature_research import training_inputs as inputs
+    from shared.stage4.protocol import ABSTENTION_SEARCH
+
+    # Two distinct tied-confidence groups. The accepted cut keeps only the
+    # correct high-confidence predictions (including the boundary value).
+    table = pd.DataFrame({"y": [1, 0, 1, 0], "stage3_fold": [0, 1, 2, 3]})
+    operating = {"space": "raw", "threshold": 0.5, "train_side_thresholds": "fold-nested per row"}
+    learner = dw.trapped_stage3(w["ebm"])
+    learner.y_train = table.y.to_list()
+    learner.oof = dw.trapped({"fold_id": table.stage3_fold, "proba": [.75, .25, .375, .625],
+                              "threshold_per_row": [.5] * 4, "test_proba": None})
+    class TrainMeta(SimpleNamespace):
+        def __getattr__(self, key):
+            raise AssertionError(f"unexpected meta field: {key}")
+
+    meta = TrainMeta(index_train=table.index, learner=learner, operating=operating)
+    monkeypatch.setattr(inputs, "read_verified", lambda pin, root: b"fixture")
+    monkeypatch.setattr(inputs.joblib, "load", lambda stream: meta)
+    expected = {"search": ABSTENTION_SEARCH, "min_coverage": .5, "train_f2": 1.,
+                "train_coverage": .5, "min_confidence": .25}
+    config = {"abstention": expected, "operating": operating}
+    pin = {"path": "fixture", "bytes": 7, "sha256": "0" * 64}
+    outcome = inputs._historical_search(table, "meta_xgb", config, pin)
+    assert outcome["min_confidence"] == .25 and outcome["n_candidates"] == 2
+    expected["min_confidence"] = .125
+    with pytest.raises(ValueError, match="min_confidence"):
+        inputs._historical_search(table, "meta_xgb", config, pin)

@@ -812,7 +812,8 @@ def test_the_repository_manifest_lists_every_tracked_notebook():
     assert P.coverage_problems(man, P.tracked_notebooks(REPO)) == []
     assert {nb for nb, s in man["notebooks"].items() if s["current"] is None} == {
         "prototype/churn_pipeline/notebooks/BestRulesWins_GlassBox_Meta.ipynb",
-        "prototype/churn_pipeline/notebooks/churn_distributions.ipynb"}
+        "prototype/churn_pipeline/notebooks/churn_distributions.ipynb",
+        "prototype/bank_pipeline/feature_research/training_research.ipynb"}     # until PR 43 Step 6B
 
 
 #: The names the early PR 42 validation commands wrote their executed copies under (Step 6C).

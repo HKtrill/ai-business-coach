@@ -1,0 +1,564 @@
+{
+  "boundary": "Stratified row identifiers; pinned train-side OOF fields only. Stage I/O split fingerprint attested from the accepted record.",
+  "claim": "Frozen random-split OOF benchmark; temporal validation is pending.",
+  "code": {
+    "files_sha256_lf": {
+      "feature_research/training_inputs.py": "7c7ee7cedf036c9b84f21c28bbf02d82fa4e542c88b38d738ca0033460003721",
+      "feature_research/training_research.ipynb": "afaaec03fe7861903fd5a2b9d4752483f4156cfdd50106124397eaf08de9c056",
+      "feature_research/training_side.py": "256db53f18f89354dae9f4ae749edeb083e227c33833b505669c692b697fbe3a",
+      "shared/stage2/diagnostics/boundary.py": "eb40c7507ea55e861748dd75425140120179b0f9e0196c9c272efea12a922e66",
+      "shared/stage4/protocol.py": "5f1813ca99a66fd9484fa7ad86edc34cad3faac25924bfa98bc419b8c33f73cc"
+    },
+    "head": "cd6a22d84c3d43c8dc7ae3f20af15b70a872ca99",
+    "tree": {
+      "code_sha256": "13171c895238e4a04734423ec381363e24d7ef5b283f63d4453627ef1e54c6e1",
+      "definition": "upstream_regeneration.records.code_identity",
+      "files": 489
+    },
+    "uncommitted_tracked_changes": true
+  },
+  "content_sha256": "0bd27b22411bd6ba1905c7c24716c78bb02388985b9698001d117dd2ebabe284",
+  "environment": {
+    "executable": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+    "os": "Windows",
+    "packages": {
+      "interpret": "0.7.8",
+      "ipykernel": "6.31.0",
+      "joblib": "1.6.0",
+      "nbclient": "0.11.0",
+      "nbformat": "5.11.1",
+      "numpy": "2.5.4",
+      "optuna": "4.9.0",
+      "pandas": "3.0.6",
+      "pulp": "3.3.2",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1",
+      "xgboost": "3.4.1"
+    },
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.14.3"
+  },
+  "format": "pr42.research_record/1",
+  "historical_reference": {
+    "glass_arbiter": {
+      "arbiter_sha256": "dac936b6a4dc5039382563cdc57add6bb2f426a9dec6b84fcb36b676e76cd2b9",
+      "configuration": {
+        "abstention": {
+          "min_coverage": 0.5,
+          "min_weighted_confidence": 0.038065627580425795,
+          "search": "exact: every distinct training confidence value; abstain where confidence < cut (PR 36 F30)",
+          "selected_by": "F2 on train OOF retained rows, exact search over distinct weighted confidences, coverage ≥ 50%",
+          "train_coverage": 0.5009408194233688,
+          "train_f2": 0.6442708333333333
+        },
+        "score": "weighted probability (a ranking score, not a calibrated probability)",
+        "thresholds": {
+          "ebm": 0.07133243606998654,
+          "glass": 0.11265553869499241,
+          "lr": 0.08444249560741927,
+          "min_weighted_confidence": 0.038065627580425795,
+          "target_recall": 0.7
+        },
+        "weights": {
+          "ebm": 0.3545832795427238,
+          "glass": 0.3021315069666846,
+          "lr": 0.34328521349059166
+        }
+      },
+      "replay": {
+        "min_weighted_confidence": 0.038065627580425795,
+        "n_candidates": 8230,
+        "train_coverage": 0.5009408194233688,
+        "train_f2": 0.6442708333333333
+      }
+    },
+    "glass_arbiter_on_blackbox": {
+      "arbiter_sha256": "c41991b04a81623c4732f4ad3c448befdea738e74e88bdb84026ef34fd3d6bba",
+      "configuration": {
+        "abstention": {
+          "min_coverage": 0.5,
+          "min_weighted_confidence": 0.03893775752039429,
+          "search": "exact: every distinct training confidence value; abstain where confidence < cut (PR 36 F30)",
+          "selected_by": "F2 on train OOF retained rows, exact search over distinct weighted confidences, coverage ≥ 50%",
+          "train_coverage": 0.5020030349013657,
+          "train_f2": 0.6396767307105825
+        },
+        "score": "weighted probability (a ranking score, not a calibrated probability)",
+        "thresholds": {
+          "ebm": 0.069050894085282,
+          "glass": 0.11265553869499241,
+          "lr": 0.06852406911374345,
+          "min_weighted_confidence": 0.03893775752039429,
+          "target_recall": 0.7
+        },
+        "weights": {
+          "ebm": 0.3543483146374546,
+          "glass": 0.3006268023606378,
+          "lr": 0.34502488300190765
+        }
+      },
+      "replay": {
+        "min_weighted_confidence": 0.03893775752039429,
+        "n_candidates": 9392,
+        "train_coverage": 0.5020030349013657,
+        "train_f2": 0.6396767307105825
+      }
+    },
+    "meta_xgb": {
+      "arbiter_sha256": "0ad847703e77baf27e96ba8ab9d41798dd14bf1bbdedbe243fbfec8c1c7099a4",
+      "configuration": {
+        "abstention": {
+          "confidence": "|p − t|, p = meta probability in the operating space, t = operating threshold (fold-nested on train rows)",
+          "min_confidence": 0.21536994934082032,
+          "min_coverage": 0.5,
+          "search": "exact: every distinct training confidence value; abstain where confidence < cut (PR 36 F30)",
+          "selected_by": "F2 on meta OOF retained rows, exact search, coverage ≥ 50% (shared Stage 4 rule)",
+          "train_coverage": 0.5015174506828528,
+          "train_f2": 0.7013023191030016
+        },
+        "operating": {
+          "space": "raw",
+          "threshold": 0.44000000000000006,
+          "threshold_key": "oof",
+          "threshold_source": "learner.threshold['oof'] — F2 grid on meta OOF train predictions",
+          "train_side_thresholds": "fold-nested per row"
+        },
+        "score": "Meta-XGB probability in its operating space (raw)"
+      },
+      "replay": {
+        "min_confidence": 0.21536994934082032,
+        "n_candidates": 1558,
+        "train_coverage": 0.5015174506828528,
+        "train_f2": 0.7013023191030016
+      }
+    },
+    "meta_xgb_on_glass": {
+      "arbiter_sha256": "73a74d4ba10e6bfbeee36eb65d4f583c1813050e554a6adea9fdb1f9d7a52dbc",
+      "configuration": {
+        "abstention": {
+          "confidence": "|p − t|, p = meta probability in the operating space, t = operating threshold (fold-nested on train rows)",
+          "min_confidence": 0.20949414253234866,
+          "min_coverage": 0.5,
+          "search": "exact: every distinct training confidence value; abstain where confidence < cut (PR 36 F30)",
+          "selected_by": "F2 on meta OOF retained rows, exact search, coverage ≥ 50% (shared Stage 4 rule)",
+          "train_coverage": 0.5004855842185129,
+          "train_f2": 0.6996473484596447
+        },
+        "operating": {
+          "space": "raw",
+          "threshold": 0.5,
+          "threshold_key": "oof",
+          "threshold_source": "learner.threshold['oof'] — F2 grid on meta OOF train predictions",
+          "train_side_thresholds": "fold-nested per row"
+        },
+        "score": "Meta-XGB probability in its operating space (raw)"
+      },
+      "replay": {
+        "min_confidence": 0.20949414253234866,
+        "n_candidates": 4695,
+        "train_coverage": 0.5004855842185129,
+        "train_f2": 0.6996473484596447
+      }
+    }
+  },
+  "historical_search": "shared.stage4.protocol.tune_min_confidence: distinct training confidences; retain >= cut; coverage >= 0.50; maximize retained F2; ties choose the smaller cut.",
+  "population": {
+    "router_split_fingerprint": "fc3e73a5ef91aea4",
+    "shared_fold_fingerprint": "8aea082fcaf371b7",
+    "stage1_fold_fingerprint": "e4da0b4442f71ecf",
+    "stage_io_attestation": "research_logs/pr39/c4_20261115_204125/run_record.json (identities.population.stage_io_split_fingerprint)",
+    "stage_io_split_fingerprint": "d6cddadc3439",
+    "train_label_fingerprint": "b984d2a50527",
+    "train_positive_rate": 0.11265553869499241,
+    "train_positives": 3712,
+    "train_rows": 32950
+  },
+  "reproduce": "python -m feature_research.training_inputs",
+  "run": {
+    "commit": 2,
+    "finished_utc": "2026-11-27T07:13:37+00:00",
+    "notebook": "feature_research/training_research.ipynb",
+    "run_id": "c2_20261126_231336",
+    "started_utc": "2026-11-27T07:13:36+00:00"
+  },
+  "seeds": {
+    "split_and_fold_seed": 42
+  },
+  "source_records": {
+    "research_logs/pr39/c4_20261115_204125/artifact_manifest.json": "c3c95d5b02e75592e49fca80a14788ba48a934b071733caeb5c1b705f8a954c3",
+    "research_logs/pr39/c4_20261115_204125/run_record.json": "86125c55f32147b7ded5ef9ce6c6c99be1101b226c7c8a09d8c3e5d79bc3a18a",
+    "research_logs/pr39/c4_20261115_204125/upstream_acceptance.json": "a2fa2ffd98342e6d1976ea5d70a96b7d63237c24b7f6df57ba45667d9d8aec07",
+    "research_logs/pr39/c5_20261116_153459/crossover_baseline.json": "f05e2532dedeeb30f9da257b889f27b943c471a5d69a3f714e6e840dcced1b3c"
+  },
+  "upstreams": {
+    "stage1.lr": {
+      "accepted_configuration": {
+        "artifact_version": "3.0",
+        "calibration_method": "sigmoid",
+        "feature_contract": {
+          "features": [
+            "cellular_downturn",
+            "subscribe_rate_by_euribor_bin",
+            "subscribe_rate_by_dow_month"
+          ],
+          "fingerprint": "d0d8b07f2ca5e81d",
+          "id": "stage1-features",
+          "version": "2.0.0"
+        },
+        "fold_fingerprint": "e4da0b4442f71ecf",
+        "n_folds": 10,
+        "oof_provenance": "refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model and calibrator fitted per fold)",
+        "split_fingerprint": "d6cddadc3439",
+        "threshold": 0.11000000000000001,
+        "threshold_is_cross_fitted": false,
+        "threshold_source": "in_stage_f2_cv"
+      },
+      "fields_read": [
+        "arm",
+        "calibration_method",
+        "config.random_state",
+        "feature_names",
+        "model",
+        "oof_provenance",
+        "split_fingerprint",
+        "stage",
+        "threshold",
+        "threshold_source",
+        "train_fold_id",
+        "train_proba_oof",
+        "y_train"
+      ],
+      "fold_fingerprint": "e4da0b4442f71ecf",
+      "path": "models/lr/lr_calibrated_20261115_204501.joblib",
+      "sha256": "d3a05760fa7594e34e864b652c26b9158b8fe29df1f90ff7a59a4f530c78949c",
+      "streams": {
+        "calibrated_probability": "stage_output.train_proba_oof"
+      }
+    },
+    "stage1.mlp": {
+      "accepted_configuration": {
+        "artifact_version": "3.0",
+        "calibration_method": "sigmoid",
+        "feature_contract": {
+          "features": [
+            "cellular_downturn",
+            "subscribe_rate_by_euribor_bin",
+            "subscribe_rate_by_dow_month"
+          ],
+          "fingerprint": "d0d8b07f2ca5e81d",
+          "id": "stage1-features",
+          "version": "2.0.0"
+        },
+        "fold_fingerprint": "e4da0b4442f71ecf",
+        "n_folds": 10,
+        "oof_provenance": "refittable (nested cross-fit: 10 outer x 10 inner folds; encoder, scaler, model and calibrator fitted per fold)",
+        "split_fingerprint": "d6cddadc3439",
+        "threshold": 0.09000000000000001,
+        "threshold_is_cross_fitted": false,
+        "threshold_source": "in_stage_f2_cv"
+      },
+      "fields_read": [
+        "arm",
+        "calibration_method",
+        "config.random_state",
+        "feature_names",
+        "model",
+        "oof_provenance",
+        "split_fingerprint",
+        "stage",
+        "threshold",
+        "threshold_source",
+        "train_fold_id",
+        "train_proba_oof",
+        "y_train"
+      ],
+      "fold_fingerprint": "e4da0b4442f71ecf",
+      "path": "models/mlp/stage1_mlp_20261116_094252_602977.joblib",
+      "sha256": "dd8922d94bb7370610c237e0f2f07810987a044419758aeda3918d865f109d70",
+      "streams": {
+        "calibrated_probability": "stage_output.train_proba_oof"
+      }
+    },
+    "stage2.glass_router": {
+      "confidence": "in-sample precision of the first matching rule of the outer fold's GLASS fit (0.0 on abstain)",
+      "configuration": {
+        "config_full": {
+          "max_recall_subscribe": 0.35,
+          "max_subscriber_leakage_rate": 0.05,
+          "max_union_leakage_rate_pass1": 0.15,
+          "min_precision_not_subscribe": 0.93,
+          "min_precision_subscribe": 0.2,
+          "min_support_pass1": 120,
+          "min_support_pass2": 25,
+          "mode": "strict",
+          "pass2_population": "oof_remainder"
+        },
+        "n_rules": {
+          "Pass 1": 4,
+          "Pass 2": 2
+        },
+        "oof_protocol": {
+          "fold_fingerprint": "8aea082fcaf371b7",
+          "fold_source": "provided",
+          "glass_abstain_label": "uncertain",
+          "glass_pass2_population": "oof_remainder",
+          "n_folds": 5,
+          "random_state": 42,
+          "train_label_fingerprint": "b984d2a50527"
+        },
+        "split_fingerprint": "fc3e73a5ef91aea4",
+        "training_base_rate": 0.11265553869499241
+      },
+      "fields_read": [
+        "config_full.pass2_population",
+        "features",
+        "fit_report.pass2_population",
+        "oof_protocol.fold_fingerprint",
+        "oof_protocol.glass_pass2_population",
+        "oof_protocol.n_folds",
+        "oof_protocol.random_state",
+        "oof_protocol.train_label_fingerprint",
+        "split_fingerprint",
+        "train_confidence",
+        "train_decisions",
+        "train_fold_id",
+        "train_idx",
+        "train_label_fingerprint",
+        "train_outputs_oof",
+        "train_pred",
+        "train_proba",
+        "training_base_rate"
+      ],
+      "fold_fingerprint": "8aea082fcaf371b7",
+      "path": "models/pr38/c3_20261112_153333/primary/glass_router/glass_router_pr38_primary_c3_20261112_153333.joblib",
+      "population": {
+        "cross_fit": "oof_remainder",
+        "full_train": "oof_remainder",
+        "normalised": "oof_remainder"
+      },
+      "route_counts": {
+        "pass1": 11659,
+        "pass2": 6663,
+        "uncertain": 14628
+      },
+      "sha256": "889c8bd572047bebe83a9e60d4de564194d142ae9e91f2faf8750127d05bb753",
+      "transform": "pass1: b*(1-c); pass2: b+(1-b)*c; uncertain: b, c=0; no vote"
+    },
+    "stage2.rf_router": {
+      "confidence": "band precision measured on the outer fold router's inner OOF (0.0 on abstain)",
+      "configuration": {
+        "bands": {
+          "kind": "flat",
+          "pass1_confidence": 0.9577078411948488,
+          "pass2_confidence": 0.30023235905588846
+        },
+        "constraint_source": "shared_contract",
+        "constraints": {
+          "max_subscriber_leakage_absolute": 4611686018427387904,
+          "max_subscriber_leakage_rate": 0.15,
+          "min_band_support_pass1": 125,
+          "min_band_support_pass2": 75,
+          "min_pass1_coverage": null,
+          "min_precision_not_subscribe": 0.95,
+          "min_precision_subscribe": 0.3,
+          "min_recall_subscribe": null,
+          "recall_denominator": "global",
+          "require_band_ordering": true
+        },
+        "full_train_thresholds": {
+          "t1": 0.30096001077493884,
+          "t2": 0.3401163566566572
+        },
+        "mode": "two_pass",
+        "n_oof_folds": 5,
+        "oof_protocol": {
+          "fold_fingerprint": "8aea082fcaf371b7",
+          "n_folds": 5,
+          "pass2_population": "OOF Pass 1 remainder (RF router design)",
+          "random_state": 42,
+          "split_fingerprint": "fc3e73a5ef91aea4",
+          "train_label_fingerprint": "b984d2a50527"
+        },
+        "random_state": 42,
+        "rf_params": {
+          "class_weight": "balanced",
+          "max_depth": 6,
+          "max_features": 0.39989815740885837,
+          "min_samples_leaf": 12,
+          "minority_weight": 1.3001084911026792,
+          "n_estimators": 650
+        },
+        "rf_params_origin": {
+          "profile": {
+            "fingerprint": "4e3f9c07e6ecc8ad",
+            "profile_id": "pr37-rf-router-primary",
+            "profile_version": "1.0.0"
+          }
+        },
+        "split_fingerprint": "fc3e73a5ef91aea4",
+        "training_base_rate": 0.11265553869499241
+      },
+      "fields_read": [
+        "config.random_state",
+        "config.rf_params",
+        "extra.index_train",
+        "extra.oof_fold_summary",
+        "extra.oof_protocol.fold_fingerprint",
+        "extra.oof_protocol.n_folds",
+        "extra.oof_protocol.pass2_population",
+        "extra.oof_protocol.random_state",
+        "extra.oof_protocol.split_fingerprint",
+        "extra.oof_protocol.train_label_fingerprint",
+        "extra.train_confidence",
+        "extra.train_decisions",
+        "extra.train_fold_id",
+        "extra.train_outputs_oof",
+        "extra.train_pred",
+        "extra.train_proba",
+        "feature_names",
+        "mode",
+        "split_fingerprint",
+        "train_label_fingerprint",
+        "training_base_rate"
+      ],
+      "fold_fingerprint": "8aea082fcaf371b7",
+      "path": "models/pr38/c3_20261112_153333/primary/rf_router/rf_router_pr38_primary_c3_20261112_153333_20261113_035911_620368.joblib",
+      "population": {
+        "cross_fit": "OOF Pass 1 remainder (RF router design)",
+        "full_train": "mode 'two_pass'",
+        "normalised": "oof_remainder"
+      },
+      "route_counts": {
+        "pass1": 13842,
+        "pass2": 8269,
+        "uncertain": 10839
+      },
+      "sha256": "aadde1ea93d0e300ca238f5b9f8844fa26646e131931e6c0e7d79714d043632e",
+      "transform": "pass1: b*(1-c); pass2: b+(1-b)*c; uncertain: b, c=0; no vote"
+    },
+    "stage3.ebm": {
+      "accepted_configuration": {
+        "arm": "glass",
+        "block_fingerprint": "9cc10fa1f5cf8d858a9168a2169372758102d06283592bed024fb06e1040318c",
+        "calibration": {
+          "applied": true,
+          "ece_after": 0.0023216768918064064,
+          "ece_before": 0.27109085167045976,
+          "method": "isotonic",
+          "reason": "OOF ECE 0.2711 > gate 0.05"
+        },
+        "features": [
+          "decay_x_density",
+          "euribor3m_sigmoid_slope",
+          "economic_curvature_intensity",
+          "cons.conf.idx",
+          "age",
+          "dow_month_encoded",
+          "default",
+          "prior_x_stress",
+          "campaign",
+          "overlap_default_clean",
+          "cpi_high_cellular",
+          "behavioral_favorability",
+          "emp_var_rate_sigmoid_slope"
+        ],
+        "fold_fingerprint": "8aea082fcaf371b7",
+        "model_family": "ebm",
+        "split_fingerprint": "d6cddadc3439",
+        "threshold": 0.53
+      },
+      "fields_read": [
+        "block_fingerprint",
+        "calibration.fold_applied",
+        "config.arm",
+        "feature_fit_scope",
+        "features",
+        "fold_plan.fold_id",
+        "fold_plan.n_splits",
+        "fold_plan.random_state",
+        "index_train",
+        "model_family",
+        "oof.decision",
+        "oof.fold_id",
+        "oof.proba",
+        "oof.proba_calibrated",
+        "oof.threshold_per_row",
+        "split_fingerprint",
+        "threshold.oof.threshold",
+        "threshold.oof_calibrated_space.threshold",
+        "threshold.oof_nested.by_fold",
+        "threshold.oof_nested.drives_train_decisions",
+        "y_train"
+      ],
+      "fold_fingerprint": "8aea082fcaf371b7",
+      "path": "models/ebm/ebm_stage3_20261116_001529_813890.joblib",
+      "sha256": "d886ae5dcbdb077dda934680f8a05902d83a01f254f7d5a5f0667e321e24b631",
+      "streams": {
+        "calibrated_probability": "oof.proba_calibrated",
+        "raw_model_score": "oof.proba"
+      }
+    },
+    "stage3.xgb": {
+      "accepted_configuration": {
+        "arm": "blackbox",
+        "block_fingerprint": "9cc10fa1f5cf8d858a9168a2169372758102d06283592bed024fb06e1040318c",
+        "calibration": {
+          "applied": true,
+          "ece_after": 0.002769137712194383,
+          "ece_before": 0.25699437785873896,
+          "method": "isotonic",
+          "reason": "OOF ECE 0.2570 > gate 0.05"
+        },
+        "features": [
+          "decay_x_density",
+          "euribor3m_sigmoid_slope",
+          "economic_curvature_intensity",
+          "cons.conf.idx",
+          "age",
+          "dow_month_encoded",
+          "default",
+          "prior_x_stress",
+          "campaign",
+          "overlap_default_clean",
+          "cpi_high_cellular",
+          "behavioral_favorability",
+          "emp_var_rate_sigmoid_slope"
+        ],
+        "fold_fingerprint": "8aea082fcaf371b7",
+        "model_family": "xgboost",
+        "split_fingerprint": "fc3e73a5ef91aea4",
+        "threshold": 0.5
+      },
+      "fields_read": [
+        "block_fingerprint",
+        "calibration.fold_applied",
+        "config.arm",
+        "feature_fit_scope",
+        "features",
+        "fold_plan.fold_id",
+        "fold_plan.n_splits",
+        "fold_plan.random_state",
+        "index_train",
+        "model_family",
+        "oof.decision",
+        "oof.fold_id",
+        "oof.proba",
+        "oof.proba_calibrated",
+        "oof.threshold_per_row",
+        "split_fingerprint",
+        "threshold.oof.threshold",
+        "threshold.oof_calibrated_space.threshold",
+        "threshold.oof_nested.by_fold",
+        "threshold.oof_nested.drives_train_decisions",
+        "y_train"
+      ],
+      "fold_fingerprint": "8aea082fcaf371b7",
+      "path": "blackbox_pipeline/models/xgb/xgb_stage3_20261116_023516_269098.joblib",
+      "sha256": "8bf1d66ecd54236cdf7e6ebb10ec18e40f24d95a5b33a1ce122dac48b2dd2780",
+      "streams": {
+        "calibrated_probability": "oof.proba_calibrated",
+        "raw_model_score": "oof.proba"
+      }
+    }
+  }
+}

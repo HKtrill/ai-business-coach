@@ -1,0 +1,60 @@
+{
+  "code": {
+    "files_sha256_lf": {
+      "feature_research/research_records.py": "fdf0bddc59b3bfcc31b39b02451ffb8ec569e1030b3c455b619a2e0d9c87567c",
+      "feature_research/stage4_policy.py": "63fcdb733438005557ff1fd56a25c6467da38eb4e59745587c9e394450f9f97b",
+      "feature_research/training_research.ipynb": "afaaec03fe7861903fd5a2b9d4752483f4156cfdd50106124397eaf08de9c056",
+      "research_logs/pr43/stage4_policy_v1.json": "e66bba9c880b40862e025b18c5b49e058f7cf95579221a2bd990d525e1b56332"
+    },
+    "head": "cd6a22d84c3d43c8dc7ae3f20af15b70a872ca99",
+    "tree": {
+      "code_sha256": "13171c895238e4a04734423ec381363e24d7ef5b283f63d4453627ef1e54c6e1",
+      "definition": "upstream_regeneration.records.code_identity",
+      "files": 489
+    },
+    "uncommitted_tracked_changes": true
+  },
+  "content_sha256": "fd8a254bc199b2da4b33130a9aa350e6fdb4d7be859dac6632fa5ff3c313f6f9",
+  "environment": {
+    "executable": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+    "os": "Windows",
+    "packages": {
+      "interpret": "0.7.8",
+      "ipykernel": "6.31.0",
+      "joblib": "1.6.0",
+      "nbclient": "0.11.0",
+      "nbformat": "5.11.1",
+      "numpy": "2.5.4",
+      "optuna": "4.9.0",
+      "pandas": "3.0.6",
+      "pulp": "3.3.2",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1",
+      "xgboost": "3.4.1"
+    },
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.14.3"
+  },
+  "format": "pr42.research_record/1",
+  "frozen_inputs": {
+    "content_sha256": "0bd27b22411bd6ba1905c7c24716c78bb02388985b9698001d117dd2ebabe284",
+    "file_sha256": "9c1c0a252f5ac485e1d81fe581ef7acbc1c1c2e3aab923e4c029077bb23db255",
+    "run_id": "c2_20261125_111609"
+  },
+  "policy": {
+    "canonical_sha256": "42f457df53baa0b52739f99097ae7da2d9d1bc32794351c8ef5dd8b7328051ba",
+    "id": "pr43.stage4_policy",
+    "path": "research_logs/pr43/stage4_policy_v1.json",
+    "version": "1.0.0"
+  },
+  "run": {
+    "commit": 2,
+    "finished_utc": "2026-11-27T07:13:38+00:00",
+    "notebook": "feature_research/training_research.ipynb",
+    "run_id": "c2_20261126_231338",
+    "started_utc": "2026-11-27T07:13:38+00:00"
+  },
+  "seeds": {
+    "paired_bootstrap": 4302
+  }
+}

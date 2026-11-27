@@ -489,6 +489,7 @@ class Stage3Block:
         expected_features: Optional[list[str]] = None,
         split_fingerprint: Optional[str] = None,
         verbose: bool = True,
+        build_reporting_frames: bool = True,
     ) -> "Stage3Block":
         say = print if verbose else (lambda *a, **k: None)
         if feature_fit_scope not in ("per_fold", "global"):
@@ -573,7 +574,7 @@ class Stage3Block:
                if feature_fit_scope == "per_fold"
                else "slicing the full-train features (LEAKY — comparison only)"))
         tune_folds = fold_frames(tune_plan, with_test=True)
-        report_folds = fold_frames(report_plan, with_test=False)
+        report_folds = fold_frames(report_plan, with_test=False) if build_reporting_frames else []
 
         # ---- inner folds (F22) ------------------------------------------
         # The tuning-fold partition rule applied to each tuning fold's

@@ -489,8 +489,9 @@ def test_router_defaults_are_unchanged():
 DELIBERATE_PIN_CHANGES = {
     "shared/stage2/diagnostics/boundary.py": (
         "PR 39 Commit 2 Step 2B: extract_lr_view accepts the historical Stage 1 "
-        "feature contract 1.0.0 beside the renamed 2.0.0, check label unchanged",
-        "a8340178ce641fb38b951b9889fe640c6b1501595f9cbe533788398726ca4ce8",
+        "feature contract 1.0.0 beside the renamed 2.0.0; PR 43 Step 2A (fa690cd): "
+        "share the verified Stage 1/3 training-side readers with MLP and XGBoost",
+        "eb40c7507ea55e861748dd75425140120179b0f9e0196c9c272efea12a922e66",
     ),
     "tests/support/artifact_audit.py": (
         "PR 39 Commit 3 Step 3B (D5): GLASS Arbiter roots and keys, the PR 36-38 "

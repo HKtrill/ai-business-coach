@@ -100,9 +100,12 @@ def _reachable_pandas(obj, seen=None):
     return []
 
 
-def test_draw_training_side_returns_the_training_rows_and_no_test_side(synthetic, capsys):
+@pytest.mark.parametrize("indices_only", [False, True])
+def test_draw_training_side_returns_the_training_rows_and_no_test_side(synthetic, capsys, indices_only, monkeypatch):
     frame, split = synthetic
-    side = TS.draw_training_side()
+    if indices_only:
+        monkeypatch.setattr(GlobalSplitManager, "create_split", lambda *a, **kw: pytest.fail("two-sided split"))
+    side = TS.draw_training_side(indices_only=indices_only)
     out = capsys.readouterr().out
     pd.testing.assert_frame_equal(side.X_train, split["X_train"])
     pd.testing.assert_series_equal(side.y_train, split["y_train"])

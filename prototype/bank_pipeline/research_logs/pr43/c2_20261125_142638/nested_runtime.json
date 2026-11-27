@@ -1,0 +1,113 @@
+{
+  "code": {
+    "files_sha256_lf": {
+      "blackbox_pipeline/models/meta_xgb/estimator.py": "c7fe8d576339089948dd481020cf189a3c1bcd434474c470d45adae1cc8ff73e",
+      "feature_research/stage4_nested.py": "2d229e5498618870b044db4ecd89a94dda04f5e8e0f0dd4f54b8ff258cf67cc4",
+      "feature_research/stage4_policy.py": "63fcdb733438005557ff1fd56a25c6467da38eb4e59745587c9e394450f9f97b",
+      "feature_research/training_inputs.py": "7c7ee7cedf036c9b84f21c28bbf02d82fa4e542c88b38d738ca0033460003721",
+      "feature_research/training_research.ipynb": "014f766aab16836d40abe890ed80654725a8a4ddf456bd9b0af93f3fb3065d12",
+      "feature_research/training_side.py": "256db53f18f89354dae9f4ae749edeb083e227c33833b505669c692b697fbe3a",
+      "glass_pipeline/glass_arbiter/arbiter.py": "10d3fb37fa9d137e9f63f670ed877ff0323a28c019a7e4aaddd824de9116aada",
+      "glass_pipeline/glass_arbiter/meta_stage.py": "ba5edeff3feb649f3110972a54186a9a076679e845c9317e754e59ac752ccecc",
+      "glass_pipeline/glass_arbiter/weighting.py": "46baa9487a626a57f845c0d1bd6d8fc1c36959e4c934d190fc8bed6c77cdf27e",
+      "shared/stage2/diagnostics/boundary.py": "eb40c7507ea55e861748dd75425140120179b0f9e0196c9c272efea12a922e66",
+      "shared/stage4/protocol.py": "5f1813ca99a66fd9484fa7ad86edc34cad3faac25924bfa98bc419b8c33f73cc"
+    },
+    "head": "7476e878499a7f05faea934368b437e6ca8fde67",
+    "tree": {
+      "code_sha256": "7c051aeafedaf74db83e773551d38871bd4f54305fbcbad165c485fd5cd38e2f",
+      "definition": "upstream_regeneration.records.code_identity",
+      "files": 475
+    },
+    "uncommitted_tracked_changes": true
+  },
+  "content_sha256": "80f0d11864326f6fd3e77fcdae8260f378f76caf574e70422fd8dd166df21965",
+  "environment": {
+    "executable": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+    "os": "Windows",
+    "packages": {
+      "interpret": "0.7.8",
+      "ipykernel": "6.31.0",
+      "joblib": "1.6.0",
+      "nbclient": "0.11.0",
+      "nbformat": "5.11.1",
+      "numpy": "2.5.4",
+      "optuna": "4.9.0",
+      "pandas": "3.0.6",
+      "pulp": "3.3.2",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1",
+      "xgboost": "3.4.1"
+    },
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.14.3"
+  },
+  "format": "pr42.research_record/1",
+  "predictions_file": {
+    "bytes": 9493205,
+    "sha256": "7d31a1858317e76ebcfcf7366ba0598a212ab97b1686573718ba4a196df1c274"
+  },
+  "run": {
+    "commit": 2,
+    "finished_utc": "2026-11-25T22:26:39+00:00",
+    "notebook": "feature_research/training_research.ipynb",
+    "run_id": "c2_20261125_142638",
+    "started_utc": "2026-11-25T22:26:38+00:00"
+  },
+  "seconds": {
+    "blackbox": {
+      "glass_formula": [
+        0.5432640999788418,
+        0.5419258999754675,
+        0.5480793000315316,
+        0.5493927999632433,
+        0.5399800000013784
+      ],
+      "meta_xgb": [
+        20.437944500008598,
+        20.662440300046,
+        21.149554499948863,
+        20.37841990002198,
+        20.31021599995438
+      ],
+      "meta_xgb_accepted_params": [
+        1.7890948000131175,
+        1.778637900017202,
+        1.7577105999807827,
+        1.732476100034546,
+        1.7086242999648675
+      ]
+    },
+    "glass": {
+      "glass_formula": [
+        0.5428292999858968,
+        0.5474661999614909,
+        0.5450575000140816,
+        0.5467473000171594,
+        0.5486802000086755
+      ],
+      "meta_xgb": [
+        21.73498439998366,
+        21.6137290999759,
+        20.59752450004453,
+        21.334776200004853,
+        20.816664099984337
+      ],
+      "meta_xgb_accepted_params": [
+        2.333931300032418,
+        2.358759100025054,
+        2.3280362999648787,
+        2.3463097999920137,
+        2.3373926000203937
+      ]
+    },
+    "references_s": 5.54031800001394,
+    "total_s": 240.787748200004
+  },
+  "seeds": {
+    "inner_folds": 42,
+    "meta_xgb": 42,
+    "random_sampler": 42
+  },
+  "threads": 1
+}

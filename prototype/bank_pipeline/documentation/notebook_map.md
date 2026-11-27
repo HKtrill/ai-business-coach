@@ -80,9 +80,16 @@ calibration, tuning, and model selection.
   `blackbox_pipeline/models/mlp/{tuning,calibration,thresholds}.py`,
   `blackbox_pipeline/models/rf_router/tuning/`, `glass_pipeline/glass_arbiter/{tuning,weighting}.py`,
   `shared/stage4/protocol.py` (`tune_min_confidence`), `blackbox_pipeline/models/meta_xgb/{config,estimator}.py`.
-- **Frozen training-side inputs for Stage 4 research:** `shared/stage4/contract.py`
-  (`build_stage4_inputs`), `glass_pipeline/glass_arbiter/loader.py` (`load_stage_outputs`),
-  `blackbox_pipeline/models/meta_xgb/inputs.py` (`load_blackbox_stage4_inputs`).
+- **Step 2A entry:** `feature_research/training_research.ipynb` imports
+  `feature_research.training_inputs` for both pinned OOF tables. The production
+  Stage 4 loaders and `build_feature_frames` construct both split sides.
+- **Step 2C nesting:** `feature_research.stage4_nested` refits both Stage 4 references inside the
+  registered outer and inner folds on those tables. Upstream inputs stay fixed; PR 44 evaluates shortlisted upstream selections with outer folds.
+- **Accepted PR 43 workflow:** Cells 1–5 establish the training boundary, frozen inputs and policy.
+  Cell 6 fits nested Stage 4 references. Cells 7–11 report voter diagnostics, Linear and comparator
+  dispositions, frozen-policy stability and the training-only simulated holdout. Cell 11 reads the
+  expansion decision and recovered GLASS record. The [PR 43 research log and handoff](../research_logs/pr43/README.md)
+  identifies the accepted runs, archive dependencies and PR 44–45 decision requirements.
 - **Boundaries:** training rows only. Selection rules are registered before any test evaluation.
   It produces candidate configurations; regeneration happens in PR 45, not here. G 8 and B 8–9
   also stay in the cascades: they are the accepted training path, and Training Research studies
@@ -239,6 +246,7 @@ PR 42, Step 6B. A notebook exists in three forms:
 | G, B | `c6_20261116_194111_{glass,blackbox}_executed.ipynb`, the PR 39 Phase 1 reproduction (each notebook run top to bottom in a fresh kernel; written by `phase1_reproduction` through the `upstream_regeneration.vehicle` path) | `C:\Users\phill\projects\pr39_c6_notebooks\` (outside the repository) | `research_logs/pr39/c6_20261116_194111/phase1_freeze.json`: `passed`, and the executed copy's SHA-256 |
 | E | the outputs committed in PR 36 (commit `42753db`, Git blob `266860ba…`) | Git | `research_logs/pr42/c4_20261123_081749/binning_drift.json` pins the blob and its LF SHA-256 |
 | F | one copy per accepted PR 42 run (`research_logs/pr42/feature_contract_recommendations.md`, section 1), named `<run_id>_feature_research_executed.ipynb` except the first three (below). The current one is the manifest's `current` for F: Step 6C's final run once it is registered | `C:\Users\phill\projects\notebook_outputs\pr42\` (outside the repository) | the run's record in `research_logs/pr42/<run_id>/`, intact against its sidecar, with the run id in the notebook's saved outputs |
+| `feature_research/training_research.ipynb` (PR 43) | none yet; PR 43 Step 6B adds the accepted copy | — | listed with the reason it has none |
 | `prototype/churn_pipeline/notebooks/*.ipynb` | none | — | listed with the reason they have none |
 
 The validation commands of the first three PR 42 runs named their copies differently (Step 6C). The records

@@ -94,7 +94,7 @@ __all__ = [
     "FORBIDDEN_FIELD_TOKENS", "TRANSFORM_ATOL", "ROUTER_N_FOLDS", "LR_N_FOLDS",
     "RF_PASS2_REMAINDER_PROTOCOL", "BoundaryCheckError",
     "router_split_fingerprint", "build_train_reference", "train_reference_from_global_split",
-    "extract_router_view", "extract_lr_view", "extract_ebm_view",
+    "extract_router_view", "extract_lr_view", "extract_ebm_view", "extract_mlp_view", "extract_xgb_view",
     "extract_stage4_recall_thresholds", "extract_rf_pass1_candidate", "file_sha256",
 ]
 
@@ -661,8 +661,21 @@ def _safe_call(fn):
 # ======================================================================
 def extract_lr_view(artifact, ref: TrainReference, *, expected_arm: str = "glass", path=None,
                     expected_sha256: Optional[str] = None) -> UpstreamOOFView:
-    """The GLASS Stage 1 calibrated LR's out-of-fold outputs (StageOutput contract)."""
-    what = f"{expected_arm} Stage 1 LR"
+    """Training-only LR OOF view."""
+    return _stage1_view(artifact, ref, "lr", expected_arm=expected_arm, path=path,
+                        expected_sha256=expected_sha256)
+
+
+def extract_mlp_view(artifact, ref: TrainReference, *, expected_arm: str = "blackbox", path=None,
+                    expected_sha256: Optional[str] = None) -> UpstreamOOFView:
+    """Training-only MLP OOF view."""
+    return _stage1_view(artifact, ref, "mlp", expected_arm=expected_arm, path=path,
+                        expected_sha256=expected_sha256)
+
+
+def _stage1_view(artifact, ref: TrainReference, name: str, *, expected_arm: str = "glass", path=None,
+                    expected_sha256: Optional[str] = None) -> UpstreamOOFView:
+    what = f"{expected_arm} Stage 1 {name.upper()}"
     art, opened_path, sha_item = _open(artifact, expected_sha256, what)
     path = opened_path or path
     if isinstance(art, Mapping) and "__stage_output__" in art:
@@ -691,16 +704,18 @@ def extract_lr_view(artifact, ref: TrainReference, *, expected_arm: str = "glass
     from shared.stage1.feature_engineering import HISTORICAL_LR_FEATURES, LR_FEATURES
     chk("stage is 'stage1'", lambda: stage == "stage1", repr(stage))
     chk(f"arm is {expected_arm!r}", lambda: arm == expected_arm, repr(arm))
+    if name == "mlp":
+        chk("model is calibrated_mlp", lambda: model == "calibrated_mlp", repr(model))
     # Either registered Stage 1 feature contract, in its own order: 2.0.0
     # (current names) or 1.0.0 (the names every artifact saved before the PR 39
     # rename carries; read as saved, never translated). The label is unchanged.
     chk("feature_names = shared.stage1 LR_FEATURES",
         lambda: _same_list(features, LR_FEATURES) or _same_list(features, HISTORICAL_LR_FEATURES),
         _safe(lambda: list(features)))
-    for name, s in (("train_proba_oof", proba), ("y_train", y), ("train_fold_id", fold_raw)):
-        chk(f"{name} index = X_train index (same order)",
-            lambda s=s, name=name: isinstance(s, pd.Series)
-            and index_alignment(s.index, ref.index_train, f"{what} {name}") == "label")
+    for field, s in (("train_proba_oof", proba), ("y_train", y), ("train_fold_id", fold_raw)):
+        chk(f"{field} index = X_train index (same order)",
+            lambda s=s, field=field: isinstance(s, pd.Series)
+            and index_alignment(s.index, ref.index_train, f"{what} {field}") == "label")
     yv = np.asarray(y)
     chk("carried training labels = GLOBAL_SPLIT y_train",
         lambda: yv.shape == (ref.n_train,) and np.array_equal(yv.astype(int), ref.y_train))
@@ -720,12 +735,12 @@ def extract_lr_view(artifact, ref: TrainReference, *, expected_arm: str = "glass
     checks = _report_failures(rep, what)
 
     space = "calibrated_probability" if cal not in (None, "none") else "raw_model_score"
-    stream = ScoreStream("lr.train_proba_oof", _frozen(p, float), space, f"{src}train_proba_oof",
+    stream = ScoreStream(f"{name}.train_proba_oof", _frozen(p, float), space, f"{src}train_proba_oof",
                          f"out-of-fold over {LR_N_FOLDS} folds; calibration {cal}, nested per fold")
     thresholds = {}
     if thr_src == "in_stage_f2_cv":
-        thresholds["lr.in_stage_f2_cv"] = ThresholdRecord(
-            "lr.in_stage_f2_cv", float(thr), space, f"{src}threshold", SELECTION_GLOBAL_TRAIN_LABELS,
+        thresholds[f"{name}.in_stage_f2_cv"] = ThresholdRecord(
+            f"{name}.in_stage_f2_cv", float(thr), space, f"{src}threshold", SELECTION_GLOBAL_TRAIN_LABELS,
             "F2 argmax over the OOF probabilities of all training rows (threshold_source "
             "in_stage_f2_cv; not cross-fitted)")
     split_item = (ProvenanceItem("stage_io_split_fingerprint", ATTESTED,
@@ -745,7 +760,7 @@ def extract_lr_view(artifact, ref: TrainReference, *, expected_arm: str = "glass
         sha_item,
     )
     return UpstreamOOFView(
-        model="lr", arm=expected_arm, index=ref.index_train, y=ref.y_train,
+        model=name, arm=expected_arm, index=ref.index_train, y=ref.y_train,
         fold_id=_frozen(np.asarray(fold_raw), int),
         scores=_proxy({space: stream}), thresholds=_proxy(thresholds), stored_decisions=_proxy({}),
         provenance=provenance,
@@ -762,8 +777,23 @@ def extract_lr_view(artifact, ref: TrainReference, *, expected_arm: str = "glass
 def extract_ebm_view(artifact, ref: TrainReference, *, expected_arm: str = "glass", path=None,
                      expected_sha256: Optional[str] = None,
                      fold_fingerprint_fn: Optional[Callable] = None) -> UpstreamOOFView:
-    """The GLASS Stage 3 EBM's out-of-fold outputs (``Stage3Artifact``)."""
-    what = f"{expected_arm} Stage 3 EBM"
+    """Training-only EBM OOF view."""
+    return _stage3_view(artifact, ref, "ebm", expected_arm=expected_arm, path=path,
+                        expected_sha256=expected_sha256, fold_fingerprint_fn=fold_fingerprint_fn)
+
+
+def extract_xgb_view(artifact, ref: TrainReference, *, expected_arm: str = "blackbox", path=None,
+                     expected_sha256: Optional[str] = None,
+                     fold_fingerprint_fn: Optional[Callable] = None) -> UpstreamOOFView:
+    """Training-only XGB OOF view."""
+    return _stage3_view(artifact, ref, "xgb", expected_arm=expected_arm, path=path,
+                        expected_sha256=expected_sha256, fold_fingerprint_fn=fold_fingerprint_fn)
+
+
+def _stage3_view(artifact, ref: TrainReference, name: str, *, expected_arm: str = "glass", path=None,
+                     expected_sha256: Optional[str] = None,
+                     fold_fingerprint_fn: Optional[Callable] = None) -> UpstreamOOFView:
+    what = f"{expected_arm} Stage 3 {name.upper()}"
     art, opened_path, sha_item = _open(artifact, expected_sha256, what)
     path = opened_path or path
     if isinstance(art, Mapping) or not any(c.__name__ == "Stage3Artifact"
@@ -790,7 +820,8 @@ def extract_ebm_view(artifact, ref: TrainReference, *, expected_arm: str = "glas
     rep = ValidationReport()
     chk = lambda name, fn, detail="": rep.check(_SECTION, what, name, fn, detail)  # noqa: E731
     from shared.stage3.feature_engineering import EBM_FEATURES
-    chk("model_family is 'ebm'", lambda: family == "ebm", repr(family))
+    expected_family = "xgboost" if name == "xgb" else "ebm"
+    chk(f"model_family is {expected_family!r}", lambda: family == expected_family, repr(family))
     chk(f"config arm is {expected_arm!r}", lambda: arm == expected_arm, repr(arm))
     chk("features = shared.stage3 EBM_FEATURES", lambda: _same_list(features, EBM_FEATURES),
         f"{len(EBM_FEATURES)} features")
@@ -811,8 +842,8 @@ def extract_ebm_view(artifact, ref: TrainReference, *, expected_arm: str = "glas
         lambda: pc.shape == (ref.n_train,) and check_proba(pc, "calibrated"))
     chk("per-fold calibration gates recorded (PR 36 F22)",
         lambda: len(fold_applied) == ROUTER_N_FOLDS, _safe(lambda: list(fold_applied)))
-    for name, t in (("global raw threshold", t_raw), ("global calibrated threshold", t_cal)):
-        chk(f"{name} finite in (0, 1)", lambda t=t: 0.0 < float(t) < 1.0, repr(t))
+    for label, t in (("global raw threshold", t_raw), ("global calibrated threshold", t_cal)):
+        chk(f"{label} finite in (0, 1)", lambda t=t: 0.0 < float(t) < 1.0, repr(t))
     chk("drives_train_decisions is a bool", lambda: isinstance(drives, (bool, np.bool_)), repr(drives))
     thr_row = np.asarray(per_row, dtype=float)
     dec = np.asarray(decision)
@@ -843,25 +874,25 @@ def extract_ebm_view(artifact, ref: TrainReference, *, expected_arm: str = "glas
     checks = _report_failures(rep, what)
 
     scores = {
-        "raw_model_score": ScoreStream("ebm.oof_proba", _frozen(pr, float), "raw_model_score",
-                                       "oof.proba", "out-of-fold EBM score; not calibrated"),
+        "raw_model_score": ScoreStream(f"{name}.oof_proba", _frozen(pr, float), "raw_model_score",
+                                       "oof.proba", f"out-of-fold {name.upper()} score; not calibrated"),
         "calibrated_probability": ScoreStream(
-            "ebm.oof_proba_calibrated", _frozen(pc, float), "calibrated_probability",
+            f"{name}.oof_proba_calibrated", _frozen(pc, float), "calibrated_probability",
             "oof.proba_calibrated", "per-fold calibration from inner OOF of each fold's training rows"),
     }
     thresholds = {
-        "ebm.global_f2_raw": ThresholdRecord(
-            "ebm.global_f2_raw", float(t_raw), "raw_model_score", "threshold.oof.threshold",
+        f"{name}.global_f2_raw": ThresholdRecord(
+            f"{name}.global_f2_raw", float(t_raw), "raw_model_score", "threshold.oof.threshold",
             SELECTION_GLOBAL_TRAIN_LABELS, "F2 selection on all training rows' raw OOF scores"),
-        "ebm.global_f2_calibrated": ThresholdRecord(
-            "ebm.global_f2_calibrated", float(t_cal), "calibrated_probability",
+        f"{name}.global_f2_calibrated": ThresholdRecord(
+            f"{name}.global_f2_calibrated", float(t_cal), "calibrated_probability",
             "threshold.oof_calibrated_space.threshold", SELECTION_GLOBAL_TRAIN_LABELS,
             "F2 selection on all training rows' calibrated OOF probabilities"),
     }
     stored = {}
     if nested:
-        stored["ebm.nested_f2"] = StoredDecision(
-            "ebm.nested_f2", _frozen(dec.astype(int)), _frozen(thr_row, float), "raw_model_score",
+        stored[f"{name}.nested_f2"] = StoredDecision(
+            f"{name}.nested_f2", _frozen(dec.astype(int)), _frozen(thr_row, float), "raw_model_score",
             "oof.decision / oof.threshold_per_row", SELECTION_FOLD_NESTED,
             tuple(float(v) for v in by_fold))
     split_detail = {VALIDATED: "router scheme, recomputed",
@@ -883,7 +914,7 @@ def extract_ebm_view(artifact, ref: TrainReference, *, expected_arm: str = "glas
         sha_item,
     )
     return UpstreamOOFView(
-        model="ebm", arm=expected_arm, index=ref.index_train, y=ref.y_train,
+        model=name, arm=expected_arm, index=ref.index_train, y=ref.y_train,
         fold_id=_frozen(fold, int), scores=_proxy(scores), thresholds=_proxy(thresholds),
         stored_decisions=_proxy(stored), provenance=provenance,
         source=_proxy({"path": path, "checks": tuple(checks.to_dict("records")),
