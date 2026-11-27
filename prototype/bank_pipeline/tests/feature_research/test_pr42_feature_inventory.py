@@ -5,7 +5,7 @@ PR 42 Commit 2: the feature inventory and frozen references
 The code-only checks run on this branch's production code; the checks that need
 data run on a synthetic bank frame (training rows only, as in the notebook).
 The review document ``research_logs/pr42/feature_inventory.md`` must hold
-exactly the generated tables (``python -m feature_research.feature_inventory``).
+the generated tables with the PR 42 source identity in the historical DAG row.
 """
 
 from __future__ import annotations
@@ -214,11 +214,27 @@ def test_duplicate_callers_find_the_known_importers():
 # ----------------------------------------------------------------------
 # the review document
 # ----------------------------------------------------------------------
-def test_the_review_document_holds_the_current_generated_tables():
+def test_the_review_document_holds_the_current_generated_tables(stage3_dag_transition):
     text = DOC.read_text(encoding="utf-8")
-    assert FI.generated_block(text) == FI.render_markdown(), (
-        "research_logs/pr42/feature_inventory.md is stale: regenerate the block between the "
-        "GENERATED markers with `python -m feature_research.feature_inventory`")
+    historical = FI.generated_block(text)
+    old, current = stage3_dag_transition
+    field = "| Stage 3 feature DAG implementation (LF SHA-256 over its modules) | "
+    assert historical.count(field + old + " ") == 1
+    assert historical.replace(field + old + " ", field + current + " ") == FI.render_markdown()
+
+
+def test_dag_pin_detects_a_further_source_edit(stage3_dag_transition, monkeypatch):
+    current = stage3_dag_transition[1]
+    assert FR.dag_implementation()["sha256_lf_combined"] == current
+    original = FR._lf_sha256
+
+    def edited_digest(path):
+        if path == BANK_ROOT / "shared/stage3/data.py":
+            return hashlib.sha256(path.read_bytes() + b"# unreviewed edit").hexdigest()
+        return original(path)
+
+    monkeypatch.setattr(FR, "_lf_sha256", edited_digest)
+    assert FR.dag_implementation()["sha256_lf_combined"] != current
 
 
 # ----------------------------------------------------------------------

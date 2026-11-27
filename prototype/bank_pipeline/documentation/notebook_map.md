@@ -84,7 +84,12 @@ calibration, tuning, and model selection.
   `feature_research.training_inputs` for both pinned OOF tables. The production
   Stage 4 loaders and `build_feature_frames` construct both split sides.
 - **Step 2C nesting:** `feature_research.stage4_nested` refits both Stage 4 references inside the
-  registered outer and inner folds on those tables. Upstream inputs stay fixed (PR 44 nests them).
+  registered outer and inner folds on those tables. Upstream inputs stay fixed; PR 44 evaluates shortlisted upstream selections with outer folds.
+- **Accepted PR 43 workflow:** Cells 1–5 establish the training boundary, frozen inputs and policy.
+  Cell 6 fits nested Stage 4 references. Cells 7–11 report voter diagnostics, Linear and comparator
+  dispositions, frozen-policy stability and the training-only simulated holdout. Cell 11 reads the
+  expansion decision and recovered GLASS record. The [PR 43 research log and handoff](../research_logs/pr43/README.md)
+  identifies the accepted runs, archive dependencies and PR 44–45 decision requirements.
 - **Boundaries:** training rows only. Selection rules are registered before any test evaluation.
   It produces candidate configurations; regeneration happens in PR 45, not here. G 8 and B 8–9
   also stay in the cascades: they are the accepted training path, and Training Research studies

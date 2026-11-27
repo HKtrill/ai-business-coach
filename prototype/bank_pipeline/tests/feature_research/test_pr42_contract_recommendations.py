@@ -10,9 +10,8 @@ those records:
   that wrote its record; the latest accepted run reproduces every earlier one;
 - every row of its evidence index resolves, in the named accepted record, to the
   value it states (at the precision written), and every citation names a row;
-- the production feature code is the code every accepted run recorded, and every
-  code-computable frozen reference is the one the latest accepted run recorded,
-  so Step 6A changes no feature code, contract or identity;
+- production feature code and code-computable references match the accepted evidence
+  with one pinned Stage 3 implementation transition after PR 42;
 - the record index, the notebook map and the notebook point to the document,
   and the notebook stays output-free with its 68 code cells.
 
@@ -265,7 +264,11 @@ def test_the_production_feature_code_is_the_code_every_accepted_run_recorded():
     now = {f: _lf_sha256(BANK / f) for f in PRODUCTION_FEATURE_CODE}
     for a in _accepted():
         recorded = _record(a["run"], a["record"])["code"]["files_sha256_lf"]
-        changed = sorted(f for f in PRODUCTION_FEATURE_CODE if recorded.get(f) != now[f])
+        expected = {f: recorded[f] for f in PRODUCTION_FEATURE_CODE}
+        # Commit cd6a22d added the default-on reporting-frame switch to this file alone.
+        assert expected["shared/stage3/data.py"] == "5ce9e669838c5692a53cad6c74e3f7ed207a16f45448ebbef963d156d2b04c16"
+        expected["shared/stage3/data.py"] = "522340ef58cb10705752db6212398315e86fe03d4df58f7d74cf6987ba48d743"
+        changed = sorted(f for f in PRODUCTION_FEATURE_CODE if expected[f] != now[f])
         assert changed == [], (a["run"], changed)
 
 
@@ -273,13 +276,18 @@ def _canonical(value):
     return json.loads(json.dumps(value, sort_keys=True, default=str))
 
 
-def test_the_code_computable_frozen_references_are_the_ones_the_accepted_run_recorded():
+def test_the_code_computable_frozen_references_are_the_ones_the_accepted_run_recorded(stage3_dag_transition):
     recorded = {r["name"]: r for r in _record(LATEST, "feature_inventory")["frozen_references"]}
     # As in ``frozen_references``, the population is recorded from the training rows, not statically.
     computed = [r for r in FR.static_references() if r["name"] != "Train-side population"]
     assert len(computed) >= 15
     for ref in computed:
         rec = recorded[ref["name"]]
+        if ref["name"] == "Stage 3 feature DAG implementation (LF SHA-256 over its modules)":
+            old, current = stage3_dag_transition
+            sha, modules = rec["computed"].split(" ", 1)
+            assert sha == old
+            rec = dict(rec, computed=f"{current} {modules}")
         for key in ("computed", "recorded", "status"):
             assert _canonical(ref[key]) == _canonical(rec[key]), (ref["name"], key)
     assert {r["status"] for r in computed} >= {"verified"}

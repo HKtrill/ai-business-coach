@@ -110,18 +110,18 @@
 
 #### Step 6A — Stage 4 Recommendations and Research Handoff
 
-- [ ] Consolidate the registered policy, supporting run IDs, paired comparisons, accepted and rejected variants, shift findings, and remaining uncertainties. Record the provisional GLASS Stage 4 choice or an inconclusive outcome. Specify the decision PR 45 must repeat on regenerated inputs.
-- [ ] Hand PR 44 the upstream properties that materially affect Stage 4. Connect Stage 1 probability quality to the past-only encoding and MLP early-stopping work, router reliability and complementarity to the qualified `gap_placed` and `eci_warm` experiments, and deferred-row performance to shared `jed_alone` and the EBM interaction-budget comparison.
-- [ ] Update the notebook map and PR 43 research log with accepted records, reproduction commands, costs, claim boundaries, and unresolved prerequisites. Reference the PR 42 handoff for feature-contract details.
+- [x] Consolidate the registered policy, supporting run IDs, paired comparisons, accepted and rejected variants, shift findings, and remaining uncertainties. Record the provisional GLASS Stage 4 choice or an inconclusive outcome. Specify the decision PR 45 must repeat on regenerated inputs.
+- [x] Hand PR 44 the upstream properties that materially affect Stage 4. Connect Stage 1 probability quality to the past-only encoding and MLP early-stopping work, router reliability and complementarity to the qualified `gap_placed` and `eci_warm` experiments, and deferred-row performance to shared `jed_alone` and the EBM interaction-budget comparison.
+- [x] Update the notebook map and PR 43 research log with accepted records, reproduction commands, costs, claim boundaries, and unresolved prerequisites. Reference the PR 42 handoff for feature-contract details.
 
 #### Step 6B — Final Validation, Reproducibility, and Notebook Publication
 
-- [ ] Run targeted research, notebook, and packaging checks, followed by the full default, slow, and comprehensive real-data regression suites. Run the applicable accepted-record checks and verify the frozen PR 39 pins, crossover identity, and PR 42 contract references.
-- [ ] Execute the final Training Research Notebook in a clean Windows kernel through the established `_run_notebook` path. Verify reproduction against the registered tolerances and save the accepted executed copy with its run ID under `notebook_outputs/pr43/`.
-- [ ] Reuse the PR 42 packager with explicitly accepted runs. Refresh the flat project-wide `executed_notebooks.zip` with the latest accepted copy of each notebook and repository source paths in `MANIFEST.json`. Prepare `pr43_executed_notebooks.zip` with run IDs in its filenames.
-- [ ] Extract both archives and verify that the notebooks open with their saved tables and plots. Confirm tracked notebooks are output-free with code and Markdown cells intact.
-- [ ] Publish both assets on the `pr43-notebooks` GitHub release. Verify the root README’s stable `releases/latest/download/executed_notebooks.zip` link and include the release-specific PR 43 snapshot link in the PR description.
-- [ ] Review the complete diff for unintended changes and generated files. Record final validation results, warnings, and outstanding handoffs, then close the PR.
+- [x] Run targeted research, notebook, and packaging checks, followed by the full default, slow, and comprehensive real-data regression suites. Run the applicable accepted-record checks and verify the frozen PR 39 pins, crossover identity, and PR 42 contract references.
+- [x] Execute the final Training Research Notebook in a clean Windows kernel through the established `_run_notebook` path. Verify reproduction against the registered tolerances and save the accepted executed copy with its run ID under `notebook_outputs/pr43/`.
+- [x] Reuse the PR 42 packager with explicitly accepted runs. Refresh the flat project-wide `executed_notebooks.zip` with the latest accepted copy of each notebook and repository source paths in `MANIFEST.json`. Prepare `pr43_executed_notebooks.zip` with run IDs in its filenames.
+- [x] Extract both archives and verify that the notebooks open with their saved tables and plots. Confirm tracked notebooks are output-free with code and Markdown cells intact.
+- [x] Publish both assets on the `pr43-notebooks` GitHub release. Verify the root README’s stable `releases/latest/download/executed_notebooks.zip` link and include the release-specific PR 43 snapshot link in the PR description.
+- [x] Review the complete diff for unintended changes and generated files. Record final validation results, warnings, and outstanding handoffs, then close the PR.
 
 **Deliverable:** The Training Research Notebook, a registered Stage 4 abstention policy and comparison protocol, training-side voter diagnostics, an evaluated GLASS Linear Arbiter candidate, matched-coverage comparisons with both reference arbiters, an input-shift diagnosis, and a provisional Stage 4 recommendation for PR 45.
 
