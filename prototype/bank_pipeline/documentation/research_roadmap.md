@@ -2,236 +2,105 @@
 
 ## Phase 2 — Research Organization, Training Research, and Optimized Cascades
 
-## PR 43 — Training Research Notebook and Stage 4 Policy Research
+## PR 44 — Stage 1–3 Optimization and Router Research
 
-**Objective:** Establish the train-only Training Research Notebook, register a whole-system abstention policy, and evaluate Stage 4 approaches on the frozen PR 39 training-side out-of-fold (OOF) evidence. Give the GLASS Linear Arbiter priority, diagnose input shift for retained candidates, and provide recommendations for PR 44 optimization and PR 45 adoption.
+**Objective:** Select upstream feature and training procedures for both cascades. Keep stage fitting independent. PR 45 owns production regeneration and Stage 4 adoption.
 
-**Execution principles:**
+**References:** [PR 42 candidate contracts R1–R6](../research_logs/pr42/feature_contract_recommendations.md), [PR 43 decisions and cost evidence](../research_logs/pr43/README.md), [PR 38 evaluation protocol](methodology/pr38_evaluation_protocol.md). Historical Step 44A/B/C references correspond to Stage 1 (Commit 3), routers (Commits 5–6) and Stage 3 (Commit 4).
 
-- Use training rows only. Preserve the PR 39 artifacts, manifests, accepted configurations, and registered 2×2 crossover. Write research evidence under distinct PR 43 run identities.
-- Apply the PR 42 claim boundary throughout. The frozen OOF evidence supports random-split comparisons. Target-derived features use later contacts’ labels, and the MLP early-stopping split shares encoder fitting. Forward-in-time claims require the temporal evaluation in PR 49.
-- Register objectives, decision rules, budgets, and conditional experiments before inspecting candidate results. Use identical evaluation rows, folds, coverage obligations, and uncertainty methods for paired comparisons. Record each arm’s search space and budget.
-- Reuse existing implementations by import. Justify substantial additions before implementation by identifying the missing capability and the alternatives inspected. Reserve repository-wide consolidation for after PR 46.
-- Screen candidates on frozen inputs first. Use full-batch optimization for the small convex candidate. Reserve upstream fitting for the registered input-shift experiment.
-- Run targeted tests and applicable research acceptance checks after each implementation step. Reuse accepted execution records and intermediate results where their recorded identities remain valid. Reserve the full default, slow, and comprehensive real-data regression suites, final clean-kernel notebook execution, and complete frozen-baseline verification for Commit 6. Repeat expensive experiments only when a material change invalidates their accepted evidence.
-- Review the implementation footprint alongside scientific correctness. Avoid duplicating metrics, diagnostics, research summaries, plotting functionality, and test coverage. Store sufficient evidence to reproduce and defend each finding without unnecessarily duplicating large intermediate results.
-
-**Commit order:** Commit 1 records the plan. Commit 2 establishes the training boundary and registers the evaluation protocol. Commit 3 diagnoses the voters under that protocol. Commit 4 evaluates the priority GLASS Linear Arbiter, targeted GLASS formula changes, and Meta-XGBoost on the same evidence. Commit 5 uses those results to limit upstream refitting to the candidates and questions that require it. Commit 6 consolidates recommendations, completes validation, and publishes the accepted executed notebooks.
+**Execution principles:** Optimize on training rows only. Preserve PR 39 pins, manifests and the four-cell crossover. Register decisions before inspecting new results. Keep random-split development findings, the Stage 1 chronological candidate check and PR 49 cascade robustness distinct. Use targeted tests and research acceptance checks after each step. Reuse compatible records and predictions by digest. Reserve comprehensive regression and publication for closure. Justify substantial additions against existing implementations.
 
 ### Commit 1 — Roadmap Planning and Deferred Engineering Updates
 
-**Objective:** Record the PR 43 execution plan and reconcile Deferred Engineering with the completed PR 42 handoff. Documentation only.
+**Objective:** Set the research sequence and reconcile prior decisions.
 
-- [x] Replace the existing PR 43 section with the agreed commit sequence. Keep its deliverable immediately before PR 44.
-- [x] Add the PR 44 acceptance requirement for measuring Stage 1 and Stage 3 hyperparameter-selection optimism before adoption.
-- [x] Review Deferred Engineering dispositions. Keep the resolved Windows execution and PuLP 3.3.2 items closed. Retain the separate PuLP 4.x migration, low-priority Loky shutdown issue, Optuna widget rendering, portability work, and optional development utility in their existing queues.
-- [x] Keep the seven SAG/SAGA convergence warnings visible for PR 44 optimization or resolution before PR 45 regeneration.
-- [x] Record the repository consolidation and documentation cleanup planned after PR 46 and before publicly announcing Phase 2 completion. Preserve scientific evidence and provenance during that cleanup.
-- [x] Make no source-code, notebook, or artifact changes.
+- [x] Review the frozen references, notebook responsibilities, training paths and deferred work. Correct the served-row evaluation path and downstream Stage 4 shortlist.
+- [x] Schedule independent Stage 1 and Stage 3 work before expensive router comparisons. Reserve new experimental registrations and implementation for subsequent commits.
 
-### Commit 2 — Train-Only Notebook, Policy Registration, and Nested Stage 4 Validation
+### Commit 2 — Training Boundary, Baselines and Optimization Registration
 
-**Objective:** Establish the training inputs, scoring policy, and evaluation procedure before examining Stage 4 candidate results.
+**Objective:** Establish which questions frozen evidence answers and what a candidate must demonstrate.
 
-#### Step 2A — Notebook Foundation and Frozen Input Boundary
+#### Step 2A — Verify training inputs and reproduce references
 
-- [x] Build the Training Research Notebook from `documentation/notebook_map.md` section 2.2. Inventory and reuse the existing training, calibration, cross-fitting, threshold, evaluation, statistical, plotting, and research-record utilities.
-- [x] Reuse `feature_research.training_side` and extend notebook tests G5 and G7 to cover the labelled execution path and train-only boundary.
-- [x] Assemble both upstream OOF tables from the PR 39 pins. Verify row order, labels, producer fold identities, route states, probability semantics, and fingerprints. Preserve the distinct Stage 1 and Stage 2/3 fold designs.
-- [x] Reuse the PR 38 router, LR, and EBM boundary extractors. Supply the smallest verified train-only access needed for the MLP, Stage 3 XGBoost, and missing router evidence. Check the notebook entry point for test-field access because the production Stage 4 loaders and `build_feature_frames` construct both sides of the split.
-- [x] Record the accepted configurations and threshold procedures. Reproduce the production abstention search over distinct confidence values when checking the historical reference. The research helper searches a fixed grid.
+- [ ] Extend the Training Research Notebook after its PR 43 sections. Reuse `training_side`, `training_inputs`, `frozen_references` and existing metric primitives. Verify the PR 39 six-role upstream manifest against the PR 43 frozen-input receipt, ordered 32,950 rows and 3,712 positives, ten Stage 1 folds, five shared Stage 2/3 folds, route states, producing-model base rates and probability spaces.
+- [ ] Establish both arms' all-row and served-row references before optimization. Join training OOF predictions to each arm's frozen deferral mask by row identity. Reproduce PR 43's GLASS reference on 14,628 deferrals (Stage 1/3 average precision 0.168/0.214). The artifact's `evaluate_served` method indexes test rows. Exercise the labelled training path and reject misaligned or test rows.
+- [ ] Identify which summaries can use committed records and which comparisons need verified local numerical archives. Give each new execution a write-once ID under `research_logs/pr44/` using existing research-record utilities. Bind seeds, environment, code, folds, feature and parent digests. Record missing evidence at the affected comparison.
 
-#### Step 2B — Stage 4 Objective, Abstention Policy, and Comparison Registration
+#### Step 2B — Register decisions and cost before screening
 
-- [x] Define what abstention means operationally and how abstained rows contribute to whole-system scoring. Register the primary loss, coverage grid, selective-risk definition, AURC convention, tie handling, class-retention safeguards, and rule for selecting a deployable cut.
-- [x] Evaluate scoring functions at matched coverage. Separately measure the coverage achieved on outer-fold rows by an inner-selected cut. Report decisions before abstention, retained-row results, and whole-system outcomes, including effective recall, per-class retention, retained prevalence, and correct and incorrect decisions deferred.
-- [x] Keep retained F2 as a descriptive historical metric. It has no true-negative term, and the selected cut reached the 50% training coverage floor in all four accepted crossover cells. Use the registered criteria for weight, threshold, and policy selection.
-- [x] Register the GLASS Linear Arbiter comparisons against the GLASS Arbiter and Meta-XGBoost on each upstream, separately from the historical PR 39 2×2.
-- [x] Predefine the paired uncertainty method, meaningful improvement and comparability margins, calibration and class-retention limits, interpretability requirements, and computational budget. Favor the simpler interpretable approach when performance falls within the registered comparability margin.
-- [x] Record each arm’s search space, trial budget, stopping criteria, diagnostic triggers for optional variants, and decision rule for expanding the simulated holdout.
+- [ ] For each contrast, lock comparator, primary metric and direction, practical margin, safeguards, paired uncertainty method, multiplicity treatment and simplicity tie-break. Use probability/ranking metrics for Stage 1/3 and the registered feasibility/coverage hierarchy for routers. Define improvement and equivalence using paired intervals. Record a failed safeguard as rejection and inadequate support, precision or budget as inconclusive. A comparable simpler procedure may advance under the registered tie-break.
+- [ ] Specify finite spaces, trial and seed caps, inner/outer folds, expected fit counts (including calibration, stopping, repeated ILPs and feature engineering), elapsed-time ceilings and conditional expansion rules. Start with frozen summaries, then matched one-factor screens. Reuse only fitting-local blocks with matching identities. Record cost per arm and stop an expansion when it cannot change a decision within budget.
+- [ ] For Stage 1/3 shortlists, repeat all data-dependent screening and selection inside outer training partitions, or freeze the candidate list prospectively from historical evidence. Fit preprocessing, stopping, interaction selection and calibration inside the applicable fitting boundary. Lock each fit before outer scoring. Report paired outer effects, selected parameters and signed inner-selected versus outer gaps on the same metric, including sampling and training-size limitations. Previously explored training rows limit inference.
+- [ ] Register descriptive whole-system diagnostics under PR 43 policy v1. Measure signed voter margins, unique correct votes, effective recall, retention by class, coverage and review-cost loss on matched locked actions. Use original formula/raw Meta controls and GLASS-only normalized margins when score semantics permit. Verify registration replay, partition isolation and mismatched-input failures.
 
-#### Step 2C — Nested Stage 4 Validation on Fixed Upstream Inputs
+### Commit 3 — Stage 1 Macro Encodings and Numerical Stability
 
-- [x] Use common outer folds for evaluation and inner folds for selection. Fit each Stage 4 procedure from scratch, including learned voter cuts, weights or coefficients, calibration, class thresholds, and abstention cuts. Keep raw scoring, calibration, class decisions, and deferral separate.
-- [x] Refit the accepted GLASS Arbiter procedure per outer fold. Reproduce its historical operating rule as a reference and evaluate its scoring function under the common registered policy. Apply the same outer evaluation and selection safeguards to Meta-XGBoost.
-- [x] Measure Stage 4 selection optimism from inner-selected and outer-evaluated results. Document that upstream OOF inputs remain fixed and that upstream fits producing one row’s inputs can include other Stage 4 outer-fold labels. Fully nested Stage 1/3 hyperparameter selection belongs to PR 44.
-- [x] Verify Stage 4 fold isolation, input parity, and reference behavior with targeted checks. Record run IDs, seeds, fold identities, parameters, trial counts, elapsed time, and code identity under `research_logs/pr43/`.
+**Objective:** Test whether the three-input LR and MLP retain useful ranking and transferable probabilities under deployable fitting rules.
 
-### Commit 3 — Voter Diagnostics and GLASS Decision Structure
+#### Step 3A — Isolate encoding and early-stopping effects
 
-**Objective:** Determine where each voter contributes, where confidence is poorly scaled, and which arbiter changes warrant evaluation.
+- [ ] Reuse `encoding_audit` and `temporal_validity` for the accepted encoder versus `past_daily_lag0` (`stage1-features` 3.0.0-candidate) at fixed settings on both arms. Specify contact-day input, earlier-label availability, cold start and euribor fallback. Report paired random-fold and chronological results, pooled and within the five PR 42 windows with prevalence and support. Outcome timing is uncertain. PR 49 owns lag sensitivity and chronological cascades.
+- [ ] Compare MLP encoder-isolated early stopping with the accepted split at matched features and seed. Draw the stopping subset before fitting the encoder/scaler or resampling. Verify earlier encodings are invariant to unavailable labels and stopping labels cannot influence preprocessing.
 
-- [x] On the frozen GLASS OOF rows, tabulate routing state × LR vote × EBM vote, support, and observed positive rate. Measure agreement, error correlation, double faults, unique-correct predictions, and correct lone dissents at the Stage 4 voter cuts and at matched flag budgets. Break out class and routing state where supported.
-- [x] Count Pass 1 leaked positives flagged by LR or EBM. For Pass 2 rows where both voters vote negative, count the false positives a veto would remove and the true positives it would lose.
-- [x] Measure LR and EBM discrimination and calibration on router-deferred rows. Estimate voter calibration intercepts and slopes by routing state where estimable, with support and uncertainty.
-- [x] Trace accepted-cut abstentions and per-voter contributions by class and route. Quantify how the bound on negative probability margins affects Pass 2 and router-deferred rows.
-- [x] Record which registered triggers were met for optional variants. Assess redundancy through shared errors and unique contributions. High agreement and near-uniform formula weights alone do not establish redundancy.
+#### Step 3B — Optimize shortlisted procedures
 
-### Commit 4 — Stage 4 Candidate Evaluation at Matched Coverage
+- [ ] Reuse the LR tuning/penalty paths, MLP tuner and shared Stage 1 OOF calibration. Compare compatible LR penalty/solver and regularization settings, balanced and unweighted training. Trace seven SAG/SAGA warnings to fits and folds. Check scaling, iterations against cap, tolerance, coefficient/probability stability and elapsed time. Characterize unresolved configurations and exclude unstable fits.
+- [ ] Give the MLP a small matched-seed comparison of oversampling, weighting and unweighted training. Expand width/depth, learning rate, batch size or regularization only on a registered signal. Measure seed variance and stopping epochs. Compare raw and calibrated log-loss, Brier, ECE, PR-/ROC-AUC and runtime. Keep standalone cuts descriptive.
+- [ ] Apply Step 2B nesting and the chronological gate. Record separate R1 feature and R2 procedure decisions, fold isolation and convergence checks. Save aligned OOF inputs and signed margins for Commit 6.
 
-**Objective:** Compare the priority GLASS Linear Arbiter, targeted GLASS formula improvements, and Meta-XGBoost under the registered policy and nested Stage 4 procedure.
+### Commit 4 — Stage 3 Shared Features, EBM Interactions and Training Objectives
 
-#### Step 4A — GLASS Linear Arbiter
+**Objective:** Separate changes to the shared feature block from changes to either learner. Compare models on the same frozen deferrals within each arm.
 
-- [x] Fit regularized logistic regression with nonnegative coefficients and an intercept using full-batch log-loss optimization. Use `logit(p) − logit(t)` for Stage 1 and Stage 3 and signed `logit(r) − logit(b)` router evidence on routed rows, with zero router contribution on deferral. Specify finite clipping and direction conventions before fitting.
-- [x] Derive inputs from the Stage 1/3 probabilities, router probability, and route indicators available to Meta-XGBoost, using training-fitted constants where required. Verify each upstream’s router semantics. For GLASS, recover the rule rate using its producing model’s base rate. Keep rule identity and per-rule outcome counts outside the linear candidate’s inputs.
-- [x] Assess probability calibration before and after any inner-fitted correction. Report coefficients, bootstrap intervals, and fold-to-fold stability.
-- [x] Evaluate routing-state-specific coefficients shrunk toward the global coefficients only if the registered Commit 3 reliability trigger is met.
-- [x] Evaluate both upstreams against both reference arbiters. Apply the registered paired improvement and class-retention criteria before retaining the linear candidate for PR 45.
+#### Step 4A — Test features and interactions at fixed training settings
 
-#### Step 4B — GLASS Formula and Meta-XGBoost Comparators
+- [ ] Compare an equivalently refitted 13-feature baseline with `jed_alone` for EBM and XGBoost (R5). Keep the historical prediction streams as separate references. Reuse `stage3_simplification`, the Stage 3 block cache and shared runner. Verify feature order, G2/G3 inventory and held-out invariance.
+- [ ] Start the candidate EBM with the two surviving Step 5A pairs. Compare the three fixed baseline pairs on the original block, zero, one or two eligible pairs, a fixed campaign pair and capped fold-fitted selection using `interaction_selection` (R6). Record candidate eligibility per block. Apply the Step 5A net-corrections screen on fixed deferrals. The fixed candidate scored 486 versus 389 after three-pair reselection against the historical 456.86 cutoff. Recompute the registered screen against the paired refit when its reference changes.
+- [ ] Report terms, supported shapes, fold stability, additive explanation fidelity and net corrections alongside discrimination and calibration. Require one shared feature list for both arms. Keep `drop_first` secondary, `drop_second` closed and `past_density` with PR 49.
 
-- [x] Isolate GLASS log-odds margin normalization with the accepted formula weights first. Then evaluate sensitivity to the recall target of 0.70, weight blend α = 0.5, and abstention cut. Compare sequential fitting with nested joint selection where justified.
-- [x] Compare selected-rule in-sample evidence with cross-fitted router rule precision. Document rule support, unseen-rule handling, and what the frozen records can establish. Account for any required upstream refit in the Commit 5 budget.
-- [x] For Meta-XGBoost, compare the accepted balanced-weight, F2-at-0.5 tuning objective with registered threshold-free alternatives. Evaluate raw and calibrated confidence using the implemented `operating_space="calibrated"` path while preserving nonlinear learning.
-- [x] Produce one paired comparison per upstream, using the same rows for all arbiters. Report matched-coverage risk, AURC, achieved coverage at locked cuts, calibration where applicable, class retention, and whole-system outcomes. Record retained candidates and inconclusive comparisons.
+#### Step 4B — Evaluate objectives and tune survivors
 
-### Commit 5 — OOF-versus-Refit Input Shift and Coverage Stability
+- [ ] Isolate the historical balanced F2-at-0.5 search, training weights and selection metric. Compare unweighted fitting, log-loss and average-precision selection under matched budgets. Evaluate raw and cross-fitted calibrated probabilities before choosing operating cuts.
+- [ ] Bound EBM rate, rounds, bagging, regularization and smoothing/binning proposals. Compare XGBoost early stopping on fitting-local validation rows with tuned tree count, then depth, shrinkage, row/column sampling and regularization where justified. Reuse `shared/stage3/{runner,tuning,calibration}.py` and family fitters. Nest surviving procedures, verify stability, fit costs and served-row results, and freeze candidate OOF identities for F10.
 
-**Objective:** Determine how much Stage 4 coverage changes with the operating rule and how much changes when upstream models are refitted.
+### Commit 5 — Procedural Router Contracts and Independent Rule Evidence
 
-#### Step 5A — Frozen-Table Stability Checks
+**Objective:** Spend router fits on changes that can affect feasibility, coverage or reliability.
 
-- [x] Compare Meta-XGBoost coverage under fold-nested operating thresholds and the single global threshold used for deployment. Label the global-cut result on training rows as descriptive.
-- [x] Measure abstention-cut and achieved-coverage stability across training-row resamples for retained candidates.
-- [x] Identify the remaining questions that require fresh upstream fits. Record the expected fit count and runtime before starting the simulated holdout.
+#### Step 5A — Screen bin and rule-space revisions
 
-#### Step 5B — Training-Only Simulated Upstream Holdout
+- [ ] Reuse `binning_candidates`, `stage2_binning`, `stage2_crossfit` and the two-pass selectors. Fit NSD `gap_placed` with both registered and fold-local reference inputs (R3). Record reference scope, cut, support, migration and fold-0 lift. Treat registered constants that saw outer rows as conditional evidence. Apply the shared ordered 29-bin contract to both routers.
+- [ ] Separately evaluate `eci_warm` as a required filter on GLASS Pass 2 partner rules (R4). Measure candidate count, redundancy, overlap and marginal coverage on the actual remainder. Test a combination only if individual contrasts justify its cost. Extend G13 to the cut fit within each cross-fit fold and verify nested eligibility.
+- [ ] Retain PR 35 RF settings as control. Reopen pass-specific tuning, weights, feature sampling or thresholds only for a changed contract or measured deficiency under identical obligations. Preserve F31's interpretation of RF band scores.
 
-- [x] Start with the black-box upstream. Hold out a stratified subset of training rows and fit the upstream procedures on the remainder using accepted hyperparameters. Keep learned transformations, routing evidence, calibration, and cuts inside the fitting partition. Reuse the resulting fits and predictions across arbiters.
-- [x] Compare the fitting partition’s OOF input distribution with the simulated holdout distribution. On the same untouched holdout rows, compare full-refit and fold-averaged upstream predictions with Stage 4 held fixed.
-- [x] Isolate Meta-XGBoost’s own OOF/refit effect with upstream inputs held fixed. Report changes in route state, confidence, decisions, and achieved coverage.
-- [x] Apply the registered expansion rule to the GLASS upstream, accounting for fold-model versus full-fit rule rates and base rates. Evaluate retained candidates under the simulated conditions relevant to their proposed use. Identify any unresolved arm-specific shift as a prerequisite for PR 45 adoption.
-- [x] Record observed runtime, bottlenecks, and computational estimates for PR 45 regeneration and PR 49 repeated splits. Keep simulated fits research-local and preserve the accepted artifacts.
+#### Step 5B — Validate surviving routers
 
-### Commit 6 — Recommendations, Validation, Executed Notebooks, and PR Closure
+- [ ] Preserve the lexicographic objective and PR 38 obligations. Report per-pass fit and outer OOF NPV/leakage, precision, support, feasibility, coverage and abstentions. Time candidate generation and solving separately. Record solver termination, gap and ordered rules. Apply PR 38 M3 repetition for eligible feasible incumbents, retaining failed attempts and authenticated recovery evidence.
+- [ ] Report matches versus first-issued decisions and positives, producing-model base rates, precision, overlap, order and marginal correct decisions by fold. Recheck the two flagged Pass 2 rules and five unsupported full-fit rule transfers from PR 43 where their conditions recur. Require rule-specific independent support for transfer. Record unavailable ablations explicitly.
+- [ ] Verify G13, fit statuses, RF diagnostics and ordered rule reproducibility. Reserve comparisons involving new Stage 1/3 flags for the F10 registration in Commit 6.
 
-**Objective:** Record the provisional Stage 4 decision, hand actionable findings to PRs 44–45, complete reproducibility checks, and publish the accepted executed notebooks.
+### Commit 6 — Cross-Stage Comparisons, Reproducibility and PR 45 Handoff
 
-#### Step 6A — Stage 4 Recommendations and Research Handoff
+**Objective:** Determine whether independently trained revisions complement the other voters and whether their confidence scales transfer. Consolidate versioned candidate decisions, complete comprehensive validation, and prepare PR 45 for a single production regeneration.
 
-- [x] Consolidate the registered policy, supporting run IDs, paired comparisons, accepted and rejected variants, shift findings, and remaining uncertainties. Record the provisional GLASS Stage 4 choice or an inconclusive outcome. Specify the decision PR 45 must repeat on regenerated inputs.
-- [x] Hand PR 44 the upstream properties that materially affect Stage 4. Connect Stage 1 probability quality to the past-only encoding and MLP early-stopping work, router reliability and complementarity to the qualified `gap_placed` and `eci_warm` experiments, and deferred-row performance to shared `jed_alone` and the EBM interaction-budget comparison.
-- [x] Update the notebook map and PR 43 research log with accepted records, reproduction commands, costs, claim boundaries, and unresolved prerequisites. Reference the PR 42 handoff for feature-contract details.
+#### Step 6A — F10 Comparisons and Shortlist Transfer Checks
 
-#### Step 6B — Final Validation, Reproducibility, and Notebook Publication
+- [ ] Before examining any new Stage 2 comparative result against Stage 1/3 flags outside the PR 38 pins (including PR 39), register a distinct F10 protocol with exact row, fold, flag, cut and candidate identities. Bind the Commit 2 design to the actual streams. Check stale fingerprints are rejected. Earlier served-row analyses condition on fixed masks and do not rank routers against revised voters.
+- [ ] Swap one shortlisted stream at a time on identical training rows with companion streams fixed. Report route transitions, unique correct votes, signed margins, paired policy loss and retention. Report Stage 3 results on common frozen deferrals first, then on each router's actual deferrals with denominators and class mix. Identify comparisons conditional on historical producer fits.
+- [ ] Evaluate the combined shortlist using compatible prediction streams where available. Distinguish individual stage improvements from their combined whole-system contribution without requiring production regeneration.
+- [ ] Reuse PR 43's holdout evidence for historical full-refit versus fold-average shifts. For registered material changes in confidence, routing or coverage, refit only the necessary shortlisted producer on the fitting partition and score the same held-out rows at locked cuts. Verify compatibility of reused companions. Report gross decision/retention flips alongside net changes. The exposed simulated split supports development diagnostics. Require a costed unresolved decision before repeating a whole upstream.
+- [ ] Keep advanced work conditional. A proper-score or distillation screen needs a concrete failure to address and spare registered budget. Use fitting-local cross-fitted teacher predictions and score genuine labels, calibration, fidelity, size and interpretability separately. Identify cross-family distillation as its own arm. Defer compression, focal loss, RL and contextual bandits absent a supported question and suitable data.
 
-- [x] Run targeted research, notebook, and packaging checks, followed by the full default, slow, and comprehensive real-data regression suites. Run the applicable accepted-record checks and verify the frozen PR 39 pins, crossover identity, and PR 42 contract references.
-- [x] Execute the final Training Research Notebook in a clean Windows kernel through the established `_run_notebook` path. Verify reproduction against the registered tolerances and save the accepted executed copy with its run ID under `notebook_outputs/pr43/`.
-- [x] Reuse the PR 42 packager with explicitly accepted runs. Refresh the flat project-wide `executed_notebooks.zip` with the latest accepted copy of each notebook and repository source paths in `MANIFEST.json`. Prepare `pr43_executed_notebooks.zip` with run IDs in its filenames.
-- [x] Extract both archives and verify that the notebooks open with their saved tables and plots. Confirm tracked notebooks are output-free with code and Markdown cells intact.
-- [x] Publish both assets on the `pr43-notebooks` GitHub release. Verify the root README’s stable `releases/latest/download/executed_notebooks.zip` link and include the release-specific PR 43 snapshot link in the PR description.
-- [x] Review the complete diff for unintended changes and generated files. Record final validation results, warnings, and outstanding handoffs, then close the PR.
+#### Step 6B — Final Decisions, Validation, Executed Notebooks and PR Closure
 
-**Deliverable:** The Training Research Notebook, a registered Stage 4 abstention policy and comparison protocol, training-side voter diagnostics, an evaluated GLASS Linear Arbiter candidate, matched-coverage comparisons with both reference arbiters, an input-shift diagnosis, and a provisional Stage 4 recommendation for PR 45.
+- [ ] Link accepted records under `research_logs/pr44/`. Summarize accepted, rejected, comparable and inconclusive procedures, including unchanged references. Record feature/training versions, fitting scopes, seeds, costs, limitations, and PR 45 rebuild/reuse dependencies and time estimates. Carry open numerical and rule-support questions into the adoption decision.
+- [ ] Update the notebook map and research log. Use paired effects/cost tables, calibration or margin plots where scale changed, supported EBM shapes and router coverage/support tables. Reuse plotting and research utilities. Review implementation footprint and targeted checks.
+- [ ] Reconcile Deferred Engineering with the completed PR 44 work. Resolve remaining issues where feasible within scope, verify fixes, and document outstanding blockers and their disposition before Phase 2 closure. Preserve completed deferred items as a resolution record.
+- [ ] Run default, slow and comprehensive real-data suites, the complete frozen-baseline checks and accepted-record verification. Reproduce selected results within registered tolerances. Execute Training Research in a clean Windows kernel using the established execution path, with explicit verified readback for expensive historical results.
+- [ ] Package the accepted executed notebook, refresh the flat project archive and prepare a run-identified PR 44 snapshot. Check extraction, manifest hashes, embedded results and output-free tracked notebooks. Publish the notebook assets at closeout and verify download links.
 
----
-
-## PR 44 — Stage 1–3 Optimization and Router Research
-
-**Objective:** Systematically evaluate training objectives and optimization strategies for the upstream stages of both cascades (Phase 2 Optimization Principle), prioritizing ranking, probability quality, and whole-system contribution, without intermediate artifact regeneration.
-
-Stages 1–3 are trained independently: no upstream stage reads another's outputs during training, and only Stage 4 consumes them. Their optimization can proceed in any order; one regeneration follows in PR 45.
-
-### Step 44A — Stage 1
-
-#### GLASS — Calibrated Logistic Regression
-
-- [ ] Evaluate regularization and penalty alternatives beyond the current search (100 trials, ROC-AUC, balanced class weights).
-- [ ] Compare unweighted training with balanced weights followed by sigmoid calibration.
-- [ ] Reevaluate calibration only when supported by training-side evidence.
-- [ ] Preserve coefficient interpretability and the accepted feature contract.
-
-#### Black-Box — Calibrated MLP (lower priority)
-
-Stage 1 has three inputs, so architecture and optimization changes have limited expected headroom; each experiment must justify its computational cost.
-
-- [ ] Evaluate architecture width and depth, regularization, and optimization settings.
-- [ ] Investigate batch size, learning rate, early stopping, and validation strategies.
-- [ ] Compare positive oversampling with class-weighted or alternative objectives, including their effects on calibration.
-- [ ] Examine training stability, initialization variance, and convergence.
-
-#### Shared Evaluation
-
-- [ ] Compare ROC-AUC, PR-AUC, log-loss, Brier score, calibration, and computational efficiency.
-- [ ] Treat Stage 1 decision thresholds as standalone reporting only: Stage 4 sets its own cuts, so threshold strategies are not Stage 1 optimization targets.
-- [ ] Evaluate the incremental value of each change against the PR 39 baseline.
-- [ ] Evaluate the PR 42 Stage 1 candidates for both arms, with a chronological comparison among the adoption criteria (PR 42 Step 6A, sections 2.5 and 5.3):
-  - the past-only encodings drafted as `stage1-features` 3.0.0-candidate;
-  - the MLP's encoder-isolated early stopping.
-
-### Step 44B — Stage 2 Routers
-
-#### GLASS Router
-
-- [ ] Preserve the two-pass routing structure and union-aware ILP selection.
-- [ ] Investigate candidate-rule generation and selection efficiency.
-- [ ] Evaluate redundancy, complementarity, and marginal coverage.
-- [ ] Consider alternative selector objectives only when supported by measured deficiencies.
-- [ ] Test the feature-bin candidates identified in PR 42 against the router-level requirements of PR 42 Step 6A, section 3.4:
-  - NSD `gap_placed`, fitted with both its registered and its fold-local reference inputs;
-  - `eci_warm` required as a filter on Pass 2 partner rules.
-- [ ] Preserve symbolic rule interpretability and auditable routing decisions.
-
-#### Random Forest Router
-
-- [ ] Start from the PR 35 objective-specialization results (the baseline configuration was retained for both passes); revisit only under a changed contract or new evidence.
-- [ ] Evaluate hyperparameters, class weighting, and feature sampling where justified.
-- [ ] Optimize thresholds under the same shared operating obligations.
-- [ ] Compare routing coverage, constraint feasibility, and complementary predictions.
-
-#### Shared Obligations
-
-- [ ] Preserve the Pass 1 NPV/leakage and Pass 2 precision/support requirements.
-- [ ] Preserve the lexicographic coverage objective unless a separately justified methodology revision is approved.
-- [ ] Maintain fold-level cross-fitting and nested eligibility safeguards.
-- [ ] Preserve G13 leakage auditing and applicable F31 diagnostics.
-- [ ] Evaluate routing efficiency, stability, abstentions, and unique-correct contributions.
-- [ ] Register a new protocol version before any Stage 2 comparison against revised Stage 1/3 models (F10: the PR 38 protocol pins the historical LR/EBM flag fingerprints).
-
-### Step 44C — Stage 3
-
-- [ ] Evaluate each Stage 3 model on the router-deferred rows it serves (`Stage3Artifact.evaluate_served`, training-side) before tuning.
-- [ ] Compare the current tuning objective (F2 at the 0.5 cut with balanced weights) with threshold-free objectives (log-loss, PR-AUC) and with unweighted training. Before isotonic calibration, both accepted Stage 3 models have training OOF ECE of about 0.26–0.27.
-- [ ] Evaluate the PR 42 Stage 3 candidate `jed_alone` (with its two Step 5A pairs) for both the EBM and XGBoost, against refitted baselines. Stage 3 features stay shared between the arms (PR 42 Step 6A, section 4.5).
-
-#### GLASS — Explainable Boosting Machine
-
-- [ ] Evaluate learning rate, boosting rounds, bagging, and regularization.
-- [ ] Compare interaction budgets with the PR 42 procedural selector and the Step 5A cascade screen on Stage 2 abstentions (PR 42 Step 6A, section 4.5):
-  - the three fixed pairs;
-  - none;
-  - one or two pairs;
-  - a campaign pair fixed by construction;
-  - capped automatic detection.
-- [ ] Assess binning and smoothing parameters.
-- [ ] Evaluate monotonic constraints only where supported by defensible hypotheses.
-- [ ] Quantify the interpretability cost of additional terms, preserving transparent feature contributions and explanation fidelity.
-
-#### Black-Box — XGBoost
-
-- [ ] Investigate tree depth, learning rate, and early stopping in place of a tuned estimator count.
-- [ ] Evaluate regularization, subsampling, and column sampling.
-- [ ] Compare objectives and class-imbalance strategies.
-- [ ] Examine probability calibration and threshold selection separately.
-- [ ] Evaluate training efficiency and the stability of selected configurations.
-
-### Step 44D — Optional Advanced Strategies
-
-- [ ] Knowledge distillation and cascade compression: optional, separately identified experiments using leakage-safe (cross-fitted) teacher predictions. Report student fidelity, genuine-label performance, calibration, and interpretability separately, and report cross-family distillation as its own arm.
-- [ ] Evaluate alternative proper scoring objectives where justified.
-- [ ] Do not prioritize focal loss, reinforcement learning, or contextual bandits without new evidence: calibration matters to Stage 4, and the dataset is a static, fully labelled log without action-dependent outcomes.
-- [ ] Promote a strategy only when inexpensive screening justifies further work.
-
-**Acceptance:**
-
-- [ ] Select accepted Stage 1–3 configurations using predefined criteria.
-- [ ] Preserve the PR 39 configurations for comparison.
-- [ ] Version candidate training contracts.
-- [ ] Defer artifact regeneration to PR 45.
-- [ ] Measure hyperparameter-selection optimism for shortlisted Stage 1 and Stage 3 configurations using nested selection and outer-fold evaluation before adoption. Reuse the PR 43 evaluation methodology where applicable.
-
-**Deliverable:** Evaluated, versioned Stage 1–3 candidates for both cascades, ready for a single upstream regeneration.
+**Deliverable:** Versioned upstream candidates and a costed, evidence-linked PR 45 recommendation for each stage and arm.
 
 ---
 
@@ -250,11 +119,11 @@ Stage 1 has three inputs, so architecture and optimization changes have limited 
 
 ### Stage 4 Training
 
-- [ ] Fit the GLASS Arbiter, Meta-XGBoost, and the GLASS Linear Arbiter (if retained in PR 43) under the PR 43 objectives, using training-side evidence only for candidate selection, thresholds, and coverage cutoffs.
-- [ ] Select the final GLASS Stage 4 approach by the criteria predefined in PR 43, favoring the simpler interpretable model when performance is meaningfully comparable.
+- [ ] Refit the original GLASS formula and raw Meta-XGBoost on both upstreams as common-policy controls. On GLASS inputs also fit normalized log-odds margins with the same voter cuts and weights. Distinguish the searched Meta reference from fixed-parameter deployment checks.
+- [ ] Before examining regenerated results, register the inferential role of normalized versus original and normalized versus raw Meta on GLASS. Apply policy v1 loss, uncertainty, class-retention, support, calibration and partial-AURC safeguards at locked cuts. Check attainable coverage, full-refit transfer and independent first-issued rule support. Prefer simplicity under demonstrated comparability.
 - [ ] Evaluate retained-only and whole-system performance together, with class-specific abstention, retained base rates, error rates, and calibration where applicable.
 - [ ] Reject degenerate solutions that improve retained-row metrics by abstaining on excessive numbers of otherwise correct predictions.
-- [ ] Recompute the registered 2×2 crossover (four cells) on the regenerated upstream, and run any separately registered GLASS Linear Arbiter comparison apart from it.
+- [ ] Recompute the registered 2×2 crossover (four cells) on the regenerated upstream, and report the separately registered normalized-margin comparisons outside those four cells.
 
 ### Comparison Registration
 
@@ -309,7 +178,7 @@ Stage 1 has three inputs, so architecture and optimization changes have limited 
 - [ ] GLASS versus black-box end-to-end performance.
 - [ ] Stage-level performance and complementarity.
 - [ ] Registered 2×2 Stage 4 arbiter crossover (four cells).
-- [ ] Separately registered GLASS Linear Arbiter comparisons, reported apart from the accepted 2×2 crossover.
+- [ ] Report the prospectively registered GLASS normalized-margin contrasts separately from the four-cell crossover, carrying forward their PR 45 disposition.
 - [ ] Matched positive-flag-budget comparisons.
 - [ ] Matched abstention-coverage comparisons.
 - [ ] Coverage-prescription comparison:
@@ -384,7 +253,7 @@ Stage 1 has three inputs, so architecture and optimization changes have limited 
 
 ### Stacking Methodology Sensitivity (F39; includes the PR 36 deferral)
 
-- [ ] Assess indirect label dependence in the upstream OOF stacking features of the learned arbiters (Meta-XGBoost and, if retained, the GLASS Linear Arbiter).
+- [ ] Assess indirect label dependence in the upstream OOF stacking features of the retained learned arbiter (Meta-XGBoost).
 - [ ] Evaluate the feasibility of fully nested upstream fitting within each meta-fold.
 - [ ] Compare standard OOF stacking against fully nested stacking where computationally feasible.
 - [ ] Measure effects on calibration, thresholds, abstention, and predictive performance.
@@ -432,8 +301,9 @@ Stage 1 has three inputs, so architecture and optimization changes have limited 
 - [ ] **PuLP 4.x migration (future compatibility).** PuLP 4.0 removes the bundled CBC binary and `PULP_CBC_CMD`, from which `ilp_builder.py` reads its pinned CBC path (`_BUNDLED_CBC`). CBC then comes from the `pulp[cbc]` extra or a `cbc` executable on `PATH`, possibly a different build from CBC 2.10.3, and PuLP 4.0 changes other modelling and solve APIs (see its 3.x-to-4.0 migration guide). Migrating requires a dependency change, a new solver pin, and solver-parity validation against the accepted Stage 2 selections (objectives, termination statuses, time-limit and feasible-but-not-optimal outcomes, and the CBC log parsing in `parse_cbc_log`), as a separately versioned Stage 2 change. Until then, keep `pulp>=2.8,<4`.
 - [ ] **Joblib/Loky shutdown traceback (low priority).** On Windows (Python 3.14.3, Joblib 1.6.0 with vendored Loky 3.6.0, ipykernel 6.31.0), the Joblib/Loky resource tracker can print a `KeyError` traceback for a `joblib_memmapping_folder_` entry during kernel shutdown, after notebook execution has completed. Local reproduction supports a shutdown-order conflict: ipykernel terminates the tracker, and Joblib's exit-time cleanup restarts it with an empty registry. No effect on notebook results, accepted artifacts, or execution records has been observed, and no repository change is required (`research_logs/pr41/pr41_loky_resource_tracker.md`). [Joblib PR #1829](https://github.com/joblib/joblib/pull/1829) concerns temporary-folder registration and cleanup and may address it; before upgrading Joblib, repeat the isolated reproduction with the candidate release.
 - [ ] **Lightweight GLASS development utility.** A small command-driven tool (`run script`, `run notebook`, `run cell`, `apply test`, `scan artifacts`) that reuses existing Python, pytest, notebook, and artifact utilities, protects accepted artifacts, never retrains unexpectedly, and leaves Git operations to Git. Evaluate when its workflow benefit justifies implementation.
-- [ ] Investigate advanced training strategies that survive preliminary scientific and computational screening.
+- [ ] PR 44 Commit 6 may screen an advanced training strategy only under its evidence and cost gate.
 - [ ] Avoid new framework dependencies or infrastructure without demonstrated need.
-- [ ] **Scikit-learn SAG/SAGA convergence warnings.** Seven convergence warnings occurred during PR 42 temporal-validity real-data validation. Investigate feature scaling, solver tolerance, iteration limits, and convergence during PR 44 training optimization or before PR 45 artifact regeneration. Do not suppress the warnings.
-- [ ] **Optuna notebook widget rendering (low priority).** Investigate interactive progress-bar rendering warnings in saved executed notebooks. Preserve optimization results while improving published notebook presentation.
-- [ ] **Cross-platform compatibility.** Evaluate Windows, Linux, and macOS portability, including LF/CRLF handling, filesystem paths, notebook execution, and cross-platform CI.
+- [ ] **Scikit-learn SAG/SAGA convergence warnings.** Seven convergence warnings occurred during PR 42 temporal-validity real-data validation. PR 44 Step 3B owns reproduction, numerical diagnosis and the shortlist decision before PR 45 regeneration. Do not suppress the warnings.
+- [ ] **Optuna notebook widget rendering (low priority).** Investigate interactive progress-bar rendering warnings in saved executed notebooks. At PR 44 packaging, check saved output. Use a local presentation-only fix if a warning obscures evidence and verify identical trial results.
+- [ ] **Cross-platform compatibility.** Evaluate Windows, Linux, and macOS portability, including LF/CRLF, paths and notebook execution. Fix reproducible blockers in touched PR 44 paths with focused checks. Defer platform-wide CI and dependency changes to separate work.
+- [ ] **Repository consolidation.** After PR 46 and before announcing Phase 2 completion, measure and reduce duplicated code, tests and documentation while preserving the historical scientific records and reproduction paths.
