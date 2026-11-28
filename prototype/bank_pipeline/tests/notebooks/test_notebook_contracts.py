@@ -349,6 +349,8 @@ def test_the_research_notebook_reads_artifacts_only_through_the_boundary(noteboo
     if notebook == TRAINING_RESEARCH:
         (entry,) = _calls(notebook, "frozen_inputs")
         assert ast.unparse(entry) == "frozen_inputs(TRAIN)"
+        (baseline,) = _calls(notebook, "record_baselines")
+        assert ast.unparse(baseline) == "record_baselines(TRAIN)"
         return
     (views,) = _calls(notebook, "accepted_artifact_views")
     assert ast.unparse(views.func) == "FR.accepted_artifact_views"

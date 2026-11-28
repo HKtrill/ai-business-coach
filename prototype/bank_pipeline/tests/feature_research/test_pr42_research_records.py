@@ -15,6 +15,7 @@ import dataclasses
 import hashlib
 import inspect
 import json
+import subprocess
 
 import numpy as np
 import pandas as pd
@@ -233,3 +234,10 @@ def test_compare_records_locates_differing_sections(tmp_path):
 def test_the_commit2_reference_record_reads_back_verified():
     record = RR.read_run_record(*RR.COMMIT2_INVENTORY)
     assert record["run"]["run_id"] == RR.COMMIT2_INVENTORY[0] and record["run"]["commit"] == 2
+
+def test_git_keeps_evidence_bytes_in_current_and_future_runs():
+    paths = [f"research_logs/pr{pr}/c2_20261125_111609/frozen_inputs.json{suffix}"
+             for pr in (43, 44) for suffix in ("", ".sha256")]
+    result = subprocess.run(["git", "check-attr", "-z", "text", "--", *paths],
+                            cwd=BANK_ROOT, check=True, capture_output=True)
+    assert result.stdout.split(b"\0")[2::3] == [b"unset"] * len(paths)

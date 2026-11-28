@@ -1,0 +1,64 @@
+{
+  "baseline": {
+    "content_sha256": "2d672becfba63f6d100911d3463855675da8eb232060fdcd6aad922d25c5f32f",
+    "file_sha256": "a8f21843df2e73aa86c87e2f0600051f5f05db8e357ef2da5312c135ec6c2520",
+    "run_id": "c2_20261128_100705",
+    "tables_sha256": {
+      "blackbox": "365c849535d660d6a7de02cb102008a35bcb23f43bdce1ab7c19e864edf6f9af",
+      "glass": "c493bc50d99a0e3aa9f293157b1a4fb712e878679651498e2b87d38c22686551"
+    }
+  },
+  "code": {
+    "files_sha256_lf": {
+      "feature_research/research_records.py": "fdf0bddc59b3bfcc31b39b02451ffb8ec569e1030b3c455b619a2e0d9c87567c",
+      "feature_research/training_research.ipynb": "0c30a63bc73a3d0103ba445216872116f375084a168a93217a28657e5651c24f",
+      "feature_research/upstream_registration.py": "927f362599a6ea9ec007d7c1b6d559c5c4fa8cdd8bdb8754374d7ab9489f5ec0",
+      "research_logs/pr44/upstream_policy_v1.json": "9df755d27a8a917e9817e812535149e3dbe25726b2f567cf76456991ec391daa"
+    },
+    "head": "3095eab3ce90e5418921200222809d9187d5ce9f",
+    "tree": {
+      "code_sha256": "999a696d3ceb8f4996c7a87cdcb2c3c69537fff0de993e490ed0b5a2f189fb54",
+      "definition": "upstream_regeneration.records.code_identity",
+      "files": 492
+    },
+    "uncommitted_tracked_changes": true
+  },
+  "content_sha256": "cbff3028a7a89e22778ccc61de1d1641670665502556a15c07ef3736731f58c1",
+  "environment": {
+    "executable": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+    "os": "Windows",
+    "packages": {
+      "interpret": "0.7.8",
+      "ipykernel": "6.31.0",
+      "joblib": "1.6.0",
+      "nbclient": "0.11.0",
+      "nbformat": "5.11.1",
+      "numpy": "2.5.4",
+      "optuna": "4.9.0",
+      "pandas": "3.0.6",
+      "pulp": "3.3.2",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1",
+      "xgboost": "3.4.1"
+    },
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.14.3"
+  },
+  "format": "pr42.research_record/1",
+  "policy": {
+    "digest": "dceb16cb495ea8323dbb5668188a35af68fa5795f3b387ad1a991edce58f84d0",
+    "id": "pr44.upstream_optimization",
+    "version": "1.0.0"
+  },
+  "run": {
+    "commit": 2,
+    "finished_utc": "2026-11-28T18:36:01+00:00",
+    "notebook": "feature_research/training_research.ipynb",
+    "run_id": "c2_20261128_103601",
+    "started_utc": "2026-11-28T18:36:01+00:00"
+  },
+  "seeds": {
+    "bootstrap": 4402
+  },
+  "stage4_policy_sha256": "42f457df53baa0b52739f99097ae7da2d9d1bc32794351c8ef5dd8b7328051ba"
+}

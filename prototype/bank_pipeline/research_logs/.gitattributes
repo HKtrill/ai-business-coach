@@ -1,0 +1,3 @@
+# Write-once run records and their SHA-256 receipts are verified as raw bytes.
+pr*/c*_*/**/*.json -text
+pr*/c*_*/**/*.json.sha256 -text

@@ -1,0 +1,318 @@
+{
+  "calibrated_oof": {
+    "blackbox": [
+      {
+        "average_precision": 0.368530011122676,
+        "brier": 0.08251755429448537,
+        "ece": 0.006010483314465798,
+        "log_loss": 0.28693669896036406,
+        "n": 32950,
+        "negative": 29238,
+        "positive": 3712,
+        "prevalence": 0.11265553869499241,
+        "roc_auc": 0.7803916635929034,
+        "scope": "all",
+        "voter": "stage1"
+      },
+      {
+        "average_precision": 0.4203456377770991,
+        "brier": 0.07879445529590841,
+        "ece": 0.002769137712194383,
+        "log_loss": 0.27960754344973854,
+        "n": 32950,
+        "negative": 29238,
+        "positive": 3712,
+        "prevalence": 0.11265553869499241,
+        "roc_auc": 0.79354411775329,
+        "scope": "all",
+        "voter": "stage3"
+      },
+      {
+        "average_precision": 0.0739775370219396,
+        "brier": 0.05939622155682944,
+        "ece": 0.007772571193489763,
+        "log_loss": 0.23661017411669819,
+        "n": 10839,
+        "negative": 10153,
+        "positive": 686,
+        "prevalence": 0.06328997139957561,
+        "roc_auc": 0.5377676362154661,
+        "scope": "deferred",
+        "voter": "stage1"
+      },
+      {
+        "average_precision": 0.08618499207112362,
+        "brier": 0.05895634051697457,
+        "ece": 0.001936911850971066,
+        "log_loss": 0.23338197244795209,
+        "n": 10839,
+        "negative": 10153,
+        "positive": 686,
+        "prevalence": 0.06328997139957561,
+        "roc_auc": 0.5614839314178204,
+        "scope": "deferred",
+        "voter": "stage3"
+      }
+    ],
+    "glass": [
+      {
+        "average_precision": 0.35789157869043264,
+        "brier": 0.08419248740668546,
+        "ece": 0.013828389855897016,
+        "log_loss": 0.2915558052819436,
+        "n": 32950,
+        "negative": 29238,
+        "positive": 3712,
+        "prevalence": 0.11265553869499241,
+        "roc_auc": 0.774950061482636,
+        "scope": "all",
+        "voter": "stage1"
+      },
+      {
+        "average_precision": 0.4117778056358914,
+        "brier": 0.07954116961553505,
+        "ece": 0.0023216768918064064,
+        "log_loss": 0.28164875789652993,
+        "n": 32950,
+        "negative": 29238,
+        "positive": 3712,
+        "prevalence": 0.11265553869499241,
+        "roc_auc": 0.7918136056333751,
+        "scope": "all",
+        "voter": "stage3"
+      },
+      {
+        "average_precision": 0.1676161669745682,
+        "brier": 0.06773075055323374,
+        "ece": 0.005719213762079403,
+        "log_loss": 0.2558801838554633,
+        "n": 14628,
+        "negative": 13508,
+        "positive": 1120,
+        "prevalence": 0.07656549083948591,
+        "roc_auc": 0.6172061727970727,
+        "scope": "deferred",
+        "voter": "stage1"
+      },
+      {
+        "average_precision": 0.21383616458371002,
+        "brier": 0.06574389577093546,
+        "ece": 0.004177009412026134,
+        "log_loss": 0.2534145638716187,
+        "n": 14628,
+        "negative": 13508,
+        "positive": 1120,
+        "prevalence": 0.07656549083948591,
+        "roc_auc": 0.6619923643132112,
+        "scope": "deferred",
+        "voter": "stage3"
+      }
+    ]
+  },
+  "code": {
+    "files_sha256_lf": {
+      "blackbox_pipeline/models/meta_xgb/estimator.py": "c7fe8d576339089948dd481020cf189a3c1bcd434474c470d45adae1cc8ff73e",
+      "feature_research/frozen_references.py": "d3de1b4c83a31c7fc3a760c81d84a744449dfc4a3e4175e9dc61a4717e7ffdd3",
+      "feature_research/stage4_nested.py": "44a4bf785def10afcd317e5e1c20a2827b88ab3501c55f4114f10767a96285a3",
+      "feature_research/stage4_policy.py": "63fcdb733438005557ff1fd56a25c6467da38eb4e59745587c9e394450f9f97b",
+      "feature_research/training_inputs.py": "7c7ee7cedf036c9b84f21c28bbf02d82fa4e542c88b38d738ca0033460003721",
+      "feature_research/training_research.ipynb": "fe1cfdc76f225e9bede4b3f9e4560020761551aa612e76764f02ed04486e5813",
+      "feature_research/training_side.py": "256db53f18f89354dae9f4ae749edeb083e227c33833b505669c692b697fbe3a",
+      "feature_research/upstream_baselines.py": "2244e66f97d9290f3338127971c767624ad0f9b53b688c31acf4c84e631dff05",
+      "glass_pipeline/glass_arbiter/arbiter.py": "0093b0bb4498b61e3ec5206ed42a2b85930706febb4116adb864edeac2733de6",
+      "glass_pipeline/glass_arbiter/meta_stage.py": "ba5edeff3feb649f3110972a54186a9a076679e845c9317e754e59ac752ccecc",
+      "glass_pipeline/glass_arbiter/weighting.py": "46baa9487a626a57f845c0d1bd6d8fc1c36959e4c934d190fc8bed6c77cdf27e",
+      "shared/metrics.py": "7b694a9cd151b9bf45643909513313efe87cd5d38a6dcb05ed96c8610acbf09e",
+      "shared/stage2/diagnostics/boundary.py": "eb40c7507ea55e861748dd75425140120179b0f9e0196c9c272efea12a922e66",
+      "shared/stage4/protocol.py": "5f1813ca99a66fd9484fa7ad86edc34cad3faac25924bfa98bc419b8c33f73cc"
+    },
+    "head": "3095eab3ce90e5418921200222809d9187d5ce9f",
+    "tree": {
+      "code_sha256": "5cf660346e6713c7d24642831aef2bbb07429b1f2bdf2d33fdf2fdfe2ebd09d0",
+      "definition": "upstream_regeneration.records.code_identity",
+      "files": 490
+    },
+    "uncommitted_tracked_changes": true
+  },
+  "content_sha256": "2d672becfba63f6d100911d3463855675da8eb232060fdcd6aad922d25c5f32f",
+  "diagnostic": {
+    "content_sha256": "b5ab3779cb5f74557ce7cb7a81e37a8c4be3a469d883a33e0f9b116e875ce8ba",
+    "run_id": "c3_20261125_163120"
+  },
+  "elapsed_seconds": 3.385731999995187,
+  "environment": {
+    "executable": "C:\\Users\\phill\\projects\\ai-business-coach-clean\\.venv\\Scripts\\python.exe",
+    "os": "Windows",
+    "packages": {
+      "interpret": "0.7.8",
+      "ipykernel": "6.31.0",
+      "joblib": "1.6.0",
+      "nbclient": "0.11.0",
+      "nbformat": "5.11.1",
+      "numpy": "2.5.4",
+      "optuna": "4.9.0",
+      "pandas": "3.0.6",
+      "pulp": "3.3.2",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1",
+      "xgboost": "3.4.1"
+    },
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.14.3"
+  },
+  "evidence": {
+    "pr42_summary_records": {
+      "binning_candidates": {
+        "content_sha256": "f223bf72e34d0ab4a58b23109f89d930d7e869e59441cd31c2689e2fe4f77754",
+        "run_id": "c4_20261123_151515"
+      },
+      "binning_drift": {
+        "content_sha256": "46c26889ec063fbd996c9409208c8877f213532b339d3ee44645154afc1b722b",
+        "run_id": "c4_20261123_081749"
+      },
+      "encoding_audit": {
+        "content_sha256": "9751f4affcf612dc2f364567e3aaa97da4f436a0b5bff45af4731e95ddb721cb",
+        "run_id": "c3_20261122_201830"
+      },
+      "feature_inventory": {
+        "content_sha256": "b824bd4bdc65c3ac5067a7d3dfe547f3b564eb40d8b61433749cab9bff34b9fd",
+        "run_id": "c2_20261122_124809"
+      },
+      "interaction_selection": {
+        "content_sha256": "0d999bc8c58a5a3c8592e02789e2220d1bdfdc72a85fdb7e40accff5b673c8de",
+        "run_id": "c5_20261124_122029"
+      },
+      "stage3_simplification": {
+        "content_sha256": "d70330e1d8fa37de5cc7288f80b2d954d510b8579a0619ee8f32f6653e83f033",
+        "run_id": "c5_20261124_002645"
+      },
+      "temporal_validity": {
+        "content_sha256": "26de649374387c5cd58a94d9ff1f637d958c2bc63969b63ec7f497638d483e2b",
+        "run_id": "c3_20261122_232809"
+      }
+    },
+    "pr43_archives": {
+      "holdout_blackbox": {
+        "content_sha256": "416ab0a324d07fc08d120c62b697810b69ca5a404c667625bafaa7c788e816c7",
+        "missing_files": 0,
+        "path": "research_logs/pr43/holdout_cache/blackbox",
+        "row_archive": "verified",
+        "run_id": "c5_20261126_104038"
+      },
+      "holdout_glass": {
+        "content_sha256": "971f8a374ad2ae4b4ddbb595c5fc5e63690e17b8c03991d78eec662e9f72fed3",
+        "missing_files": 0,
+        "path": "research_logs/pr43/holdout_cache/glass",
+        "row_archive": "verified",
+        "run_id": "c5_20261126_184203"
+      },
+      "nested_references": {
+        "content_sha256": "85db12425eb5ddbdb9a3d6df307d4d4d7cc63a8ea82976fda6804e68e756386e",
+        "path": "research_logs/pr43/c2_20261125_142638/nested_predictions.npz",
+        "row_archive": "verified",
+        "run_id": "c2_20261125_142638"
+      },
+      "stage4_comparators": {
+        "content_sha256": "509270be711b616fc5b31c21462ae18de3df09b46bad5772b3fd9b5f31d9b61d",
+        "path": "research_logs/pr43/c4_20261125_220626/nested_predictions.npz",
+        "row_archive": "verified",
+        "run_id": "c4_20261125_220626"
+      }
+    },
+    "use": "PR 42 records support feature comparisons. PR 43 records support historical summaries. Restore the matching numerical archive for new paired Stage 4 or same-row refit contrasts. Published notebooks contain presentation outputs."
+  },
+  "format": "pr42.research_record/1",
+  "historical_glass_deferred": [
+    {
+      "average_precision": 0.1676161669745682,
+      "brier": 0.06773075055323374,
+      "ece": 0.005719213762079403,
+      "n": 14628,
+      "negative": 13508,
+      "positive": 1120,
+      "prevalence": 0.07656549083948591,
+      "roc_auc": 0.6172061727970727,
+      "voter": "stage1"
+    },
+    {
+      "average_precision": 0.21383616458371002,
+      "brier": 0.06574389577093546,
+      "ece": 0.004177009412026134,
+      "n": 14628,
+      "negative": 13508,
+      "positive": 1120,
+      "prevalence": 0.07656549083948591,
+      "roc_auc": 0.6619923643132112,
+      "voter": "stage3"
+    }
+  ],
+  "historical_glass_sole_correct": {
+    "ebm": 1446,
+    "lr": 1404,
+    "router": 563
+  },
+  "local_artifacts": {
+    "stage1.lr": true,
+    "stage1.mlp": true,
+    "stage2.glass_router": true,
+    "stage2.rf_router": true,
+    "stage3.ebm": true,
+    "stage3.xgb": true
+  },
+  "population": {
+    "router_split_fingerprint": "fc3e73a5ef91aea4",
+    "shared_fold_fingerprint": "8aea082fcaf371b7",
+    "stage1_fold_fingerprint": "e4da0b4442f71ecf",
+    "stage_io_attestation": "research_logs/pr39/c4_20261115_204125/run_record.json (identities.population.stage_io_split_fingerprint)",
+    "stage_io_split_fingerprint": "d6cddadc3439",
+    "train_label_fingerprint": "b984d2a50527",
+    "train_positive_rate": 0.11265553869499241,
+    "train_positives": 3712,
+    "train_rows": 32950
+  },
+  "pr39": {
+    "research_logs/pr39/c4_20261115_204125/artifact_manifest.json": "c3c95d5b02e75592e49fca80a14788ba48a934b071733caeb5c1b705f8a954c3",
+    "research_logs/pr39/c4_20261115_204125/run_record.json": "86125c55f32147b7ded5ef9ce6c6c99be1101b226c7c8a09d8c3e5d79bc3a18a",
+    "research_logs/pr39/c4_20261115_204125/upstream_acceptance.json": "a2fa2ffd98342e6d1976ea5d70a96b7d63237c24b7f6df57ba45667d9d8aec07",
+    "research_logs/pr39/c5_20261116_153459/crossover_baseline.json": "f05e2532dedeeb30f9da257b889f27b943c471a5d69a3f714e6e840dcced1b3c"
+  },
+  "pr43": {
+    "checks": [
+      "Step 2A producer code",
+      "accepted Step 2A content",
+      "registered input run",
+      "registered policy digest",
+      "replayed Step 2A content"
+    ],
+    "frozen_inputs": {
+      "content_sha256": "0bd27b22411bd6ba1905c7c24716c78bb02388985b9698001d117dd2ebabe284",
+      "file_sha256": "9c1c0a252f5ac485e1d81fe581ef7acbc1c1c2e3aab923e4c029077bb23db255",
+      "run_id": "c2_20261125_111609"
+    },
+    "policy": {
+      "canonical_sha256": "42f457df53baa0b52739f99097ae7da2d9d1bc32794351c8ef5dd8b7328051ba",
+      "id": "pr43.stage4_policy",
+      "version": "1.0.0"
+    },
+    "registration": {
+      "content_sha256": "fd8a254bc199b2da4b33130a9aa350e6fdb4d7be859dac6632fa5ff3c313f6f9",
+      "run_id": "c2_20261125_112854"
+    }
+  },
+  "run": {
+    "commit": 2,
+    "finished_utc": "2026-11-28T18:07:08+00:00",
+    "notebook": "feature_research/training_research.ipynb",
+    "run_id": "c2_20261128_100705",
+    "started_utc": "2026-11-28T18:07:05+00:00"
+  },
+  "seeds": {
+    "split_and_fold_seed": 42
+  },
+  "status": "reproduced",
+  "tables_sha256": {
+    "blackbox": "365c849535d660d6a7de02cb102008a35bcb23f43bdce1ab7c19e864edf6f9af",
+    "glass": "c493bc50d99a0e3aa9f293157b1a4fb712e878679651498e2b87d38c22686551"
+  },
+  "upstream_run": "c4_20261115_204125"
+}
